@@ -1,0 +1,141 @@
+
+// bootstrap configuration.
+$enable-rounded: false;
+$enable-shadows: false;
+$enable-gradients: false;
+$enable-transitions: false;
+$enable-validation-icons: false;
+
+
+$enable-deprecation-messages: true;
+
+
+// import bootstrap.
+@import "../../node_modules/bootstrap/scss/functions";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+@import "../../node_modules/bootstrap/scss/utilities";
+
+
+// colors
+$primary: $purple; // #abc;
+$secondary: $cyan; // #def;
+
+
+$theme-colors: map-remove(
+  $theme-colors,
+  "info", "warning", "light", "dark");
+
+$theme-colors: map-merge(
+  $theme-colors, (
+    "primary": $primary,
+    "secondary": $secondary
+  ));
+
+@import "../../node_modules/bootstrap/scss/root";
+@import "../../node_modules/bootstrap/scss/reboot";
+@import "../../node_modules/bootstrap/scss/type";
+@import "../../node_modules/bootstrap/scss/images";
+@import "../../node_modules/bootstrap/scss/containers";
+@import "../../node_modules/bootstrap/scss/grid";
+@import "../../node_modules/bootstrap/scss/tables";
+@import "../../node_modules/bootstrap/scss/forms";
+@import "../../node_modules/bootstrap/scss/buttons";
+// @import "../../node_modules/bootstrap/scss/transitions";
+@import "../../node_modules/bootstrap/scss/dropdown";
+@import "../../node_modules/bootstrap/scss/button-group";
+@import "../../node_modules/bootstrap/scss/nav";
+@import "../../node_modules/bootstrap/scss/navbar";
+// @import "../../node_modules/bootstrap/scss/card";
+// @import "../../node_modules/bootstrap/scss/accordion";
+// @import "../../node_modules/bootstrap/scss/breadcrumb";
+// @import "../../node_modules/bootstrap/scss/pagination";
+@import "../../node_modules/bootstrap/scss/badge";
+@import "../../node_modules/bootstrap/scss/alert";
+@import "../../node_modules/bootstrap/scss/progress";
+@import "../../node_modules/bootstrap/scss/list-group";
+@import "../../node_modules/bootstrap/scss/close";
+// @import "../../node_modules/bootstrap/scss/toasts";
+// @import "../../node_modules/bootstrap/scss/modal";
+// @import "../../node_modules/bootstrap/scss/tooltip";
+// @import "../../node_modules/bootstrap/scss/popover";
+// @import "../../node_modules/bootstrap/scss/carousel";
+@import "../../node_modules/bootstrap/scss/spinners";
+
+@import "../../node_modules/bootstrap/scss/helpers";
+@import "../../node_modules/bootstrap/scss/utilities/api";
+
+
+
+
+
+//----------
+
+
+.border-lg {
+  border-left-width: 0.4rem !important;
+}
+
+
+.font-size-sm {
+  font-size: 0.9rem;
+}
+
+
+//----------
+
+
+
+html body {
+  background: #405161 url("../../assets/background.png");
+}
+
+#page {
+  background: #f0f0f7;
+}
+
+#nav, #banner {
+  background: $gray-400;
+}
+
+
+
+#state .list-group-item {
+  padding: 0.4rem 0.6rem;
+}
+
+.quality-icon, .quality-icon-wrap {
+  height: 1.4rem;
+}
+
+.quality-icon-wrap {
+  background-color: green;
+  display: inline-block;
+  vertical-align: bottom;
+
+  .quality-icon {
+    display: block;
+    mix-blend-mode: screen;
+    filter: invert(100%);
+  }
+}
+
+  // filter: sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8) invert(100%);
+
+// invert(60%) saturate(100%) hue-rotate(60deg);
+
+
+@include media-breakpoint-up(lg) {
+  #goodnight-client {
+    margin-bottom: 8rem;
+
+    & > div.container-lg {
+      border-radius: 0.9rem;
+
+      nav {
+        border-top-left-radius: 0.9rem;
+        border-top-right-radius: 0.9rem;
+      }
+    }
+  }
+}
