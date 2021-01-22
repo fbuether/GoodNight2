@@ -1,4 +1,5 @@
 using System;
+using Microsoft.Extensions.Hosting;
 
 namespace GoodNight.Service.Api
 {
@@ -6,6 +7,9 @@ namespace GoodNight.Service.Api
   {
     public static void Main(string[] args)
     {
+      Host.CreateDefaultBuilder();
+
+
       System.Console.WriteLine("hello, now.");
     }
   }
