@@ -1,5 +1,6 @@
 using System;
 using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Hosting;
 
 namespace GoodNight.Service.Api
 {
@@ -7,10 +8,13 @@ namespace GoodNight.Service.Api
   {
     public static void Main(string[] args)
     {
-      Host.CreateDefaultBuilder();
-
-
-      System.Console.WriteLine("hello, now.");
+      Host.CreateDefaultBuilder(args)
+        .ConfigureWebHostDefaults(webHostBuilder =>
+        {
+          webHostBuilder.UseStartup<Startup>();
+        })
+        .Build()
+        .Run();
     }
   }
 }
