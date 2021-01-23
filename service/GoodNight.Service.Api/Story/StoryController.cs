@@ -1,5 +1,6 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 
 namespace GoodNight.Service.Api.Story
 {
@@ -8,9 +9,12 @@ namespace GoodNight.Service.Api.Story
   public class StoryController : ControllerBase
   {
     [HttpGet()]
-    public string Get()
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
+    public ActionResult<string> Get()
     {
-      return "hello?";
+      
+
+      return Ok("hello");
     }
   }
 }
