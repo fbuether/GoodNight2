@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 
 namespace GoodNight.Service.Api
 {
-  public class GoodNight
+  public class Program
   {
     public static void Main(string[] args)
     {

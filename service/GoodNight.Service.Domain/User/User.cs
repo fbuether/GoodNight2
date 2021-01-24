@@ -1,9 +1,9 @@
 using System;
 
-namespace GoodNight.Service.Model.User
+namespace GoodNight.Service.Domain.User
 {
-  public class User
+  public record User(
+    Guid Id)
   {
-    public Guid Id { get; }
   }
 }

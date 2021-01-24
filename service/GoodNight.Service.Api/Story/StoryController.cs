@@ -12,7 +12,9 @@ namespace GoodNight.Service.Api.Story
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     public ActionResult<string> Get()
     {
-      
+      var story = new Domain.Story.Story("Helms Schlund");
+
+      System.Console.WriteLine(story);
 
       return Ok("hello");
     }
