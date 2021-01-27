@@ -9,3 +9,13 @@ Feature: StoryNames
     When I generate the urlname
     Then the urlname should be helms-schlund
 
+  Scenario: Generate more complex Url Name
+    Given a scenario named "Wait -- is pete around? and where?"
+    When I generate the urlname
+    Then the urlname should be wait----is-pete-around--and-where-
+
+  Scenario: Tackle special chars in Url Names
+    Given a scenario named " !%^!£%()//oHOMY"
+    When I generate the urlname
+    Then the urlname should be -----------ohomy
+
