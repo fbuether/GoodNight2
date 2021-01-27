@@ -6,9 +6,9 @@ namespace GoodNight.Service.Domain.Test
   [FeatureFile("StoryNames.feature")]
   public sealed class StoryNames : Feature
   {
-    private Domain.Story.Story story;
+    private Domain.Story.Story? story;
 
-    private string urlname;
+    private string? urlname;
 
     [Given(@"a scenario named ""(.*)""")]
     public void CreateScenarioNamed(string name)
@@ -19,7 +19,7 @@ namespace GoodNight.Service.Domain.Test
     [When(@"I generate the urlname")]
     public void GenerateTheUrlname()
     {
-      urlname = story.Urlname;
+      urlname = story?.Urlname;
     }
   
     [Then(@"the urlname should be (.*)")]
