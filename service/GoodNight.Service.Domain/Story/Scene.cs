@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace GoodNight.Service.Domain.Story
 {
-  public record Story (
-    string Name
-  )
+  public record Scene (
+    string Name,
+    IEnumerable<Content> Content)
   {
     public string Urlname {
       get {
