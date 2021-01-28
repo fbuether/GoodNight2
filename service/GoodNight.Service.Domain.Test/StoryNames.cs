@@ -1,19 +1,20 @@
 using Xunit;
 using Xunit.Gherkin.Quick;
+using GoodNight.Service.Domain.Play;
 
 namespace GoodNight.Service.Domain.Test
 {
   [FeatureFile("StoryNames.feature")]
   public sealed class StoryNames : Feature
   {
-    private Domain.Story.Story? story;
+    private Story? story;
 
     private string? urlname;
 
     [Given(@"a scenario named ""(.*)""")]
     public void CreateScenarioNamed(string name)
     {
-      story = new Domain.Story.Story(name);
+      story = new Story(name);
     }
 
     [When(@"I generate the urlname")]

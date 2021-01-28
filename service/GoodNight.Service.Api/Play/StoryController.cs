@@ -1,8 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using GoodNight.Service.Domain.Play;
 
-namespace GoodNight.Service.Api.Story
+namespace GoodNight.Service.Api.Play
 {
   [ApiController]
   [Route("api/v1/stories")]
@@ -12,7 +13,7 @@ namespace GoodNight.Service.Api.Story
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     public ActionResult<string> Get()
     {
-      var story = new Domain.Story.Story("Helms Schlund");
+      var story = new Story("Helms Schlund");
 
       System.Console.WriteLine(story);
 
