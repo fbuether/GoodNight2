@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Story
+namespace GoodNight.Service.Domain.Play
 {
   public record Quality(
     string Name)

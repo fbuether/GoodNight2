@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
-namespace GoodNight.Service.Domain.Story
+namespace GoodNight.Service.Domain.Play
 {
   public record Scene (
     string Name,
