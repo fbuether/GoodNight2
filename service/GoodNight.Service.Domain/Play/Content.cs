@@ -9,13 +9,6 @@ namespace GoodNight.Service.Domain.Play
     string Markdown)
     : Content() {}
 
-  // consider a set of settings only if a condition holds
-  public record Condition(
-    Expression If,
-    IEnumerable<Content> Then,
-    IEnumerable<Content> Else)
-    : Content() {}
-
   // this scene is the start of the story
   // must not be within a Condition.
   public record IsStart()
@@ -33,6 +26,19 @@ namespace GoodNight.Service.Domain.Play
   public record ForceShow()
     : Content() {}
 
+
+  // set a quality of the player to a new value
+  public record Set(
+    string Quality,
+    Expression Expression)
+    : Content() {}
+
+  // require the player to fulfil an expression to take this scene
+  public record Require(
+    Expression Expression)
+    : Content() {}
+
+
   // something the player can do here
   public record Option(
     Action Action)
@@ -48,19 +54,16 @@ namespace GoodNight.Service.Domain.Play
     Scene Scene)
     : Content() {}
 
+
+  // consider a set of settings only if a condition holds
+  public record Condition(
+    Expression If,
+    IEnumerable<Content> Then,
+    IEnumerable<Content> Else)
+    : Content() {}
+
   // includes another scene here, completely
   public record Include(
     Scene Scene)
-    : Content() {}
-
-  // set a quality of the player to a new value
-  public record Set(
-    string Quality,
-    Expression Expression)
-    : Content() {}
-
-  // require the player to fulfil an expression to take this scene
-  public record Require(
-    Expression Expression)
     : Content() {}
 }
