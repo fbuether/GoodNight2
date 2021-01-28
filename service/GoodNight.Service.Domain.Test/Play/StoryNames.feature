@@ -18,4 +18,3 @@ Feature: StoryNames
     Given a scenario named " !%^!£%()//oHOMY"
     When I generate the urlname
     Then the urlname should be -----------ohomy
-

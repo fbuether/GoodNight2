@@ -4,7 +4,7 @@ using GoodNight.Service.Domain.Play;
 
 namespace GoodNight.Service.Domain.Test
 {
-  [FeatureFile("StoryNames.feature")]
+  [FeatureFile("Play/StoryNames.feature")]
   public sealed class StoryNames : Feature
   {
     private Story? story;
