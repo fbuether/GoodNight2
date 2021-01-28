@@ -1,17 +1,25 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Play
 {
-  public record Story (
-    string Name
-  )
+  public record Story(
+    string Name,
+    IImmutableSet<Scene> Scenes)
   {
-    public string Urlname {
-      get {
-        return Regex.Replace(Name, "[^a-zA-Z0-9]", "-").Trim().ToLower();
+    public string Urlname
+    {
+      get
+      {
+        return NameConverter.OfString(Name);
       }
+    }
+
+
+    // Create a new story with a given name.
+    public static Story Create(string name)
+    {
+      return new Story(name, ImmutableHashSet<Scene>.Empty);
     }
   }
 }

@@ -13,7 +13,7 @@ namespace GoodNight.Service.Api.Play
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
     public ActionResult<string> Get()
     {
-      var story = new Story("Helms Schlund");
+      var story = Story.Create("Helms Schlund");
 
       System.Console.WriteLine(story);
 

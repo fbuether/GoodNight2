@@ -1,16 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
+using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Play
 {
   public record Scene (
     string Name,
-    IEnumerable<Content> Content)
+    IImmutableList<Content> Content)
   {
-    public string Urlname {
-      get {
-        return Regex.Replace(Name, "[^a-zA-Z0-9]", "-").Trim().ToLower();
+    public string Urlname
+    {
+      get
+      {
+        return NameConverter.OfString(Name);
       }
     }
   }
