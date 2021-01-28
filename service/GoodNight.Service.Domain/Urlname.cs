@@ -1,6 +1,6 @@
 using System.Text.RegularExpressions;
 
-namespace GoodNight.Service.Domain.Play
+namespace GoodNight.Service.Domain
 {
   public static class NameConverter
   {

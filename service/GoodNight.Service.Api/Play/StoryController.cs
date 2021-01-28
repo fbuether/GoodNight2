@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using GoodNight.Service.Domain.Play;
+using GoodNight.Service.Domain.Write;
 
 namespace GoodNight.Service.Api.Play
 {

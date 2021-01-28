@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Play.Expressions;
+using GoodNight.Service.Domain.Write.Expressions;
 
-namespace GoodNight.Service.Domain.Play
+namespace GoodNight.Service.Domain.Write
 {
   public record Content()
   {
@@ -25,6 +25,20 @@ namespace GoodNight.Service.Domain.Play
     // should usually also have a Require so the scene does not instantly
     // trigger for every player.
     public record ForceShow()
+      : Content() {}
+
+
+    // to classify scenes for writing add categories or tags
+    // tags are opaque strings
+    // several tags may be attached to each scene
+    public record Tag(
+      string Name)
+      : Content() {}
+
+    // categories behave like a path, similar to a directory
+    // each scene may have at most one category
+    public record Category(
+      IImmutableList<string> Path)
       : Content() {}
 
 

@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Play.Expressions
+namespace GoodNight.Service.Domain.Write.Expressions
 {
   public record Expression()
   {

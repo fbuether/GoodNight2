@@ -1,8 +1,8 @@
 using Xunit;
 using Xunit.Gherkin.Quick;
-using GoodNight.Service.Domain.Play;
+using GoodNight.Service.Domain.Write;
 
-namespace GoodNight.Service.Domain.Test
+namespace GoodNight.Service.Domain.Test.Write
 {
   [FeatureFile("Play/StoryNames.feature")]
   public sealed class StoryNames : Feature

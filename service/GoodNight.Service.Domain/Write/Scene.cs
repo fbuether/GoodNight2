@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Immutable;
 
-namespace GoodNight.Service.Domain.Play
+namespace GoodNight.Service.Domain.Write
 {
   public record Scene (
     string Name,
