@@ -10,5 +10,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\GoodNight.Service.Domain\GoodNight.Service.Domain.csproj" />
+    <ProjectReference Include="..\GoodNight.Service.Store\GoodNight.Service.Store.csproj" />
   </ItemGroup>
 </Project>
