@@ -10,6 +10,11 @@ namespace GoodNight.Service.Domain.Write
       string Markdown)
       : Content() {}
 
+    // The name of this scene. Must occur on each scene.
+    public record Name(
+      string DisplayName)
+      : Content() {}
+
     // this scene is the start of the story
     // must not be within a Condition.
     public record IsStart()
@@ -32,7 +37,7 @@ namespace GoodNight.Service.Domain.Write
     // tags are opaque strings
     // several tags may be attached to each scene
     public record Tag(
-      string Name)
+      string TagName)
       : Content() {}
 
     // categories behave like a path, similar to a directory
