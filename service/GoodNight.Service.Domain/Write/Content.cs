@@ -10,7 +10,9 @@ namespace GoodNight.Service.Domain.Write
       string Markdown)
       : Content() {}
 
-    // The name of this scene. Must occur on each scene.
+    /// <summary>
+    /// The name of this scene. Must occur on each scene.
+    /// </summary>
     public record Name(
       string DisplayName)
       : Content() {}
