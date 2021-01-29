@@ -1,12 +1,14 @@
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Collections.Immutable;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Domain.Write;
 using GoodNight.Service.Store;
+using GoodNight.Service.Domain.Parse;
 
 namespace GoodNight.Service.Api.Write
 {
@@ -45,12 +47,22 @@ namespace GoodNight.Service.Api.Write
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create()
+    public async Task<ActionResult<Scene>> Create()
     {
       var content = await GetBody();
-      System.Console.WriteLine($"content:  {content}");
+      var parsed = new SceneParser().Parse(content);
 
-      return new StatusCodeResult(StatusCodes.Status417ExpectationFailed);
+      if (parsed != null)
+      {
+        repos.Save(parsed);
+        return Created($"{HttpContext.Request.Path}/{parsed.Name}", parsed);
+      }
+      else
+      {
+        return BadRequest(new {
+            error = "that was wrong!"
+          });
+      }
     }
 
     [HttpPut("{urlname}")]
