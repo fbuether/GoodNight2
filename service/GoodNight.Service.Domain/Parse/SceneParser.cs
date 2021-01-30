@@ -7,34 +7,40 @@ namespace GoodNight.Service.Domain.Parse
   public class SceneParser
   {
     private readonly static Parser<char, Unit> inlineWhitespace =
-      Parser.Char(' ').Or(Parser.Char('\t')).SkipMany();
+      Parser.OneOf(" \t").SkipMany();
 
     private readonly static Parser<char, Unit> endOfLine =
-      Parser.Char('\n').Or(Parser.Char('\r')).SkipAtLeastOnce();
+      Parser.OneOf("\r\n").SkipAtLeastOnce();
 
     private readonly static Parser<char, string> remainingLine =
       Parser.AnyCharExcept("\r\n").ManyString();
 
-    private readonly static Parser<char, Content> parseName =
-      Parser.Char('$')
-      .Then(inlineWhitespace)
-      .Then(Parser.String("name"))
+    private readonly static Parser<char, Content> nameContent =
+      Parser.String("name")
       .Then(inlineWhitespace)
       .Then(Parser.Char(':'))
       .Then(remainingLine)
-      .Map<Content>(name => new Content.Name(name));
+      .Map<Content>(name => new Content.Name(name.Trim()));
 
-    private readonly static Parser<char, Content> parseSetting =
-      Parser.Char('$').Then(
-        parseName
+    private readonly static Parser<char, Content> settingContent =
+      Parser.Char('$')
+      .Then(inlineWhitespace)
+      .Then(
+        nameContent
       );
 
+    private readonly static Parser<char, Content> textContent =
+      Parser.Map(
+        (first, remainder) => first + remainder,
+        Parser.AnyCharExcept("$"),
+        remainingLine)
+      .Map<Content>(text => new Content.Text(text));
 
 
     private readonly static Parser<char, IEnumerable<Content>> parseLines =
-      parseSetting
-      .Or(remainingLine.Map<Content>(text => new Content.Text(text)))
-      .Many();
+      settingContent
+      .Or(textContent)
+      .Separated(endOfLine);
 
     public Scene? Parse(string content)
     {
