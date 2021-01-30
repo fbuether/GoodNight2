@@ -65,25 +65,29 @@ namespace GoodNight.Service.Domain.Write
 
     // something the player can do here
     public record Option(
-      Scene Action)
+      string Action)
       : Content() {}
 
     // allow the player to return to another scene without consequence
     public record Return(
-      Scene Scene)
+      string Scene)
       : Content() {}
 
     // this scene can continue on into another scene
     public record Continue(
-      Scene Scene)
+      string Scene)
       : Content() {}
 
 
     // consider a set of settings only if a condition holds
-    public record Condition(
-      Expression If,
-      IImmutableList<Content> Then,
-      IImmutableList<Content> Else)
+    public record If(
+      Expression Condition)
+      : Content() {}
+
+    public record Else()
+      : Content() {}
+
+    public record End()
       : Content() {}
 
     // includes another scene here, completely

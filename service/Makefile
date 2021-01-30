@@ -11,7 +11,16 @@ test:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
 		dotnet test --nologo
 
+test-v:
+	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
+		dotnet test --nologo -v n
 
-testList:
+
+test-list:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
 		dotnet test -t
+
+
+clean:
+	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
+		dotnet clean --nologo -v q
