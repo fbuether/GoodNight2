@@ -131,28 +131,6 @@ namespace GoodNight.Service.Domain.Parse
       Parser<char, T> parser) =>
       parser.Map<IEnumerable<T>>(YieldSingle);
 
-    private readonly static Parser<char, IEnumerable<Content>> settingContent =
-      Parser.Char('$')
-      .Then(inlineWhitespace)
-      .Then(Parser.OneOf(
-          AsList(Parser.Try(nameContent)),
-          AsList(Parser.Try(isStartContent)),
-          AsList(Parser.Try(showAlwaysContent)),
-          AsList(Parser.Try(forceShowContent)),
-          Parser.Try(tagsContent),
-          AsList(Parser.Try(categoryContent)),
-          AsList(Parser.Try(setContent)),
-          AsList(Parser.Try(requireContent)),
-          AsList(Parser.Try(nextSceneContent))
-        ))
-      .Before(inlineWhitespace);
-
-    private readonly static Parser<char, Content> textContent =
-      Parser.Map(
-        (first, remainder) => first + remainder,
-        Parser.AnyCharExcept("$"),
-        remainingLine)
-      .Map<Content>(text => new Content.Text(text));
 
 
     private readonly static Parser<char, IEnumerable<Content>> parseLinesRec =
@@ -163,9 +141,7 @@ namespace GoodNight.Service.Domain.Parse
 
 
     private readonly static Parser<char, Expression> conditionIf =
-      Parser.Char('$')
-      .Then(inlineWhitespace)
-      .Then(Parser.String("if"))
+      Parser.String("if")
       .Then(colon)
       .Then(ExpressionParser.expression)
       .Before(Parser.EndOfLine);
@@ -201,8 +177,9 @@ namespace GoodNight.Service.Domain.Parse
         Parser.Try(
           Parser.Not(Parser.Try(conditionElse))
           .Then(Parser.Not(Parser.Try(conditionEnd)))
-          .Then(parseLineRec))
-        .Separated(Parser.EndOfLine)
+          .Then(parseLineRec)
+          .Before(Parser.EndOfLine))
+        .Many()
         // flatten due to double wraping of settings
         .Map<IEnumerable<Content>>(c => c.SelectMany(c => c)),
 
@@ -213,10 +190,34 @@ namespace GoodNight.Service.Domain.Parse
         .Before(conditionEnd));
 
 
+    private readonly static Parser<char, IEnumerable<Content>> settingContent =
+      Parser.Char('$')
+      .Then(inlineWhitespace)
+      .Then(Parser.OneOf(
+          AsList(nameContent),
+          AsList(isStartContent),
+          AsList(showAlwaysContent),
+          AsList(forceShowContent),
+          tagsContent,
+          AsList(categoryContent),
+          AsList(setContent),
+          AsList(requireContent),
+          AsList(nextSceneContent),
+          AsList(conditionalContent)
+        ))
+      .Before(inlineWhitespace);
+
+    private readonly static Parser<char, Content> textContent =
+      Parser.Map(
+        (first, remainder) => first + remainder,
+        Parser.AnyCharExcept("$"),
+        remainingLine)
+      .Map<Content>(text => new Content.Text(text));
+
+
     private readonly static Parser<char, IEnumerable<Content>> parseLine =
       Parser.Try(AsList(textContent))
-      .Or(Parser.Try(settingContent))
-      .Or(AsList(conditionalContent));
+      .Or(settingContent);
 
     private readonly static Parser<char, IEnumerable<Content>> parseLines =
       parseLine
@@ -245,6 +246,9 @@ namespace GoodNight.Service.Domain.Parse
           : null,
         !res.Success && res.Error is not null && res.Error.Unexpected.HasValue
           ? res.Error.Unexpected.Value.ToString()
+          : null,
+        !res.Success && res.Error is not null
+          ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
           : null);
     }
   }

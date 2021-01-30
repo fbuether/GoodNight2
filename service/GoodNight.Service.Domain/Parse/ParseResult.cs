@@ -29,7 +29,13 @@ namespace GoodNight.Service.Domain.Parse
     /// The unexpected token, if parsing was un-successful and this was caused
     /// by an unexpected token.
     /// </summary>
-    string? UnexpectedToken)
+    string? UnexpectedToken,
+
+    /// <summary>
+    /// The token expected, if parsing was un-successful and this was caused
+    /// by an unexpected token.
+    /// </summary>
+    string? ExpectedToken)
   {
   }
 }

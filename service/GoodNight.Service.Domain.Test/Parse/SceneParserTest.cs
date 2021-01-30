@@ -78,6 +78,7 @@ namespace GoodNight.Service.Domain.Test.Parse
       output.WriteLine($"ErrorMessage: {result!.ErrorMessage}");
       output.WriteLine($"ErrorPosition: {result!.ErrorPosition}");
       output.WriteLine($"UnexpectedToken: {result!.UnexpectedToken}");
+      output.WriteLine($"ExpectedToken: {result!.ExpectedToken}");
     }
 
 
