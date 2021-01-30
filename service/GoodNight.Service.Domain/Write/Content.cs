@@ -80,20 +80,15 @@ namespace GoodNight.Service.Domain.Write
 
 
     // consider a set of settings only if a condition holds
-    public record If(
-      Expression Condition)
-      : Content() {}
-
-    public record Else()
-      : Content() {}
-
-    public record End()
+    public record Condition(
+      Expression If,
+      IImmutableList<Content> Then,
+      IImmutableList<Content> Else)
       : Content() {}
 
     // includes another scene here, completely
     public record Include(
       Scene Scene)
       : Content() {}
-
   }
 }

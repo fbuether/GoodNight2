@@ -123,24 +123,6 @@ namespace GoodNight.Service.Domain.Parse
         sceneName);
 
 
-    private readonly static Parser<char, Content> conditionIf =
-      Parser.String("if")
-      .Then(colon)
-      .Then(ExpressionParser.expression)
-      .Map<Content>(expr => new Content.If(expr));
-
-    private readonly static Parser<char, Content> conditionElse =
-      Parser.String("else")
-      .Then(remainingLine)
-      .Map<Content>(_ => new Content.Else());
-
-    private readonly static Parser<char, Content> conditionEnd =
-      Parser.String("end")
-      .Then(remainingLine)
-      .Map<Content>(_ => new Content.End());
-
-
-
     private static IEnumerable<T> YieldSingle<T>(T single) {
       yield return single;
     }
@@ -173,26 +155,88 @@ namespace GoodNight.Service.Domain.Parse
       .Map<Content>(text => new Content.Text(text));
 
 
+    private readonly static Parser<char, IEnumerable<Content>> parseLinesRec =
+      Parser.Rec(() => parseLines!);
+
+    private readonly static Parser<char, IEnumerable<Content>> parseLineRec =
+      Parser.Rec(() => parseLine!);
+
+
+    private readonly static Parser<char, Expression> conditionIf =
+      Parser.Char('$')
+      .Then(inlineWhitespace)
+      .Then(Parser.String("if"))
+      .Then(colon)
+      .Then(ExpressionParser.expression)
+      .Before(Parser.EndOfLine);
+
+    private readonly static Parser<char, Unit> conditionElse =
+      Parser.Char('$')
+      .Then(inlineWhitespace)
+      .Then(Parser.String("else"))
+      .Then(remainingLine)
+      .Then(Parser.EndOfLine)
+      .Map(_ => Unit.Value);
+
+    private readonly static Parser<char, Unit> conditionEnd =
+      Parser.Char('$')
+      .Then(inlineWhitespace)
+      .Then(Parser.String("end"))
+      .Then(remainingLine)
+      .Map(_ => Unit.Value);
+
+    private readonly static Parser<char, Content> conditionalContent =
+      Parser.Map<char, Expression, IEnumerable<Content>,
+      Maybe<IEnumerable<Content>>, Content>(
+        (cond, thenExpr, maybeElseExpr) =>
+          new Content.Condition(cond,
+            ImmutableArray.Create<Content>(thenExpr.ToArray()),
+            maybeElseExpr.Select(elseExpr =>
+              ImmutableArray.Create<Content>(elseExpr.ToArray()))
+            .GetValueOrDefault(
+              ImmutableArray.Create<Content>())),
+
+        conditionIf,
+
+        Parser.Try(
+          Parser.Not(Parser.Try(conditionElse))
+          .Then(Parser.Not(Parser.Try(conditionEnd)))
+          .Then(parseLineRec))
+        .Separated(Parser.EndOfLine)
+        // flatten due to double wraping of settings
+        .Map<IEnumerable<Content>>(c => c.SelectMany(c => c)),
+
+        Parser.Try(conditionElse
+          .Then(parseLinesRec)
+          .Before(Parser.EndOfLine))
+          .Optional()
+        .Before(conditionEnd));
+
+
     private readonly static Parser<char, IEnumerable<Content>> parseLine =
       Parser.Try(AsList(textContent))
-      .Or(settingContent);
+      .Or(Parser.Try(settingContent))
+      .Or(AsList(conditionalContent));
 
     private readonly static Parser<char, IEnumerable<Content>> parseLines =
       parseLine
       .Separated(Parser.EndOfLine)
       // flatten due to double wraping of settings
-      .Map<IEnumerable<Content>>(c => c.SelectMany(c => c))
-      .Before(Parser<char>.End);
+      .Map<IEnumerable<Content>>(c => c.SelectMany(c => c));
+
+
 
     // .Labelled("name")?
 
 
-    public ParseResult<IEnumerable<Content>> Parse(string content)
+    public ParseResult<IImmutableList<Content>> Parse(string content)
     {
-      var res = parseLines.Parse(content);
+      var res = parseLines
+        .Before(Parser<char>.End)
+        .Parse(content);
 
-      return new ParseResult<IEnumerable<Content>>(res.Success,
-        res.Success ? res.Value : null,
+      return new ParseResult<IImmutableList<Content>>(res.Success,
+        res.Success ? ImmutableArray.Create<Content>(res.Value.ToArray()) : null,
         !res.Success && res.Error is not null
           ? res.Error.Message
           : null,
