@@ -11,35 +11,19 @@ namespace GoodNight.Service.Domain.Parse
 
   public class ExpressionParser
   {
-
     private readonly static Parser<char, Expression> boolExpr =
-      // Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting bool")
-      // .Then(
-      Parser.String("true")// .Trace(f => $"-- debut \"{f}\" parsed true")
+      Parser.String("true")
       .WithResult<Expression>(new Expression.Bool(true))
       .Or(Parser.String("false")
-        .WithResult<Expression>(new Expression.Bool(false)))
-      // .Trace(f => $"-- debut \"{f}\" parsed boolExpr")
-      // )
-    ;
+        .WithResult<Expression>(new Expression.Bool(false)));
 
     private readonly static Parser<char, Expression> numberExpr =
-      // Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting number")
-      // .Then(
-        Parser.DecimalNum// .Trace(f => $"-- debut \"{f}\" within the number expr parser")
-      .Select<Expression>(num => new Expression.Number(num))
-      // )
-    ;
+      Parser.DecimalNum
+      .Select<Expression>(num => new Expression.Number(num));
 
     private readonly static Parser<char, Expression> qualityExpr =
-      // Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting quality")
-      // .Then(
-      NameParser.QualityName// .Trace(f => $"-- debut \"{f}\" within quality expr")
-      .Select<Expression>(name => new Expression.Quality(name))
-      // .Trace(f => $"-- debug \"{f}\" finished quailty")
-      // )
-    ;
-
+      NameParser.QualityName
+      .Select<Expression>(name => new Expression.Quality(name));
 
 
     private static Parser<char, UnaryExprFun> unaryOp(
@@ -52,19 +36,18 @@ namespace GoodNight.Service.Domain.Parse
       where T : Expression.UnaryOperator, new()
       {
         var parseName = Parser.String(rep);
+        // if this operator is a possible quality name, we must make sure that
+        // the word ends here.
         if (excludePostLetters) {
           parseName = parseName
-            .Before(
-              Parser.Not(Parser.Lookahead(NameParser.QualityLetters)));
+            .Before(Parser.Not(Parser.Lookahead(NameParser.QualityLetters)));
         }
 
         return NameParser.InlineWhitespace
         .Then(unaryOp(
             Parser.Try(parseName)
             .WithResult<Expression.UnaryOperator>(new T()))
-          .Before(NameParser.InlineWhitespace)
-          // .Trace(f => $"-- debut \"{f}\" finished a unary operator")
-        );
+          .Before(NameParser.InlineWhitespace));
       }
 
 
@@ -81,47 +64,22 @@ namespace GoodNight.Service.Domain.Parse
         .Before(NameParser.InlineWhitespace));
 
 
-
     private static Parser<char, Expression> bracedExpr(
       Parser<char, Expression> body) =>
-      // Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting braced")
-      // .Then(
-      body// .Trace(f => $"-- debut \"{f}\" parsed braced body")
-      .Between(
-        Parser.String("(").Before(NameParser.InlineWhitespace)
-
-// .Trace(f => $"-- debut \"{f}\" starting braced parse")
-        ,
-        Parser.String(")"))// .Trace(f => $"-- debut \"{f}\" parsed a braced thing")
-      // )
-    ;
+      body
+      .Between(Parser.String("(").Before(NameParser.InlineWhitespace),
+        Parser.String(")"));
 
 
     internal readonly static Parser<char, Expression> expression =
-
-//               Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting expression")
-//         .Then(Parser.Lookahead(Parser<char>.Any.ManyString()).Trace(f => $"-- debut \"{f}\" remainder"))
-// .Then(
-      Pidgin.Expression.ExpressionParser.Build<char, Expression>(
-        expr =>
-
-//               Parser<char>.FromResult(Unit.Value).Trace(f => $"-- debut \"{f}\" starting inner expression")
-//         .Then(Parser.Lookahead(Parser<char>.Any.ManyString()).Trace(f => $"-- debut \"{f}\" remainder"))
-
-//         // .Then(Parser.Lookahead(Parser<char>.Any.ManyString()).Trace(f => $"-- debut \"{f}\" remainder"))
-
-// .Then(
-  Parser.OneOf(
+      Pidgin.Expression.ExpressionParser.Build<char, Expression>(expr =>
+        Parser.OneOf(
           numberExpr,
           qualityExpr.Labelled("Quality"),
           boolExpr,
           bracedExpr(expr).Labelled("Expression in braces")
         )
-  .Before(NameParser.InlineWhitespace)
-        // .Trace(f => $"-- debut \"{f}\" finished an inner expression")
-// )
-
-,
+        .Before(NameParser.InlineWhitespace),
         new[] {
           Pidgin.Expression.Operator.PrefixChainable(
             buildUnary<Expression.UnaryOperator.Not>("not", true),
@@ -155,11 +113,7 @@ namespace GoodNight.Service.Domain.Parse
             buildBinary<Expression.BinaryOperator.And>("and")),
           Pidgin.Expression.Operator.InfixL(
             buildBinary<Expression.BinaryOperator.Or>("or")),
-        }
-// )
-);
-
-
+        });
 
 
 
@@ -174,17 +128,17 @@ namespace GoodNight.Service.Domain.Parse
       return new ParseResult<Expression>(res.Success,
         res.Success ? res.Value : null,
         !res.Success && res.Error is not null
-          ? res.Error.Message
-          : null,
+        ? res.Error.Message
+        : null,
         !res.Success && res.Error is not null
-          ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
-          : null,
+        ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
+        : null,
         !res.Success && res.Error is not null && res.Error.Unexpected.HasValue
-          ? res.Error.Unexpected.Value.ToString()
-          : null,
+        ? res.Error.Unexpected.Value.ToString()
+        : null,
         !res.Success && res.Error is not null
-          ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
-          : null);
+        ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
+        : null);
     }
   }
 }
