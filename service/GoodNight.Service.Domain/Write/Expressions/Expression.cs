@@ -1,53 +1,51 @@
 
 namespace GoodNight.Service.Domain.Write.Expressions
 {
-  public record Expression()
+  public abstract record Expression
   {
     // a Quality refered to by name.
     public record Quality(
       string Name)
-      : Expression() {}
+      : Expression {}
 
     // Literals.
     public record Bool(
       bool Value)
-      : Expression() {}
+      : Expression {}
     public record Number(
       int Value)
-      : Expression() {}
+      : Expression {}
 
     // Operators with one argument
-    public record UnaryOperator()
-      : Expression()
+    public abstract record UnaryOperator()
     {
       public record Not()
-        : UnaryOperator() {}
+        : UnaryOperator {}
     }
 
     // Application of a unary operator
     public record UnaryApplication(
       UnaryOperator Operator,
       Expression Argument)
-      : Expression() {}
+      : Expression {}
 
     // Operators with two arguments
-    public record BinaryOperator()
-      : Expression()
+    public abstract record BinaryOperator()
     {
-      public record Add() : BinaryOperator() {}
-      public record Sub() : BinaryOperator() {}
-      public record Mult() : BinaryOperator() {}
-      public record Div() : BinaryOperator() {}
+      public record Add() : BinaryOperator {}
+      public record Sub() : BinaryOperator {}
+      public record Mult() : BinaryOperator {}
+      public record Div() : BinaryOperator {}
 
-      public record And() : BinaryOperator() {}
-      public record Or() : BinaryOperator() {}
+      public record And() : BinaryOperator {}
+      public record Or() : BinaryOperator {}
 
-      public record Greater() : BinaryOperator() {}
-      public record GreaterOrEqual() : BinaryOperator() {}
-      public record Less() : BinaryOperator() {}
-      public record LessOrEqual() : BinaryOperator() {}
-      public record Equal() : BinaryOperator() {}
-      public record NotEqual() : BinaryOperator() {}
+      public record Greater() : BinaryOperator {}
+      public record GreaterOrEqual() : BinaryOperator {}
+      public record Less() : BinaryOperator {}
+      public record LessOrEqual() : BinaryOperator {}
+      public record Equal() : BinaryOperator {}
+      public record NotEqual() : BinaryOperator {}
     }
 
     // Application of a binary operator
@@ -55,6 +53,6 @@ namespace GoodNight.Service.Domain.Write.Expressions
       BinaryOperator Operator,
       Expression Left,
       Expression Right)
-      : Expression() {}
+      : Expression {}
   }
 }

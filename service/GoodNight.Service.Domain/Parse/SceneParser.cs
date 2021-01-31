@@ -13,25 +13,16 @@ namespace GoodNight.Service.Domain.Parse
 
     // sort these.
 
-    // Names of qualities are letters, digits, underscores and spaces if quoted.
-    private readonly static Parser<char, string> qualityName =
-      Parser.Not(Parser.Try(Parser.OneOf(
-            // Keywords must not be valid qualitynames.
-            Parser.String("true"),
-            Parser.String("false"))))
-      .Then(
-        Parser.LetterOrDigit.Or(Parser.OneOf("_ ")).ManyString()
-        .Between(Parser.Char('"'))
-        .Or(Parser.LetterOrDigit.Or(Parser.Char('_')).ManyString()));
 
 
     // fin sort these.
 
-    private readonly static Parser<char, Unit> inlineWhitespace =
-      Parser.OneOf(" \t").SkipMany();
 
     private readonly static Parser<char, Unit> colon =
-      inlineWhitespace.Then(Parser.Char(':')).Then(inlineWhitespace);
+      NameParser.InlineWhitespace
+      .Then(Parser.Char(':'))
+      .Then(NameParser.InlineWhitespace)
+      .WithResult(Unit.Value);
 
     private readonly static Parser<char, string> remainingLine =
       Parser.AnyCharExcept("\r\n").ManyString();
@@ -58,16 +49,16 @@ namespace GoodNight.Service.Domain.Parse
 
     private readonly static Parser<char, Content> showAlwaysContent =
       Parser.Try(Parser.String("show")
-        .Then(inlineWhitespace)
+        .Then(NameParser.InlineWhitespace)
         .Then(Parser.String("always")))
       .Or(Parser.String("always")
-        .Then(inlineWhitespace)
+        .Then(NameParser.InlineWhitespace)
         .Then(Parser.String("show")))
       .Map<Content>(_ => new Content.ShowAlways());
 
     private readonly static Parser<char, Content> forceShowContent =
       Parser.String("force")
-      .Then(inlineWhitespace)
+      .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("show"))
       .Map<Content>(_ => new Content.ForceShow());
 
@@ -93,10 +84,10 @@ namespace GoodNight.Service.Domain.Parse
       .Then(
         Parser.Map<char, string, Expression, Content>((quality,expr) =>
           new Content.Set(quality, expr),
-          qualityName
-          .Before(inlineWhitespace
+          NameParser.QualityName
+          .Before(NameParser.InlineWhitespace
             .Then(Parser.Char('='))
-            .Then(inlineWhitespace)),
+            .Then(NameParser.InlineWhitespace)),
           ExpressionParser.expression));
 
     private readonly static Parser<char, Content> requireContent =
@@ -148,7 +139,7 @@ namespace GoodNight.Service.Domain.Parse
 
     private readonly static Parser<char, Unit> conditionElse =
       Parser.Char('$')
-      .Then(inlineWhitespace)
+      .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("else"))
       .Then(remainingLine)
       .Then(Parser.EndOfLine)
@@ -156,7 +147,7 @@ namespace GoodNight.Service.Domain.Parse
 
     private readonly static Parser<char, Unit> conditionEnd =
       Parser.Char('$')
-      .Then(inlineWhitespace)
+      .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("end"))
       .Then(remainingLine)
       .Map(_ => Unit.Value);
@@ -192,7 +183,7 @@ namespace GoodNight.Service.Domain.Parse
 
     private readonly static Parser<char, IEnumerable<Content>> settingContent =
       Parser.Char('$')
-      .Then(inlineWhitespace)
+      .Then(NameParser.InlineWhitespace)
       .Then(Parser.OneOf(
           AsList(nameContent),
           AsList(isStartContent),
@@ -205,7 +196,7 @@ namespace GoodNight.Service.Domain.Parse
           AsList(nextSceneContent),
           AsList(conditionalContent)
         ))
-      .Before(inlineWhitespace);
+      .Before(NameParser.InlineWhitespace);
 
     private readonly static Parser<char, Content> textContent =
       Parser.Map(

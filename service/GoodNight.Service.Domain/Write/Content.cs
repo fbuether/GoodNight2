@@ -3,36 +3,36 @@ using GoodNight.Service.Domain.Write.Expressions;
 
 namespace GoodNight.Service.Domain.Write
 {
-  public record Content()
+  public abstract record Content()
   {
     // actual text for the player to read. This can be markdown.
     public record Text(
       string Markdown)
-      : Content() {}
+      : Content {}
 
     /// <summary>
     /// The name of this scene. Must occur on each scene.
     /// </summary>
     public record Name(
       string DisplayName)
-      : Content() {}
+      : Content {}
 
     // this scene is the start of the story
     // must not be within a Condition.
     public record IsStart()
-      : Content() {}
+      : Content {}
 
     // always show this action, even if not available
     // must not be within a Condition.
     public record ShowAlways()
-      : Content() {}
+      : Content {}
 
     // should this action automatically be taken, if possible?
     // must not be within a Condition.
     // should usually also have a Require so the scene does not instantly
     // trigger for every player.
     public record ForceShow()
-      : Content() {}
+      : Content {}
 
 
     // to classify scenes for writing add categories or tags
@@ -40,13 +40,13 @@ namespace GoodNight.Service.Domain.Write
     // several tags may be attached to each scene
     public record Tag(
       string TagName)
-      : Content() {}
+      : Content {}
 
     // categories behave like a path, similar to a directory
     // each scene may have at most one category
     public record Category(
       IImmutableList<string> Path)
-      : Content() {}
+      : Content {}
 
 
     // set a quality of the player to a new value
@@ -54,29 +54,29 @@ namespace GoodNight.Service.Domain.Write
     public record Set(
       string Quality,
       Expression Expression)
-      : Content() {}
+      : Content {}
 
     // require the player to fulfil an expression to take this scene
     // usually only used in Actions
     public record Require(
       Expression Expression)
-      : Content() {}
+      : Content {}
 
 
     // something the player can do here
     public record Option(
       string Action)
-      : Content() {}
+      : Content {}
 
     // allow the player to return to another scene without consequence
     public record Return(
       string Scene)
-      : Content() {}
+      : Content {}
 
     // this scene can continue on into another scene
     public record Continue(
       string Scene)
-      : Content() {}
+      : Content {}
 
 
     // consider a set of settings only if a condition holds
@@ -84,11 +84,11 @@ namespace GoodNight.Service.Domain.Write
       Expression If,
       IImmutableList<Content> Then,
       IImmutableList<Content> Else)
-      : Content() {}
+      : Content {}
 
     // includes another scene here, completely
     public record Include(
       Scene Scene)
-      : Content() {}
+      : Content {}
   }
 }
