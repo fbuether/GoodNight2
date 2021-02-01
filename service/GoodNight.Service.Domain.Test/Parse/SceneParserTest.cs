@@ -13,10 +13,6 @@ namespace GoodNight.Service.Domain.Test.Parse
   [FeatureFile("Parse/SceneParserTest.feature")]
   public class SceneParserTest : Xunit.Gherkin.Quick.Feature
   {
-    private string? input;
-
-    private ParseResult<IImmutableList<Content>>? result;
-
     private ITestOutputHelper output;
 
     public SceneParserTest(ITestOutputHelper output)
@@ -44,6 +40,11 @@ namespace GoodNight.Service.Domain.Test.Parse
         }
       }
     }
+
+    private string? input;
+
+    private ParseResult<IImmutableList<Content>>? result;
+
 
 
     [Given("the scene input")]
@@ -82,30 +83,6 @@ namespace GoodNight.Service.Domain.Test.Parse
     }
 
 
-    [Then(@"the parsed scene has a name of ""(.*)""")]
-    public void TheParsedSceneHasANameOf(string name)
-    {
-      Assert.NotNull(result);
-      Assert.True(result!.IsSuccessful);
-
-      var contentName = result!.Result!
-        .Single(c => c is Content.Name)
-        as Content.Name;
-
-      Assert.NotNull(contentName);
-      Assert.Equal(name, contentName!.DisplayName);
-    }
-
-    [Then("the parsed scene has only text content")]
-    public void TheParsedSceneHasOnlyTextContent()
-    {
-      Assert.NotNull(result);
-      foreach(var content in result!.Result!)
-      {
-        Assert.IsType<Content.Text>(content);
-      }
-    }
-
     [Then("parsing fails")]
     public void ParsingFails()
     {
@@ -118,27 +95,147 @@ namespace GoodNight.Service.Domain.Test.Parse
     {
       Assert.NotNull(result);
       Assert.True(result!.IsSuccessful);
-    }
-
-    [Then("the parsed scene contains only one conditional")]
-    public void TheParsedSceneContainsOnlyOneConditional()
-    {
-      ParsingSucceeds();
       Assert.NotNull(result!.Result);
-
-
-      var element = result!.Result!.Single();
-      Assert.IsType<Content.Condition>(element);
     }
 
-    [Then(@"the parsed scene has at least one text node with ""(.*)""")]
-    public void TheParsedSceneHasAtLeastOneTextNodeWith(string text)
+    [Then(@"the result has (\d+) nodes?")]
+    public void TheResultHasNNodes(int count)
     {
-      ParsingSucceeds();
-      Assert.NotNull(result!.Result);
-
-      Assert.Contains(FindAllNodes(result!.Result!),
-        n => n is Content.Text t ? t.Markdown == text : false);
+      Assert.Equal(count, result!.Result!.Count());
     }
+
+    [Then(@"the scene has name ""(.*)""")]
+    public void TheSceneHasNameString(string name)
+    {
+      Assert.Contains(result!.Result, node =>
+        (node as Content.Name)!.DisplayName == name);
+    }
+
+
+    [Then(@"the node (\d+) is a ""(.*)""")]
+    public void TheNodeNIsAType(int position, string type)
+    {
+      Assert.True(position <= result!.Result!.Count());
+      Assert.Equal(type, result!.Result![position-1].GetType().Name);
+    }
+
+    [Then(@"the result has only ""(.*)"" nodes")]
+    public void TheResultHasOnlyTypeNodes(string type)
+    {
+      Assert.All(result!.Result, node => {
+        Assert.Equal(type, node.GetType().Name);
+      });
+    }
+
+
+    private int CountNodesOfType(IEnumerable<Content> cs, string type)
+    {
+      int count = 0;
+      foreach (var content in cs)
+      {
+        if (content.GetType().Name == type)
+        {
+          count += 1;
+        }
+
+        if (content is Content.Condition condition)
+        {
+          count += CountNodesOfType(condition.Then, type);
+          count += CountNodesOfType(condition.Else, type);
+        }
+      }
+
+      return count;
+    }
+
+    [Then(@"the result has (\d+) ""(.*)"" nodes in branches")]
+    public void TheResultHasNumberTypeNodesInBranches(int count, string type)
+    {
+      Assert.Equal(count, CountNodesOfType(result!.Result!, type));
+    }
+
+    [Then(@"the node (\d+) has text ""(.*)""")]
+    public void TheNodeNHasTextContent(int position, string content)
+    {
+      Assert.True(position <= result!.Result!.Count());
+      var node = result!.Result![position-1];
+      Assert.IsType<Content.Text>(node);
+      var text = node as Content.Text;
+      Assert.Equal(content, text!.Markdown);
+    }
+
+    [Then(@"the result has the tag ""(.*)""")]
+    public void TheResultHasTagName(string tag)
+    {
+      Assert.Contains(result!.Result, node =>
+        (node as Content.Tag)!.TagName == tag);
+    }
+
+    [Then(@"the result has the category ""(.*)""")]
+    public void TheResultHasTheCategoryName(string name)
+    {
+      var category = result!.Result!
+        .Single(n => n is Content.Category)
+        as Content.Category;
+
+      var expected = name == "quest/Hilda's Hammer"
+        ? new[] { "quest", "Hilda's Hammer" }
+        : name == "a/b/c/d/e/f/g/h/i/j/k/l/m/n"
+        ? new[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
+          "m", "n" }
+        : name == "areas"
+        ? new[] { "areas" }
+        : new string[] { };
+
+      Assert.Equal(expected, category!.Path);
+    }
+
+
+
+    // [Then(@"the parsed scene has a name of ""(.*)""")]
+    // public void TheParsedSceneHasANameOf(string name)
+    // {
+    //   Assert.NotNull(result);
+    //   Assert.True(result!.IsSuccessful);
+
+    //   var contentName = result!.Result!
+    //     .Single(c => c is Content.Name)
+    //     as Content.Name;
+
+    //   Assert.NotNull(contentName);
+    //   Assert.Equal(name, contentName!.DisplayName);
+    // }
+
+    // [Then("the parsed scene has only text content")]
+    // public void TheParsedSceneHasOnlyTextContent()
+    // {
+    //   Assert.NotNull(result);
+    //   foreach(var content in result!.Result!)
+    //   {
+    //     Assert.IsType<Content.Text>(content);
+    //   }
+    // }
+
+
+    // [Then("the parsed scene contains only one conditional")]
+    // public void TheParsedSceneContainsOnlyOneConditional()
+    // {
+    //   ParsingSucceeds();
+    //   Assert.NotNull(result!.Result);
+
+
+    //   var element = result!.Result!.Single();
+    //   Assert.IsType<Content.Condition>(element);
+    // }
+
+    // [Then(@"the parsed scene has at least one text node with ""(.*)""")]
+    // public void TheParsedSceneHasAtLeastOneTextNodeWith(string text)
+    // {
+    //   ParsingSucceeds();
+    //   Assert.NotNull(result!.Result);
+
+    //   Assert.Contains(FindAllNodes(result!.Result!),
+    //     n => n is Content.Text t ? t.Markdown == text : false);
+    // }
   }
 }

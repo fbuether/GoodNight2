@@ -27,6 +27,288 @@ Feature: SceneParser
     Then parsing succeeds
 
 
+  Scenario: A scene with just text
+    Given the scene input
+      """
+      this scene has just text.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Text" nodes
+    Then the node 1 has text "this scene has just text."
+
+  Scenario: A scene with several lines of text
+    Given the scene input
+      """
+      this scene
+      has several lines
+      of text.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 3 nodes
+    Then the result has only "Text" nodes
+    Then the node 1 has text "this scene"
+    Then the node 2 has text "has several lines"
+    Then the node 3 has text "of text."
+
+  Scenario: A scene with empty lines
+    Given the scene input
+      """
+      this scene has several
+
+
+      lines of text.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 4 nodes
+    Then the result has only "Text" nodes
+    Then the node 1 has text "this scene has several"
+    Then the node 2 has text ""
+    Then the node 3 has text ""
+    Then the node 4 has text "lines of text."
+
+  Scenario: A scene without any text
+    Given the scene input
+      """
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 0 nodes
+
+
+  Scenario: A simple name
+    Given the scene input
+      """
+      $name:Entry into the depth
+      """
+      When the parser parses the input
+      Then parsing succeeds
+      Then the result has 1 nodes
+      Then the result has only "Name" nodes
+      Then the scene has name "Entry into the depth"
+
+  Scenario: Spacing in name settings is allowed and names are trimmed
+    Given the scene input
+      """
+      $   	   name	 	:	 		Entry into 		  the depth	   	 
+      """
+      When the parser parses the input
+      Then parsing succeeds
+      Then the result has 1 nodes
+      Then the result has only "Name" nodes
+      Then the scene has name "Entry into 		  the depth"
+
+  Scenario: Names allow special characters
+    Given the scene input
+      """
+      $name: cmofrhqmpQI_- !\0"1%^&2*(3)=4+[5]{6};7:'8@#~\9\|/a<>b,c.dfeftanof  RVP?NRCNHENEC
+      """
+      When the parser parses the input
+      Then parsing succeeds
+      Then the result has 1 nodes
+      Then the result has only "Name" nodes
+      Then the scene has name "cmofrhqmpQI_- !\0"1%^&2*(3)=4+[5]{6};7:'8@#~\9\|/a<>b,c.dfeftanof  RVP?NRCNHENEC"
+
+
+  Scenario: Name settings require a colon
+    Given the scene input
+      """
+      $name the name
+      """
+    When the parser parses the input
+    Then parsing fails
+
+  Scenario: Names do not allow even more special characters
+    Given the scene input
+      """
+      $name: 😁
+      """
+      When the parser parses the input
+      Then parsing fails
+
+  Scenario: Names may be empty
+    Given the scene input
+      """
+      $name:
+      """
+      When the parser parses the input
+      Then parsing succeeds
+
+
+  Scenario: A scene with a start setting
+    Given the scene input
+      """
+      On this scene there is a:
+      $ start
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the node 2 is a "IsStart"
+
+  Scenario: A scene with a show always setting
+    Given the scene input
+      """
+      $ always show
+      $ show always
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the result has only "ShowAlways" nodes
+
+  Scenario: A scene with a force show setting
+    Given the scene input
+      """
+      $ force show
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 nodes
+    Then the result has only "ForceShow" nodes
+
+
+  Scenario: A scene with a single tag
+    Given the scene input
+      """
+      $ tags: humpel
+      And there is text too.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the node 1 is a "Tag"
+    Then the result has the tag "humpel"
+
+  Scenario: A scene with a tag with multiple entries
+    Given the scene input
+      """
+      $ tags: From Russia With Love, Goldfinger, You Only Live 2*
+      And there is text too.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the tag "From Russia With Love"
+    Then the result has the tag "Goldfinger"
+    Then the result has the tag "You Only Live 2*"
+
+  Scenario: A scene with multiple tag nodes
+    Given the scene input
+      """
+      $ tags: You Only Live 2*, From Russia With Love
+      $ tags: Goldfinger
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the tag "From Russia With Love"
+    Then the result has the tag "Goldfinger"
+    Then the result has the tag "You Only Live 2*"
+
+  Scenario: Tag names are trimmed around them, but not inside.
+    Given the scene input
+      """
+      $ tags: 		   	From 		Russia 	With     Love		  	  
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the tag "From 		Russia 	With     Love"
+
+  Scenario: Tag names are trimmed around them, but not inside.
+    Given the scene input
+      """
+      $ tags: 		   	From 		Russia 	With     Love		  	  
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the tag "From 		Russia 	With     Love"
+
+  Scenario: A single category
+    Given the scene input
+      """
+      $ category: areas
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the category "areas"
+
+  Scenario: Several categories are split
+    Given the scene input
+      """
+      $ category: quest/Hilda's Hammer
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the category "quest/Hilda's Hammer"
+
+  Scenario: Very many categories are still split
+    Given the scene input
+      """
+      $ category: a/b/c/d/e/f/g/h/i/j/k/l/m/n
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the category "a/b/c/d/e/f/g/h/i/j/k/l/m/n"
+
+
+  Scenario: A set setting
+    Given the scene input
+      """
+      $ set: Hilda's Hammer = true
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Set" nodes
+
+  Scenario: Several set settings
+    Given the scene input
+      """
+      $ set: Hilda's Hammer = true
+      $ set: Life = Life - Enemy Level
+      $ set: Enraged = 10 - (Enemy Level * 2)
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Set" nodes
+
+  Scenario: A requirement
+    Given the scene input
+      """
+      $ require: (Enraged > 3) and Hilda's Hammer
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Require" nodes
+
+
+  Scenario: A scene with a return option
+    Given the scene input
+      """
+      $ return: At the top of the mountain
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Return" nodes
+
+  Scenario: A scene with a continue option
+    Given the scene input
+      """
+      $ continue: At the top of the mountain
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Continue" nodes
+
+  Scenario: A scene with an include
+    Given the scene input
+      """
+      $ include: At the top of the mountain
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Include" nodes
+
   Scenario: A simple conditional works for text.
     Given the scene input
       """
@@ -36,78 +318,116 @@ Feature: SceneParser
       """
     When the parser parses the input
     Then parsing succeeds
+    Then the result has 1 node
+    Then the node 1 is a "Condition"
 
-  Scenario: A scene with just a simple name works
+  Scenario: Consecutive conditions
     Given the scene input
       """
-      $name:the name
+      $if: true
+      some expression text.
+      $end
+      $if: false
+      some other text.
+      $end
       """
     When the parser parses the input
-    Then the parsed scene has a name of "the name"
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the result has only "Condition" nodes
 
-  Scenario: A name setting without semicolon is not accepted
+  Scenario: A condition with an else case
     Given the scene input
       """
-      $name the name
+      $ if: true or false
+      some expression text.
+      $ else
+      nothing to see here.
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Condition" nodes
+
+  Scenario: A condition with empty branches
+    Given the scene input
+      """
+      $ if: false
+      $ else
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Condition" nodes
+
+  Scenario: A condition with a complex condition
+    Given the scene input
+      """
+      $ if:   	 (true or ((false))) and (7 > 9 + 16) or not (Kildur's Hammer)
+      $ else
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Condition" nodes
+
+  Scenario: Nested conditions
+    Given the scene input
+      """
+      $ if: false
+      $ if: true
+      $ if: false
+      $ end
+      $ else
+      $end
+      $ else
+      $ if: 9 > 67
+      $ end
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Condition" nodes
+    Then the result has 4 "Condition" nodes in branches
+
+  Scenario: Other settings in branches
+    Given the scene input
+      """
+      $ if: false
+      $ set: starving = true
+      $ else
+      $ set: Provisions = Provisions - 1
+      $ set: starving = not Provisions >= 1
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 3 "Set" nodes in branches
+
+  Scenario: No other content after else marker
+    Given the scene input
+      """
+      $ if: false
+      $ else --
+      $ end
+      """
+    When the parser parses the input
+    Then parsing fails
+
+  Scenario: No other content after end marker
+    Given the scene input
+      """
+      $ if: false
+      $ else
+      $ end --
       """
     When the parser parses the input
     Then parsing fails
 
 
-  Scenario: A name setting without $ counts as text
-    Given the scene input
-      """
-      name: the name
-      """
-    When the parser parses the input
-    Then the parsed scene has only text content
 
-
-  Scenario: Name declarations can have spacing with space and tab
-    Given the scene input
-      """
-      $  	  name 		 :  thisisthename  	
-      """
-    When the parser parses the input
-    Then the parsed scene has a name of "thisisthename"
-
-
-  Scenario: A scene with just text works
-    Given the scene input
-      """
-      This is just content text.
-      """
-    When the parser parses the input
-    Then the parsed scene has only text content
-
-
-  Scenario: Extract name from scene
-    Given the scene input
-      """
-      $ name: it 'as a name, though!
-      this is a first scene
-      it's just a string.
-      """
-    When the parser parses the input
-    Then the parsed scene has a name of "it 'as a name, though!"
-
-
-  Scenario: Empty lines count as text
-    Given the scene input
-      """
-      Line 1
-
-      Line 3
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the parsed scene has only text content
-
-
-  Scenario: An empty body parses successfully
-    Given the scene input
-      """
-      """
-    When the parser parses the input
-    Then parsing succeeds
-
+    # todo: options
