@@ -10,14 +10,6 @@ namespace GoodNight.Service.Domain.Parse
 {
   public class SceneParser
   {
-
-    // sort these.
-
-
-
-    // fin sort these.
-
-
     private readonly static Parser<char, Unit> colon =
       NameParser.InlineWhitespace
       .Then(Parser.Char(':'))
@@ -27,20 +19,11 @@ namespace GoodNight.Service.Domain.Parse
     private readonly static Parser<char, string> remainingLine =
       Parser.AnyCharExcept("\r\n").ManyString();
 
-    private readonly static Parser<char, string> sceneName =
-      Parser.AnyCharExcept("\r\n\":").ManyString();
-
-    private readonly static Parser<char, string> tagName =
-      Parser.AnyCharExcept("\r\n\":,").ManyString();
-
-    private readonly static Parser<char, string> categoryName =
-      Parser.AnyCharExcept("\r\n\":/").ManyString();
-
 
     private readonly static Parser<char, Content> nameContent =
       Parser.String("name")
       .Then(colon)
-      .Then(sceneName)
+      .Then(NameParser.SceneName)
       .Map<Content>(name => new Content.Name(name.Trim()));
 
     private readonly static Parser<char, Content> isStartContent =
@@ -66,14 +49,14 @@ namespace GoodNight.Service.Domain.Parse
       Parser.String("tag")
       .Then(Parser.Char('s').Optional())
       .Then(colon)
-      .Then(tagName.Separated(Parser.Char(',')))
+      .Then(NameParser.TagName.Separated(Parser.Char(',')))
       .Map<IEnumerable<Content>>(tags => tags.Select(t => new Content.Tag(t)));
 
     private readonly static Parser<char, Content> categoryContent =
       Parser.String("cat")
       .Then(Parser.String("egory").Optional())
       .Then(colon)
-      .Then(categoryName.Separated(Parser.Char('/')))
+      .Then(NameParser.CategoryName.Separated(Parser.Char('/')))
       .Map<Content>(cs => new Content.Category(
           ImmutableArray.Create<string>(cs.ToArray())));
 
@@ -111,7 +94,7 @@ namespace GoodNight.Service.Domain.Parse
           Parser.String("return"),
           Parser.String("contine"))
         .Before(colon),
-        sceneName);
+        NameParser.SceneName);
 
 
     private static IEnumerable<T> YieldSingle<T>(T single) {

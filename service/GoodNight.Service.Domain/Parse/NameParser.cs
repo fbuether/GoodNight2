@@ -44,5 +44,22 @@ namespace GoodNight.Service.Domain.Parse
 
     internal readonly static Parser<char, string> InlineWhitespace =
       Parser.OneOf(" \t").ManyString();
+
+
+
+    internal readonly static Parser<char, string> SceneName =
+      Parser.LetterOrDigit
+      .Or(Parser.OneOf("_- !\"%^&*()=+[]{}`;:'@#~\\|/<>,.?"))
+      .ManyString();
+
+    internal readonly static Parser<char, string> TagName =
+      SceneName;
+
+    // no slashes allowed here.
+    internal readonly static Parser<char, string> CategoryName =
+      Parser.LetterOrDigit
+      .Or(Parser.OneOf("_- !\"%^&*()=+[]{};:'@#~|<>,.?"))
+      .ManyString();
+
   }
 }
