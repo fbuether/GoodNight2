@@ -59,10 +59,20 @@ namespace GoodNight.Service.Domain.Parse
     private static Parser<char, BinaryExprFun> buildBinary<T>(
       string rep)
       where T : Expression.BinaryOperator, new() =>
-      binaryOp(Parser.Try(Parser.String(rep))
+      buildBinaryParser<T, string>(Parser.String(rep));
+
+
+    private static Parser<char, BinaryExprFun> buildBinaryParser<T, U>(
+      Parser<char, U> op)
+      where T : Expression.BinaryOperator, new() =>
+      binaryOp(Parser.Try(op)
         .WithResult<Expression.BinaryOperator>(new T())
         .Before(NameParser.InlineWhitespace));
 
+    private static Parser<char, BinaryExprFun> LessButNotUnequal =
+      buildBinaryParser<Expression.BinaryOperator.Less, Unit>(
+        Parser.String("<")
+        .Then(Parser.Try(Parser.Not(Parser.String(">")))));
 
     private static Parser<char, Expression> bracedExpr(
       Parser<char, Expression> body) =>
@@ -100,8 +110,7 @@ namespace GoodNight.Service.Domain.Parse
             buildBinary<Expression.BinaryOperator.Greater>(">")),
           Pidgin.Expression.Operator.InfixN(
             buildBinary<Expression.BinaryOperator.LessOrEqual>("<=")),
-          Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expression.BinaryOperator.Less>("<")),
+          Pidgin.Expression.Operator.InfixN(LessButNotUnequal),
           Pidgin.Expression.Operator.InfixN(
             buildBinary<Expression.BinaryOperator.Equal>("=")),
           Pidgin.Expression.Operator.InfixN(
