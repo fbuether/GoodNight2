@@ -38,6 +38,13 @@ namespace GoodNight.Service.Domain.Test.Parse
             yield return elseNode;
           }
         }
+        else if (node is Content.Option o)
+        {
+          foreach (var contentNode in FindAllNodes(o.Content))
+          {
+            yield return contentNode;
+          }
+        }
       }
     }
 

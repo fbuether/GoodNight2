@@ -63,9 +63,10 @@ namespace GoodNight.Service.Domain.Write
       : Content {}
 
 
-    // something the player can do here
+    // something the player can do here, contains a body of description
     public record Option(
-      string Action)
+      string Action,
+      IImmutableList<Content> Content)
       : Content {}
 
     // allow the player to return to another scene without consequence

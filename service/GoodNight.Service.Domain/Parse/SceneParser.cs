@@ -84,7 +84,6 @@ namespace GoodNight.Service.Domain.Parse
 
     private readonly static Parser<char, Content> nextSceneContent =
       Parser.OneOf(
-        Parser.Try(Parser.String("option")).WithResult(typeof(Content.Option)),
         Parser.Try(Parser.String("return")).WithResult(typeof(Content.Return)),
         Parser.Try(Parser.String("include")).WithResult(typeof(Content.Include)),
         Parser.Try(Parser.String("continue")).WithResult(typeof(Content.Continue)))
@@ -98,6 +97,7 @@ namespace GoodNight.Service.Domain.Parse
       Parser.Try(Parser.String("if"))
       .Then(colon)
       .Then(ExpressionParser.expression)
+      .Before(NameParser.InlineWhitespace)
       .Before(Parser.EndOfLine);
 
     private readonly static Parser<char, Unit> conditionElse =
@@ -108,7 +108,7 @@ namespace GoodNight.Service.Domain.Parse
       .Then(Parser.EndOfLine)
       .Map(_ => Unit.Value);
 
-    private readonly static Parser<char, Unit> conditionEnd =
+    private readonly static Parser<char, Unit> endContent =
       Parser.Char('$')
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("end"))
@@ -124,7 +124,7 @@ namespace GoodNight.Service.Domain.Parse
           conditionElse
           .Then(parseLines)
         ).Optional()
-        .Before(conditionEnd),
+        .Before(endContent),
 
           ((Expression, IEnumerable<Content>) condThen,
             Maybe<IEnumerable<Content>> elseContent) =>
@@ -134,6 +134,21 @@ namespace GoodNight.Service.Domain.Parse
                 elseContent
                 .Select(elseContent => elseContent.ToArray())
                 .GetValueOrDefault(new Content[] { }))));
+
+
+    private static Parser<char, Content> optionContent(ContentParser parseLines) =>
+      Parser.Try(Parser.String("option"))
+      .Then(colon)
+      .Then(NameParser.SceneName)
+      .Before(NameParser.InlineWhitespace)
+      .Before(Parser.EndOfLine)
+      .Then<IEnumerable<Content>, Content>(
+        parseLines
+        .Before(endContent),
+        (string sceneName, IEnumerable<Content> optionContent) =>
+        new Content.Option(sceneName,
+          ImmutableArray.Create<Content>(optionContent.ToArray())));
+
 
 
     private static ContentParser ToList<T>(Parser<char, T> parser)
@@ -154,6 +169,7 @@ namespace GoodNight.Service.Domain.Parse
           ToList(setContent),
           ToList(requireContent),
           ToList(nextSceneContent),
+          ToList(optionContent(parseLines)),
           ToList(conditionalContent(parseLines))
         ))
       .Before(NameParser.InlineWhitespace)

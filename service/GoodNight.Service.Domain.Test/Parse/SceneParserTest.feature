@@ -18,9 +18,12 @@ Feature: SceneParser
       $category: quest/Salars Keller
 
       $option: Gehe die Treppe hoch
+      Klettere vorsichtig die steile Treppe hinauf.
+      $end
 
-      $if: "Gespür für Leben" > 5 and Atem > 4
       $option: Spüre oben nach Leben
+      $require: "Gespür für Leben" > 5 and Atem > 4
+      Fokussiere dich auf deinen Atem und spüre nach Leben über dir.
       $end
       """
     When the parser parses the input
@@ -466,5 +469,72 @@ Feature: SceneParser
     Then parsing succeeds
 
 
+  Scenario: A Simple option with text
+    Given the scene input
+      """
+      $ option: scenename
+      text content
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Option" nodes
 
-    # todo: options
+  Scenario: A Simple option with other text around
+    Given the scene input
+      """
+      Hello, here!
+      $ option: scenename
+      text content
+      $ end
+      this, as well.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 3 nodes
+    Then the node 2 is a "Option"
+
+  Scenario: Several options consecutively
+    Given the scene input
+      """
+      $ option: scenename
+      text content
+      $ end
+      $ option: something else
+      other content
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the result has only "Option" nodes
+
+  Scenario: An option with nested settings
+    Given the scene input
+      """
+      $ option: scenename
+      $ require: cookies
+      $ always show
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Option" nodes
+
+  Scenario: A conditional with a nested option
+    Given the scene input
+      """
+      $ if: not cookies
+      $ option: scenename
+      $ require: cookies
+      it's optional.
+      $ end
+      $ end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the node 1 is a "Condition"
+    Then the result has 1 "Option" nodes in branches
