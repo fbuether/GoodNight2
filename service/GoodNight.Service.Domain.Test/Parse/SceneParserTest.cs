@@ -51,7 +51,7 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void ASceneNamed(DocString body)
     {
       input = body.Content;
-      output.WriteLine($"input is: --------8<--------");
+      output.WriteLine($"input is ({input.Length}): --------8<--------");
       output.WriteLine(input);
       output.WriteLine("--------8<--------");
     }
@@ -178,8 +178,8 @@ namespace GoodNight.Service.Domain.Test.Parse
         .Single(n => n is Content.Category)
         as Content.Category;
 
-      var expected = name == "quest/Hilda's Hammer"
-        ? new[] { "quest", "Hilda's Hammer" }
+      var expected = name == "quest/Hildas Hammer"
+        ? new[] { "quest", "Hildas Hammer" }
         : name == "a/b/c/d/e/f/g/h/i/j/k/l/m/n"
         ? new[] { "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l",
           "m", "n" }

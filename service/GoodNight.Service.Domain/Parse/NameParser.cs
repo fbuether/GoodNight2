@@ -46,20 +46,19 @@ namespace GoodNight.Service.Domain.Parse
       Parser.OneOf(" \t").ManyString();
 
 
+    private readonly static Parser<char, char> nameCommonLetters =
+      Parser.LetterOrDigit
+      .Or(Parser.OneOf("_- !\"%^&*()=+[]{}`;:'@#~|<>.?\t"));
+
 
     internal readonly static Parser<char, string> SceneName =
-      Parser.LetterOrDigit
-      .Or(Parser.OneOf("_- !\"%^&*()=+[]{}`;:'@#~\\|/<>,.?"))
-      .ManyString();
+      nameCommonLetters.Or(Parser.OneOf(",\\/")).ManyString();
 
     internal readonly static Parser<char, string> TagName =
-      SceneName;
+      nameCommonLetters.Or(Parser.OneOf("\\/")).ManyString();
 
-    // no slashes allowed here.
     internal readonly static Parser<char, string> CategoryName =
-      Parser.LetterOrDigit
-      .Or(Parser.OneOf("_- !\"%^&*()=+[]{};:'@#~|<>,.?"))
-      .ManyString();
+      nameCommonLetters.Or(Parser.OneOf(",")).ManyString();
 
   }
 }

@@ -88,7 +88,7 @@ namespace GoodNight.Service.Domain.Write
 
     // includes another scene here, completely
     public record Include(
-      Scene Scene)
+      string Scene)
       : Content {}
   }
 }

@@ -53,22 +53,39 @@ Feature: SceneParser
     Then the node 2 has text "has several lines"
     Then the node 3 has text "of text."
 
-  Scenario: A scene with empty lines
+  Scenario: A scene with one empty line
     Given the scene input
       """
       this scene has several
+
+      lines of text.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 3 nodes
+    Then the result has only "Text" nodes
+    Then the node 1 has text "this scene has several"
+    Then the node 2 has text ""
+    Then the node 3 has text "lines of text."
+
+  Scenario: A scene with several empty lines
+    Given the scene input
+      """
+      this scene has several
+
 
 
       lines of text.
       """
     When the parser parses the input
     Then parsing succeeds
-    Then the result has 4 nodes
+    Then the result has 5 nodes
     Then the result has only "Text" nodes
     Then the node 1 has text "this scene has several"
     Then the node 2 has text ""
     Then the node 3 has text ""
-    Then the node 4 has text "lines of text."
+    Then the node 4 has text ""
+    Then the node 5 has text "lines of text."
 
   Scenario: A scene without any text
     Given the scene input
@@ -78,6 +95,17 @@ Feature: SceneParser
     Then parsing succeeds
     Then the result has 0 nodes
 
+  Scenario: A scene with just a single empty line
+    Given the scene input
+      """
+
+
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 nodes
+    Then the result has only "Text" nodes
+    Then the node 1 has text ""
 
   Scenario: A simple name
     Given the scene input
@@ -215,15 +243,6 @@ Feature: SceneParser
     Then parsing succeeds
     Then the result has the tag "From 		Russia 	With     Love"
 
-  Scenario: Tag names are trimmed around them, but not inside.
-    Given the scene input
-      """
-      $ tags: 		   	From 		Russia 	With     Love		  	  
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the result has the tag "From 		Russia 	With     Love"
-
   Scenario: A single category
     Given the scene input
       """
@@ -233,19 +252,28 @@ Feature: SceneParser
     Then parsing succeeds
     Then the result has the category "areas"
 
-  Scenario: Several categories are split
+  Scenario: A single category may use the short form cat:
     Given the scene input
       """
-      $ category: quest/Hilda's Hammer
+      $ cat: areas
       """
     When the parser parses the input
     Then parsing succeeds
-    Then the result has the category "quest/Hilda's Hammer"
+    Then the result has the category "areas"
+
+  Scenario: Several categories are split
+    Given the scene input
+      """
+      $ category: quest/Hildas Hammer
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has the category "quest/Hildas Hammer"
 
   Scenario: Very many categories are still split
     Given the scene input
       """
-      $ category: a/b/c/d/e/f/g/h/i/j/k/l/m/n
+      $ cat: a/b/c/d/e/f/g/h/i/j/k/l/m/n
       """
     When the parser parses the input
     Then parsing succeeds
@@ -255,7 +283,7 @@ Feature: SceneParser
   Scenario: A set setting
     Given the scene input
       """
-      $ set: Hilda's Hammer = true
+      $ set: Hildas Hammer = true
       """
     When the parser parses the input
     Then parsing succeeds
@@ -264,7 +292,7 @@ Feature: SceneParser
   Scenario: Several set settings
     Given the scene input
       """
-      $ set: Hilda's Hammer = true
+      $ set: Hildas Hammer = true
       $ set: Life = Life - Enemy Level
       $ set: Enraged = 10 - (Enemy Level * 2)
       """
@@ -275,7 +303,7 @@ Feature: SceneParser
   Scenario: A requirement
     Given the scene input
       """
-      $ require: (Enraged > 3) and Hilda's Hammer
+      $ require: (Enraged > 3) and Hildas Hammer
       """
     When the parser parses the input
     Then parsing succeeds
@@ -365,7 +393,7 @@ Feature: SceneParser
   Scenario: A condition with a complex condition
     Given the scene input
       """
-      $ if:   	 (true or ((false))) and (7 > 9 + 16) or not (Kildur's Hammer)
+      $ if:   	 (true or ((false))) and (7 > 9 + 16) or not (Kildurs Hammer)
       $ else
       $ end
       """
@@ -422,11 +450,20 @@ Feature: SceneParser
     Given the scene input
       """
       $ if: false
-      $ else
       $ end --
       """
     When the parser parses the input
     Then parsing fails
+
+  Scenario: More content on the next line after end
+    Given the scene input
+      """
+      $ if: false
+      $ end
+      --
+      """
+    When the parser parses the input
+    Then parsing succeeds
 
 
 

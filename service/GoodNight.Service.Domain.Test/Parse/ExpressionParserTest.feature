@@ -36,13 +36,13 @@ Feature: ExpressionParser
     Then parsing succeeds
     Then the result is Quality "not"
 
-  Scenario: Names are okay if starting with reserved keywords
+  Scenario: Names are okay if starting with reserved keyword not
     Given the input notable
     When the parser parses the input
     Then parsing succeeds
     Then the result is Quality "notable"
 
-  Scenario: Names are okay if starting with reserved keywords
+  Scenario: Names are okay if starting with reserved keyword or
     Given the input orwellian
     When the parser parses the input
     Then parsing succeeds
