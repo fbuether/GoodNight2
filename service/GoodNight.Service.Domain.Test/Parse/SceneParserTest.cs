@@ -196,53 +196,5 @@ namespace GoodNight.Service.Domain.Test.Parse
 
       Assert.Equal(expected, category!.Path);
     }
-
-
-
-    // [Then(@"the parsed scene has a name of ""(.*)""")]
-    // public void TheParsedSceneHasANameOf(string name)
-    // {
-    //   Assert.NotNull(result);
-    //   Assert.True(result!.IsSuccessful);
-
-    //   var contentName = result!.Result!
-    //     .Single(c => c is Content.Name)
-    //     as Content.Name;
-
-    //   Assert.NotNull(contentName);
-    //   Assert.Equal(name, contentName!.DisplayName);
-    // }
-
-    // [Then("the parsed scene has only text content")]
-    // public void TheParsedSceneHasOnlyTextContent()
-    // {
-    //   Assert.NotNull(result);
-    //   foreach(var content in result!.Result!)
-    //   {
-    //     Assert.IsType<Content.Text>(content);
-    //   }
-    // }
-
-
-    // [Then("the parsed scene contains only one conditional")]
-    // public void TheParsedSceneContainsOnlyOneConditional()
-    // {
-    //   ParsingSucceeds();
-    //   Assert.NotNull(result!.Result);
-
-
-    //   var element = result!.Result!.Single();
-    //   Assert.IsType<Content.Condition>(element);
-    // }
-
-    // [Then(@"the parsed scene has at least one text node with ""(.*)""")]
-    // public void TheParsedSceneHasAtLeastOneTextNodeWith(string text)
-    // {
-    //   ParsingSucceeds();
-    //   Assert.NotNull(result!.Result);
-
-    //   Assert.Contains(FindAllNodes(result!.Result!),
-    //     n => n is Content.Text t ? t.Markdown == text : false);
-    // }
   }
 }

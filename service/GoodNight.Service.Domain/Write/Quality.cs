@@ -1,13 +1,15 @@
+using System.Collections.Immutable;
 using GoodNight.Service.Domain.Write.Expressions;
 
 namespace GoodNight.Service.Domain.Write
 {
-  public record Quality(
+  public abstract record Quality(
     string Name,
+    Type Type,
     string Raw,
-    Type Type
-    // string Image
-  )
+    bool Hidden,
+    string? Scene,
+    string Description)
   {
     public string Urlname
     {
@@ -20,12 +22,29 @@ namespace GoodNight.Service.Domain.Write
 
     public record Bool(
       string Name,
-      string Raw)
-      : Quality(Name, Raw, Type.Bool) {}
+      string Raw,
+      bool Hidden,
+      string? Scene,
+      string Description)
+      : Quality(Name, Type.Bool, Raw, Hidden, Scene, Description) {}
 
     public record Int(
       string Name,
-      string Raw)
-      : Quality(Name, Raw, Type.Int) {}
+      string Raw,
+      bool Hidden,
+      string? Scene,
+      string Description,
+      int Minimum,
+      int Maximum)
+      : Quality(Name, Type.Int, Raw, Hidden, Scene, Description) {}
+
+    public record Enum(
+      string Name,
+      string Raw,
+      bool Hidden,
+      string? Scene,
+      string Description,
+      IImmutableDictionary<int, string> Levels)
+      : Quality(Name, Type.Enum, Raw, Hidden, Scene, Description) {}
   }
 }

@@ -357,3 +357,9 @@ Feature: ExpressionParser
     When the parser parses the input
     Then parsing fails
 
+  # at the very bottom, because it (rightly) confuses syntax highlighting
+  Scenario: Un-even number of quotes
+    Given the input not "something
+    When the parser parses the input
+    Then parsing fails
+
