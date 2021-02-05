@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using ReadScene = GoodNight.Service.Domain.Read.Scene;
 
 namespace GoodNight.Service.Domain.Model
 {
@@ -30,6 +31,7 @@ namespace GoodNight.Service.Domain.Model
       : Content() {}
   }
 
+
   public record Scene(
     string Name,
     string Raw,
@@ -39,7 +41,7 @@ namespace GoodNight.Service.Domain.Model
     IImmutableList<string> Tags,
     IImmutableList<string> Category,
 
-    IImmutableList<Tuple<string, Expression>> Sets,
+    IImmutableList<(string, Expression)> Sets,
 
     string? Return,
     string? Continue,
@@ -54,15 +56,27 @@ namespace GoodNight.Service.Domain.Model
       }
     }
 
+
     public static Scene CreateDefault()
     {
       return new Scene("", "", false, false, false,
         ImmutableList<string>.Empty,
         ImmutableList<string>.Empty,
-        ImmutableList<Tuple<string, Expression>>.Empty,
+        ImmutableList<(string, Expression)>.Empty,
         null,
         null,
         ImmutableList<Content>.Empty);
+    }
+
+    public Scene AddContent(Content newContent)
+    {
+      return this with { Content = Content.Add(newContent) };
+    }
+
+
+    public ReadScene ToReadScene(IImmutableDictionary<string, Value> qualities)
+    {
+      return new ReadScene();
     }
   }
 }
