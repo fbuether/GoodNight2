@@ -7,7 +7,7 @@ namespace GoodNight.Service.Domain.Model.Parse
   {
     // actual text for the player to read. This can be markdown.
     public record Text(
-      string Markdown)
+      string Value)
       : Content {}
 
     /// <summary>
@@ -50,14 +50,14 @@ namespace GoodNight.Service.Domain.Model.Parse
 
 
     // set a quality of the player to a new value
-    // usually only used in Actions
+    // only used on the top level of an action
     public record Set(
       string Quality,
       Expression Expression)
       : Content {}
 
     // require the player to fulfil an expression to take this scene
-    // usually only used in Actions
+    // only used inside of options
     public record Require(
       Expression Expression)
       : Content {}
@@ -65,16 +65,16 @@ namespace GoodNight.Service.Domain.Model.Parse
 
     // something the player can do here, contains a body of description
     public record Option(
-      string Action,
+      string Scene,
       IImmutableList<Content> Content)
       : Content {}
 
-    // allow the player to return to another scene without consequence
+    // allow the player to return to another scene without requirements
     public record Return(
       string Scene)
       : Content {}
 
-    // this scene can continue on into another scene
+    // this scene can continue on into another scene, without requirements
     public record Continue(
       string Scene)
       : Content {}
@@ -87,7 +87,7 @@ namespace GoodNight.Service.Domain.Model.Parse
       IImmutableList<Content> Else)
       : Content {}
 
-    // includes another scene here, completely
+    // includes another scene here, completely, except for its own includes
     public record Include(
       string Scene)
       : Content {}

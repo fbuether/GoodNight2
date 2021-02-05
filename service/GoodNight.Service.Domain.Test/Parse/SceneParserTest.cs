@@ -168,7 +168,7 @@ namespace GoodNight.Service.Domain.Test.Parse
       var node = result!.Result!.Content[position-1];
       Assert.IsType<Content.Text>(node);
       var text = node as Content.Text;
-      Assert.Equal(content, text!.Markdown);
+      Assert.Equal(content, text!.Value);
     }
 
     [Then(@"the result has the tag ""(.*)""")]
