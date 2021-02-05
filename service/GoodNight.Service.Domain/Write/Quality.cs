@@ -34,8 +34,8 @@ namespace GoodNight.Service.Domain.Write
       bool Hidden,
       string? Scene,
       string Description,
-      int Minimum,
-      int Maximum)
+      int? Minimum,
+      int? Maximum)
       : Quality(Name, Type.Int, Raw, Hidden, Scene, Description) {}
 
     public record Enum(

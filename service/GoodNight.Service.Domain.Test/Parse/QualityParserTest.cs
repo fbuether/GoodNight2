@@ -66,5 +66,72 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.True(result!.IsSuccessful);
       Assert.NotNull(result!.Result);
     }
+
+    [Then(@"the quality has name ""(.*)""")]
+    public void TheQualityHasNameString(string name)
+    {
+      Assert.Equal(name, result!.Result!.Name);
+    }
+
+    [Then(@"the quality has description ""(.*)""")]
+    public void TheQualityHasDescriptionString(string description)
+    {
+      Assert.Equal(description, result!.Result!.Description);
+    }
+
+    [Then("the quality has no scene")]
+    public void TheQualityHasNoScene()
+    {
+      Assert.Null(result!.Result!.Scene);
+    }
+
+    [Then(@"the quality has type (.*)")]
+    public void TheQualityHasTypeName(string typeName)
+    {
+      Assert.Equal(typeName, result!.Result!.GetType().Name);
+    }
+
+    [Then(@"the quality is( not)? hidden")]
+    public void TheQualityIsMaybeHidden(string not)
+    {
+      if (not == " not")
+      {
+        Assert.False(result!.Result!.Hidden);
+      }
+      else
+      {
+        Assert.True(result!.Result!.Hidden);
+      }
+    }
+
+    [Then(@"the quality has minimum (\d+)")]
+    public void TheQualityHasMinimumValue(int min)
+    {
+      Assert.IsType<Quality.Int>(result!.Result!);
+      Assert.Equal(min, (result!.Result as Quality.Int)!.Minimum);
+    }
+
+    [Then(@"the quality has maximum (\d+)")]
+    public void TheQualityHasMaximumValue(int max)
+    {
+      Assert.IsType<Quality.Int>(result!.Result!);
+      Assert.Equal(max, (result!.Result as Quality.Int)!.Maximum);
+    }
+
+    [Then(@"the quality has level (\d+) with text (.*)")]
+    public void TheQualityHasLevelNWithTextString(int level, string text)
+    {
+      Assert.IsType<Quality.Enum>(result!.Result!);
+      var e = result!.Result as Quality.Enum;
+      Assert.True(e!.Levels.ContainsKey(level));
+      Assert.Equal(text, e!.Levels[level]);
+    }
+
+
+    [Then(@"the quality has scene (.*)")]
+    public void TheQualityHasSceneName(string name)
+    {
+      Assert.Equal(name, result!.Result!.Scene);
+    }
   }
 }

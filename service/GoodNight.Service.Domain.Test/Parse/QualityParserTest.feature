@@ -56,11 +56,11 @@ Feature: Parsing of Qualities
   Scenario: A quality may have a quoted name with special characters
     Given the quality input
       """
-      $name: "_- !\"%^&*()=+[]{}`;:'@#~|<>.?	\/,"
+      $name: "_- !\%^&*()=+[]{}`;:'@#~|<>.?	\/,"
       """
     When the parser parses the input
     Then parsing succeeds
-    Then the quality has name "_- !\"%^&*()=+[]{}`;:'@#~|<>.?	\/,"
+    Then the quality has name "_- !\%^&*()=+[]{}`;:'@#~|<>.?	\/,"
 
 
   Scenario: A quality of default type
@@ -148,21 +148,11 @@ Feature: Parsing of Qualities
     Given the quality input
       """
       Oh my, am i there?
-      $hidden: true
+      $hidden
       """
     When the parser parses the input
     Then parsing succeeds
     Then the quality is hidden
-
-  Scenario: A quality that is explicitly not hidden
-    Given the quality input
-      """
-      Oh my, am i there?
-      $hidden: false
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the quality is not hidden
 
 
   Scenario: A quality that has no scene name
@@ -234,12 +224,8 @@ Feature: Parsing of Qualities
       $min: 5
       $max: 9
       """
-    When the parser parsers the input
+    When the parser parses the input
     Then parsing succeeds
     Then the quality has type Int
     Then the quality has minimum 5
     Then the quality has maximum 9
-
-
-
- 

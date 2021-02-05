@@ -20,12 +20,11 @@ namespace GoodNight.Service.Domain.Parse
               Parser.String("not"))
             .Before(Parser.Not(QualityLetters)))));
 
-    // Names of qualities are letters, digits, underscores and spaces if quoted.
     internal readonly static Parser<char, string> QualityName =
         //  a quality in quotes, this can be anything.
-        qualityStarters
-        .Then(QualityLetters.Or(Parser.Char(' ')).ManyString(), (f,r) => f + r)
-        .Between(Parser.Char('"'))
+      Parser.Try(Parser.AnyCharExcept("\r\n\"")
+        .ManyString()
+        .Between(Parser.Char('"')))
 
         .Or(noKeyword
           // a quality without spaces.
@@ -44,6 +43,15 @@ namespace GoodNight.Service.Domain.Parse
 
     internal readonly static Parser<char, string> InlineWhitespace =
       Parser.OneOf(" \t").ManyString();
+
+    internal readonly static Parser<char, Unit> Colon =
+      InlineWhitespace
+      .Then(Parser.Char(':'))
+      .Then(NameParser.InlineWhitespace)
+      .WithResult(Unit.Value);
+
+    internal readonly static Parser<char, string> RemainingLine =
+      Parser.AnyCharExcept("\r\n").ManyString();
 
 
     private readonly static Parser<char, char> nameCommonLetters =
