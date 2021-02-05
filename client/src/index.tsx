@@ -15,6 +15,8 @@ import {
   // Tooltip
 } from "bootstrap";
 
+const thisIsJustToKeepWebpackFromRemovingBootstrap = Dropdown;
+
 
 import "./ui/style.scss";
 
