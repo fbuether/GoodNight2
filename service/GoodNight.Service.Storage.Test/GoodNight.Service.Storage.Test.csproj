@@ -4,7 +4,7 @@
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600;CS8602;CS8603;CS8618</WarningsAsErrors>
     <IsPackable>false</IsPackable>
-    <RootNamespace>GoodNight.Service.Store.Test</RootNamespace>
+    <RootNamespace>GoodNight.Service.Storage.Test</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>
@@ -21,6 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\GoodNight.Service.Store\GoodNight.Service.Store.csproj" />
+    <ProjectReference Include="..\GoodNight.Service.Storage\GoodNight.Service.Storage.csproj" />
   </ItemGroup>
 </Project>

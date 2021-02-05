@@ -3,6 +3,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600;CS8602;CS8603;CS8618</WarningsAsErrors>
-    <RootNamespace>GoodNight.Service.Store</RootNamespace>
+    <RootNamespace>GoodNight.Service.Storage</RootNamespace>
   </PropertyGroup>
 </Project>
