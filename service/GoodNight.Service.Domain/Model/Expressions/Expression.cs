@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Write.Expressions
+namespace GoodNight.Service.Domain.Model.Expressions
 {
   public abstract record Expression
   {

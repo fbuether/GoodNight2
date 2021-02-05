@@ -1,10 +1,10 @@
 using Pidgin;
-using GoodNight.Service.Domain.Write;
 using System.Collections.Generic;
 using System;
 using System.Linq;
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Write.Expressions;
+using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Parse;
 
 namespace GoodNight.Service.Domain.Parse
 {
@@ -12,8 +12,6 @@ namespace GoodNight.Service.Domain.Parse
 
   public class SceneParser
   {
-
-
     private readonly static Parser<char, Content> nameContent =
       Parser.Try(Parser.String("name"))
       .Then(NameParser.Colon)
@@ -64,13 +62,13 @@ namespace GoodNight.Service.Domain.Parse
       .Before(NameParser.InlineWhitespace
         .Then(Parser.Char('='))
         .Then(NameParser.InlineWhitespace)).
-      Then<Expression, Content>(ExpressionParser.expression, (quality,expr) =>
+      Then<Expression, Content>(ExpressionParser.Expression, (quality,expr) =>
         new Content.Set(quality, expr));
 
     private readonly static Parser<char, Content> requireContent =
       Parser.Try(Parser.String("require"))
       .Then(NameParser.Colon)
-      .Then(ExpressionParser.expression)
+      .Then(ExpressionParser.Expression)
       .Map<Content>(expr => new Content.Require(expr));
 
 
@@ -91,7 +89,7 @@ namespace GoodNight.Service.Domain.Parse
     private readonly static Parser<char, Expression> conditionIf =
       Parser.Try(Parser.String("if"))
       .Then(NameParser.Colon)
-      .Then(ExpressionParser.expression)
+      .Then(ExpressionParser.Expression)
       .Before(NameParser.InlineWhitespace)
       .Before(Parser.EndOfLine);
 
@@ -199,15 +197,15 @@ namespace GoodNight.Service.Domain.Parse
       Parser.Rec<char, IEnumerable<Content>>(parseLines);
 
 
-    public ParseResult<IImmutableList<Content>> Parse(string content)
+    public ParseResult<Scene> Parse(string content)
     {
       var res = parseLinesRec
         .Before(Parser<char>.End)
         .Parse(content);
 
-      return new ParseResult<IImmutableList<Content>>(res.Success,
+      return new ParseResult<Scene>(res.Success,
         (res.Success
-          ? ImmutableArray.Create<Content>(res.Value.ToArray())
+          ? new Scene(content, ImmutableArray.Create<Content>(res.Value.ToArray()))
           : null),
         !res.Success && res.Error is not null ? res.Error.Message : null,
         (!res.Success && res.Error is not null

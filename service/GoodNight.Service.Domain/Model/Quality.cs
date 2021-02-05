@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Write.Expressions;
+using GoodNight.Service.Domain.Model.Expressions;
 
-namespace GoodNight.Service.Domain.Write
+namespace GoodNight.Service.Domain.Model
 {
   public abstract record Quality(
     string Name,

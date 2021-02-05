@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Parse;
-using GoodNight.Service.Domain.Write.Expressions;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Gherkin.Quick;

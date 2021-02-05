@@ -1,6 +1,6 @@
+using GoodNight.Service.Domain.Model;
 using Xunit;
 using Xunit.Gherkin.Quick;
-using GoodNight.Service.Domain.Write;
 
 namespace GoodNight.Service.Domain.Test.Write
 {

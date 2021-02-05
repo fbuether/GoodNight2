@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Gherkin.Ast;
+using GoodNight.Service.Domain.Model.Parse;
 using GoodNight.Service.Domain.Parse;
-using GoodNight.Service.Domain.Write;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Gherkin.Quick;
@@ -50,7 +50,7 @@ namespace GoodNight.Service.Domain.Test.Parse
 
     private string? input;
 
-    private ParseResult<IImmutableList<Content>>? result;
+    private ParseResult<Scene>? result;
 
 
 
@@ -74,7 +74,7 @@ namespace GoodNight.Service.Domain.Test.Parse
       output.WriteLine("Result:");
       if (result is not null && result.Result is not null)
       {
-        foreach (var node in FindAllNodes(result.Result))
+        foreach (var node in FindAllNodes(result.Result.Content))
         {
           output.WriteLine($"  node: {node}");
           if (node is Content.Condition c) {
@@ -108,13 +108,13 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has (\d+) nodes?")]
     public void TheResultHasNNodes(int count)
     {
-      Assert.Equal(count, result!.Result!.Count());
+      Assert.Equal(count, result!.Result!.Content.Count());
     }
 
     [Then(@"the scene has name ""(.*)""")]
     public void TheSceneHasNameString(string name)
     {
-      Assert.Contains(result!.Result, node =>
+      Assert.Contains(result!.Result!.Content, node =>
         (node as Content.Name)!.DisplayName == name);
     }
 
@@ -122,14 +122,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the node (\d+) is a ""(.*)""")]
     public void TheNodeNIsAType(int position, string type)
     {
-      Assert.True(position <= result!.Result!.Count());
-      Assert.Equal(type, result!.Result![position-1].GetType().Name);
+      Assert.True(position <= result!.Result!.Content.Count());
+      Assert.Equal(type, result!.Result!.Content[position-1].GetType().Name);
     }
 
     [Then(@"the result has only ""(.*)"" nodes")]
     public void TheResultHasOnlyTypeNodes(string type)
     {
-      Assert.All(result!.Result, node => {
+      Assert.All(result!.Result!.Content, node => {
         Assert.Equal(type, node.GetType().Name);
       });
     }
@@ -158,14 +158,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has (\d+) ""(.*)"" nodes in branches")]
     public void TheResultHasNumberTypeNodesInBranches(int count, string type)
     {
-      Assert.Equal(count, CountNodesOfType(result!.Result!, type));
+      Assert.Equal(count, CountNodesOfType(result!.Result!.Content, type));
     }
 
     [Then(@"the node (\d+) has text ""(.*)""")]
     public void TheNodeNHasTextContent(int position, string content)
     {
-      Assert.True(position <= result!.Result!.Count());
-      var node = result!.Result![position-1];
+      Assert.True(position <= result!.Result!.Content.Count());
+      var node = result!.Result!.Content[position-1];
       Assert.IsType<Content.Text>(node);
       var text = node as Content.Text;
       Assert.Equal(content, text!.Markdown);
@@ -174,14 +174,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has the tag ""(.*)""")]
     public void TheResultHasTagName(string tag)
     {
-      Assert.Contains(result!.Result, node =>
+      Assert.Contains(result!.Result!.Content, node =>
         (node as Content.Tag)!.TagName == tag);
     }
 
     [Then(@"the result has the category ""(.*)""")]
     public void TheResultHasTheCategoryName(string name)
     {
-      var category = result!.Result!
+      var category = result!.Result!.Content
         .Single(n => n is Content.Category)
         as Content.Category;
 

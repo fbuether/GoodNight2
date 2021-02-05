@@ -1,6 +1,6 @@
 using System;
 using System.Linq;
-using GoodNight.Service.Domain.Write.Expressions;
+using GoodNight.Service.Domain.Model.Expressions;
 using Pidgin;
 
 
@@ -81,7 +81,7 @@ namespace GoodNight.Service.Domain.Parse
         Parser.String(")"));
 
 
-    internal readonly static Parser<char, Expression> expression =
+    internal readonly static Parser<char, Expression> Expression =
       Pidgin.Expression.ExpressionParser.Build<char, Expression>(expr =>
         Parser.OneOf(
           numberExpr,
@@ -130,7 +130,7 @@ namespace GoodNight.Service.Domain.Parse
     {
       var res =
         NameParser.InlineWhitespace // leading whitespace
-        .Then(expression)
+        .Then(Expression)
         .Before(Parser<char>.End)
         .Parse(input);
 

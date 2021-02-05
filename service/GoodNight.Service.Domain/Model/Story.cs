@@ -1,7 +1,8 @@
 using System;
 using System.Collections.Immutable;
+using GoodNight.Service.Domain.Model.Parse;
 
-namespace GoodNight.Service.Domain.Write
+namespace GoodNight.Service.Domain.Model
 {
   public record Story(
     string Name,

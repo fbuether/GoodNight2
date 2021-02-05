@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Write.Expressions
+namespace GoodNight.Service.Domain.Model.Expressions
 {
   public record Value()
   {
@@ -10,5 +10,9 @@ namespace GoodNight.Service.Domain.Write.Expressions
     public record Number(
       int Value) 
       : Value() {}
+
+    public record Enum(
+      int Value)
+      : Number(Value) {}
   }
 }

@@ -1,8 +1,8 @@
 using System.Linq;
 using System;
-using GoodNight.Service.Domain.Write;
 using Pidgin;
 using System.Collections.Immutable;
+using GoodNight.Service.Domain.Model;
 
 namespace GoodNight.Service.Domain.Parse
 {

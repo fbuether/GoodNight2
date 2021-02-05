@@ -1,6 +1,6 @@
 using System;
 
-namespace GoodNight.Service.Domain.User
+namespace GoodNight.Service.Domain.Model.User
 {
   public record User(
     string Name,
