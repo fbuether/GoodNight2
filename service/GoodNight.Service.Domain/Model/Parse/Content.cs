@@ -57,7 +57,7 @@ namespace GoodNight.Service.Domain.Model.Parse
       : Content {}
 
     // require the player to fulfil an expression to take this scene
-    // only used inside of options
+    // only used inside of options, or on the top level
     public record Require(
       Expression Expression)
       : Content {}
