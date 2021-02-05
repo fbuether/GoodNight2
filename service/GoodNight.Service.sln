@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNight.Service.Store", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNight.Service.Store.Test", "GoodNight.Service.Store.Test\GoodNight.Service.Store.Test.csproj", "{9D51D300-4A2F-4099-B7A1-BDCB89404696}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GoodNight.Service.Api.Test", "GoodNight.Service.Api.Test\GoodNight.Service.Api.Test.csproj", "{621CE658-5B59-430F-B8AF-15BE731FA16F}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -86,5 +88,17 @@ Global
 		{9D51D300-4A2F-4099-B7A1-BDCB89404696}.Release|x64.Build.0 = Release|Any CPU
 		{9D51D300-4A2F-4099-B7A1-BDCB89404696}.Release|x86.ActiveCfg = Release|Any CPU
 		{9D51D300-4A2F-4099-B7A1-BDCB89404696}.Release|x86.Build.0 = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|x64.Build.0 = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Debug|x86.Build.0 = Debug|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|x64.ActiveCfg = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|x64.Build.0 = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|x86.ActiveCfg = Release|Any CPU
+		{621CE658-5B59-430F-B8AF-15BE731FA16F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
