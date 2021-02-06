@@ -140,15 +140,17 @@ html body {
 
 
 #side {
-  hr:first-child {
-    @include media-breakpoint-up(sm) {
-      display: none;
-    }
-  }
-
   @include media-breakpoint-up(sm) {
     padding-left: 1.2rem;
     padding-top: 0.8rem;
+
+    position: sticky;
+    top: 0.6rem;
+    align-self: start;
+
+    hr:first-child {
+      display: none;
+    }
   }
 }
 
