@@ -36,9 +36,13 @@ module.exports = env => { return {
         loader: "ts-loader",
         exclude: /node_modules/
       },
+      // {
+      //   test: /\.(png|svg)$/,
+      //   use: "file-loader"
+      // },
       {
-        test: /\.(png|svg)$/,
-        use: "file-loader"
+        test: /icons\/.*\.svg$/,
+        use: "raw-loader"
       },
       {
         test: /\.scss$/,
@@ -55,7 +59,8 @@ module.exports = env => { return {
               }
             }
           },
-          "sass-loader"]
+          "sass-loader"
+        ]
       }
     ]
   },

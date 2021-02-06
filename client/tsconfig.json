@@ -18,5 +18,8 @@
     "forceConsistentCasingInFileNames": true,
 
     "jsx": "react"
-  }
+  },
+  "include": [
+    "types/svg.d.ts"
+  ]
 }
