@@ -9,6 +9,6 @@ export default interface ActionLog {
 
 export default function ActionLog(log: ActionLog) {
   return (
-    <p className="border-left border-lg border-light pl-2 ml-2">{log.text}</p>
+    <p className="action-log py-1">{log.text}</p>
   );
 }

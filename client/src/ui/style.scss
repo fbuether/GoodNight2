@@ -11,10 +11,10 @@ $enable-deprecation-messages: true;
 
 
 // import bootstrap.
-@import "../../node_modules/bootstrap/scss/functions";
-@import "../../node_modules/bootstrap/scss/variables";
-@import "../../node_modules/bootstrap/scss/mixins";
-@import "../../node_modules/bootstrap/scss/utilities";
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
 
 
 // colors
@@ -32,38 +32,39 @@ $theme-colors: map-merge(
     "secondary": $secondary
   ));
 
-@import "../../node_modules/bootstrap/scss/root";
-@import "../../node_modules/bootstrap/scss/reboot";
-@import "../../node_modules/bootstrap/scss/type";
-@import "../../node_modules/bootstrap/scss/images";
-@import "../../node_modules/bootstrap/scss/containers";
-@import "../../node_modules/bootstrap/scss/grid";
-@import "../../node_modules/bootstrap/scss/tables";
-@import "../../node_modules/bootstrap/scss/forms";
-@import "../../node_modules/bootstrap/scss/buttons";
-// @import "../../node_modules/bootstrap/scss/transitions";
-@import "../../node_modules/bootstrap/scss/dropdown";
-@import "../../node_modules/bootstrap/scss/button-group";
-@import "../../node_modules/bootstrap/scss/nav";
-@import "../../node_modules/bootstrap/scss/navbar";
-// @import "../../node_modules/bootstrap/scss/card";
-// @import "../../node_modules/bootstrap/scss/accordion";
-// @import "../../node_modules/bootstrap/scss/breadcrumb";
-// @import "../../node_modules/bootstrap/scss/pagination";
-@import "../../node_modules/bootstrap/scss/badge";
-@import "../../node_modules/bootstrap/scss/alert";
-@import "../../node_modules/bootstrap/scss/progress";
-@import "../../node_modules/bootstrap/scss/list-group";
-@import "../../node_modules/bootstrap/scss/close";
-// @import "../../node_modules/bootstrap/scss/toasts";
-// @import "../../node_modules/bootstrap/scss/modal";
-// @import "../../node_modules/bootstrap/scss/tooltip";
-// @import "../../node_modules/bootstrap/scss/popover";
-// @import "../../node_modules/bootstrap/scss/carousel";
-@import "../../node_modules/bootstrap/scss/spinners";
 
-@import "../../node_modules/bootstrap/scss/helpers";
-@import "../../node_modules/bootstrap/scss/utilities/api";
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/tables";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/transitions";
+@import "~bootstrap/scss/dropdown";
+@import "~bootstrap/scss/button-group";
+@import "~bootstrap/scss/nav";
+@import "~bootstrap/scss/navbar";
+// @import "~bootstrap/scss/card";
+// @import "~bootstrap/scss/accordion";
+// @import "~bootstrap/scss/breadcrumb";
+// @import "~bootstrap/scss/pagination";
+@import "~bootstrap/scss/badge";
+@import "~bootstrap/scss/alert";
+@import "~bootstrap/scss/progress";
+@import "~bootstrap/scss/list-group";
+@import "~bootstrap/scss/close";
+// @import "~bootstrap/scss/toasts";
+// @import "~bootstrap/scss/modal";
+// @import "~bootstrap/scss/tooltip";
+// @import "~bootstrap/scss/popover";
+// @import "~bootstrap/scss/carousel";
+@import "~bootstrap/scss/spinners";
+
+@import "~bootstrap/scss/helpers";
+@import "~bootstrap/scss/utilities/api";
 
 
 
@@ -77,27 +78,151 @@ $theme-colors: map-merge(
 }
 
 
-.font-size-sm {
-  font-size: 0.9rem;
+small {
+  font-size: 0.8rem;
 }
 
+
+
+
+.mb-5 {
+  margin-bottom: 2rem !important;
+}
+
+.mb-6 {
+  margin-bottom: 2.8rem !important;
+}
 
 //----------
 
 
 
+// from: https://www.sitepoint.com/hsb-colors-with-sass/
+@function hsb($h-hsb, $s-hsb, $b-hsb, $a: 1) {
+  @if $b-hsb == 0 {
+    @return hsla(0, 0, 0, $a)
+  }
+  @else {
+    $l-hsl: ($b-hsb/2) * (2 - ($s-hsb/100));
+    $s-hsl: ($b-hsb * $s-hsb) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
+    @return hsla($h-hsb, $s-hsl, $l-hsl, $a);
+  }
+}
+
+
+
+$base-color: 30;
+
 html body {
-  background: #405161 url("../../assets/background.png");
+  background: hsb($base-color, 4%, 94%);
 }
 
 #page {
-  background: #f0f0f7;
+  background: hsb($base-color, 2%, 98%);
+  padding-bottom: 3rem !important;
+  margin-bottom: 6rem;
 }
 
-#nav, #banner {
-  background: $gray-400;
+#centre, .navbar-brand {
+  font-family: "Droid Serif", "droid_serifregular", Cambria, Georgia, serif;
 }
 
+#text {
+  font-size: 1.05rem;
+  line-height: initial;
+
+  color: hsb($base-color, 76%, 28%);
+
+  p {
+    margin-bottom: 0.6rem;
+  }
+}
+
+
+nav {
+  border-bottom: 0.06rem solid hsba($base-color, 32%, 64%, 0.6);
+}
+
+
+a:focus {
+  outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
+}
+
+
+//--------------------------------------
+// log
+
+
+.action-log {
+  border-left: 0.4rem solid hsb($base-color, 10%, 90%);
+  padding-left: 0.6rem;
+  margin-left: 1rem;
+}
+
+
+
+//--------------------------------------
+// options.
+
+
+.options {
+
+  .list-group-item {
+    background-color: inherit;
+    border: none;
+
+    border-left: 0.4rem solid hsb($base-color, 10%, 90%);
+    padding-left: 0.6rem;
+    margin-left: 1rem;
+
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+
+    &:hover, &:focus {
+      background-color: hsb($base-color, 6%, 94%);
+      outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
+
+    }
+
+    &.disabled {
+      border-left-color: hsb($base-color, 0%, 90%);
+    }
+  }
+}
+
+
+
+//--------------------------------------
+// character state.
+
+
+
+.icon {
+  width: 1.4rem;
+  height: 1.4rem;
+  display: inline-block;
+  vertical-align: top;
+
+  svg {
+    width: auto !important;
+    height: auto !important;
+
+    vertical-align: initial;
+
+    path {
+      fill-opacity: 0;
+    }
+
+    g {
+
+      path {
+        fill-opacity: 1;
+        fill: hsb($base-color, 30%, 60%);
+      }
+    }
+  }
+}
 
 
 #state .list-group-item {
@@ -109,33 +234,15 @@ html body {
 }
 
 .quality-icon-wrap {
-  background-color: green;
+  background-color: hsb($base-color, 50%, 80%);
   display: inline-block;
   vertical-align: bottom;
+
+  margin-right: 0.2rem;
 
   .quality-icon {
     display: block;
     mix-blend-mode: screen;
     filter: invert(100%);
-  }
-}
-
-  // filter: sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8) invert(100%);
-
-// invert(60%) saturate(100%) hue-rotate(60deg);
-
-
-@include media-breakpoint-up(lg) {
-  #goodnight-client {
-    margin-bottom: 8rem;
-
-    & > div.container-lg {
-      border-radius: 0.9rem;
-
-      nav {
-        border-top-left-radius: 0.9rem;
-        border-top-right-radius: 0.9rem;
-      }
-    }
   }
 }

@@ -65,6 +65,7 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
           requirements: [
             {
               name: "Münzen",
+              icon: "two-coins",
               relation: "mindestens",
               required: "40",
               has: "2"
@@ -84,12 +85,14 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
           requirements: [
             {
               name: "Das Unobtanium",
+              icon: "shamrock",
               required: "2",
               relation: "genau",
               has: "2"
             },
             {
               name: "Ärger mit Fina",
+              icon: "two-coins",
               required: "no",
               relation: "genau",
               has: "no"
@@ -103,12 +106,12 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
       qualities: [
         {
           name: "Münzen",
-          icon: "two-coins.svg",
+          icon: "two-coins",
           has: "2"
         },
         {
           name: "Glückspilz",
-          icon: "shamrock.svg",
+          icon: "shamrock",
           has: "yes"
         }
       ]
@@ -116,21 +119,17 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
   };
 
   return (
-    <div>
-      <h1 id="banner"
-        className="px-4">
-        {frame.game}
-      </h1>
-      <div id="centre" className="p-3 container">
-        <div className="row">
-          <div className="col-8">
-            <Log {...frame.log}></Log>
-            <Scene {...frame.scene}></Scene>
-          </div>
-          <div className="col">
-            <State {...frame.state}></State>
-          </div>
-        </div>
+    <div id="centre" className="row px-0">
+      <div id="text" className="col-8">
+        <h1 id="banner"
+          className="">
+          {frame.game}
+        </h1>
+        <Log {...frame.log}></Log>
+        <Scene {...frame.scene}></Scene>
+      </div>
+      <div className="col">
+        <State {...frame.state}></State>
       </div>
     </div>
   );

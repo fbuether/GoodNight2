@@ -22,7 +22,7 @@ export default function Choice(choice: Choice) {
 
   let addReq = (rs: Array<JSX.Element>, r: Requirement) => {
     if (rs.length > 0) {
-      rs.push(<span>, </span>);
+      rs.push(<span key={"empty"}>, </span>);
     }
     rs.push(<Requirement key={r.name} {...r}></Requirement>);
     return rs;
@@ -33,21 +33,17 @@ export default function Choice(choice: Choice) {
 
   if (!choice.available) {
     return (
-      <div key={choice.name} className="list-group-item list-group-item-action disabled">
+      <a key={choice.name} className="list-group-item list-group-item-action disabled">
         {choice.text} {" "}
-        <span className="font-size-sm">
-          (nicht verfügbar. benötigt: {requirements})
-        </span>
-      </div>
+        <small>(nicht verfügbar. benötigt: {requirements})</small>
+      </a>
     );
   }
 
   return (
     <a key={choice.name} className="list-group-item list-group-item-action" href="#">
       {choice.text} {" "}
-      <span className="font-size-sm text-secondary">
-        (benötigt: {requirements})
-      </span>
+        <small>(benötigt: {requirements})</small>
     </a>
   );
 }

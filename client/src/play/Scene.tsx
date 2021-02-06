@@ -13,7 +13,8 @@ export default function Scene(scene: Scene) {
   return (
     <div className="markdowned">
       <p>{scene.text}</p>
-      <div className="list-group">
+      <hr className="w-75 mx-auto mt-4 mb-5" />
+      <div className="options list-group">
         {scene.choices.map(choice =>
           <Choice key={choice.name} {...choice}></Choice>)}
       </div>
