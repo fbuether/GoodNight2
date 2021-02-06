@@ -5,7 +5,7 @@ import Frame from "./play/Frame";
 
 export default function Page(page: {}) {
   return (
-    <div id="page" className="container-lg shadow mt-4 px-2 px-sm-3 px-md-4 py-1 py-sm-2 py-md-3">
+    <div id="page" className="container-lg shadow mt-4 px-2 px-sm-3 px-md-4 py-2 py-md-3">
 
       <nav className="navbar navbar-expand-sm navbar-light py-0">
         <div className="container-fluid px-0">

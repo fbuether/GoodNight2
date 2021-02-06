@@ -107,20 +107,28 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
         {
           name: "Münzen",
           icon: "two-coins",
+          type: "int",
           has: "2"
         },
         {
           name: "Glückspilz",
           icon: "shamrock",
+          type: "bool",
           has: "yes"
+        },
+        {
+          name: "Ärger mit Fina",
+          icon: "shamrock",
+          type: "enum",
+          has: "Fina hat Deine Geschichte gehört, und vertraut Dir… vorerst."
         }
       ]
     }
   };
 
   return (
-    <div id="centre" className="row px-0">
-      <div id="text" className="col-8">
+    <div id="centre" className="row px-0 g-0">
+      <div id="text" className="col-sm-8">
         <h1 id="banner"
           className="">
           {frame.game}
@@ -128,7 +136,8 @@ Sie wirft ihren massigen Hammer auf die Werkbank, und setzt sich auf einen klein
         <Log {...frame.log}></Log>
         <Scene {...frame.scene}></Scene>
       </div>
-      <div className="col">
+      <div id="side" className="col-sm-4">
+        <hr className="w-75 mx-auto mt-4 mb-5" />
         <State {...frame.state}></State>
       </div>
     </div>

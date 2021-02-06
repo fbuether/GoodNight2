@@ -139,6 +139,21 @@ html body {
 }
 
 
+#side {
+  hr:first-child {
+    @include media-breakpoint-up(sm) {
+      display: none;
+    }
+  }
+
+  @include media-breakpoint-up(sm) {
+    padding-left: 1.2rem;
+    padding-top: 0.8rem;
+  }
+}
+
+
+
 nav {
   border-bottom: 0.06rem solid hsba($base-color, 32%, 64%, 0.6);
 }
@@ -170,6 +185,7 @@ a:focus {
   .list-group-item {
     background-color: inherit;
     border: none;
+    width: auto;
 
     border-left: 0.4rem solid hsb($base-color, 10%, 90%);
     padding-left: 0.6rem;
@@ -194,9 +210,7 @@ a:focus {
 
 
 //--------------------------------------
-// character state.
-
-
+// icons, as inline svg.
 
 .icon {
   width: 1.4rem;
@@ -225,24 +239,14 @@ a:focus {
 }
 
 
-#state .list-group-item {
-  padding: 0.4rem 0.6rem;
-}
+//--------------------------------------
+// character state.
 
-.quality-icon, .quality-icon-wrap {
-  height: 1.4rem;
-}
-
-.quality-icon-wrap {
-  background-color: hsb($base-color, 50%, 80%);
-  display: inline-block;
-  vertical-align: bottom;
-
-  margin-right: 0.2rem;
-
-  .quality-icon {
-    display: block;
-    mix-blend-mode: screen;
-    filter: invert(100%);
+#state {
+  .list-group-item {
+    
+    background-color: inherit;
+    padding: 0.4rem 0rem 0.4rem 0.4rem;
+    border: none;
   }
 }
