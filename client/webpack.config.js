@@ -49,12 +49,9 @@ module.exports = env => { return {
             loader: "postcss-loader",
             options: {
               postcssOptions: {
-                // postcss plugins, can be exported to postcss.config.js
-                plugins: function () {
-                  return [
-                    require("autoprefixer")
-                  ];
-                }
+                plugins: [
+                  "autoprefixer"
+                ]
               }
             }
           },
