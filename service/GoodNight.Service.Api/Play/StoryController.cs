@@ -1,7 +1,9 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using GoodNight.Service.Domain.Write;
+using GoodNight.Service.Domain.Read;
+using GoodNight.Service.Storage;
+using System.Collections.Generic;
 
 namespace GoodNight.Service.Api.Play
 {
@@ -9,15 +11,25 @@ namespace GoodNight.Service.Api.Play
   [Route("api/v1/stories")]
   public class StoryController : ControllerBase
   {
-    [HttpGet()]
-    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string))]
-    public ActionResult<string> Get()
+    private IStore store;
+
+    public StoryController(IStore store)
     {
-      var story = Story.Create("Helms Schlund");
+      this.store = store;
+    }
 
-      System.Console.WriteLine(story);
+    [HttpGet()]
+    [ProducesResponseType(StatusCodes.Status200OK,
+      Type = typeof(IEnumerable<Story>))]
+    public ActionResult<IEnumerable<Story>> Get()
+    {
+      return Ok(new Story[] {});
 
-      return Ok("hello");
+      // var story = Story.Create("Helms Schlund");
+
+      // System.Console.WriteLine(story);
+
+      // return Ok("hello");
     }
   }
 }

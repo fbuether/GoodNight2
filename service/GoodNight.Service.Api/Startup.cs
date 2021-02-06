@@ -2,8 +2,7 @@ using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
-using GoodNight.Service.Store;
-using GoodNight.Service.Domain.Write;
+using GoodNight.Service.Storage;
 
 namespace GoodNight.Service.Api
 {
@@ -13,8 +12,7 @@ namespace GoodNight.Service.Api
     {
       services.AddControllers();
 
-      services.AddSingleton<IRepository<Scene>>((serviceProvider) =>
-        new RepositoryFactory().Create<Scene>());
+      services.AddSingleton<IStore, Store>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

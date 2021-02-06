@@ -6,9 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Domain.Write;
-using GoodNight.Service.Store;
-using GoodNight.Service.Domain.Parse;
+using GoodNight.Service.Storage;
 
 namespace GoodNight.Service.Api.Write
 {
