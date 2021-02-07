@@ -3,7 +3,7 @@ using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Model.Parse
 {
-  public abstract record Content()
+  public abstract record Content
   {
     // actual text for the player to read. This can be markdown.
     public record Text(
@@ -19,19 +19,19 @@ namespace GoodNight.Service.Domain.Model.Parse
 
     // this scene is the start of the story
     // must not be within a Condition.
-    public record IsStart()
+    public record IsStart
       : Content {}
 
     // always show this action, even if not available
     // must not be within a Condition.
-    public record ShowAlways()
+    public record ShowAlways
       : Content {}
 
     // should this action automatically be taken, if possible?
     // must not be within a Condition.
     // should usually also have a Require so the scene does not instantly
     // trigger for every player.
-    public record ForceShow()
+    public record ForceShow
       : Content {}
 
 

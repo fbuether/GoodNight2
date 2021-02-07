@@ -17,9 +17,9 @@ namespace GoodNight.Service.Domain.Model.Expressions
       : Expression {}
 
     // Operators with one argument
-    public abstract record UnaryOperator()
+    public abstract record UnaryOperator
     {
-      public record Not()
+      public record Not
         : UnaryOperator {}
     }
 
@@ -30,22 +30,22 @@ namespace GoodNight.Service.Domain.Model.Expressions
       : Expression {}
 
     // Operators with two arguments
-    public abstract record BinaryOperator()
+    public abstract record BinaryOperator
     {
-      public record Add() : BinaryOperator {}
-      public record Sub() : BinaryOperator {}
-      public record Mult() : BinaryOperator {}
-      public record Div() : BinaryOperator {}
+      public record Add : BinaryOperator {}
+      public record Sub : BinaryOperator {}
+      public record Mult : BinaryOperator {}
+      public record Div : BinaryOperator {}
 
-      public record And() : BinaryOperator {}
-      public record Or() : BinaryOperator {}
+      public record And : BinaryOperator {}
+      public record Or : BinaryOperator {}
 
-      public record Greater() : BinaryOperator {}
-      public record GreaterOrEqual() : BinaryOperator {}
-      public record Less() : BinaryOperator {}
-      public record LessOrEqual() : BinaryOperator {}
-      public record Equal() : BinaryOperator {}
-      public record NotEqual() : BinaryOperator {}
+      public record Greater : BinaryOperator {}
+      public record GreaterOrEqual : BinaryOperator {}
+      public record Less : BinaryOperator {}
+      public record LessOrEqual : BinaryOperator {}
+      public record Equal : BinaryOperator {}
+      public record NotEqual : BinaryOperator {}
     }
 
     // Application of a binary operator

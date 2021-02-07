@@ -5,30 +5,30 @@ using ReadScene = GoodNight.Service.Domain.Read.Scene;
 
 namespace GoodNight.Service.Domain.Model
 {
-  public record Content()
+  public record Content
   {
     public record Text(
       string Value)
-      : Content() {}
+      : Content {}
 
     public record Require(
       Expression Expression)
-      : Content() {}
+      : Content {}
 
     public record Option(
       string Scene,
       IImmutableList<Content> Content)
-      : Content() {}
+      : Content {}
 
     public record Condition(
       Expression If,
       IImmutableList<Content> Then,
       IImmutableList<Content> Else)
-      : Content() {}
+      : Content {}
 
     public record Include(
       string Scene)
-      : Content() {}
+      : Content {}
   }
 
 
