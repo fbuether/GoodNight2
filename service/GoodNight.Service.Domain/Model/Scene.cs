@@ -76,7 +76,8 @@ namespace GoodNight.Service.Domain.Model
 
     public ReadScene ToReadScene(IImmutableDictionary<string, Value> qualities)
     {
-      return new ReadScene();
+      throw new NotImplementedException();
+      // return new ReadScene();
     }
   }
 }
