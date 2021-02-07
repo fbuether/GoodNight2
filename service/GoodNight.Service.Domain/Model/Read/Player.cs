@@ -13,7 +13,8 @@ namespace GoodNight.Service.Domain.Read
     string User,
     string Story,
     string Name,
-    IImmutableList<Scene> History,
+    IImmutableList<Action> History,
+    Scene Current,
     IImmutableDictionary<string, Value> State)
   {}
 }
