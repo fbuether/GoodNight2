@@ -1,10 +1,10 @@
 import * as React from "react";
-import Icon, { Icons } from "../play/Icon";
+import Icon, {IconName} from "../play/Icon";
 
 export default interface Quality {
   name: string;
   type: "bool" | "int" | "enum";
-  icon: keyof typeof Icons;
+  icon: IconName;
   has: string;
 }
 

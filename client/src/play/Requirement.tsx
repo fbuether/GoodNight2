@@ -1,9 +1,9 @@
 import * as React from "react";
-import Icon, {Icons} from "../play/Icon";
+import Icon, {IconName} from "../play/Icon";
 
 export default interface Requirement {
   name: string,
-  icon: typeof keyof Icons,
+  icon: IconName,
   required: string,
   relation: string,
   has: string

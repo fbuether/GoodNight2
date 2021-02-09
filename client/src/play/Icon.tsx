@@ -3,19 +3,25 @@ import * as React from "react";
 import twocoins from "../../assets/icons/two-coins.svg";
 import shamrock from "../../assets/icons/shamrock.svg";
 
-export const Icons = {
+
+export type IconName =
+    "shamrock"
+    | "two-coins";
+
+
+let icons: { [name: IconName]: string } = {
   "shamrock": shamrock,
   "two-coins": twocoins
-}
+};
 
 
 export default interface Icon {
-  readonly name: keyof typeof Icons;
+  readonly name: IconName;
 }
 
 export default function Icon(icon: Icon) {
   return (
     <span className="icon"
-    dangerouslySetInnerHTML={ { __html: Icons[icon.name] } }></span>
+    dangerouslySetInnerHTML={ { __html: icons[icon.name] } }></span>
   );
 }
