@@ -33,6 +33,7 @@ $theme-colors: map-merge(
   ));
 
 
+// don't remove "xs" here, as it breaks shadow and nav-expand-sm.
 $grid-breakpoints: map-remove(
   $grid-breakpoints,
    "xl", "xxl");
@@ -41,8 +42,6 @@ $container-max-widths: map-remove(
   $container-max-widths,
   "xs", "xl", "xxl");
 
-
-@debug "colors: #{$container-max-widths}";
 
 
 @import "~bootstrap/scss/root";
