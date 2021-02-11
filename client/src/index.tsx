@@ -18,17 +18,22 @@ import "bootstrap/js/dist/collapse";
 import "./ui/style.scss";
 
 import State from "./model/State";
+import DispatchContext from "./DispatchContext";
+import update, {Update} from "./update/Update";
+import initialState from "./update/InitialState";
 
-import Page from "./Page";
+import Page from "./components/Page";
 
-let initial: State = {
-  page: {
-    kind: "start",
-    message: "default message!"
-  },
-  user: "Mrs. Hollywookle"
+let Root = () => {
+  const [state, dispatch] = React.useReducer<React.Reducer<State, Update>>(
+    update, initialState);
+
+  return (
+    <DispatchContext.Provider value={dispatch}>
+      <Page {...state}></Page>
+    </DispatchContext.Provider>
+  );
 };
 
-ReactDOM.render(
-  <Page {...initial}></Page>,
+ReactDOM.render(<Root />,
   document.getElementById("goodnight-client"));
