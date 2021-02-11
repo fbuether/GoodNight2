@@ -1,24 +1,29 @@
+import Link from "./Link";
+
 
 export default function Navigation(state: {}) {
   return (
-    <nav className="navbar navbar-expand-sm navbar-light py-0">
-      <div className="container-fluid px-0">
-        <span className="navbar-brand">GoodNight</span>
+    <nav class="navbar navbar-expand-sm navbar-light py-0">
+      <div class="container-fluid px-0">
+        <span class="navbar-brand">GoodNight</span>
 
-        <button className="navbar-toggler collapsed" type="button"
+        <button class="navbar-toggler collapsed" type="button"
           data-bs-toggle="collapse" data-bs-target="#navbarNav"
           aria-controls="navbarNav" aria-expanded="false"
           aria-label="Toggle navigation">
-          <span className="navbar-toggler-icon"></span>
+          <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav me-auto">
-            <li className="nav-item active">
-              <a className="nav-link" href="#">Home</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+          <ul class="navbar-nav me-auto">
+            <li class="nav-item active">
+              <Link class="nav-link" href="/home">Home</Link>
             </li>
-            <li className="nav-item">
-              <a className="nav-link" href="#">Features</a>
+            <li class="nav-item">
+              <Link class="nav-link" href="/read">Read</Link>
+            </li>
+            <li class="nav-item">
+              <Link class="nav-link" href="https://github.com/fbuether/GoodNight2">Github</Link>
             </li>
           </ul>
         </div>

@@ -6,6 +6,6 @@ export default interface ActionLog {
 
 export default function ActionLog(log: ActionLog) {
   return (
-    <p className="action-log py-1">{log.text}</p>
+    <p class="action-log py-1">{log.text}</p>
   );
 }

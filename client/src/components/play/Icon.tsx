@@ -19,7 +19,7 @@ export default interface Icon {
 
 export default function Icon(icon: Icon) {
   return (
-    <span className="icon"
+    <span class="icon"
     dangerouslySetInnerHTML={ { __html: icons[icon.name] } }></span>
   );
 }

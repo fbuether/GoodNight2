@@ -10,10 +10,10 @@ export default interface Scene {
 
 export default function Scene(scene: Scene) {
   return (
-    <div className="markdowned">
+    <div class="markdowned">
       <p>{scene.text}</p>
-      <hr className="w-75 mx-auto mt-4 mb-5" />
-      <div className="options list-group">
+      <hr class="w-75 mx-auto mt-4 mb-5" />
+      <div class="options list-group">
         {scene.choices.map(choice =>
           <Choice key={choice.name} {...choice}></Choice>)}
       </div>

@@ -13,7 +13,7 @@ export default function Choice(choice: Choice) {
 
   if (!hasReqs) {
     return (
-      <a key={choice.name} className="list-group-item list-group-item-action" href="#">
+      <a key={choice.name} class="list-group-item list-group-item-action" href="#">
         {choice.text}
       </a>
     );
@@ -32,7 +32,7 @@ export default function Choice(choice: Choice) {
 
   if (!choice.available) {
     return (
-      <a key={choice.name} className="list-group-item list-group-item-action disabled">
+      <a key={choice.name} class="list-group-item list-group-item-action disabled">
         {choice.text} {" "}
         <small>(nicht verfügbar. benötigt: {requirements})</small>
       </a>
@@ -40,7 +40,7 @@ export default function Choice(choice: Choice) {
   }
 
   return (
-    <a key={choice.name} className="list-group-item list-group-item-action" href="#">
+    <a key={choice.name} class="list-group-item list-group-item-action" href="#">
       {choice.text} {" "}
         <small>(benötigt: {requirements})</small>
     </a>

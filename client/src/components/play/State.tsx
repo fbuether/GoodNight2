@@ -11,7 +11,7 @@ export default function State(state: State) {
   return (
     <div>
       <h3>{state.name}</h3>
-      <ul id="state" className="list-group">
+      <ul id="state" class="list-group">
         {state.qualities.map(quality =>
           <Quality key={quality.name} {...quality}></Quality>)}
       </ul>

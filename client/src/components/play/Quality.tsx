@@ -21,7 +21,7 @@ export default function Quality(quality: Quality) {
   }
 
   return (
-    <li className="list-group-item text-truncate">
+    <li class="list-group-item text-truncate">
       <Icon name={quality.icon} />{" "}{text}
     </li>
   );
