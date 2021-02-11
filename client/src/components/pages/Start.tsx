@@ -1,6 +1,5 @@
-import * as React from "react";
 
-import StartPage from "../../model/StartPage.ts";
+import StartPage from "../../model/StartPage";
 
 
 export default function Start(state: StartPage) {

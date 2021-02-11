@@ -1,6 +1,6 @@
+import * as Preact from "preact";
+import * as PreactHooks from "preact/hooks";
 
-import * as React from "react";
-import * as ReactDOM from "react-dom";
 
 // Bootstrap imports, filtered.
 // Alert
@@ -25,7 +25,7 @@ import initialState from "./update/InitialState";
 import Page from "./components/Page";
 
 let Root = () => {
-  const [state, dispatch] = React.useReducer<React.Reducer<State, Update>>(
+  const [state, dispatch] = PreactHooks.useReducer<State, Update>(
     update, initialState);
 
   return (
@@ -35,5 +35,9 @@ let Root = () => {
   );
 };
 
-ReactDOM.render(<Root />,
-  document.getElementById("goodnight-client"));
+let rootElement = document.getElementById("goodnight-client");
+if (rootElement == null) {
+  throw "HTML does not contain the root element \"goodnight-client\".";
+}
+
+Preact.render(<Root />, rootElement);

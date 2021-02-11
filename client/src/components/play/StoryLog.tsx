@@ -1,5 +1,3 @@
-import * as React from "react";
-
 
 export default interface StoryLog {
   name: string;

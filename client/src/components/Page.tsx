@@ -1,5 +1,3 @@
-import * as React from "react";
-
 import State, {Page} from "../model/State";
 import DispatchContext from "../DispatchContext";
 
@@ -8,6 +6,7 @@ import Start from "./pages/Start";
 import Read from "./pages/Read";
 
 import Navigation from "./Navigation";
+
 
 function getPage(page: Page) {
   switch (page.kind) {

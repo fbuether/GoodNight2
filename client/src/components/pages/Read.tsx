@@ -1,10 +1,11 @@
-import * as React from "react";
 
-import ReadPage from "../../model/ReadPage.ts";
+import ReadPage from "../../model/ReadPage";
+
+import Frame from "../play/Frame";
 
 
 export default function Read(state: ReadPage) {
   return (
-    <div>Reading...</div>
+    <Frame />
   );
 }

@@ -1,7 +1,5 @@
-import * as React from "react";
-
-import twocoins from "../../assets/icons/two-coins.svg";
-import shamrock from "../../assets/icons/shamrock.svg";
+import twocoins from "../../../assets/icons/two-coins.svg";
+import shamrock from "../../../assets/icons/shamrock.svg";
 
 
 export type IconName =

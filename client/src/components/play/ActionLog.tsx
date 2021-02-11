@@ -1,11 +1,8 @@
-import * as React from "react";
-
 
 export default interface ActionLog {
   name: string;
   text: string;
 }
-
 
 export default function ActionLog(log: ActionLog) {
   return (

@@ -1,4 +1,3 @@
-import * as React from "react";
 import Icon, {IconName} from "../play/Icon";
 
 export default interface Quality {

@@ -1,4 +1,3 @@
-import * as React from "react";
 import Scene from "../play/Scene";
 import State from "../play/State";
 import Log from "../play/Log";
@@ -12,9 +11,7 @@ export default interface Frame {
 }
 
 
-export default function Frame(
-) {
-
+export default function Frame() {
   let frame: Frame = {
     game: "Holms Schlucht",
     log: {

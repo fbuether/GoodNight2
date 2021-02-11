@@ -1,4 +1,3 @@
-import * as React from "react";
 import StoryLog from "../play/StoryLog";
 import ActionLog from "../play/ActionLog";
 
