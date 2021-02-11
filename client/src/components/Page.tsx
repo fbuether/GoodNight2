@@ -1,5 +1,9 @@
-import State, {Page} from "../model/State";
+import type State from "../model/State";
+import type {Page} from "../model/Page";
 import DispatchContext from "../DispatchContext";
+
+import StartPage from "../model/StartPage";
+import ReadPage from "../model/ReadPage";
 
 import Frame from "./play/Frame";
 import Start from "./pages/Start";
@@ -7,12 +11,15 @@ import Read from "./pages/Read";
 import Navigation from "./Navigation";
 
 
+function assertNever(param: never): never {
+  throw new Error(`"Page" received invalid state: "${param}"`);
+}
+
 function getPage(page: Page) {
   switch (page.kind) {
-      case "start": return <Start {...page}></Start>;
-      case "read": return <Read {...page}></Read>;
-
-      default: let exhaust: never = page; return exhaust;
+    case "start": return <Start page={page} />;
+    case "read": return <Read page={page} />;
+    default: return assertNever(page);
   }
 }
 

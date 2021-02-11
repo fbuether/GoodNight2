@@ -1,5 +1,8 @@
 import Link from "./Link";
 
+import StartPage from "../model/StartPage";
+import ReadPage from "../model/ReadPage";
+
 
 export default function Navigation(state: {}) {
   return (
@@ -17,13 +20,13 @@ export default function Navigation(state: {}) {
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
             <li class="nav-item active">
-              <Link class="nav-link" href="/home">Home</Link>
+              <Link class="nav-link" to={new StartPage("okay")}>Home</Link>
             </li>
             <li class="nav-item">
-              <Link class="nav-link" href="/read">Read</Link>
+              <Link class="nav-link" to={new ReadPage()}>Read</Link>
             </li>
             <li class="nav-item">
-              <Link class="nav-link" href="https://github.com/fbuether/GoodNight2">Github</Link>
+              <Link class="nav-link" to="https://github.com/fbuether/GoodNight2">Github</Link>
             </li>
           </ul>
         </div>

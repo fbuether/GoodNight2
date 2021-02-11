@@ -1,34 +1,35 @@
 import * as Preact from "preact";
 import * as PreactHooks from "preact/hooks";
 
-function linkHandler() {
-  const currentProtocol = window.location.protocol;
-  const currentHost = window.location.host;
+import type {Page} from "../model/Page";
 
-  let links = document.getElementsByTagName("a");
-  for (let link of Array.from(links)) {
-    if (currentProtocol == link.protocol
-        && currentHost == link.host) {
-      let target = link.pathname;
+import DispatchContext from "../DispatchContext";
+import {Update} from "../update/Update";
 
-      console.log("updating to navigate to ", target);
-    }
-  }
-}
+import NavigateAction from "../update/NavigateAction";
 
 
 interface Link {
-  href: string;
-  class: string;
+  class?: string;
+  to: Page | string;
 }
 
-
+function dispatchLink(dispatch: (u: Update) => void, page: Page) {
+  return (event: MouseEvent) => {
+    event.preventDefault();
+    dispatch(new NavigateAction(page));
+  }
+};
 
 export default function Link(state: Preact.RenderableProps<Link>) {
-  PreactHooks.useEffect(linkHandler);
+  const dispatch = PreactHooks.useContext(DispatchContext);
 
-  return (
-    <a class={state.class} href={state.href}>{state.children}</a>
-  );
-
+  if (typeof state.to === "string") {
+    return <a class={state.class} href={state.to}>{state.children}</a>;
+  }
+  else {
+    return <a class={state.class}
+      onClick={dispatchLink(dispatch, state.to)}
+      href={state.to.asHref()}>{state.children}</a>;
+  }
 }

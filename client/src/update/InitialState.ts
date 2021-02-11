@@ -1,13 +1,16 @@
-import State from "../model/State";
+import type State from "../model/State";
+
+import StartPage from "../model/StartPage";
+import ReadPage from "../model/ReadPage";
 
 
-const initialState: State = {
-  page: {
-    kind: "start",
-    message: "default message!"
-  },
-  user: "Mrs. Hollywookle"
+export default function initialState(path: string): State {
+  let page = path.startsWith("/read")
+      ? new ReadPage()
+      : new StartPage("default message!");
+
+  return {
+    page: page,
+    user: "Mrs. Hollywookle"
+  };
 }
-
-
-export default initialState;

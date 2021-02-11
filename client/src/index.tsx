@@ -25,9 +25,10 @@ import initialState from "./update/InitialState";
 
 import Page from "./components/Page";
 
+
 let Root = () => {
   const [state, dispatch] = PreactHooks.useReducer<State, Update>(
-    update, initialState);
+    update, initialState(window.location.pathname));
 
   return (
     <DispatchContext.Provider value={dispatch}>
