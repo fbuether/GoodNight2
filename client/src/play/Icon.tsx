@@ -9,7 +9,7 @@ export type IconName =
     | "two-coins";
 
 
-let icons: { [name: IconName]: string } = {
+let icons: Record<IconName, string> = {
   "shamrock": shamrock,
   "two-coins": twocoins
 };

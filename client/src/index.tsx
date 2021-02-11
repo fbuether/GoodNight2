@@ -17,8 +17,18 @@ import "bootstrap/js/dist/collapse";
 
 import "./ui/style.scss";
 
+import State from "./model/State";
+
 import Page from "./Page";
 
+let initial: State = {
+  page: {
+    kind: "start",
+    message: "default message!"
+  },
+  user: "Mrs. Hollywookle"
+};
+
 ReactDOM.render(
-  <Page></Page>,
+  <Page {...initial}></Page>,
   document.getElementById("goodnight-client"));
