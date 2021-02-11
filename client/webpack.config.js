@@ -16,6 +16,7 @@ module.exports = env => { return {
     serveIndex: false,
     stats: "minimal",
     port: 32015,
+    historyApiFallback: true
   },
 
   output: {
