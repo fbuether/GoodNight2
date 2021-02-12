@@ -1,7 +1,7 @@
 import * as Preact from "preact";
 import * as PreactHooks from "preact/hooks";
 
-import type {Page} from "../model/Page";
+import {Page, asHref} from "../model/Page";
 
 import DispatchContext from "../DispatchContext";
 import {Update} from "../update/Update";
@@ -30,6 +30,6 @@ export default function Link(state: Preact.RenderableProps<Link>) {
   else {
     return <a class={state.class}
       onClick={dispatchLink(dispatch, state.to)}
-      href={state.to.asHref()}>{state.children}</a>;
+      href={asHref(state.to)}>{state.children}</a>;
   }
 }

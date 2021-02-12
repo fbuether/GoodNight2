@@ -28,7 +28,7 @@ import Page from "./components/Page";
 
 let Root = () => {
   const [state, dispatch] = PreactHooks.useReducer<State, Update>(
-    update, initialState(window.location.pathname));
+    update, initialState(new URL(window.location.href)));
 
   return (
     <DispatchContext.Provider value={dispatch}>

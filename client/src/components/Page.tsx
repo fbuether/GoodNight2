@@ -2,9 +2,6 @@ import type State from "../model/State";
 import type {Page} from "../model/Page";
 import DispatchContext from "../DispatchContext";
 
-import StartPage from "../model/StartPage";
-import ReadPage from "../model/ReadPage";
-
 import Frame from "./play/Frame";
 import Start from "./pages/Start";
 import Read from "./pages/Read";
@@ -28,7 +25,7 @@ export default function Page(state: State) {
   return (
     <div id="page"
       class="container-lg shadow mt-md-4 px-2 px-sm-3 px-md-4 py-2 py-md-3">
-      <Navigation />
+      <Navigation currentPage={state.page} user={state.user} />
       <hr class="mt-1" />
       {getPage(state.page)}
     </div>

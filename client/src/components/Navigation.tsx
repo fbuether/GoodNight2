@@ -1,10 +1,41 @@
 import Link from "./Link";
+import type {Page} from "../model/Page";
 
-import StartPage from "../model/StartPage";
-import ReadPage from "../model/ReadPage";
+export default interface Navigation {
+  readonly currentPage: Page;
+  readonly user: string;
+}
 
 
-export default function Navigation(state: {}) {
+export default function Navigation(state: Navigation) {
+  let navigations = [
+    {
+      title: "Start",
+      to: {
+        kind: "start"  as const,
+        message: "okay"
+      }
+    },
+    {
+      title: "Hels Schlund",
+      to: {
+        kind: "read" as const,
+        story: "hels-schlund",
+        user: state.user
+      }
+    }
+  ];
+
+  navigations = navigations.map(nav => { return {
+    ...nav,
+    current: state.currentPage.kind == nav.to.kind
+  }});
+
+  let navItems = navigations.map(item => (
+    <li key={item.to.kind} class="nav-item {item.current ? 'active' : ''}">
+      <Link class="nav-link" to={item.to}>{item.title}</Link>
+    </li>));
+
   return (
     <nav class="navbar navbar-expand-sm navbar-light py-0">
       <div class="container-fluid px-0">
@@ -19,15 +50,7 @@ export default function Navigation(state: {}) {
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
-            <li class="nav-item active">
-              <Link class="nav-link" to={new StartPage("okay")}>Home</Link>
-            </li>
-            <li class="nav-item">
-              <Link class="nav-link" to={new ReadPage()}>Read</Link>
-            </li>
-            <li class="nav-item">
-              <Link class="nav-link" to="https://github.com/fbuether/GoodNight2">Github</Link>
-            </li>
+            {navItems}
           </ul>
         </div>
       </div>

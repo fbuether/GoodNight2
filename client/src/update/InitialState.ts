@@ -1,16 +1,11 @@
 import type State from "../model/State";
 
-import StartPage from "../model/StartPage";
-import ReadPage from "../model/ReadPage";
+import {ofHref} from "../model/Page";
 
 
-export default function initialState(path: string): State {
-  let page = path.startsWith("/read")
-      ? new ReadPage()
-      : new StartPage("default message!");
-
+export default function initialState(url: URL): State {
   return {
-    page: page,
+    page: ofHref(url),
     user: "Mrs. Hollywookle"
   };
 }

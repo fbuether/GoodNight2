@@ -1,5 +1,5 @@
 import type State from "../model/State";
-import type {Page} from "../model/Page";
+import {asHref, Page} from "../model/Page";
 
 
 export default class NavigateAction {
@@ -12,7 +12,7 @@ export default class NavigateAction {
   }
 
   public execute(state: State) {
-    history.pushState(this.page, "GoodNight", this.page.asHref());
+    history.pushState(this.page, "GoodNight", asHref(this.page));
     return { ...state, page: this.page };
   }
 }

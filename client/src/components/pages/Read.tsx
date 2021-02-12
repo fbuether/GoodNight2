@@ -1,5 +1,5 @@
 
-import ReadPage from "../../model/ReadPage";
+import type {ReadPage} from "../../model/Page";
 
 import Frame from "../play/Frame";
 
