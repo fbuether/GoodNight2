@@ -1,3 +1,6 @@
+import {Action} from "./Action";
+import {Value} from "./Value";
+import {Scene} from "./Scene";
 
 
 export interface Player {

@@ -1,3 +1,5 @@
+import {Quality} from "./Quality";
+import {Value} from "./Value";
 
 
 interface ChoiceOption {
@@ -18,7 +20,7 @@ interface ChoiceContinue {
 type Choice = ChoiceOption | ChoiceReturn | ChoiceContinue;
 
 
-interface Action {
+export interface Action {
   urlname: string;
   text: string;
   chosen: Choice;

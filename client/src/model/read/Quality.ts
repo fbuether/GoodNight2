@@ -6,9 +6,9 @@ enum QualityType {
   Enum = 3
 }
 
-interface Quality {
+export interface Quality {
   name: string;
   type: QualityType;
-  // description: string;
+  description: string;
   scene: string;
 }

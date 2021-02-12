@@ -1,3 +1,6 @@
+import {Quality} from "./Quality.ts";
+import {Value} from "./Value.ts";
+
 
 interface Requirement {
   description: string;
@@ -13,7 +16,7 @@ interface Option {
 }
 
 
-interface Scene {
+export interface Scene {
   urlname: string;
   text: string;
   effects: Array<[Quality, Value]>;
