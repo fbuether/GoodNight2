@@ -20,6 +20,13 @@ namespace GoodNight.Service.Api
           options.JsonSerializerOptions.PropertyNamingPolicy = null;
         });
 
+      services.AddCors(corsOptions => {
+        corsOptions.AddDefaultPolicy(builder => {
+          builder.WithOrigins("http://localhost:32015",
+            "https://goodnight.jasminefields.net");
+        });
+      });
+
       services.AddSingleton<IStore, Store>();
     }
 
@@ -31,6 +38,8 @@ namespace GoodNight.Service.Api
       }
 
       app.UseRouting();
+
+      app.UseCors();
 
       app.UseEndpoints(endpoints =>
       {
