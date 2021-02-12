@@ -16,7 +16,7 @@ export interface ReadPage {
   player?: Player; // may be null if not yet loaded.
 }
 
-const readPagePath = /^\/read\/.+/;
+const readPagePath = /^\/read\/(.+)/;
 
 
 
@@ -39,11 +39,7 @@ export function asHref(page: Page) {
 
 
 export function ofHref(url: URL): Page {
-  console.log("matching", url.pathname);
-
   let start = url.pathname.match(startPagePath);
-
-  console.log("start", start);
   if (start != null) {
     return {
       kind: "start" as const
@@ -51,7 +47,6 @@ export function ofHref(url: URL): Page {
   }
 
   let read = url.pathname.match(readPagePath);
-  console.log("read", read);
   if (read != null) {
     return {
       kind: "read" as const,
