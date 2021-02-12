@@ -30,6 +30,8 @@ let Root = () => {
   const [state, dispatch] = PreactHooks.useReducer<State, Update>(
     update, initialState(new URL(window.location.href)));
 
+  console.log("current state", state);
+
   return (
     <DispatchContext.Provider value={dispatch}>
       <Page {...state}></Page>
