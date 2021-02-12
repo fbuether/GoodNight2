@@ -127,6 +127,7 @@ $base-color: 30;
 html body {
   background: hsb($base-color, 4%, 94%);
   overflow-y: scroll;
+  line-height: initial;
 }
 
 #page {
