@@ -1,14 +1,15 @@
 import type State from "../model/State";
+
+import navigate from "./Navigate";
 import type {Page} from "../model/Page";
-import NavigateAction from "./NavigateAction";
+
+import {showStory} from "./LoadStory";
+import type {Player} from "../model/read/Player";
 
 
-export interface NoUpdate {
-  kind: "no-update";
-}
-
-export type Update = NoUpdate
-    | NavigateAction;
+export type Update =
+    | { kind: "Navigate", page: Page }
+    | { kind: "ShowStory", player: Player };
 
 
 function assertNever(param: never): never {
@@ -16,9 +17,10 @@ function assertNever(param: never): never {
 }
 
 export default function update(state: State, update: Update): State {
+  console.log("update state", update);
   switch (update.kind) {
-    case "navigate": return update.execute(state); // navigateTo(state, update.page);
-    case "no-update": return state;
+    case "Navigate": return navigate(state, update.page);
+    case "ShowStory": return showStory(state, update.player);
     default: return assertNever(update);
   }
 }

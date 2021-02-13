@@ -6,8 +6,6 @@ import {Page, asHref} from "../model/Page";
 import DispatchContext from "../DispatchContext";
 import {Update} from "../update/Update";
 
-import NavigateAction from "../update/NavigateAction";
-
 
 interface Link {
   class?: string;
@@ -17,7 +15,7 @@ interface Link {
 function dispatchLink(dispatch: (u: Update) => void, page: Page) {
   return (event: MouseEvent) => {
     event.preventDefault();
-    dispatch(new NavigateAction(page));
+    dispatch({kind: "Navigate", page: page });
   }
 };
 

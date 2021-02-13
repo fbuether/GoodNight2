@@ -4,6 +4,8 @@ import {Scene} from "./Scene";
 
 
 export interface Player {
+  user: string;
+  story: string;
   name: string;
   history: Array<Action>;
   current: Scene;
