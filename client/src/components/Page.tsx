@@ -2,9 +2,9 @@ import type State from "../model/State";
 import type {Page} from "../model/Page";
 import DispatchContext from "../DispatchContext";
 
-import Start from "./pages/Start";
-import Read from "./pages/Read";
-import Navigation from "./Navigation";
+import Start from "../components/Start";
+import Read from "../components/Read";
+import Navigation from "../components/Navigation";
 
 
 function assertNever(param: never): never {

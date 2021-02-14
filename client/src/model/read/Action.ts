@@ -28,6 +28,7 @@ export type Choice = ChoiceOption | ChoiceReturn | ChoiceContinue;
 export interface Action {
   readonly urlname: string;
   readonly text: string;
+  readonly effects: Array<Property>;
   readonly chosen: Choice;
 }
 
@@ -60,6 +61,7 @@ export function asAction(obj: any): Action {
   return {
     urlname: requireString(obj["urlname"]),
     text: requireString(obj["text"]),
+    effects: deserialiseArray(obj, "effects", asProperty),
     chosen: asChoice(obj["chosen"])
   };
 }
