@@ -26,6 +26,7 @@ namespace GoodNight.Service.Domain.Read
   public record Action(
     string Urlname,
     string Text,
+    IImmutableList<Property> Effects,
     Choice Chosen
   ) {}
 }
