@@ -1,17 +1,39 @@
+import {requireString, requireNumber, requireBoolean} from "../Deserialise";
 
 interface BoolValue {
-  kind: "bool";
-  value: boolean;
+  readonly kind: "bool";
+  readonly value: boolean;
 }
 
 interface IntValue {
-  kind: "int";
-  value: number;
+  readonly kind: "int";
+  readonly value: number;
 }
 
 interface EnumValue {
-  kind: "enum";
-  value: number;
+  readonly kind: "enum";
+  readonly value: number;
 }
 
 export type Value = BoolValue | IntValue | EnumValue;
+
+
+export function asValue(obj: any): Value {
+  let kind = requireString(obj["kind"]);
+  switch (kind) {
+    case "Bool":
+      return {
+        kind: "bool",
+        value: requireBoolean(obj["value"])
+      };
+    case "Int":
+    case "Enum":
+      return {
+        kind: kind == "Enum" ? "enum" : "int",
+        value: requireNumber(obj["value"])
+      };
+    default:
+      console.error("Invalid value kind", kind);
+      throw new Error("Invalid value kind");
+  }
+}

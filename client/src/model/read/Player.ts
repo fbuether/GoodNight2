@@ -1,14 +1,18 @@
-import {Action} from "./Action";
-import {Value} from "./Value";
-import {Scene} from "./Scene";
+import {requireString, deserialiseArray} from "../Deserialise";
 
+import {Property, asProperty} from "./Property";
 
 export interface Player {
-  user: string;
-  story: string;
-  name: string;
-  history: Array<Action>;
-  current: Scene;
-  state: Map<string, Value>;
+  readonly user: string;
+  readonly name: string;
+  readonly state: Array<Property>;
 }
 
+
+export function asPlayer(obj: any): Player {
+  return {
+    user: requireString(obj["user"]),
+    name: requireString(obj["name"]),
+    state: deserialiseArray(obj, "state", asProperty)
+  };
+}

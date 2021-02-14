@@ -1,14 +1,18 @@
-import {Quality} from "./Quality.ts";
-import {Value} from "./Value.ts";
+import {requireString, requireBoolean, optionalString,
+  deserialiseArray} from "../Deserialise";
+
+import {Quality, asQuality} from "./Quality.ts";
+import {Value, asValue} from "./Value.ts";
+import {Property, asProperty} from "./Property";
 
 
-interface Requirement {
+export interface Requirement {
   description: string;
   passed: boolean;
 }
 
 
-interface Option {
+export interface Option {
   scene: string;
   isAvailable: boolean;
   text: string;
@@ -17,10 +21,38 @@ interface Option {
 
 
 export interface Scene {
-  urlname: string;
+  name: string;
   text: string;
-  effects: Array<[Quality, Value]>;
+  effects: Array<Property>;
   options: Array<Option>;
-  return: string;
-  continue: string;
+  return?: string;
+  continue?: string;
+}
+
+
+function asRequirement(obj: any): Requirement {
+  return {
+    description: requireString(obj["description"]),
+    passed: requireBoolean(obj["passed"])
+  };
+}
+
+function asOption(obj: any): Option {
+  return {
+    scene: requireString(obj["scene"]),
+    isAvailable: requireBoolean(obj["isAvailable"]),
+    text: requireString(obj["text"]),
+    requirements: deserialiseArray(obj, "requirements", asRequirement)
+  };
+}
+
+export function asScene(obj: any): Scene {
+  return {
+    name: requireString(obj["name"]),
+    text: requireString(obj["text"]),
+    effects: deserialiseArray(obj, "effects", asProperty),
+    options: deserialiseArray(obj, "options", asOption),
+    return: optionalString(obj, "return"),
+    continue: optionalString(obj, "continue")
+  };
 }
