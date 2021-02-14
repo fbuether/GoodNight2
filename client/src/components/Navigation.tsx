@@ -17,10 +17,11 @@ export default function Navigation(state: Navigation) {
       }
     },
     {
-      title: "Hels Schlund",
+      title: "Hels Schlucht",
       to: {
         kind: "read" as const,
-        story: "hels-schlund",
+        story: "Hels Schlucht",
+        urlname: "hels-schlucht",
         user: state.user
       }
     }
