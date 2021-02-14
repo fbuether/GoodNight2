@@ -26,9 +26,9 @@ namespace GoodNight.Service.Api.Play
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Player> GetPlayerState()
     {
-      var muenzen = new Quality.Int("Münzen",
+      var muenzen = new Quality.Int("Münzen", "two-coins",
         "Alles, was glitzert, ist Gold.", null);
-      var finasHammer = new Quality.Bool("Finas Hammer",
+      var finasHammer = new Quality.Bool("Finas Hammer", "shamrock",
         "Der mächtige Hammer der Schmiedin.", null);
 
       var player = new Player("logged_in_user", "Mrs. Hollywinkle",

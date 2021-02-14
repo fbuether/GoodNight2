@@ -10,6 +10,7 @@ export enum QualityType {
 export interface Quality {
   readonly name: string;
   readonly type: QualityType;
+  readonly icon?: string;
   readonly description: string;
   readonly scene?: string;
 }
@@ -25,6 +26,7 @@ export function asQuality(obj: any): Quality {
   return {
     name: requireString(obj["name"]),
     type: typeNum as QualityType,
+    icon: optionalString(obj, "icon"),
     description: requireString(obj["description"]),
     scene: optionalString(obj, "scene")
   };
