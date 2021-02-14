@@ -18,7 +18,9 @@
     "forceConsistentCasingInFileNames": true,
 
     "jsx": "react-jsx",
-    "jsxImportSource": "preact"
+    "jsxImportSource": "preact",
+
+    "esModuleInterop": true
   },
   "include": [
     "types/svg.d.ts"
