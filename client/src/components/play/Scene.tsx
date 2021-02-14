@@ -1,22 +1,23 @@
-import Choice from "../play/Choice";
+import Markdown from "../../components/common/Markdown";
 
+import Option from "./Option";
 
-export default interface Scene {
-  readonly name: string;
-  readonly text: string;
-  readonly choices: Array<Choice>;
-}
+import type {Scene} from "../../model/read/Scene";
 
 
 export default function Scene(scene: Scene) {
+  // todo: effects.
+
+  // todo: return, continue.
+
   return (
-    <div class="markdowned">
-      <p>{scene.text}</p>
+    <>
+      <Markdown text={scene.text} />
       <hr class="w-75 mx-auto mt-4 mb-5" />
       <div class="options list-group">
-        {scene.choices.map(choice =>
-          <Choice key={choice.name} {...choice}></Choice>)}
+        {scene.options.map((option, index) =>
+          <Option key={index} {...option} />)}
       </div>
-    </div>
+    </>
   );
 }

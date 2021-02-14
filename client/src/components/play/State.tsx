@@ -1,19 +1,15 @@
-import Quality from "../play/Quality";
+import Property from "../../components/play/Property";
+
+import type {Player} from "../../model/read/Player";
 
 
-export default interface State {
-  name: string;
-  qualities: Array<Quality>;
-}
-
-
-export default function State(state: State) {
+export default function State(player: Player) {
   return (
     <div>
-      <h3>{state.name}</h3>
+      <h3>{player.name}</h3>
       <ul id="state" class="list-group">
-        {state.qualities.map(quality =>
-          <Quality key={quality.name} {...quality}></Quality>)}
+        {Array.from(player.state, (property) => 
+          <Property {...property} />)}
       </ul>
     </div>
   );
