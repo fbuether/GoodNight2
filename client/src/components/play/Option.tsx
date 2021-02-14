@@ -5,12 +5,6 @@ import RequirementC from "../play/Requirement";
 
 import type {Option, Requirement} from "../../model/read/Scene";
 
-// export default interface Option {
-//   name: string;
-//   text: string;
-//   available: boolean;
-//   requirements: Array<Requirement>;
-// }
 
 export default function Option(option: Option) {
   let hasReqs = option.requirements.length > 0;

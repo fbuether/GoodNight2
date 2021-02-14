@@ -1,4 +1,4 @@
-import Markdown from "preact-markdown";
+import Markdown from "../../components/common/Markdown";
 
 import Effect from "../../components/play/Effect";
 
@@ -13,13 +13,10 @@ function renderChoice(choice: Choice) {
     case "option":
       if (choice.effects.length > 0) {
         return (
-          <p class="action-log py-1">
-            {choice.text}
-            <div class="pt-1">
-              {choice.effects.map(effect => 
-                <Effect {...effect} />)}
-            </div>
-          </p>
+          <div class="action-log">
+            <Markdown>{choice.text}</Markdown>
+            {choice.effects.map(effect => <Effect {...effect} />)}
+          </div>
         );
       }
       else {
@@ -35,9 +32,7 @@ export default function Log(log: { entries: Array<Action> }) {
     <>
       {log.entries.map(entry => (
         <>
-          <p class="markdowned">
-            {Markdown(entry.text)}
-          </p>
+          <Markdown>{entry.text}</Markdown>
           {entry.effects.map(effect => <Effect {...effect} />)}
           {renderChoice(entry.chosen)}
         </>

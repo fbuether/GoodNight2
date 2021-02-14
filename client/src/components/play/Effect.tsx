@@ -7,17 +7,17 @@ export default function Effect(effect: Property) {
   switch (value.kind) {
     case "bool":
       if (value.value) {
-        return <div key={quality.name}>Du erlangst {quality.name}.</div>;
+        return <p class="fst-italic">Du erlangst {quality.name}.</p>;
       }
       else {
-        return <div key={quality.name}>Du verlierst {quality.name}.</div>;
+        return <p class="fst-italic">Du verlierst {quality.name}.</p>;
       }
     case "int":
       return (<p class="fst-italic">
         Du besitzt jetzt {value.value} {quality.name}.
       </p>);
     case "enum":
-      return (<p>
+      return (<p class="fst-italic">
         {quality.name} ist jetzt: {value.value}.
       </p>);
   }
