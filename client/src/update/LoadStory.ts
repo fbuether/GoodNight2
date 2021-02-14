@@ -1,34 +1,23 @@
 import type State from "../model/State";
 import request from "../Request";
 
-import type {Player} from "../model/read/Player";
+import {Adventure, asAdventure} from "../model/read/Adventure";
 
 
-export async function loadStory(user: string, story: string): Promise<Player> {
-  console.log("loading story");
-  let player = await request("api/v1/read/continue") as Player;
-  return player;
+export async function loadStory(user: string, story: string)
+: Promise<Adventure> {
+  let response = await request("api/v1/read/continue");
+  return asAdventure(response);
 }
 
-export function showStory(state: State, player: Player): State {
-  console.log("showin story");
+export function showStory(state: State, adventure: Adventure): State {
   return {
     ...state,
     page: {
       kind: "read" as const,
-      story: player.story,
-      user: player.user,
-      player: player
+      story: adventure.story.name,
+      user: adventure.player.name,
+      adventure: adventure
     }
   };
 }
-
-
-// export default async function loadStory(user: string, story: string) {
-
-//   return (state: State) => {
-//     console.log("loading story. right?");
-
-//     return { ...state, page: { ...state.page, player: player } };
-//   };
-// }

@@ -1,4 +1,4 @@
-import {Player} from "./read/Player";
+import {Adventure} from "./read/Adventure";
 
 
 export interface StartPage {
@@ -11,9 +11,9 @@ const startPagePath = /^\/($|start)/;
 
 export interface ReadPage {
   kind: "read";
-  story: string;
+  story: string; // urlname
   user: string;
-  player?: Player; // may be null if not yet loaded.
+  adventure?: Adventure; // may be null if not yet loaded.
 }
 
 const readPagePath = /^\/read\/(.+)/;
