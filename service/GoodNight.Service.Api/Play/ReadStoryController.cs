@@ -32,7 +32,7 @@ namespace GoodNight.Service.Api.Play
         "Der mächtige Hammer der Schmiedin.", null);
 
       var player = new Player("logged_in_user", "Mrs. Hollywinkle",
-        ImmutableArray.Create<Property>(
+        ImmutableList.Create<Property>(
           new Property(muenzen, new Value.Int(4)),
           new Property(finasHammer, new Value.Bool(true))
         ));
@@ -42,13 +42,17 @@ namespace GoodNight.Service.Api.Play
       var history = ImmutableList.Create<Action>(
         new Action("start",
           "Die Zeit der Menschen ist vorbei, sagen…",
+          ImmutableList.Create<Property>(
+            new Property(muenzen, new Value.Int(2))),
           new Choice.Continue("start-fortsetzung")));
 
       var current =
         new Scene(
           "start-fortsetzung",
           "# Weiter auf der Flucht\n\nAuch du bist geflohen, dem Ruf…",
-          ImmutableList.Create<Property>(),
+          ImmutableList.Create<Property>(
+            new Property(finasHammer, new Value.Bool(false))
+          ),
           ImmutableList.Create<Option>(new[] {
               new Option("herkunft-kueste", true, "an der Küste zwischen dem…",
                 ImmutableList<Requirement>.Empty),
