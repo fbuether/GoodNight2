@@ -196,7 +196,6 @@ a:focus {
 
 
 .options {
-
   .list-group-item {
     background-color: inherit;
     border: none;
@@ -216,7 +215,7 @@ a:focus {
 
     }
 
-    &.disabled {
+    &:disabled {
       border-left-color: hsb($base-color, 0%, 90%);
     }
   }

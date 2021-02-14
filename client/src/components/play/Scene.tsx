@@ -14,8 +14,7 @@ export default function Scene(scene: Scene) {
       {scene.effects.map(effect => <Effect {...effect} />)}
       <hr class="w-75 mx-auto mt-4 mb-5" />
       <div class="options list-group">
-        {scene.options.map((option, index) =>
-          <Option key={index} {...option} />)}
+        {scene.options.map((option, index) => <Option {...option} />)}
       </div>
     </>
   );

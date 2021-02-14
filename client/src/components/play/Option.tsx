@@ -13,26 +13,25 @@ export default function Option(option: Option) {
     if (option.isAvailable) {
           // to={{kind: "ReadAction"}}
       return (
-        <div class="list-group-item list-group-item-action"
-            >
+        <button class="list-group-item list-group-item-action">
           {option.text}
-        </div>
+        </button>
       );
     }
     else {
       return (
-        <a class="list-group-item list-group-item-action disabled">
+        <button class="list-group-item list-group-item-action" disabled>
           {option.text} <small>(nicht verfügbar.)</small>
-        </a>
+        </button>
       );
     }
   }
 
   let addReq = (rs: Array<JSX.Element>, r: Requirement, index: number) => {
     if (rs.length > 0) {
-      rs.push(<span key={"empty"}>, </span>);
+      rs.push(<span>, </span>);
     }
-    rs.push(<RequirementC key={index} {...r}></RequirementC>);
+    rs.push(<RequirementC {...r}></RequirementC>);
     return rs;
   };
 
@@ -41,17 +40,17 @@ export default function Option(option: Option) {
 
   if (!option.isAvailable) {
     return (
-      <a class="list-group-item list-group-item-action disabled">
+      <button class="list-group-item list-group-item-action" disabled>
         {option.text}{" "}
         <small>(nicht verfügbar. benötigt: {requirements})</small>
-      </a>
+      </button>
     );
   }
   else {
     return (
-      <div class="list-group-item list-group-item-action">
+      <button class="list-group-item list-group-item-action">
         {option.text} <small>(benötigt: {requirements})</small>
-      </div>
+      </button>
     );
   }
 }

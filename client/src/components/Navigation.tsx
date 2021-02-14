@@ -33,7 +33,7 @@ export default function Navigation(state: Navigation) {
   }});
 
   let navItems = navigations.map(item => (
-    <li key={item.to.kind} class="nav-item {item.current ? 'active' : ''}">
+    <li class="nav-item {item.current ? 'active' : ''}">
       <Link class="nav-link" to={item.to}>{item.title}</Link>
     </li>));
 
