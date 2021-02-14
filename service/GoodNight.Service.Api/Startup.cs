@@ -17,7 +17,6 @@ namespace GoodNight.Service.Api
             new ActionChoiceConverter());
           options.JsonSerializerOptions.Converters.Add(
             new ExpressionValueConverter());
-          options.JsonSerializerOptions.PropertyNamingPolicy = null;
         });
 
       services.AddCors(corsOptions => {
