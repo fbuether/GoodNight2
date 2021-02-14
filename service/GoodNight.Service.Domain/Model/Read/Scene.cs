@@ -9,7 +9,7 @@ namespace GoodNight.Service.Domain.Read
   {}
 
   public record Option(
-    string Scene,
+    string Scene, // urlname of scene that this option leads to.
     bool IsAvailable,
     string Text,
     IImmutableList<Requirement> Requirements)
@@ -21,9 +21,9 @@ namespace GoodNight.Service.Domain.Read
   /// options that this player has from here on.
   /// </summary>
   public record Scene(
-    string Urlname,
+    string Name, // urlname
     string Text,
-    IImmutableList<(Quality, Value)> Effects,
+    IImmutableList<Property> Effects,
     IImmutableList<Option> Options,
     string? Return,
     string? Continue

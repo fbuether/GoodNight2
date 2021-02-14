@@ -8,7 +8,7 @@ namespace GoodNight.Service.Domain.Read
     public record Option(
       string Scene,
       string Text,
-      IImmutableList<(Quality, Value)> Effects)
+      IImmutableList<Property> Effects)
       : Choice {}
 
     public record Return(string Scene)
@@ -26,6 +26,6 @@ namespace GoodNight.Service.Domain.Read
   public record Action(
     string Urlname,
     string Text,
-    Choice Choosen
+    Choice Chosen
   ) {}
 }

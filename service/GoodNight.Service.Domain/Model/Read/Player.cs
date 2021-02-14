@@ -1,20 +1,14 @@
-
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Read
 {
   /// <summary>
-  /// A Read.Player is a user playing a specific story. They have a name, a
-  /// current state (a list of qualities along with the acquired values)
-  /// and a history, a list of all scenes they have played.
+  /// A Read.Player is a user playing a specific story. They have a name and a
+  /// current state (a list of qualities along with the acquired values).
   /// </summary>
   public record Player(
     string User,
-    string Story,
     string Name,
-    IImmutableList<Action> History,
-    Scene Current,
-    IImmutableDictionary<string, Value> State)
+    IImmutableList<Property> State)
   {}
 }

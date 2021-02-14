@@ -12,6 +12,22 @@ namespace GoodNight.Service.Domain.Read
     string Description,
     string? Scene)
   {
-    
+    public record Bool(
+      string Name,
+      string Description,
+      string? Scene)
+      : Quality(Name, Type.Bool, Description, Scene) {}
+
+    public record Int(
+      string Name,
+      string Description,
+      string? Scene)
+      : Quality(Name, Type.Int, Description, Scene) {}
+
+    public record Enum(
+      string Name,
+      string Description,
+      string? Scene)
+      : Quality(Name, Type.Enum, Description, Scene) {}
   }
 }

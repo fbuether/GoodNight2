@@ -1,4 +1,3 @@
-using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Read
 {
@@ -8,11 +7,9 @@ namespace GoodNight.Service.Domain.Read
   /// </summary>
   public record Story(
     string Name,
+    string Urlname,
 
     string Description,
-    bool Public,
-
-    IImmutableList<Scene> Scenes,
-    IImmutableList<Quality> Qualities)
+    bool Public)
   {}
 }
