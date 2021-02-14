@@ -1,4 +1,4 @@
-import Link from "./Link";
+import Link from "../components/common/Link";
 import type {Page} from "../model/Page";
 
 export default interface Navigation {

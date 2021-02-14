@@ -1,14 +1,14 @@
 import * as PreactHooks from "preact/hooks";
 
-import DispatchContext from "../../DispatchContext";
-import useAsyncEffect from "../../ui/useAsyncEffect";
+import DispatchContext from "../DispatchContext";
+import useAsyncEffect from "../ui/useAsyncEffect";
 
-import type {ReadPage} from "../../model/Page";
-import {loadStory} from "../../update/LoadStory";
+import type {ReadPage} from "../model/Page";
+import {loadStory} from "../update/LoadStory";
 
-import Scene from "../play/Scene";
-import State from "../play/State";
-import Log from "../play/Log";
+import Scene from "../components/play/Scene";
+import State from "../components/play/State";
+import Log from "../components/play/Log";
 
 
 

@@ -1,5 +1,5 @@
 
-import type {StartPage} from "../../model/Page";
+import type {StartPage} from "../model/Page";
 
 
 export default function Start(state: { page: StartPage }) {

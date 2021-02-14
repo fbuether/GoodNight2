@@ -1,10 +1,10 @@
 import * as Preact from "preact";
 import * as PreactHooks from "preact/hooks";
 
-import {Page, asHref} from "../model/Page";
+import {Page, asHref} from "../../model/Page";
 
-import DispatchContext from "../DispatchContext";
-import {Update} from "../update/Update";
+import DispatchContext from "../../DispatchContext";
+import {Update} from "../../update/Update";
 
 
 interface Link {
