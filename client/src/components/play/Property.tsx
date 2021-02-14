@@ -1,4 +1,4 @@
-import Icon, {IconName} from "../play/Icon";
+import Icon, {IconName, isIcon} from "../play/Icon";
 
 import type {Quality, QualityType} from "../../model/read/Quality";
 import type {Value} from "../../model/read/Value";
@@ -27,9 +27,34 @@ export default function Property(property: Property) {
   //   </li>
   // );
 
-  return (
-    <li class="list-group-item text-truncate">
-      {property.quality.name}: {property.value.value}
-    </li>
-  );
+  let icon = typeof property.quality.icon == "string"
+      && isIcon(property.quality.icon)
+      ? <Icon name={property.quality.icon} />
+      : <Icon name="swap-bag" />;
+
+  switch (property.value.kind) {
+    case "int":
+      return (
+        <li class="list-group-item text-truncate">
+          {icon} {property.value.value} {property.quality.name}
+        </li>
+      );
+    case "bool":
+      if (property.value.value) {
+        return (
+          <li class="list-group-item text-truncate">
+            {icon} {property.quality.name}
+          </li>
+        );
+      }
+      else {
+        return <></>;
+      }
+    case "enum":
+      return (
+        <li class="list-group-item text-truncate">
+          {icon} {property.quality.name}
+        </li>
+      );
+  }
 }
