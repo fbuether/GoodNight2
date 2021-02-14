@@ -53,16 +53,19 @@ namespace GoodNight.Service.Api.Converter
       switch (value)
       {
         case Value.Bool b:
-          writer.WriteBoolean("Bool", b.Value);
+          writer.WriteString("kind", "Bool");
+          writer.WriteBoolean("value", b.Value);
           break;
 
         // must come before value.Int so it's not used up there.
         case Value.Enum e:
-          writer.WriteNumber("Enum", e.Value);
+          writer.WriteString("kind", "Enum");
+          writer.WriteNumber("value", e.Value);
           break;
 
         case Value.Int i:
-          writer.WriteNumber("Int", i.Value);
+          writer.WriteString("kind", "Int");
+          writer.WriteNumber("value", i.Value);
           break;
       }
 

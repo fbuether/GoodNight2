@@ -13,8 +13,8 @@ namespace GoodNight.Service.Api.Converter
       string type = "";
       string scene = "";
       string text = "";
-      ImmutableList<(Quality, Value)> effects =
-        ImmutableList<(Quality, Value)>.Empty;
+      ImmutableList<Property> effects =
+        ImmutableList<Property>.Empty;
 
       if (reader.TokenType != JsonTokenType.StartObject)
       {
@@ -59,9 +59,9 @@ namespace GoodNight.Service.Api.Converter
           else if (property is not null && property.ToLower() == "effects")
           {
             effects = JsonSerializer
-              .Deserialize<ImmutableList<(Quality, Value)>>(
+              .Deserialize<ImmutableList<Property>>(
                 ref reader, options)
-              ?? ImmutableList<(Quality, Value)>.Empty;
+              ?? ImmutableList<Property>.Empty;
           }
         }
       }
@@ -76,18 +76,21 @@ namespace GoodNight.Service.Api.Converter
       switch (value)
       {
         case Choice.Option o:
-          writer.WriteString("Option", o.Scene);
-          writer.WriteString("Text", o.Text);
-          writer.WritePropertyName("Effects");
+          writer.WriteString("kind", "option");
+          writer.WriteString("scene", o.Scene);
+          writer.WriteString("text", o.Text);
+          writer.WritePropertyName("effects");
           JsonSerializer.Serialize(writer, o.Effects, options);
           break;
 
         case Choice.Continue c:
-          writer.WriteString("Continue", c.Scene);
+          writer.WriteString("kind", "continue");
+          writer.WriteString("scene", c.Scene);
           break;
 
         case Choice.Return c:
-          writer.WriteString("Return", c.Scene);
+          writer.WriteString("kind", "return");
+          writer.WriteString("scene", c.Scene);
           break;
       }
 
