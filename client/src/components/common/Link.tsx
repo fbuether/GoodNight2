@@ -15,7 +15,7 @@ interface Link {
 function dispatchLink(dispatch: (u: Update) => void, page: Page) {
   return (event: MouseEvent) => {
     event.preventDefault();
-    dispatch({kind: "Navigate", page: page });
+    dispatch({ kind: "Navigate", page: page });
   }
 };
 

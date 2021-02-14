@@ -1,55 +1,57 @@
+import * as PreactHooks from "preact/hooks";
+
 import Link from "../../components/common/Link";
+import RequirementC from "../../components/play/Requirement";
+
+import DispatchContext from "../../DispatchContext";
+import {Update} from "../../update/Update";
+
 import type {Page} from "../../model/Page";
-
-import RequirementC from "../play/Requirement";
-
 import type {Option, Requirement} from "../../model/read/Scene";
 
 
-export default function Option(option: Option) {
-  let hasReqs = option.requirements.length > 0;
+function dispatchOption(dispatch: (u: Update) => void, option: Option) {
+  return (event: MouseEvent) => {
+    event.preventDefault();
+    dispatch({ kind: "ReadOption", option: option });
+  }
+}
 
-  if (!hasReqs) {
-    if (option.isAvailable) {
-          // to={{kind: "ReadAction"}}
-      return (
-        <button class="list-group-item list-group-item-action">
-          {option.text}
-        </button>
-      );
-    }
-    else {
-      return (
-        <button class="list-group-item list-group-item-action" disabled>
-          {option.text} <small>(nicht verfügbar.)</small>
-        </button>
-      );
+
+export default function Option(option: Option) {
+  const dispatch = PreactHooks.useContext(DispatchContext);
+
+  let requirements: JSX.Element | string = "";
+
+  if (option.requirements.length > 0) {
+    let requirementList = (
+      <>
+        {option.requirements.map(r => <RequirementC {...r} />)}
+      </>
+    );
+
+    requirements = option.isAvailable
+        ? <small>(benötigt: {requirementList})</small>
+        : <small>(nicht verfügbar. benötigt: {requirementList})</small>;
+  }
+  else {
+    if (!option.isAvailable) {
+      requirements = <small>(nicht verfügbar.)</small>;
     }
   }
 
-  let addReq = (rs: Array<JSX.Element>, r: Requirement, index: number) => {
-    if (rs.length > 0) {
-      rs.push(<span>, </span>);
-    }
-    rs.push(<RequirementC {...r}></RequirementC>);
-    return rs;
-  };
-
-  let requirements = option.requirements.reduce(addReq,
-    new Array<JSX.Element>());
-
-  if (!option.isAvailable) {
+  if (option.isAvailable) {
     return (
-      <button class="list-group-item list-group-item-action" disabled>
-        {option.text}{" "}
-        <small>(nicht verfügbar. benötigt: {requirements})</small>
+      <button class="list-group-item list-group-item-action"
+        onClick={dispatchOption(dispatch, option)}>
+        {option.text} {requirements}
       </button>
     );
   }
   else {
     return (
-      <button class="list-group-item list-group-item-action">
-        {option.text} <small>(benötigt: {requirements})</small>
+      <button class="list-group-item list-group-item-action" disabled>
+        {option.text} {requirements} 
       </button>
     );
   }
