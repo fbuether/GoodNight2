@@ -2,7 +2,6 @@ import type State from "../model/State";
 import type {Page} from "../model/Page";
 import DispatchContext from "../DispatchContext";
 
-import Frame from "./play/Frame";
 import Start from "./pages/Start";
 import Read from "./pages/Read";
 import Navigation from "./Navigation";
@@ -15,7 +14,7 @@ function assertNever(param: never): never {
 function getPage(page: Page) {
   switch (page.kind) {
     case "start": return <Start page={page} />;
-    case "read": return <Read page={page} />;
+    case "read": return <Read {...page} />;
     default: return assertNever(page);
   }
 }

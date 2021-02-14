@@ -6,27 +6,46 @@ import useAsyncEffect from "../../ui/useAsyncEffect";
 import type {ReadPage} from "../../model/Page";
 import {loadStory} from "../../update/LoadStory";
 
-import Frame from "../play/Frame";
+import Scene from "../play/Scene";
+import State from "../play/State";
+import Log from "../play/Log";
 
 
 
-export default function Read(state: { page: ReadPage }) {
+export default function Read(page: ReadPage) {
   const dispatch = PreactHooks.useContext(DispatchContext);
 
-  if (state.page.player == null) {
+  if (page.adventure == null) {
     useAsyncEffect(async() => {
-      dispatch({
-        kind: "ShowStory",
-        player: await loadStory(state.page.user, state.page.story) });
+      let adventure = await loadStory(page.user, page.story);
+      dispatch({ kind: "ShowStory", adventure: adventure });
     });
 
     return (
-      <div>Loading…</div>
+      <div id="centre" class="row px-0 g-0">
+        <div id="text" class="col-sm-8">
+          <h1 id="banner">Loading…</h1>
+        </div>
+        <div id="side" class="col-sm-4">
+        </div>
+      </div>
     );
   }
   else {
+    let adventure = page.adventure;
+
     return (
-      <Frame />
+      <div id="centre" class="row px-0 g-0">
+        <div id="text" class="col-sm-8">
+          <h1 id="banner">{adventure.story.name}</h1>
+          <Log entries={adventure.history}></Log>
+          <Scene {...adventure.current}></Scene>
+        </div>
+        <div id="side" class="col-sm-4">
+          <hr class="w-75 mx-auto mt-4 mb-5" />
+          <State {...adventure.player}></State>
+        </div>
+      </div>
     );
   }
 }
