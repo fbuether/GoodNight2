@@ -6,14 +6,14 @@ import type {Page} from "../model/Page";
 import {showStory} from "./LoadStory";
 import type {Adventure} from "../model/read/Adventure";
 
-import {readOption} from "./ReadOption";
-import type {Option} from "../model/read/Scene";
+import {showOption} from "./DoOption";
+import type {Consequence} from "../model/read/Consequence";
 
 
 export type Update =
     | { kind: "Navigate", page: Page }
     | { kind: "ShowStory", adventure: Adventure }
-    | { kind: "ReadOption", option: Option };
+    | { kind: "ReadOption", consequence: Consequence };
 
 
 function assertNever(param: never): never {
@@ -25,7 +25,7 @@ export default function update(state: State, update: Update): State {
   switch (update.kind) {
     case "Navigate": return navigate(state, update.page);
     case "ShowStory": return showStory(state, update.adventure);
-    case "ReadOption": return readOption(state, update.option);
+    case "ReadOption": return showOption(state, update.consequence);
     default: return assertNever(update);
   }
 }

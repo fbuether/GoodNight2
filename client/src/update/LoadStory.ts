@@ -6,7 +6,7 @@ import {Adventure, asAdventure} from "../model/read/Adventure";
 
 export async function loadStory(user: string, story: string)
 : Promise<Adventure> {
-  let response = await request("api/v1/read/continue");
+  let response = await request("GET", "api/v1/read/continue");
   return asAdventure(response);
 }
 

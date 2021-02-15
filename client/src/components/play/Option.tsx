@@ -9,11 +9,13 @@ import {Update} from "../../update/Update";
 import type {Page} from "../../model/Page";
 import type {Option, Requirement} from "../../model/read/Scene";
 
+import {doOption} from "../../update/DoOption";
 
 function dispatchOption(dispatch: (u: Update) => void, option: Option) {
-  return (event: MouseEvent) => {
+  return async (event: MouseEvent) => {
     event.preventDefault();
-    dispatch({ kind: "ReadOption", option: option });
+    let consequence = await doOption(option);
+    dispatch({ kind: "ReadOption", consequence: consequence });
   }
 }
 
