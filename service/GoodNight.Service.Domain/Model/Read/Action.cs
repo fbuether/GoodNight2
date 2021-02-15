@@ -3,7 +3,7 @@ using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Read
 {
-  public record Choice
+  public abstract record Choice
   {
     public record Option(
       string Scene,
