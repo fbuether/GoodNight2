@@ -7,6 +7,7 @@ import {Consequence, asConsequence} from "../model/read/Consequence";
 
 
 export async function doOption(option: Option): Promise<Consequence> {
+  // todo: add story to url. .../api/v1/read/{story}/do
   return await request("POST", "api/v1/read/do", option.scene) as Consequence;
 }
 
