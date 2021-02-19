@@ -3,9 +3,6 @@
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
     <WarningsAsErrors>CS8600;CS8602;CS8603;CS8618;CS8619;CS8619</WarningsAsErrors>
-    <RootNamespace>GoodNight.Service.Storage</RootNamespace>
+    <RootNamespace>GoodNight.Service.Storage.Interface</RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\GoodNight.Service.Storage.Interface\GoodNight.Service.Storage.Interface.csproj" />
-  </ItemGroup>
 </Project>
