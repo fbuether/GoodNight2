@@ -28,7 +28,7 @@ namespace GoodNight.Service.Api.Converter
           switch (type) {
             case "continue": return new Choice.Continue(scene);
             case "return": return new Choice.Return(scene);
-            case "option": return new Choice.Option(scene, text, effects);
+            case "option": return new Choice.Action(scene, text, effects);
             default: return null;
           }
         }
@@ -75,8 +75,8 @@ namespace GoodNight.Service.Api.Converter
 
       switch (value)
       {
-        case Choice.Option o:
-          writer.WriteString("kind", "option");
+        case Choice.Action o:
+          writer.WriteString("kind", "action");
           writer.WriteString("scene", o.Scene);
           writer.WriteString("text", o.Text);
           writer.WritePropertyName("effects");

@@ -1,4 +1,5 @@
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain.Model.Write;
 using Xunit;
 using Xunit.Gherkin.Quick;
 

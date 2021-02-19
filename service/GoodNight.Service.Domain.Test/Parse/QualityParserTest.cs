@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using Gherkin.Ast;
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain.Parse;
 using Xunit;
 using Xunit.Abstractions;

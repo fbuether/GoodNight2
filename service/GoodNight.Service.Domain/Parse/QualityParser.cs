@@ -3,6 +3,7 @@ using System;
 using Pidgin;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain.Model.Write;
 
 namespace GoodNight.Service.Domain.Parse
 {
