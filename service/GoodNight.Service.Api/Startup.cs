@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using GoodNight.Service.Storage;
+using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Api.Converter;
 
 namespace GoodNight.Service.Api

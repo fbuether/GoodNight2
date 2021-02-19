@@ -6,8 +6,17 @@ namespace GoodNight.Service.Storage.Interface
   /// An object implementing IStorable can be persisted in a Storage.IStore.
   /// This is an aggregate root in DDD nomenclature.
   /// </summary>
-  public interface IStorable : ISerializable
+  /// <typeparam name="K">
+  /// The type of the keys of this type.
+  /// </typeparam>
+  public interface IStorable<K>
   {
-
+    /// <summary>
+    /// Fetches the key of this object.
+    /// </summary>
+    /// <returns>
+    /// The key of this object.
+    /// </returns>
+    public K GetKey();
   }
 }

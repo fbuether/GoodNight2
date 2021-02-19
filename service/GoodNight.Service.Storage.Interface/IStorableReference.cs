@@ -14,13 +14,14 @@ namespace GoodNight.Service.Storage.Interface
   /// <typeparam name="T">
   /// The type of the element to store.
   /// </typeparam>
-  /// <typeparam name="K">
-  /// The type of the key of this element.
-  /// </typeparam>
   public interface IStorableReference<T, K>
-    where T : IStorable
-    where K : IStorableKey
+    where T : IStorable<K>
   {
+    /// <summary>
+    /// Returns the key of this reference.
+    /// </summary>
+    public K Key { get; }
+
     /// <summary>
     /// Sets this element to reference a specific element in the store.
     /// </summary>

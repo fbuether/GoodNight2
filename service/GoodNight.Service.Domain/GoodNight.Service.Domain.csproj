@@ -8,4 +8,7 @@
   <ItemGroup>
     <PackageReference Include="Pidgin" Version="2.5.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GoodNight.Service.Storage.Interface\GoodNight.Service.Storage.Interface.csproj" />
+  </ItemGroup>
 </Project>
