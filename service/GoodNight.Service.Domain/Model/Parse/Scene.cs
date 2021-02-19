@@ -1,8 +1,8 @@
 using System.Linq;
 using System;
 using System.Collections.Immutable;
-using ModelScene = GoodNight.Service.Domain.Model.Scene;
-using ModelContent = GoodNight.Service.Domain.Model.Content;
+using ModelScene = GoodNight.Service.Domain.Model.Write.Scene;
+using ModelContent = GoodNight.Service.Domain.Model.Write.Content;
 using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Parse
