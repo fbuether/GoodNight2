@@ -29,5 +29,13 @@ namespace GoodNight.Service.Domain.Model.Read
 
       return this with { State = newState };
     }
+
+    public Value GetValueOf(IStorableReference<Quality, string> quality)
+    {
+      return State.GetValueOrDefault(quality)
+        ?? quality.Get()?.GetDefault()
+        ?? throw new InvalidQualityError($"Materialising Scene found " +
+          $"invalid Quality {quality.Key}.");
+    }
   }
 }

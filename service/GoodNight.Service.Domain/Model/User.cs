@@ -25,19 +25,16 @@ namespace GoodNight.Service.Domain.Model
       return this.EMail;
     }
 
-    public (User, Consequence)? ContinueAdventure(string storyname,
+    public (User, Consequence)? ContinueAdventure(Story story,
       string optionname)
     {
-      var adventure = this.Adventures.First(a => a.Story.Key == storyname);
-      if (adventure == null)
+      var adventure = this.Adventures.First(a => a.Story.Key == story.GetKey());
+      if (adventure is null)
         return null;
 
-      var option = adventure.Current.Options
-        .First(o => o.Scene.Key == optionname);
-      if (option == null)
+      var (newAdventure, consequence) = adventure.ContinueWith(optionname);
+      if (newAdventure is null || consequence is null)
         return null;
-
-      var (newAdventure, consequence) = adventure.ContinueWith(option);
 
       var newSelf = this with {
         Adventures = this.Adventures
