@@ -1,8 +1,9 @@
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Http;
-using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Storage.Interface;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using System.Linq;
 using System;
 
 namespace GoodNight.Service.Api.Play
@@ -19,87 +20,57 @@ namespace GoodNight.Service.Api.Play
     }
 
 
-    [HttpGet("continue")]
+    [HttpGet("{storyname}/continue")]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Adventure> GetAdventure()
+    public ActionResult<Adventure> GetAdventure(string storyname)
     {
-      var muenzen = new Quality.Int("Münzen", "two-coins",
-        "Alles, was glitzert, ist Gold.", null);
-      var finasHammer = new Quality.Bool("Finas Hammer", "shamrock",
-        "Der mächtige Hammer der Schmiedin.", null);
+      var username = "current-user-name";
 
-      var player = new Player("logged_in_user", "Mrs. Hollywinkle",
-        ImmutableList.Create<Property>(
-          new Property(muenzen, new Value.Int(4)),
-          new Property(finasHammer, new Value.Bool(true))
-        ));
+      var user = store.Get<User, string>(username);
+      if (user == null)
+        return Unauthorized("Authentication not found or invalid.");
 
-      var story = new Story("Hels Schlucht", "hels-schlucht",
-        "Hels Schlucht ist die letzte Zuflucht der Menschen", true);
-      var history = ImmutableList.Create<Action>(
-        new Action("start",
-          "Die Zeit der Menschen ist vorbei, sagen…",
-          ImmutableList.Create<Property>(
-            new Property(muenzen, new Value.Int(2))),
-          new Choice.Continue("start-fortsetzung")));
+      var story = store.Get<Story, string>(storyname);
+      if (story == null)
+        return NotFound("Story not found.");
 
-      var current =
-        new Scene(
-          "start-fortsetzung",
-          "### Weiter auf der Flucht\n\nAuch du bist geflohen, dem Ruf…",
-          ImmutableList.Create<Property>(
-            new Property(finasHammer, new Value.Bool(false))
-          ),
-          ImmutableList.Create<Option>(new[] {
-              new Option("herkunft-kueste", true, "an der Küste zwischen dem…",
-                ImmutableList<Requirement>.Empty),
-              new Option("herkunft-steppe", true, "die weiten, baumlosen…",
-                ImmutableList<Requirement>.Empty),
-              new Option("herkunft-berge", false, "hoch an den Bergspitzen…",
-                ImmutableList<Requirement>.Empty)
-            }),
-          null,
-          null);
+      var adventure = user.Adventures.First(a => a.Story.Key == storyname);
+      if (adventure == null)
+        return Forbid("User has not started Adventure.");
 
-      return Ok(new Adventure(player, story, history, current));
+      return Ok(adventure);
     }
 
-    [HttpPost("do")]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [HttpPost("{storyname}/do")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Consequence> DoOption()
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<Consequence> DoOption(string storyname,
+      [FromBody] string optionname)
     {
-      var beutel = new Quality.Bool("Beutel", "swap-bag", "Zur Aufbewahrung.",
-        null);
-      var finasHammer = new Quality.Bool("Finas Hammer", "shamrock",
-        "Der mächtige Hammer der Schmiedin.", null);
+      var username = "current-user-name";
 
-      return new Consequence(
-        new Action(
-          "start-fortsetzung",
-          "### Weiter auf der Flucht\n\nAuch du bist geflohen, dem Ruf…",
-          ImmutableList.Create<Property>(
-            new Property(finasHammer, new Value.Bool(false))
-          ),
-          new Choice.Option("wherever", "Du tust, was du tun musst.",
-            ImmutableList<Property>.Empty)),
-        new Scene("start2",
-          "Und so geht es weiter...",
-          ImmutableList.Create<Property>(
-            new Property(beutel, new Value.Bool(true))),
-          ImmutableList.Create<Option>(new[] {
-              new Option("naechster-schritt", true, "Und dann kommt…",
-                ImmutableList<Requirement>.Empty),
-              new Option("oder-anderer", true, "Hier ist erstmal Pause.",
-                ImmutableList.Create<Requirement>(new[] {
-                    new Requirement(new Expression.BinaryApplication(
-                        new Expression.BinaryOperator.Equal(),
-                        new Expression.Quality("muenzen"),
-                        new Expression.Number(4)),
-                      true)
-                  }))
-            }), "return-scene", null));
+      if (String.IsNullOrEmpty(optionname))
+        return BadRequest("No Option given.");
+
+      var user = store.Get<User, string>(username);
+      if (user == null)
+        return Unauthorized("Authentication not found or invalid.");
+
+      var story = store.Get<Story, string>(storyname);
+      if (story == null)
+        return NotFound("Story not found.");
+
+      var consequence = store.WithUpdate(username, (User user) =>
+        user.ContinueAdventure(story, optionname));
+
+      if (consequence == null)
+        return BadRequest("Option not found or not valid now.");
+
+      return Ok(consequence);
     }
   }
 }
