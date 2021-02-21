@@ -34,7 +34,7 @@ namespace GoodNight.Service.Storage.Interface
     /// The element associated with the saved key in this store, or null if the
     /// key does not point to an element.
     /// </returns>
-    public T Get();
+    public T? Get();
   }
 }
 
