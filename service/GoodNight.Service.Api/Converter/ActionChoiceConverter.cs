@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Read;
 
 namespace GoodNight.Service.Api.Converter
 {
@@ -10,8 +10,9 @@ namespace GoodNight.Service.Api.Converter
     public override Choice? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
     {
       string type = "";
-      string scene = "";
+      string urlname = "";
       string text = "";
+      string? icon = null;
       ImmutableList<Property> effects =
         ImmutableList<Property>.Empty;
 
@@ -25,9 +26,10 @@ namespace GoodNight.Service.Api.Converter
         if (reader.TokenType == JsonTokenType.EndObject)
         {
           switch (type) {
-            case "continue": return new Choice.Continue(scene);
-            case "return": return new Choice.Return(scene);
-            case "option": return new Choice.Action(scene, text, effects);
+            case "continue": return new Choice.Continue();
+            case "return": return new Choice.Return();
+            case "option": return new Choice.Action(
+              urlname, text, icon, effects);
             default: return null;
           }
         }
@@ -36,24 +38,21 @@ namespace GoodNight.Service.Api.Converter
           var property = reader.GetString();
           reader.Read();
 
-          if (property == "Continue")
+          if (property == "kind")
           {
-            type = "continue";
-            scene = reader.GetString() ?? "";
+            type = reader.GetString() ?? "";
           }
-          else if (property == "Return")
+          else if (property == "urlname")
           {
-            type = "return";
-            scene = reader.GetString() ?? "";
+            urlname = reader.GetString() ?? "";
           }
-          else if (property == "Option")
-          {
-            type = "option";
-            scene = reader.GetString() ?? "";
-          }
-          else if (property == "Text")
+          else if (property == "text")
           {
             text = reader.GetString() ?? "";
+          }
+          else if (property == "icon")
+          {
+            icon = reader.GetString() ?? "";
           }
           else if (property is not null && property.ToLower() == "effects")
           {
@@ -76,20 +75,19 @@ namespace GoodNight.Service.Api.Converter
       {
         case Choice.Action o:
           writer.WriteString("kind", "action");
-          writer.WriteString("scene", o.Scene);
           writer.WriteString("text", o.Text);
+          writer.WriteString("text", o.Urlname);
+          writer.WriteString("text", o.Icon);
           writer.WritePropertyName("effects");
           JsonSerializer.Serialize(writer, o.Effects, options);
           break;
 
         case Choice.Continue c:
           writer.WriteString("kind", "continue");
-          writer.WriteString("scene", c.Scene);
           break;
 
         case Choice.Return c:
           writer.WriteString("kind", "return");
-          writer.WriteString("scene", c.Scene);
           break;
       }
 
