@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Read
@@ -13,6 +14,20 @@ namespace GoodNight.Service.Domain.Read
   /// </remarks>
   public record Player(
     string Name,
-    IImmutableSet<Property> State)
-  {}
+    IImmutableList<Property> State)
+  {
+    public Player Apply(IImmutableList<Property> effects)
+    {
+      if (effects.Count == 0)
+        return this;
+
+      var newState = effects.Aggregate(State, (state, effect) =>
+        ImmutableList.CreateRange(
+          state.Select(prop => prop.Quality.Key == effect.Quality.Key
+            ? effect
+            : prop)));
+
+      return this with { State = newState };
+    }
+  }
 }
