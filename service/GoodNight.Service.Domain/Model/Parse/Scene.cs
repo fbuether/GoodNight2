@@ -2,11 +2,12 @@ using System.Linq;
 using System;
 using System.Collections.Immutable;
 using ModelScene = GoodNight.Service.Domain.Model.Write.Scene;
-using ModelContent = GoodNight.Service.Domain.Model.Write.Content;
 using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Parse
 {
+  using ModelContent = Content<string, string>;
+
   public record Scene(
     string Raw,
     IImmutableList<Content> Content)
@@ -52,34 +53,38 @@ namespace GoodNight.Service.Domain.Model.Parse
       switch (content)
       {
         case Content.Text text:
-          if (modelContent.Last() is ModelContent.Text lastText)
+          if (modelContent.Last() is ModelContent.Text<string, string> lastText)
           {
             return
               ImmutableList.CreateRange(
                 modelContent
                 .Take(modelContent.Count - 1)
-                .Append(new ModelContent.Text(
+                .Append(new ModelContent.Text<string, string>(
                     lastText.Value + "\n" + text.Value)));
           }
           else {
-            return modelContent.Add(new ModelContent.Text(text.Value));
+            return modelContent.Add(
+              new ModelContent.Text<string, string>(text.Value));
           }
 
         case Content.Require require:
-          return modelContent.Add(new ModelContent.Require(require.Expression));
+          return modelContent.Add(
+            new ModelContent.Require<string, string>(require.Expression));
 
         case Content.Option option:
-          return modelContent.Add(new ModelContent.Option(option.Scene,
+          return modelContent.Add(
+            new ModelContent.Option<string, string>(option.Scene,
               TransformContent(option.Content)));
 
         case Content.Condition cond:
-          return modelContent.Add(new ModelContent.Condition(
+          return modelContent.Add(new ModelContent.Condition<string, string>(
               cond.If,
               TransformContent(cond.Then),
               TransformContent(cond.Else)));
 
         case Content.Include include:
-          return modelContent.Add(new ModelContent.Include(include.Scene));
+          return modelContent.Add(
+            new ModelContent.Include<string, string>(include.Scene));
 
         default:
           // todo: warn about possibly unused content?

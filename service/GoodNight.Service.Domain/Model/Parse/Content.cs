@@ -53,13 +53,13 @@ namespace GoodNight.Service.Domain.Model.Parse
     // only used on the top level of an action
     public record Set(
       string Quality,
-      Expression Expression)
+      Expression<string> Expression)
       : Content {}
 
     // require the player to fulfil an expression to take this scene
     // only used inside of options, or on the top level
     public record Require(
-      Expression Expression)
+      Expression<string> Expression)
       : Content {}
 
 
@@ -82,7 +82,7 @@ namespace GoodNight.Service.Domain.Model.Parse
 
     // consider a set of settings only if a condition holds
     public record Condition(
-      Expression If,
+      Expression<string> If,
       IImmutableList<Content> Then,
       IImmutableList<Content> Else)
       : Content {}

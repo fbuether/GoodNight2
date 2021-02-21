@@ -8,6 +8,13 @@ using Xunit.Gherkin.Quick;
 
 namespace GoodNight.Service.Domain.Test.Parse
 {
+  using Expression = Expression<string>;
+  using UnaryApplication = Expression<string>.UnaryApplication<string>;
+  using BinaryApplication = Expression<string>.BinaryApplication<string>;
+  using Bool = Expression<string>.Bool<string>;
+  using Number = Expression<string>.Number<string>;
+  using Quality = Expression<string>.Quality<string>;
+
   [FeatureFile("Parse/ExpressionParserTest.feature")]
   public class ExpressionParserTest : Xunit.Gherkin.Quick.Feature
   {
@@ -22,7 +29,7 @@ namespace GoodNight.Service.Domain.Test.Parse
     {
       yield return node;
 
-      if (node is Expression.UnaryApplication u)
+      if (node is UnaryApplication u)
       {
         foreach (var expr in FindAllNodes(u.Argument))
         {
@@ -30,7 +37,7 @@ namespace GoodNight.Service.Domain.Test.Parse
         }
       }
 
-      if (node is Expression.BinaryApplication b)
+      if (node is BinaryApplication b)
       {
         foreach (var expr in FindAllNodes(b.Left))
         {
@@ -96,16 +103,16 @@ namespace GoodNight.Service.Domain.Test.Parse
     }
 
     // helper tools to build reference expressions.
-    private static Expression expT = new Expression.Bool(true);
-    private static Expression expF = new Expression.Bool(false);
-    private static Expression exp7 = new Expression.Number(7);
-    private static Expression exp9 = new Expression.Number(9);
+    private static Expression expT = new Bool(true);
+    private static Expression expF = new Bool(false);
+    private static Expression exp7 = new Number(7);
+    private static Expression exp9 = new Number(9);
 
     private static Expression mkNot(Expression op) =>
-      new Expression.UnaryApplication(new Expression.UnaryOperator.Not(), op);
+      new UnaryApplication(new Expression.UnaryOperator.Not(), op);
     private static Expression mkBin(Expression.BinaryOperator op, Expression l,
       Expression r) =>
-      new Expression.BinaryApplication(op, l, r);
+      new BinaryApplication(op, l, r);
 
     private static Expression mkAnd(Expression l, Expression r) =>
       mkBin(new Expression.BinaryOperator.And(), l, r);
@@ -116,21 +123,21 @@ namespace GoodNight.Service.Domain.Test.Parse
       new Dictionary<string, Expression>() {
       { "true", expT },
       { "false", expF },
-      { "-14", new Expression.Number(-14) },
+      { "-14", new Number(-14) },
       { "7", exp7 },
-      { "77516", new Expression.Number(77516) },
-      { "Quality \"qualityname\"", new Expression.Quality("qualityname") },
-      { "Quality \"quality name\"", new Expression.Quality("quality name") },
+      { "77516", new Number(77516) },
+      { "Quality \"qualityname\"", new Quality("qualityname") },
+      { "Quality \"quality name\"", new Quality("quality name") },
       { "Quality \"quality name with several parts\"",
-        new Expression.Quality("quality name with several parts") },
-      { "Quality \"not\"", new Expression.Quality("not") },
-      { "Quality \"notable\"", new Expression.Quality("notable") },
-      { "Quality \"orwellian\"", new Expression.Quality("orwellian") },
+        new Quality("quality name with several parts") },
+      { "Quality \"not\"", new Quality("not") },
+      { "Quality \"notable\"", new Quality("notable") },
+      { "Quality \"orwellian\"", new Quality("orwellian") },
 
       { "Quality \"this\" and Quality \"that\"",
-        mkAnd(new Expression.Quality("this"), new Expression.Quality("that")) },
+        mkAnd(new Quality("this"), new Quality("that")) },
       { "false and Quality \"that\"",
-        mkAnd(expF, new Expression.Quality("that")) },
+        mkAnd(expF, new Quality("that")) },
 
       { "not true", mkNot(expT) },
       { "not not true", mkNot(mkNot(expT)) },

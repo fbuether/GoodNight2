@@ -14,15 +14,13 @@ namespace GoodNight.Service.Domain.Model.Write
     IImmutableList<string> Tags,
     IImmutableList<string> Category,
 
-    IImmutableList<(string, Expression)> Sets,
+    IImmutableList<(string, Expression<string>)> Sets,
 
     string? Return,
     string? Continue,
 
-    IImmutableList<Content> Content)
-    : IStorable<string>
+    IImmutableList<Content<string, string>> Content)
   {
-
     public string Urlname
     {
       get
@@ -41,16 +39,18 @@ namespace GoodNight.Service.Domain.Model.Write
       return new Scene("", "", false, false, false,
         ImmutableList<string>.Empty,
         ImmutableList<string>.Empty,
-        ImmutableList<(string, Expression)>.Empty,
+        ImmutableList<(string, Expression<string>)>.Empty,
         null,
         null,
-        ImmutableList<Content>.Empty);
+        ImmutableList<Content<string, string>>.Empty);
     }
 
-    public Scene AddContent(Content newContent)
+    public Scene AddContent(Content<string, string> newContent)
     {
       return this with { Content = Content.Add(newContent) };
     }
+
+
 
 
 

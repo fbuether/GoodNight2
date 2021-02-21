@@ -62,8 +62,8 @@ namespace GoodNight.Service.Domain.Parse
       .Before(NameParser.InlineWhitespace
         .Then(Parser.Char('='))
         .Then(NameParser.InlineWhitespace)).
-      Then<Expression, Content>(ExpressionParser.Expression, (quality,expr) =>
-        new Content.Set(quality, expr));
+      Then<Expression<string>, Content>(ExpressionParser.Expression,
+        (quality,expr) => new Content.Set(quality, expr));
 
     private readonly static Parser<char, Content> requireContent =
       Parser.Try(Parser.String("require"))
@@ -86,7 +86,7 @@ namespace GoodNight.Service.Domain.Parse
 
 
 
-    private readonly static Parser<char, Expression> conditionIf =
+    private readonly static Parser<char, Expression<string>> conditionIf =
       Parser.Try(Parser.String("if"))
       .Then(NameParser.Colon)
       .Then(ExpressionParser.Expression)
@@ -112,7 +112,7 @@ namespace GoodNight.Service.Domain.Parse
       ContentParser parseLines) =>
       conditionIf
       .Then(parseLines,
-        (Expression cond, IEnumerable<Content> then) => (cond, then))
+        (Expression<string> cond, IEnumerable<Content> then) => (cond, then))
       .Then<Maybe<IEnumerable<Content>>, Content>(
         Parser.Try(
           conditionElse
@@ -120,7 +120,7 @@ namespace GoodNight.Service.Domain.Parse
         ).Optional()
         .Before(endContent),
 
-        ((Expression, IEnumerable<Content>) condThen,
+        ((Expression<string>, IEnumerable<Content>) condThen,
           Maybe<IEnumerable<Content>> elseContent) =>
         new Content.Condition(condThen.Item1,
           ImmutableArray.Create<Content>(condThen.Item2.ToArray()),
