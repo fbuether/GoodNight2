@@ -27,12 +27,26 @@ namespace GoodNight.Service.Domain.Read
     /// One of the options in Current.Options, or Current.Return or
     /// Current.Continue.
     /// <param>
-    public (Adventure, Consequence) ContinueWith(Option option)
+    public (Adventure?, Consequence?) ContinueWith(string optionname)
     {
-      var scene = option.Scene.Get();
-      var action = scene.Play(Player);
+      var (log, nextScene) = Current.ContinueWith(optionname);
+      if (log is null || nextScene is null)
+        return (null, null);
 
-      throw new NotImplementedException();
+      var scene = nextScene.Get();
+      if (scene == null)
+        return (null, null);
+
+      var playerAfterChoice = Player.Apply(log.Effects);
+      var action = scene.Play(playerAfterChoice);
+      var playerAfterScene = playerAfterChoice.Apply(action.Effects);
+
+      var adventure = this with {
+        History = History.Add(log),
+        Current = action
+      };
+
+      return (adventure, new Consequence(log, action));
     }
   }
 }
