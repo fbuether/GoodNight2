@@ -27,6 +27,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return context(Value);
       }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return new Quality(fun(Value));
+      }
     }
 
     /// <summary>
@@ -40,6 +45,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return new Value.Bool(Value);
       }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return (Expression<R>)this;
+      }
     }
 
     /// <summary>
@@ -52,6 +62,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public Value Evaluate(Func<Q, Value> context)
       {
         return new Value.Int(Value);
+      }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return (Expression<R>)this;
       }
     }
 
@@ -86,6 +101,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
                 throw new TypeError($"Cannot apply {Operator} to {argVal}.");
             }
         }
+      }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return new UnaryApplication(Operator, Argument.Map(fun));
       }
     }
 
@@ -172,6 +192,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
               $"Cannot apply ${Operator} to ({leftVal},{rightVal})");
         }
       }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return new BinaryApplication(Operator, Left.Map(fun), Right.Map(fun));
+      }
     }
 
 
@@ -185,5 +210,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
     /// typed in the given context.
     /// </remarks>
     public Value Evaluate(Func<TQuality, Value> context);
+
+    public Expression<R> Map<R>(Func<TQuality, R> fun);
   }
 }
