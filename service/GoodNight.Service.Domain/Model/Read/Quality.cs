@@ -26,6 +26,8 @@ namespace GoodNight.Service.Domain.Model.Read
       : Quality(Name, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Bool;
+
+      public override Value GetDefault() => new Value.Bool(false);
     }
 
     /// <summary>
@@ -45,6 +47,8 @@ namespace GoodNight.Service.Domain.Model.Read
       : Quality(Name, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Int;
+
+      public override Value GetDefault() => new Value.Int(0);
     }
 
     /// <summary>
@@ -66,6 +70,8 @@ namespace GoodNight.Service.Domain.Model.Read
       : Quality(Name, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Enum;
+
+      public override Value GetDefault() => new Value.Enum(0);
     }
 
 
@@ -83,5 +89,7 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       return Urlname;
     }
+
+    public abstract Value GetDefault();
   }
 }
