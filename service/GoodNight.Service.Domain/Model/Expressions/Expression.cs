@@ -30,7 +30,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return new Quality(fun(Value));
+        return new Quality<R>(fun(Value));
       }
     }
 
@@ -100,12 +100,14 @@ namespace GoodNight.Service.Domain.Model.Expressions
               default:
                 throw new TypeError($"Cannot apply {Operator} to {argVal}.");
             }
+          default:
+            throw new InvalidOperationException($"Invalid operator {Operator}");
         }
       }
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return new UnaryApplication(Operator, Argument.Map(fun));
+        return new UnaryApplication<R>(Operator, Argument.Map(fun));
       }
     }
 
@@ -195,7 +197,8 @@ namespace GoodNight.Service.Domain.Model.Expressions
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return new BinaryApplication(Operator, Left.Map(fun), Right.Map(fun));
+        return new BinaryApplication<R>(Operator,
+          Left.Map(fun), Right.Map(fun));
       }
     }
 
