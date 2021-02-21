@@ -38,7 +38,7 @@ namespace GoodNight.Service.Domain.Model.Read
         return (null, null);
 
       var playerAfterChoice = Player.Apply(log.Effects);
-      var action = scene.Play(playerAfterChoice);
+      var action = scene.Play(nextScene, playerAfterChoice);
       var playerAfterScene = playerAfterChoice.Apply(action.Effects);
 
       var adventure = this with {

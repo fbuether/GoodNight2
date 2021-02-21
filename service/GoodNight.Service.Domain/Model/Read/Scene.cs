@@ -193,13 +193,15 @@ namespace GoodNight.Service.Domain.Model.Read
       return Urlname;
     }
 
-    public Action Play(Player player)
+    public Action Play(IStorableReference<Scene, string> thisRef, Player player)
     {
-      var action = new Action(this, "", ImmutableList<Property>.Empty,
+      // todo: replace thisRef with this, as soon as storable objects can get
+      // references to themselves.
+      var action = new Action(thisRef, "",
+        ImmutableList<Property>.Empty,
         ImmutableList<Option>.Empty, null, null);
       return Content.Aggregate(action,
         (action, content) => content.AddTo(player, action));
     }
   }
 }
-
