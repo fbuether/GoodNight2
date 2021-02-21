@@ -2,6 +2,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Read.Error;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
@@ -52,10 +53,12 @@ namespace GoodNight.Service.Domain.Model.Read
         var isAvailable = false;
         var requirements = Requirements.Select(expression => {
           var value = expression.Evaluate(player.GetValueOf);
-          if (value is Value.Bool bValue) {
+          if (value is Value.Bool bValue)
+          {
             return new Requirement(expression, bValue.Value);
           }
-          else {
+          else
+          {
             throw new TypeError("Scene Requirement does not evaluate to bool.");
           }
         });
@@ -68,8 +71,8 @@ namespace GoodNight.Service.Domain.Model.Read
         return action with {
           Options = action.Options.Add(new Read.Option(Urlname,
             Description, Icon, isAvailable,
-              ImmutableList.CreateRange(requirements),
-              ImmutableList.CreateRange(effects), Scene))
+            ImmutableList.CreateRange(requirements),
+            ImmutableList.CreateRange(effects), Scene))
         };
       }
     }
@@ -86,7 +89,7 @@ namespace GoodNight.Service.Domain.Model.Read
       public Action AddTo(Player player, Action action)
       {
         if (action.Return is not null)
-          throw new InvalidSceneError("Scene contains multiple returns.");
+          throw new InvalidSceneException("Scene contains multiple returns.");
 
         return action with { Return = Scene };
       }
@@ -104,7 +107,7 @@ namespace GoodNight.Service.Domain.Model.Read
       public Action AddTo(Player player, Action action)
       {
         if (action.Continue is not null)
-          throw new InvalidSceneError("Scene contains multiple continues.");
+          throw new InvalidSceneException("Scene contains multiple continues.");
 
         return action with { Continue = Scene };
       }
@@ -152,7 +155,7 @@ namespace GoodNight.Service.Domain.Model.Read
       {
         var scene = Scene.Get();
         if (scene is null)
-          throw new InvalidSceneError($"Scene {Scene.Key} does not exist.");
+          throw new InvalidSceneException($"Scene {Scene.Key} does not exist.");
 
         return ((Content)this).OnAction(player, action, scene.Content);
       }

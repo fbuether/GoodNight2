@@ -2,6 +2,7 @@ using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Model.Read.Error;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -33,7 +34,7 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       return State.GetValueOrDefault(quality)
         ?? quality.Get()?.GetDefault()
-        ?? throw new InvalidQualityError($"Materialising Scene found " +
+        ?? throw new InvalidQualityException($"Materialising Scene found " +
           $"invalid Quality {quality.Key}.");
     }
   }
