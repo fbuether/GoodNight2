@@ -10,17 +10,16 @@ namespace GoodNight.Service.Domain.Read
   public abstract record Choice
   {
     public record Action(
-      IStorableReference<Scene, string>? Scene,
+      string Urlname,
       string Text,
+      string? Icon,
       IImmutableList<Property> Effects)
       : Choice {}
 
-    public record Return(
-      IStorableReference<Scene, string>? Scene)
+    public record Return
       : Choice {}
 
-    public record Continue(
-      IStorableReference<Scene, string>? Scene)
+    public record Continue
       : Choice {}
   }
 
