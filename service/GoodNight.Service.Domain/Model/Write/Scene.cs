@@ -5,33 +5,6 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
-  public record Content
-  {
-    public record Text(
-      string Value)
-      : Content {}
-
-    public record Require(
-      Expression Expression)
-      : Content {}
-
-    public record Option(
-      string Scene,
-      IImmutableList<Content> Content)
-      : Content {}
-
-    public record Condition(
-      Expression If,
-      IImmutableList<Content> Then,
-      IImmutableList<Content> Else)
-      : Content {}
-
-    public record Include(
-      string Scene)
-      : Content {}
-  }
-
-
   public record Scene(
     string Name,
     string Raw,
