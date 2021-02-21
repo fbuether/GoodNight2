@@ -1,5 +1,7 @@
 using System.Linq;
 using System.Collections.Immutable;
+using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -14,7 +16,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Player(
     string Name,
-    IImmutableList<Property> State)
+    IImmutableDictionary<IStorableReference<Quality, string>, Value> State)
   {
     public Player Apply(IImmutableList<Property> effects)
     {
@@ -22,10 +24,7 @@ namespace GoodNight.Service.Domain.Model.Read
         return this;
 
       var newState = effects.Aggregate(State, (state, effect) =>
-        ImmutableList.CreateRange(
-          state.Select(prop => prop.Quality.Key == effect.Quality.Key
-            ? effect
-            : prop)));
+        state.SetItem(effect.Quality, effect.Value));
 
       return this with { State = newState };
     }
