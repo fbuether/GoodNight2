@@ -1,20 +1,28 @@
 
 namespace GoodNight.Service.Domain.Model.Expressions
 {
-  public abstract record Expression
+  /// <summary>
+  /// Expressions are computable formulas involving Qualities. Their main use is
+  /// to inspect a player's state and allow or disallow specific scenes based on
+  /// that.
+  /// </summary>
+  /// <typeparam name="TQuality">
+  /// The type of references to Qualities.
+  /// </typeparam>
+  public abstract record Expression<TQuality>
   {
     // a Quality refered to by name.
-    public record Quality(
-      string Name)
-      : Expression {}
+    public record Quality<Q>(
+      Q Name)
+      : Expression<Q> {}
 
     // Literals.
-    public record Bool(
+    public record Bool<Q>(
       bool Value)
-      : Expression {}
-    public record Number(
+      : Expression<Q> {}
+    public record Number<Q>(
       int Value)
-      : Expression {}
+      : Expression<Q> {}
 
     // Operators with one argument
     public abstract record UnaryOperator
@@ -24,10 +32,10 @@ namespace GoodNight.Service.Domain.Model.Expressions
     }
 
     // Application of a unary operator
-    public record UnaryApplication(
+    public record UnaryApplication<Q>(
       UnaryOperator Operator,
-      Expression Argument)
-      : Expression {}
+      Expression<Q> Argument)
+      : Expression<Q> {}
 
     // Operators with two arguments
     public abstract record BinaryOperator
@@ -49,10 +57,10 @@ namespace GoodNight.Service.Domain.Model.Expressions
     }
 
     // Application of a binary operator
-    public record BinaryApplication(
+    public record BinaryApplication<Q>(
       BinaryOperator Operator,
-      Expression Left,
-      Expression Right)
-      : Expression {}
+      Expression<Q> Left,
+      Expression<Q> Right)
+      : Expression<Q> {}
   }
 }
