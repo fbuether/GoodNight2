@@ -7,16 +7,45 @@ namespace GoodNight.Service.Storage
 {
   public class Store : IStore
   {
-    private HashSet<StoredObject> store = new HashSet<StoredObject>();
+    private Dictionary<Type, object> store = new Dictionary<Type, object>();
+
+    private Dictionary<K, T> GetTypeDict<T,K>()
+      where K : notnull
+    {
+      if (!store.TryGetValue(typeof(T), out var dict))
+      {
+        dict = new Dictionary<K,T>();
+        store.Add(typeof(T), dict);
+      }
+
+      if (dict is Dictionary<K,T>)
+      {
+        return (Dictionary<K,T>)dict;
+      }
+      else
+      {
+        throw new Exception("Store Error: Invalid internal store entry.");
+      }
+    }
+
 
     void IStore.Add<T, K>(T element)
     {
-      throw new NotImplementedException();
+      var dict = GetTypeDict<T,K>();
+      var key = element.GetKey();
+      if (dict.ContainsKey(key))
+      {
+        dict.Remove(key);
+      }
+
+      dict.Add(key, element);
     }
 
-    T? IStore.Get<T, K>(K key) where T : class
+    T? IStore.Get<T, K>(K key)
+      where T : class
     {
-      throw new NotImplementedException();
+      var dict = GetTypeDict<T,K>();
+      return dict.GetValueOrDefault(key);
     }
 
     IEnumerable<T> IStore.GetAll<T, K>()

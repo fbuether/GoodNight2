@@ -29,7 +29,8 @@ namespace GoodNight.Service.Storage.Interface
     /// The element to be stored.
     /// </param>
     public void Add<T, K>(T element)
-      where T : class, IStorable<K>;
+      where T : class, IStorable<K>
+      where K : notnull;
 
     /// <summary>
     /// Load an element from the store.
@@ -48,7 +49,8 @@ namespace GoodNight.Service.Storage.Interface
     /// not be found.
     /// </returns>
     public T? Get<T, K>(K key)
-      where T : class, IStorable<K>;
+      where T : class, IStorable<K>
+      where K : notnull;
 
     /// <summary>
     /// Mutates the element with key K, if it exists.
