@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Read
 {
@@ -9,15 +10,17 @@ namespace GoodNight.Service.Domain.Read
   public abstract record Choice
   {
     public record Action(
-      string Scene,
+      IStorableReference<Scene, string>? Scene,
       string Text,
       IImmutableList<Property> Effects)
       : Choice {}
 
-    public record Return(string Scene)
+    public record Return(
+      IStorableReference<Scene, string>? Scene)
       : Choice {}
 
-    public record Continue(string Scene)
+    public record Continue(
+      IStorableReference<Scene, string>? Scene)
       : Choice {}
   }
 
@@ -26,8 +29,11 @@ namespace GoodNight.Service.Domain.Read
   /// It documents the Action including its text and effects, as well as the
   /// Option that the player chose.
   /// </summary>
+  /// <remarks>
+  /// Logs are only persisted as part of an Adventure, which is part of a User.
+  /// </remarks>
   public record Log(
-    string Urlname,
+    IStorableReference<Scene, string> Scene,
     string Text,
     IImmutableList<Property> Effects,
     Choice Chosen)

@@ -6,12 +6,15 @@ namespace GoodNight.Service.Domain.Read
 {
   /// <summary>
   /// A Story is group of interlinked Scenes that a Player can play as an
-  /// adventure. It comprises a set of Scenes as well as a set of Qualities.
+  /// Adventure.
+  ///
+  /// Stories have a name and optionally an icon. They have a description and
+  /// may be non-public. Finally, they contain sets of Scenes as well as
+  /// Qualities, which together make up the actual story.
   /// </summary>
   public record Story(
     string Name,
-    string Urlname,
-
+    string? Icon,
     string Description,
     bool Public,
 
@@ -22,6 +25,14 @@ namespace GoodNight.Service.Domain.Read
     public string GetKey()
     {
       return Urlname;
+    }
+
+    public string Urlname
+    {
+      get
+      {
+        return NameConverter.OfString(Name);
+      }
     }
   }
 }

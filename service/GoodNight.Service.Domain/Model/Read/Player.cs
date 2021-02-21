@@ -9,12 +9,11 @@ namespace GoodNight.Service.Domain.Read
   /// values.
   /// </summary>
   /// <remarks>
-  /// This type belongs to the <see cref="User" /> root, and must not be stored
-  /// individually.
+  /// Players are only persisted as part of an Adventure, which is part of a
+  /// User.
   /// </remarks>
   public record Player(
     string Name,
-    IStorableReference<Story, string> Story,
     IImmutableSet<Property> State)
   {}
 }

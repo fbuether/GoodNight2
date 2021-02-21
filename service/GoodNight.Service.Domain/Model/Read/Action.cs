@@ -11,7 +11,7 @@ namespace GoodNight.Service.Domain.Read
   /// evaluate to true or false for the Player, which is given by Passed.
   /// </summary>
   public record Requirement(
-    Expression Expression,
+    Expression<IStorableReference<Quality, string>> Expression,
     bool Passed)
   {}
 
@@ -28,23 +28,22 @@ namespace GoodNight.Service.Domain.Read
   {}
 
   /// <summary>
-  /// A Read.Action is one scene as it has been played by a player.
-  /// It applies the scene configuration to the player state, yielding a
-  /// finished text, a set of effects, and a set of options that the player
-  /// may (or may not) take.
+  /// A Read.Action is one scene that a player is currently playing.
+  /// It applies the scene to the player state, yielding a finished text, a set
+  /// of effects, and a set of options that the player may (or may not) take.
   /// </summary>
   public record Action(
-    string Name,
+    IStorableReference<Scene, string> Scene,
     string Text,
     IImmutableList<Property> Effects,
     IImmutableList<Option> Options,
-    string? Return,
-    string? Continue)
+    IStorableReference<Scene, string>? Return,
+    IStorableReference<Scene, string>? Continue)
     : IStorable<string>
   {
     public string GetKey()
     {
-      return Name;
+      return Scene.Key;
     }
   }
 }
