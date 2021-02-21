@@ -17,7 +17,7 @@ namespace GoodNight.Service.Storage
       Data = data;
 
       var typename = data.GetType().FullName;
-      if (typename == null)
+      if (typename is null)
       {
         throw new InvalidOperationException(
           "Created StoredObject with data of invalid type.");
