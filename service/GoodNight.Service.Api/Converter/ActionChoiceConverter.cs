@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Domain.Model.Expressions;
-using GoodNight.Service.Domain.Read;
 
 namespace GoodNight.Service.Api.Converter
 {
