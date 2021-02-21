@@ -18,6 +18,12 @@ namespace GoodNight.Service.Domain.Read
       Expression Expression)
       : Content {}
 
+    /// <summary>
+    /// Adds an Option the Player may take here. It has a specific Urlname to
+    /// make this Option uniquely chooseable, a descriptive text and optionally
+    // an icon. A set of requirement Expressions may guard this Option. If
+    /// chosen, it may have a set of Effects and a Scene to continue to.
+    /// </summary>
     public record Option(
       string Urlname,
       string Description,
@@ -27,20 +33,39 @@ namespace GoodNight.Service.Domain.Read
       IStorableReference<Scene, string> Scene)
       : Content {}
 
+    /// <summary>
+    /// Returns to a previous Scene. This may only occur once on each
+    /// manifestation of a Scene.
+    /// </summary>
     public record Return(
       IStorableReference<Scene, string> Scene)
       : Content {}
 
+    /// <summary>
+    /// Continues to a next Scene. This may only occur once on each
+    /// manifestation of a Scene.
+    /// </summary>
     public record Continue(
       IStorableReference<Scene, string> Scene)
       : Content {}
 
+    /// <summary>
+    /// Adds Content if a specific condition holds or does not hold.
+    /// One of the branches may be an empty list if no Content exists.
+    /// </summary>
     public record Condition(
       Expression If,
       IImmutableList<Content> Then,
       IImmutableList<Content> Else)
       : Content {}
 
+    /// <summary>
+    /// Includes the content of another Scene.
+    /// This inserts the Content of the other Scene at exactly this position,
+    /// considering e.g. a Condition.
+    /// It does *not* transitively include Includes in the other Scene's
+    /// Content.
+    /// </summary>
     public record Include(
       IStorableReference<Scene, string> Scene)
       : Content {}
