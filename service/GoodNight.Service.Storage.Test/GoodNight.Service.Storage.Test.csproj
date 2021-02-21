@@ -22,5 +22,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GoodNight.Service.Storage\GoodNight.Service.Storage.csproj" />
+    <ProjectReference Include="..\GoodNight.Service.Storage.Interface\GoodNight.Service.Storage.Interface.csproj" />
   </ItemGroup>
 </Project>
