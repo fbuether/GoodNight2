@@ -2,7 +2,7 @@ using System;
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
   /// An Adventure is a path that a user has taken through a story. It includes

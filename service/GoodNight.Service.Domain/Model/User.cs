@@ -1,8 +1,8 @@
-using GoodNight.Service.Domain.Read;
 using GoodNight.Service.Storage.Interface;
 using System.Collections.Immutable;
 using System.Linq;
 using System;
+using GoodNight.Service.Domain.Model.Read;
 
 namespace GoodNight.Service.Domain.Model
 {

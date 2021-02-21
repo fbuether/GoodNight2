@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
   /// A Consequence is the result of executing a choice. It describes the

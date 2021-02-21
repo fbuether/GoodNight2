@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Collections.Immutable;
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
   /// A Player is a User playing a specific Story. They have a name and a

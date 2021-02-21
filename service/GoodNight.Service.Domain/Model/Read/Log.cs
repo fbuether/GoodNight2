@@ -1,7 +1,7 @@
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
   /// A Choice is an Option that the player has already taken. It is part of

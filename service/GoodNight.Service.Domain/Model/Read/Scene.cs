@@ -2,7 +2,7 @@ using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   using StoredQuality = IStorableReference<Quality, string>;
   using Expression = Expression<IStorableReference<Quality, string>>;

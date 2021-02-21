@@ -1,7 +1,7 @@
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
 
-namespace GoodNight.Service.Domain.Read
+namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
   /// A Property associates a Quality with one of its possible Values. It is
