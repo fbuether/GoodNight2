@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Read

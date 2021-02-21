@@ -9,6 +9,9 @@ namespace GoodNight.Service.Domain.Read
   /// the player they play as, the story they play on, the history of what they
   /// have experienced yet, and the materialised they currently are at.
   /// </summary>
+  /// <remarks>
+  /// Adventures are only persisted as part of a user.
+  /// </remarks>
   public record Adventure(
     Player Player,
     IStorableReference<Story, string> Story,

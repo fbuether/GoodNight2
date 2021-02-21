@@ -4,59 +4,46 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Read
 {
+  using StoredQuality = IStorableReference<Quality, string>;
   using Expression = Expression<IStorableReference<Quality, string>>;
 
-
-  public abstract record OptionContent
+  public abstract record Content
   {
     public record Text(
       string Value)
-      : OptionContent {}
-
-    public record Require(
-      Expression Expression)
-      : OptionContent {}
-
-    public record Condition(
-      Expression If,
-      IImmutableList<OptionContent> Then,
-      IImmutableList<OptionContent> Else)
-      : OptionContent {}
-  }
-
-  public abstract record SceneContent
-  {
-    public record Text(
-      string Value)
-      : SceneContent {}
+      : Content {}
 
     public record Effect(
-      IStorableReference<Quality, string> Quality,
+      StoredQuality Quality,
       Expression Expression)
-      : SceneContent {}
+      : Content {}
 
     public record Option(
-      IStorableReference<Scene, string> Scene,
-      IImmutableList<OptionContent> Content)
-      : SceneContent {}
+      string Urlname,
+      string Description,
+      string? Icon,
+      IImmutableList<Expression> Requirements,
+      IImmutableList<(StoredQuality, Expression)> Effects,
+      IStorableReference<Scene, string> Scene)
+      : Content {}
 
     public record Return(
       IStorableReference<Scene, string> Scene)
-      : SceneContent {}
+      : Content {}
 
     public record Continue(
       IStorableReference<Scene, string> Scene)
-      : SceneContent {}
+      : Content {}
 
     public record Condition(
       Expression If,
-      IImmutableList<SceneContent> Then,
-      IImmutableList<SceneContent> Else)
-      : SceneContent {}
+      IImmutableList<Content> Then,
+      IImmutableList<Content> Else)
+      : Content {}
 
     public record Include(
       IStorableReference<Scene, string> Scene)
-      : SceneContent {}
+      : Content {}
   }
 
   /// <summary>
@@ -66,7 +53,7 @@ namespace GoodNight.Service.Domain.Read
   /// </summary>
   public record Scene(
     string Name,
-    IImmutableList<SceneContent> Content)
+    IImmutableList<Content> Content)
     : IStorable<string>
   {
     public string Urlname

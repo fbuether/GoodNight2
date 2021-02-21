@@ -1,6 +1,5 @@
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
-using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Read
@@ -16,19 +15,24 @@ namespace GoodNight.Service.Domain.Read
   {}
 
   /// <summary>
-  /// After a player has played a scene, yielding an Action, they have a new set
-  /// of possibilities. These may include Options, which continue on to a new
-  /// Scene, but have a set of Requirements.
+  /// An Option the player can take as they are at this Action.
+  /// It shows a text and optionally an Icon. It may pose a set of Requirements
+  /// that a Player state must fulfil in order to be taken, and consequently is
+  /// available or not. When taken, it applies a set of effects and will
+  /// continue on to a new scene.
   /// </summary>
   public record Option(
-    IStorableReference<Scene, string> Scene,
-    bool IsAvailable,
+    string Name,
     string Text,
-    IImmutableList<Requirement> Requirements)
+    string? Icon,
+    bool IsAvailable,
+    IImmutableList<Requirement> Requirements,
+    IImmutableList<Property> Effects,
+    IStorableReference<Scene, string> Scene)
   {}
 
   /// <summary>
-  /// A Read.Action is one scene that a player is currently playing.
+  /// An Action is one scene that a player is currently playing.
   /// It applies the scene to the player state, yielding a finished text, a set
   /// of effects, and a set of options that the player may (or may not) take.
   /// </summary>
