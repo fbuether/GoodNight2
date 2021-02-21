@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
@@ -22,7 +24,7 @@ namespace GoodNight.Service.Domain.Read
   /// continue on to a new scene.
   /// </summary>
   public record Option(
-    string Name,
+    string Urlname,
     string Text,
     string? Icon,
     bool IsAvailable,
@@ -48,6 +50,39 @@ namespace GoodNight.Service.Domain.Read
     public string GetKey()
     {
       return Scene.Key;
+    }
+
+
+    public (Log?, IStorableReference<Scene, string>?)
+      ContinueWith(string optionname)
+    {
+      if (optionname == "return" && Return != null)
+      {
+        return (
+          new Log(Scene, Text, Effects, new Choice.Return()),
+          Return);
+      }
+      else if (optionname == "continue" && Continue != null)
+      {
+        return (
+          new Log(Scene, Text, Effects, new Choice.Continue()),
+          Continue);
+      }
+
+      var option = Options.First(o => o.Urlname == optionname);
+      if (option != null)
+      {
+        return (
+          new Log(Scene, Text, Effects,
+            new Choice.Action(
+              option.Urlname,
+              option.Text,
+              option.Icon,
+              option.Effects)),
+          option.Scene);
+      }
+
+      return (null, null);
     }
   }
 }
