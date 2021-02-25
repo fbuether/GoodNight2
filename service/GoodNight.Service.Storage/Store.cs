@@ -2,12 +2,60 @@ using System.Linq;
 using System.Collections.Generic;
 using System;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Storage.Journal;
+using System.IO;
+using System.Threading.Tasks;
 
 namespace GoodNight.Service.Storage
 {
-  public class Store : IStore
+  public class Store : IStore, IDisposable
   {
+    private static string DefaultFilename = "store.json";
+
+    private Stream backingStore;
+
     private Dictionary<Type, object> store = new Dictionary<Type, object>();
+
+    private JournalWriter writer;
+
+    public Store(Stream? journalStream = null)
+    {
+      backingStore = journalStream
+        ?? File.OpenWrite(DefaultFilename);
+
+
+      this.writer = new JournalWriter(backingStore);
+    }
+
+    public void Dispose()
+    {
+      ((IDisposable)backingStore).Dispose();
+    }
+
+
+    public static async Task Create(Stream? backingStore = null)
+    {
+      var store = new Store(backingStore);
+      var loader = new JournalReader(store.backingStore);
+      await store.Replay(loader.ReadAll());
+    }
+
+    private async Task Replay(IAsyncEnumerable<Entry> entries)
+    {
+      await foreach (var entry in entries)
+      {
+        switch (entry)
+        {
+          case Entry.Add a:
+            // ugh.
+            typeof(IStore).GetMethod("Add")!
+              .MakeGenericMethod(new[] { a.ValueType, a.KeyType })
+              .Invoke(this, new[] { a.Value });
+            break;
+        }
+      }
+    }
+
 
     private Dictionary<K, T> GetTypeDict<T,K>()
       where K : notnull
@@ -29,17 +77,13 @@ namespace GoodNight.Service.Storage
     }
 
 
-    void IStore.Add<T, K>(T element)
+    async Task IStore.Add<T, K>(T element)
     {
       var dict = GetTypeDict<T,K>();
-      var key = element.GetKey();
-      if (dict.ContainsKey(key))
-      {
-        dict.Remove(key);
-      }
-
-      dict.Add(key, element);
+      dict[element.GetKey()] = element;
+      await writer.Write(new Entry.Add(typeof(T), typeof(K), element.GetKey(), element));
     }
+
 
     T? IStore.Get<T, K>(K key)
       where T : class
@@ -48,65 +92,44 @@ namespace GoodNight.Service.Storage
       return dict.GetValueOrDefault(key);
     }
 
+
     IEnumerable<T> IStore.GetAll<T, K>()
     {
-      throw new NotImplementedException();
+      var dict = GetTypeDict<T,K>();
+      return dict.Values;
     }
+
 
     T? IStore.Update<T, K>(K key, Func<T, T> update) where T : class
     {
-      throw new NotImplementedException();
+      var dict = GetTypeDict<T,K>();
+      var oldElement = dict.GetValueOrDefault(key);
+      if (oldElement is null) {
+        return null;
+      }
+
+      var newElement = update(oldElement);
+      dict[key] = newElement;
+      return newElement;
     }
+
 
     U? IStore.WithUpdate<T, K, U>(K key, Func<T, (T, U)?> update)
       where U : class
     {
-      throw new NotImplementedException();
+      var dict = GetTypeDict<T,K>();
+      var oldElement = dict.GetValueOrDefault(key);
+      if (oldElement is null) {
+        return null;
+      }
+
+      var result = update(oldElement);
+      if (result is null) {
+        return null;
+      }
+
+      dict[key] = result.Value.Item1;
+      return result.Value.Item2;
     }
-
-
-    // public IEnumerable<T> GetAll<T>()
-    //   where T : class
-    // {
-    //   return store
-    //     .Where(obj => obj.Type is T)
-    //     .Select(obj => obj.Data)
-    //     .OfType<T>();
-    // }
-
-    // public void Add<T>(T newObj)
-    //   where T : class
-    // {
-    //   var stored = new StoredObject(newObj);
-    //   this.store.Add(stored);
-
-    //   // todo: add all child elements to store.
-
-    //   // todo: log adding this element.
-    // }
-
-    // public void Update<T>(T oldObj, T newObj)
-    //   where T : class
-    // {
-    //   var stored = this.store.First(obj => obj.Data == oldObj);
-    //   stored.Data = newObj;
-
-    //   // todo: Update all elements pointing to this element, as well as their
-    //   // transitive parents.
-
-    //   // todo: log updating this element.
-    // }
-
-    // public void Remove<T>(T obj)
-    //   where T : class
-    // {
-    //   var stored = this.store.First(obj => obj.Data == obj);
-    //   this.store.Remove(stored);
-
-    //   // todo: remove all child elements from store.
-
-    //   // todo: log removing this element.
-    // }
-
-  }
+    }
 }

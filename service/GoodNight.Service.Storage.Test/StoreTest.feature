@@ -9,3 +9,14 @@ Feature: Store
     Given a store
     When adding storable with key "foo"
     Then fetching storable with key "foo" returns storable
+
+  Scenario: Writing an Add entry
+    Given a store
+    When adding storable with key "foo"
+    # When adding storable with key "bar2"
+    Then the journal is not empty
+
+  # Scenario: Reading an Add entry
+  #   Given a store with journal "{}"
+  #   Then fetching storable with key "foo" returns storable
+

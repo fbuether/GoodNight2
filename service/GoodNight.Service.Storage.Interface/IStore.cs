@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace GoodNight.Service.Storage.Interface
 {
@@ -28,7 +29,7 @@ namespace GoodNight.Service.Storage.Interface
     /// <param name="element">
     /// The element to be stored.
     /// </param>
-    public void Add<T, K>(T element)
+    public Task Add<T, K>(T element)
       where T : class, IStorable<K>
       where K : notnull;
 
@@ -62,7 +63,8 @@ namespace GoodNight.Service.Storage.Interface
     /// The new element, or null if `key` did not exist.
     /// </returns>
     public T? Update<T, K>(K key, Func<T, T> update)
-      where T : class, IStorable<K>;
+      where T : class, IStorable<K>
+      where K : notnull;
 
     /// <summary>
     /// Mutates the element with key K, if it exists.
@@ -76,6 +78,7 @@ namespace GoodNight.Service.Storage.Interface
     /// </returns>
     public U? WithUpdate<T, K, U>(K key, Func<T, (T, U)?> update)
       where T : class, IStorable<K>
+      where K : notnull
       where U : class;
 
     /// <summary>
@@ -89,6 +92,7 @@ namespace GoodNight.Service.Storage.Interface
     // an empty enumeration.
     /// </returns>
     public IEnumerable<T> GetAll<T, K>()
-      where T : class, IStorable<K>;
+      where T : class, IStorable<K>
+      where K : notnull;
   }
 }
