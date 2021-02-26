@@ -10,126 +10,55 @@ namespace GoodNight.Service.Storage
 {
   public class Store : IStore, IDisposable
   {
-    private static string DefaultFilename = "store.json";
+    private List<StoreBacked> repositories;
 
-    private Stream backingStore;
-
-    private Dictionary<Type, object> store = new Dictionary<Type, object>();
-
-    private JournalWriter writer;
-
-    public Store(Stream? journalStream = null)
+    public Store()
     {
-      backingStore = journalStream
-        ?? File.OpenWrite(DefaultFilename);
-
-
-      this.writer = new JournalWriter(backingStore);
+      repositories = new List<StoreBacked>();
     }
 
     public void Dispose()
     {
-      ((IDisposable)backingStore).Dispose();
-    }
-
-
-    public static async Task Create(Stream? backingStore = null)
-    {
-      var store = new Store(backingStore);
-      var loader = new JournalReader(store.backingStore);
-      await store.Replay(loader.ReadAll());
-    }
-
-    private async Task Replay(IAsyncEnumerable<Entry> entries)
-    {
-      await foreach (var entry in entries)
+      foreach (var repos in repositories)
       {
-        switch (entry)
-        {
-          case Entry.Add a:
-            // ugh.
-            typeof(IStore).GetMethod("Add")!
-              .MakeGenericMethod(new[] { a.ValueType, a.KeyType })
-              .Invoke(this, new[] { a.Value });
-            break;
-        }
+        ((IDisposable)repos).Dispose();
       }
     }
 
 
-    private Dictionary<K, T> GetTypeDict<T,K>()
+    public IRepository<T, K> Create<T, K>(Stream backingStore)
+      where T : class, IStorable<K>
       where K : notnull
     {
-      if (!store.TryGetValue(typeof(T), out var dict))
+      var repos = new Repository<T,K>(backingStore);
+      repositories.Add(repos);
+
+
+      return repos;
+    }
+
+    public IRepository<T, K> Create<T, K>(string uniqueName)
+      where T : class, IStorable<K>
+      where K : notnull
+    {
+      var stream = File.Open($"store-{uniqueName}.json", FileMode.OpenOrCreate);
+      return Create<T,K>(stream);
+    }
+
+
+    public async Task LoadAll()
+    {
+      foreach (var repos in repositories)
       {
-        dict = new Dictionary<K,T>();
-        store.Add(typeof(T), dict);
-      }
-
-      if (dict is Dictionary<K,T>)
-      {
-        return (Dictionary<K,T>)dict;
-      }
-      else
-      {
-        throw new Exception("Store Error: Invalid internal store entry.");
+        await repos.ReadAll();
       }
     }
 
 
-    async Task IStore.Add<T, K>(T element)
+
+    public Task Sync()
     {
-      var dict = GetTypeDict<T,K>();
-      dict[element.GetKey()] = element;
-      await writer.Write(new Entry.Add(typeof(T), typeof(K), element.GetKey(), element));
+      throw new NotImplementedException();
     }
-
-
-    T? IStore.Get<T, K>(K key)
-      where T : class
-    {
-      var dict = GetTypeDict<T,K>();
-      return dict.GetValueOrDefault(key);
-    }
-
-
-    IEnumerable<T> IStore.GetAll<T, K>()
-    {
-      var dict = GetTypeDict<T,K>();
-      return dict.Values;
-    }
-
-
-    T? IStore.Update<T, K>(K key, Func<T, T> update) where T : class
-    {
-      var dict = GetTypeDict<T,K>();
-      var oldElement = dict.GetValueOrDefault(key);
-      if (oldElement is null) {
-        return null;
-      }
-
-      var newElement = update(oldElement);
-      dict[key] = newElement;
-      return newElement;
-    }
-
-
-    U? IStore.WithUpdate<T, K, U>(K key, Func<T, (T, U)?> update)
-      where U : class
-    {
-      var dict = GetTypeDict<T,K>();
-      var oldElement = dict.GetValueOrDefault(key);
-      if (oldElement is null) {
-        return null;
-      }
-
-      var result = update(oldElement);
-      if (result is null) {
-        return null;
-      }
-
-      dict[key] = result.Value.Item1;
-      return result.Value.Item2;
-    }
-    }
+  }
 }

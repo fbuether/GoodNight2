@@ -7,7 +7,7 @@ using System.Text;
 
 namespace GoodNight.Service.Storage.Journal
 {
-  internal class JournalWriter
+  internal class JournalWriter<T,K>
   {
     private Stream store;
 
@@ -20,7 +20,7 @@ namespace GoodNight.Service.Storage.Journal
       writer = new StreamWriter(store, Encoding.UTF8);
     }
 
-    internal async Task Write(Entry entry)
+    internal async Task Write(Entry<T,K> entry)
     {
       Console.WriteLine("--- serialising somethign.");
       Console.WriteLine("--- serialised: " + (JsonSerializer.Serialize(entry, entry.GetType())));
