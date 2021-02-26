@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Api.Converter;
+using GoodNight.Service.Api.Storage;
 
 namespace GoodNight.Service.Api
 {
@@ -28,6 +29,7 @@ namespace GoodNight.Service.Api
       });
 
       services.AddSingleton<IStore, Store>();
+      services.AddSingleton<ReadStore>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
