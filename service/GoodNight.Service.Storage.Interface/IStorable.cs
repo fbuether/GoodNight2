@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 
 namespace GoodNight.Service.Storage.Interface
 {
@@ -10,6 +9,7 @@ namespace GoodNight.Service.Storage.Interface
   /// The type of the keys of this type.
   /// </typeparam>
   public interface IStorable<K>
+    where K : notnull
   {
     /// <summary>
     /// Fetches the key of this object.
@@ -17,6 +17,6 @@ namespace GoodNight.Service.Storage.Interface
     /// <returns>
     /// The key of this object.
     /// </returns>
-    public K GetKey();
+    K GetKey();
   }
 }

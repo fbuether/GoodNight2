@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace GoodNight.Service.Storage.Interface
@@ -7,92 +7,57 @@ namespace GoodNight.Service.Storage.Interface
   /// <summary>
   /// A store persists several sets of object groups.
   /// </summary>
-  public interface IStore
+  /// <remarks>
+  /// When disposing this store, it also disposes all IRepositories it has
+  /// created.
+  /// </remarks>
+  public interface IStore : IDisposable
   {
     /// <summary>
-    /// Add a new element to the store.
-    /// Requires a key by which the element may be looked up, and the element
-    /// itself.
-    /// If the key of element already exists in the store, it is replaced with
-    /// this element, and all references to it are updated to this.
+    /// Creates a new store for a specific type.
+    ///
+    /// It uses the given backing stream as persistence for its data. If the
+    /// given stream already contains data, this will read the data from the
+    /// stream, and append new operations to the end of it.
     /// </summary>
     /// <typeparam name="T">
-    /// The type of the element to store.
+    /// The type of the elements to store.
     /// </typeparam>
     /// <typeparam name="K">
-    /// The type of the key to associate the element with. This type must always
-    /// be the same for all elements of the same type <typeparamref name="T" />.
+    /// The type of the keys to store elements at. This may not be nullable,
+    /// and ideally should have a good hash function.
     /// </typeparam>
-    /// <param name="key">
-    /// A unique key to store the element to be added at.
-    /// </param>
-    /// <param name="element">
-    /// The element to be stored.
-    /// </param>
-    public Task Add<T, K>(T element)
-      where T : class, IStorable<K>
-      where K : notnull;
-
-    /// <summary>
-    /// Load an element from the store.
-    /// </summary>
-    /// <typeparam name="T">
-    /// The type of the element to get.
-    /// </typeparam>
-    /// <typeparam name="K">
-    /// The type of the key to find the element by.
-    /// </typeparam>
-    /// <param name="key">
-    /// The key of the element to get.
+    /// <param name="backingStore">
+    /// A stream onto the backing store. The stream must be able to seek to
+    /// start and end. If this stream already contains data, the data will
+    /// be used to initialise this store. The store assumes exclusive access
+    /// to the stream as well as the underlying data. It will dispose the stream
+    /// when either this store or the repository is disposed.
     /// </param>
     /// <returns>
-    /// The element associated with the key, or null if the key could
-    /// not be found.
+    /// A new store for elements of the given type using the given stream as
+    /// backing store and containing data as present on the stream.
     /// </returns>
-    public T? Get<T, K>(K key)
+    IRepository<T,K> Create<T,K>(Stream backingStore)
       where T : class, IStorable<K>
       where K : notnull;
 
     /// <summary>
-    /// Mutates the element with key K, if it exists.
-    /// This is guaranteed to always update the current instance of element, and
-    /// will be handled like an atomic operation. Consequently, `update` may not
-    /// be async.
+    /// Creates a new store for a specific type.
+    ///
+    /// This calls `Create(Stream)` with a file for backing storage, where
+    /// the filename is given as `store-{uniqueName}.json`.
     /// </summary>
-    /// <returns>
-    /// The new element, or null if `key` did not exist.
-    /// </returns>
-    public T? Update<T, K>(K key, Func<T, T> update)
+    IRepository<T,K> Create<T,K>(string uniqueName)
       where T : class, IStorable<K>
       where K : notnull;
 
-    /// <summary>
-    /// Mutates the element with key K, if it exists.
-    /// This is guaranteed to always update the current instance of element, and
-    /// will be handled like an atomic operation. Consequently, `update` may not
-    /// be async.
-    /// If update returns null, the element will not be changed.
-    /// </summary>
-    /// <returns>
-    /// The new element, or null if `key` did not exist.
-    /// </returns>
-    public U? WithUpdate<T, K, U>(K key, Func<T, (T, U)?> update)
-      where T : class, IStorable<K>
-      where K : notnull
-      where U : class;
 
     /// <summary>
-    /// Fetches all objects of a specific type from the store.
+    /// Returns a Task that waits for all currently outstanding I/O to finish.
+    /// Await this right after store operations to ensure that they are safely
+    /// persisted.
     /// </summary>
-    /// <typeparam name="T">
-    /// The type of the elements to get.
-    /// </typeparam>
-    /// <returns>
-    /// All elements of the specific type. If no elements exist, this returns
-    // an empty enumeration.
-    /// </returns>
-    public IEnumerable<T> GetAll<T, K>()
-      where T : class, IStorable<K>
-      where K : notnull;
+    Task Sync();
   }
 }

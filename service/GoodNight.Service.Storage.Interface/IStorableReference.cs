@@ -1,5 +1,4 @@
 
-
 namespace GoodNight.Service.Storage.Interface
 {
   /// <summary>
@@ -14,18 +13,23 @@ namespace GoodNight.Service.Storage.Interface
   /// <typeparam name="T">
   /// The type of the element to store.
   /// </typeparam>
+  /// <remarks>
+  /// This is a rather thin object, and contains only pointers to its key,
+  /// the backing repository, and possibly the object it points to.
+  /// </remarks>
   public interface IStorableReference<T, K>
     where T : IStorable<K>
+    where K : notnull
   {
     /// <summary>
     /// Returns the key of this reference.
     /// </summary>
-    public K Key { get; }
+    K Key { get; }
 
-    /// <summary>
-    /// Sets this element to reference a specific element in the store.
-    /// </summary>
-    public void Set(K key);
+    // /// <summary>
+    // /// Sets this element to reference a specific element in the store.
+    // /// </summary>
+    // public void Set(K key);
 
     /// <summary>
     /// Resolves this reference in the store it was created in.
@@ -34,7 +38,7 @@ namespace GoodNight.Service.Storage.Interface
     /// The element associated with the saved key in this store, or null if the
     /// key does not point to an element.
     /// </returns>
-    public T? Get();
+    T? Get();
   }
 }
 
