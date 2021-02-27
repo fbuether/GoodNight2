@@ -4,7 +4,7 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api.Storage
 {
-  internal class ReadStore
+  public class ReadStore
   {
     internal IRepository<Action, string> Actions { get; }
 

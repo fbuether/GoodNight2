@@ -3,6 +3,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.AspNetCore.Hosting;
 using GoodNight.Service.Storage.Interface;
 using System.Threading.Tasks;
+using GoodNight.Service.Storage;
 
 namespace GoodNight.Service.Api
 {

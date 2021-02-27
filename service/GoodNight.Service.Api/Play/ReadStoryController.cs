@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System;
+using GoodNight.Service.Api.Storage;
 
 namespace GoodNight.Service.Api.Play
 {
@@ -12,9 +13,9 @@ namespace GoodNight.Service.Api.Play
   [Route("api/v1/read")]
   public class ReadStoryController : ControllerBase
   {
-    private IStore store;
+    private ReadStore store;
 
-    public ReadStoryController(IStore store)
+    public ReadStoryController(ReadStore store)
     {
       this.store = store;
     }
@@ -28,11 +29,11 @@ namespace GoodNight.Service.Api.Play
     {
       var username = "current-user-name";
 
-      var user = store.Get<User, string>(username);
+      var user = store.Users.Get(username);
       if (user == null)
         return Unauthorized("Authentication not found or invalid.");
 
-      var story = store.Get<Story, string>(storyname);
+      var story = store.Stories.Get(storyname);
       if (story == null)
         return NotFound("Story not found.");
 
@@ -56,15 +57,15 @@ namespace GoodNight.Service.Api.Play
       if (String.IsNullOrEmpty(optionname))
         return BadRequest("No Option given.");
 
-      var user = store.Get<User, string>(username);
+      var user = store.Users.Get(username);
       if (user == null)
         return Unauthorized("Authentication not found or invalid.");
 
-      var story = store.Get<Story, string>(storyname);
+      var story = store.Stories.Get(storyname);
       if (story == null)
         return NotFound("Story not found.");
 
-      var consequence = store.WithUpdate(username, (User user) =>
+      var consequence = store.Users.Update(username, (User user) =>
         user.ContinueAdventure(story, optionname));
 
       if (consequence == null)
