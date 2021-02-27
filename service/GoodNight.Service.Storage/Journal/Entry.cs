@@ -3,7 +3,7 @@ using System;
 
 namespace GoodNight.Service.Storage.Journal
 {
-  internal record Entry<T,K>(Entry<T,K>.EntryType Type)
+  internal record Entry(string Repos, Entry.EntryType Type)
   {
     internal enum EntryType
     {
@@ -13,20 +13,22 @@ namespace GoodNight.Service.Storage.Journal
     }
 
     internal record Add(
-      K Key,
-      T Value)
-      : Entry<T,K>(EntryType.Add)
+      string Repos,
+      object Value)
+      : Entry(Repos, EntryType.Add)
     {}
 
     internal record Update(
-      K Key,
-      T Value)
-      : Entry<T,K>(EntryType.Update)
+      string Repos,
+      object Key,
+      object Value)
+      : Entry(Repos, EntryType.Update)
     {}
 
     internal record Delete(
-      K Key)
-      : Entry<T,K>(EntryType.Delete)
+      string Repos,
+      object Key)
+      : Entry(Repos, EntryType.Delete)
     {}
   }
 }

@@ -1,43 +1,34 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Storage.Journal;
 
 namespace GoodNight.Service.Storage
 {
-  internal class Repository<T,K> : StoreBacked, IRepository<T,K>
+  internal class Repository<T,K> : BaseRepository, IRepository<T,K>
     where T : class, IStorable<K>
     where K : notnull
   {
     private Dictionary<K,T> dict = new Dictionary<K,T>();
 
-    internal Repository(Stream backingStore)
-      : base(backingStore)
-    {}
+    private JournalWriter writer;
 
-    internal override async Task ReadAll()
+    internal Repository(JournalWriter writer, string uniqueName)
+      : base(uniqueName)
     {
-      var reader = new JournalReader<T,K>(backingStore);
-      await foreach (var entry in reader.ReadAll())
-      {
-        switch (entry)
-        {
-          case Entry<T,K>.Add a:
-            this.Add(a.Value);
-            break;
-          case Entry<T,K>.Update u:
-            this.Update(u.Key, (_) => u.Value);
-            break;
-          case Entry<T,K>.Delete d:
-            this.Remove(d.Key);
-            break;
-        }
-      }
+      this.writer = writer;
     }
 
+
+    // BaseRepository.
+
+    internal override Type KeyType => typeof(K);
+
+    internal override Type ValueType => typeof(T);
+
+
+    // ReadOnlyDictionary.
 
     public int Count => dict.Count;
 
@@ -52,6 +43,8 @@ namespace GoodNight.Service.Storage
     }
 
 
+    // IRepository.
+
     public IStorableReference<T,K>? Add(T element)
     {
       var key = element.GetKey();
@@ -59,6 +52,9 @@ namespace GoodNight.Service.Storage
         return null;
 
       dict[key] = element;
+
+
+      writer.QueueWrite(new Entry.Add(UniqueName, element));
       return new Reference<T,K>(this, key);
     }
 
@@ -95,12 +91,57 @@ namespace GoodNight.Service.Storage
         return null;
 
       dict[key] = result.Value.Item1;
+      writer.QueueWrite(new Entry.Update(UniqueName,
+          key, result.Value.Item1));
       return result.Value.Item2;
-    }
+      }
 
     public bool Remove(K key)
     {
-      return dict.Remove(key);
+      var contains = dict.Remove(key);
+      if (contains)
+      {
+        writer.QueueWrite(new Entry.Delete(UniqueName, key));
+      }
+
+      return contains;
+    }
+
+
+    // Journaling.
+
+    internal override bool Replay(Entry entry)
+    {
+      switch (entry)
+      {
+        case Entry.Add a:
+          var addValue = (T)a.Value;
+          if (addValue is null)
+            return false;
+
+          Add(addValue);
+          return true;
+
+        case Entry.Update u:
+          var updKey = (K)u.Key;
+          var updValue = (T)u.Value;
+          if (updKey is null || updValue is null)
+            return false;
+
+          Update(updKey, _ => updValue);
+          return true;
+
+        case Entry.Delete d:
+          var delKey = (K)d.Key;
+          if (delKey is null)
+            return false;
+
+          Remove(delKey);
+          return true;
+
+        default:
+          return false;
+      }
     }
   }
 }

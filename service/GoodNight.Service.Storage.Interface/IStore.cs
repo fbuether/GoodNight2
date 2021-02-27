@@ -27,31 +27,18 @@ namespace GoodNight.Service.Storage.Interface
     /// The type of the keys to store elements at. This may not be nullable,
     /// and ideally should have a good hash function.
     /// </typeparam>
-    /// <param name="backingStore">
-    /// A stream onto the backing store. The stream must be able to seek to
-    /// start and end. If this stream already contains data, the data will
-    /// be used to initialise this store. The store assumes exclusive access
-    /// to the stream as well as the underlying data. It will dispose the stream
-    /// when either this store or the repository is disposed.
+    /// <param name="uniqueName">
+    /// Each repository requires a unique name that identifies the objects of
+    /// itself. The store uses this name to discern entries in the journal, esp.
+    /// when recovering an older journal.
     /// </param>
     /// <returns>
     /// A new store for elements of the given type using the given stream as
     /// backing store and containing data as present on the stream.
     /// </returns>
-    IRepository<T,K> Create<T,K>(Stream backingStore)
-      where T : class, IStorable<K>
-      where K : notnull;
-
-    /// <summary>
-    /// Creates a new store for a specific type.
-    ///
-    /// This calls `Create(Stream)` with a file for backing storage, where
-    /// the filename is given as `store-{uniqueName}.json`.
-    /// </summary>
     IRepository<T,K> Create<T,K>(string uniqueName)
       where T : class, IStorable<K>
       where K : notnull;
-
 
     /// <summary>
     /// Returns a Task that waits for all currently outstanding I/O to finish.
