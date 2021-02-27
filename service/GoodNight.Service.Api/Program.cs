@@ -26,6 +26,8 @@ namespace GoodNight.Service.Api
 
       await store.LoadAll();
 
+      Console.WriteLine("Finished loading stores. Starting host…");
+
       // var readStore = await ReadStore.Initialise(store);
       // var loadStores = await host.Services.GetService(
 

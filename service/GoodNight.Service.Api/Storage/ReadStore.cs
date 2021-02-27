@@ -16,7 +16,7 @@ namespace GoodNight.Service.Api.Storage
 
     internal IRepository<User, string> Users { get; }
 
-    private ReadStore(IStore store)
+    public ReadStore(IStore store)
     {
       Actions = store.Create<Action, string>("actions");
       Qualities = store.Create<Quality, string>("qualities");
