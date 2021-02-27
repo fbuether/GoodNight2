@@ -9,7 +9,7 @@ namespace GoodNight.Service.Api
 {
   public class Program
   {
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
       var host = Host.CreateDefaultBuilder(args)
         .ConfigureWebHostDefaults(webHostBuilder =>
@@ -24,9 +24,9 @@ namespace GoodNight.Service.Api
         throw new NullReferenceException();
       }
 
-      await store.LoadAll();
+      store.LoadAll();
 
-      Console.WriteLine("Finished loading stores. Starting host…");
+      Console.WriteLine("Finished loading stores. Starting host...");
 
       // var readStore = await ReadStore.Initialise(store);
       // var loadStores = await host.Services.GetService(
