@@ -30,13 +30,28 @@ Feature: Store
     When adding Demo with key "temporary" and value 13
     Then getting key "oh noes" returns null
 
-  Scenario: Writing an Add entry
-    Given a repository for Demo
-    When adding Demo with key "journaled" and value 2
-    # When adding storable with key "bar2"
-    Then the journal is not empty
+  # Scenario: Writing an Add entry
+  #   Given a repository for Demo
+  #   When adding Demo with key "journaled" and value 2
+  #   # When adding storable with key "bar2"
+  #   Then the journal is not empty
 
-  # Scenario: Reading an Add entry
-  #   Given a store with journal "{}"
-  #   Then fetching storable with key "foo" returns storable
+  Scenario: Reading an Add entry
+    Given a store with journal and repository for Demo
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
+      """
+    Then getting key "replayed" returns Demo with value 7
+
+  Scenario: Reading several Add entries
+    Given a store with journal and repository for Demo
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"Demo","kind":"Add","value":{"Key":"else","Value":17}}
+      {"repos":"Demo","kind":"Add","value":{"Key":"or not?","Value":42}}
+      """
+    Then getting key "replayed" returns Demo with value 7
+    Then getting key "else" returns Demo with value 17
+    Then getting key "or not?" returns Demo with value 42
+    Then getting key "not-replayed" returns null
 

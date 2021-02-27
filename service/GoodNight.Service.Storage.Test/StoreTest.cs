@@ -6,11 +6,12 @@ using System;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Gherkin.Ast;
 
 namespace GoodNight.Service.Storage.Test
 {
   [FeatureFile("StoreTest.feature")]
-  public class RepositoryTest : Feature, IDisposable
+  public class RepositoryTest : Xunit.Gherkin.Quick.Feature, IDisposable
   {
     private Stream journal = new MemoryStream();
 
@@ -22,20 +23,14 @@ namespace GoodNight.Service.Storage.Test
       journal.Dispose();
     }
 
-    private class Demo : IStorable<string>
+    private record Demo(
+      string Key,
+      int Value)
+      : IStorable<string>
     {
-      private string key;
-
-      public int Value { get; set; }
-      
-      public Demo(string key)
-      {
-        this.key = key;
-      }
-
       public string GetKey()
       {
-        return key;
+        return Key;
       }
     }
 
@@ -45,19 +40,39 @@ namespace GoodNight.Service.Storage.Test
       journal.Dispose();
       journal = new MemoryStream();
 
-      store = new Store();
+      store = new Store(journal);
       Assert.NotNull(store);
 
-      repos = store.Create<Demo,string>(journal);
+      repos = store.Create<Demo,string>("Demo");
       Assert.NotNull(repos);
+    }
+
+    [Given("a store with journal and repository for Demo")]
+    public void AStoreWithJournalRepositoryForDemo(DocString body)
+    {
+      journal.Dispose();
+      journal = new MemoryStream();
+
+      var writer = new StreamWriter(journal, Encoding.UTF8);
+      writer.Write(body.Content);
+      writer.Flush();
+
+      journal.Seek(0, SeekOrigin.Begin);
+
+      var newStore = new Store(journal);
+      Assert.NotNull(newStore);
+      store = newStore;
+
+      repos = store.Create<Demo,string>("Demo");
+      Assert.NotNull(repos);
+
+      newStore.LoadAll();
     }
 
     [When(@"adding Demo with key ""(.*)"" and value (\d+)")]
     public void AddingDemoWithKeyStringAndValueInt(string key, int value)
     {
-      var demo = new Demo(key);
-      demo.Value = value;
-      repos!.Add(demo);
+      repos!.Add(new Demo(key, value));
     }
 
     [Then(@"getting key ""(.*)"" returns null")]
@@ -81,8 +96,6 @@ namespace GoodNight.Service.Storage.Test
     {
       journal.Flush();
       journal.Seek(0, SeekOrigin.Begin);
-
-      Console.WriteLine("stream length " + journal.Length + ", " + journal.Position);
 
       var reader = new StreamReader(journal, Encoding.UTF8);
       var content = reader.ReadToEnd();
