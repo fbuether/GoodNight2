@@ -15,17 +15,20 @@ namespace GoodNight.Service.Storage.Test
     private Stream journal = new MemoryStream();
 
     private IStore? store = null;
+    private IRepository<Demo, string>? repos = null;
 
     public void Dispose()
     {
       journal.Dispose();
     }
 
-    private class Storable : IStorable<string>
+    private class Demo : IStorable<string>
     {
       private string key;
+
+      public int Value { get; set; }
       
-      public Storable(string key)
+      public Demo(string key)
       {
         this.key = key;
       }
@@ -36,71 +39,55 @@ namespace GoodNight.Service.Storage.Test
       }
     }
 
-    [Given("a store")]
-    public void AStore()
-    {
-      journal.Dispose();
-      journal = new MemoryStream();
-      store = new Store(journal);
-    }
-
-    [Given(@"a store with journal ""(.*)""")]
-    public void AStore(string initial)
+    [Given("a repository for Demo")]
+    public void ARepositoryForDemo()
     {
       journal.Dispose();
       journal = new MemoryStream();
 
-      var writer = new StreamWriter(journal, Encoding.UTF8);
-      writer.WriteLine(initial);
-      writer.Flush();
+      store = new Store();
+      Assert.NotNull(store);
 
-      store = new Store(journal);
+      repos = store.Create<Demo,string>(journal);
+      Assert.NotNull(repos);
     }
 
-
-    [When(@"adding storable with key ""(.*)""")]
-    public async Task AddingStorableWithKeyString(string key)
+    [When(@"adding Demo with key ""(.*)"" and value (\d+)")]
+    public void AddingDemoWithKeyStringAndValueInt(string key, int value)
     {
-      await store!.Add<Storable, string>(new Storable(key));
+      var demo = new Demo(key);
+      demo.Value = value;
+      repos!.Add(demo);
     }
 
-    [Then(@"fetching storable with key ""(.*)"" returns storable")]
-    public void FetchingStorableWithKeyStringReturnsStorable(string key)
+    [Then(@"getting key ""(.*)"" returns null")]
+    public void GettingKeyStringReturnsNull(string key)
     {
-      Assert.IsType<Storable>(store!.Get<Storable, string>(key));
+      var demo = repos!.Get(key);
+      Assert.Null(demo);
     }
 
-    [Then(@"fetching storable with key ""(.*)"" returns null")]
-    public void FetchingStorableWithKeyStringReturnsNull(string key)
+    [Then(@"getting key ""(.*)"" returns Demo with value (\d+)")]
+    public void GettingKeyStringReturnsDemoWithValueInt(string key, int value)
     {
-      Assert.Null(store!.Get<Storable, string>(key));
+      var demo = repos!.Get(key);
+      Assert.NotNull(demo);
+      Assert.Equal(value, demo!.Value);
     }
 
-    [Then("the journal is not empty")]
+
+    [Then(@"the journal is not empty")]
     public void TheJournalIsNotEmpty()
     {
-      // journal.Flush();
-      // journal.Seek(0, SeekOrigin.Begin);
-      // var w = new StreamWriter(journal, Encoding.UTF8);
-      // w.Write("newline!+");
-      // w.Flush();
-
-      // new StreamWriter(journal, Encoding.UTF8).WriteLine("newline.").;
-      // journal.Flush();
-
-      journal.Position = 0;
+      journal.Flush();
+      journal.Seek(0, SeekOrigin.Begin);
 
       Console.WriteLine("stream length " + journal.Length + ", " + journal.Position);
 
       var reader = new StreamReader(journal, Encoding.UTF8);
-
-      Console.WriteLine("ppek " + reader.Peek());
-
       var content = reader.ReadToEnd();
 
-      Console.WriteLine("----- journal content:" + content);
-      Assert.True(false);
-
+      Assert.NotNull(content);
       Assert.NotEqual("", content);
     }
   }
