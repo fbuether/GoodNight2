@@ -30,12 +30,6 @@ Feature: Store
     When adding Demo with key "temporary" and value 13
     Then getting key "oh noes" returns null
 
-  # Scenario: Writing an Add entry
-  #   Given a repository for Demo
-  #   When adding Demo with key "journaled" and value 2
-  #   # When adding storable with key "bar2"
-  #   Then the journal is not empty
-
   Scenario: Reading an Add entry
     Given a store with journal and repository for Demo
       """
@@ -54,4 +48,27 @@ Feature: Store
     Then getting key "else" returns Demo with value 17
     Then getting key "or not?" returns Demo with value 42
     Then getting key "not-replayed" returns null
+
+  Scenario: Reading an Add as well as an Update
+    Given a store with journal and repository for Demo
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"Demo","kind":"Update","key":"replayed","value":{"Key":"replayed","Value":144}}
+      """
+    Then getting key "replayed" returns Demo with value 144
+
+
+  Scenario: Reading an Add and a Delete
+    Given a store with journal and repository for Demo
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"Demo","kind":"Delete","key":"replayed"}
+      """
+    Then getting key "replayed" returns null
+
+  # Scenario: Writing an Add entry
+  #   Given a repository for Demo
+  #   When adding Demo with key "journaled" and value 2
+  #   # When adding storable with key "bar2"
+  #   Then the journal is not empty
 
