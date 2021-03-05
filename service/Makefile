@@ -19,3 +19,9 @@ test-list:
 clean:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
 		dotnet clean --nologo -v q
+
+
+test-perf:
+	DOTNET_CLI_TELEMETRY_OPTOUT=1 CORECLR_ENABLE_PROFILING=1 COMPlus_PerfMapEnabled=1 \
+	   COMPlus_EnableEventLog=1 COMPlus_ZapDisable=1     \
+	   dotnet test --nologo --no-build
