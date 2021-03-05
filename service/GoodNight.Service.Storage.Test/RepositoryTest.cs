@@ -10,10 +10,11 @@ using Gherkin.Ast;
 
 namespace GoodNight.Service.Storage.Test
 {
-  [FeatureFile("StoreTest.feature")]
+  [FeatureFile("RepositoryTest.feature")]
   public class RepositoryTest : Xunit.Gherkin.Quick.Feature, IDisposable
   {
     private Stream journal = new MemoryStream();
+    private string? journalContent = null;
 
     private IStore? store = null;
     private IRepository<Demo, string>? repos = null;
@@ -39,12 +40,16 @@ namespace GoodNight.Service.Storage.Test
     {
       journal.Dispose();
       journal = new MemoryStream();
+      journalContent = null;
 
-      store = new Store(journal);
-      Assert.NotNull(store);
+      var newStore = new Store(journal);
+      Assert.NotNull(newStore);
+      store = newStore;
 
       repos = store.Create<Demo,string>("Demo");
       Assert.NotNull(repos);
+
+      newStore.StartJournal();
     }
 
     [Given("a store with journal and repository for Demo")]
@@ -52,11 +57,11 @@ namespace GoodNight.Service.Storage.Test
     {
       journal.Dispose();
       journal = new MemoryStream();
+      journalContent = null;
 
       var writer = new StreamWriter(journal, Encoding.UTF8);
       writer.Write(body.Content);
       writer.Flush();
-
       journal.Seek(0, SeekOrigin.Begin);
 
       var newStore = new Store(journal);
@@ -66,13 +71,25 @@ namespace GoodNight.Service.Storage.Test
       repos = store.Create<Demo,string>("Demo");
       Assert.NotNull(repos);
 
-      newStore.LoadAll();
+      newStore.StartJournal();
     }
 
     [When(@"adding Demo with key ""(.*)"" and value (\d+)")]
     public void AddingDemoWithKeyStringAndValueInt(string key, int value)
     {
       repos!.Add(new Demo(key, value));
+    }
+
+    [When(@"updating Demo with key ""(.*)"" to value (\d+)")]
+    public void UpdatingDemoWithKeyStringToValueInt(string key, int value)
+    {
+      repos!.Update(key, _ => new Demo(key, value));
+    }
+
+    [When(@"deleting Demo with key ""(.*)""")]
+    public void DeletingDemoWithKeyString(string key)
+    {
+      repos!.Remove(key);
     }
 
     [Then(@"getting key ""(.*)"" returns null")]
@@ -91,17 +108,39 @@ namespace GoodNight.Service.Storage.Test
     }
 
 
+
+    private string GetJournal()
+    {
+      if (journalContent is null)
+      {
+        journal.Flush();
+        if (store is not null)
+        {
+          ((IDisposable)store).Dispose();
+        }
+
+        journal.Seek(0, SeekOrigin.Begin);
+        var reader = new StreamReader(journal, Encoding.UTF8);
+        journalContent = reader.ReadToEnd();
+      }
+
+      return journalContent;
+    }
+
     [Then(@"the journal is not empty")]
     public void TheJournalIsNotEmpty()
     {
-      journal.Flush();
-      journal.Seek(0, SeekOrigin.Begin);
-
-      var reader = new StreamReader(journal, Encoding.UTF8);
-      var content = reader.ReadToEnd();
+      var content = GetJournal();
 
       Assert.NotNull(content);
       Assert.NotEqual("", content);
+    }
+
+    [Then(@"the journal is this")]
+    public void TheJournalIsThis(DocString body)
+    {
+      var content = GetJournal();
+      Assert.Equal(body.Content, content);
     }
   }
 }

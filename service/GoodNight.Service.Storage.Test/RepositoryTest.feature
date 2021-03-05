@@ -30,6 +30,19 @@ Feature: Store
     When adding Demo with key "temporary" and value 13
     Then getting key "oh noes" returns null
 
+  Scenario: Adding an item and updating it
+    Given a repository for Demo
+    When adding Demo with key "mutating" and value 7
+    When updating Demo with key "mutating" to value 31
+    Then getting key "mutating" returns Demo with value 31
+
+  Scenario: Adding an item and removing it
+    Given a repository for Demo
+    When adding Demo with key "mutating" and value 7
+    When deleting Demo with key "mutating"
+    Then getting key "mutating" returns null
+
+
   Scenario: Reading an Add entry
     Given a store with journal and repository for Demo
       """
@@ -57,7 +70,6 @@ Feature: Store
       """
     Then getting key "replayed" returns Demo with value 144
 
-
   Scenario: Reading an Add and a Delete
     Given a store with journal and repository for Demo
       """
@@ -66,9 +78,61 @@ Feature: Store
       """
     Then getting key "replayed" returns null
 
-  # Scenario: Writing an Add entry
-  #   Given a repository for Demo
-  #   When adding Demo with key "journaled" and value 2
-  #   # When adding storable with key "bar2"
-  #   Then the journal is not empty
 
+  Scenario: Writing an Add entry
+    Given a repository for Demo
+    When adding Demo with key "dem key" and value 2
+    Then the journal is not empty
+    Then the journal is this
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"dem key","Value":2}}
+
+      """
+
+  Scenario: Writing an Add entry with escaped key
+    Given a repository for Demo
+    When adding Demo with key "dem\" key" and value 2
+    Then the journal is not empty
+    Then the journal is this
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"dem\\\u0022 key","Value":2}}
+
+      """
+
+  Scenario: Writing an item and updating it
+    Given a repository for Demo
+    When adding Demo with key "mutating" and value 7
+    When updating Demo with key "mutating" to value 31
+    Then the journal is not empty
+    Then the journal is this
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"Demo","kind":"Update","key":"mutating","value":{"Key":"mutating","Value":31}}
+
+      """
+
+  Scenario: Writing an item and removing it
+    Given a repository for Demo
+    When adding Demo with key "mutating" and value 7
+    When deleting Demo with key "mutating"
+    Then the journal is not empty
+    Then the journal is this
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"Demo","kind":"Delete","key":"mutating"}
+
+      """
+
+  Scenario: Writing adding several items
+    Given a repository for Demo
+    When adding Demo with key "mutating" and value 7
+    When adding Demo with key "more item" and value 71
+    When adding Demo with key "something else?" and value 771
+    Then the journal is not empty
+    Then the journal is this
+      """
+      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"Demo","kind":"Add","value":{"Key":"more item","Value":71}}
+      {"repos":"Demo","kind":"Add","value":{"Key":"something else?","Value":771}}
+
+      """
