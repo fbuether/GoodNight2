@@ -19,10 +19,17 @@ export interface ReadPage {
 const readPagePath = /^\/read\/(.+)/;
 
 
+export interface LoginPage {
+  kind: "login";
+}
+
+const loginPagePath = /^\/login$/;
+
 
 export type Page =
     | StartPage
-    | ReadPage;
+    | ReadPage
+    | LoginPage;
 
 
 function assertNever(param: never): never {
@@ -33,6 +40,7 @@ export function asHref(page: Page) {
   switch (page.kind) {
     case "read": return "/read/" + page.story;
     case "start": return "/start";
+    case "login": return "/login";
     default: return assertNever(page);
   }
 }
@@ -52,6 +60,13 @@ export function ofHref(url: URL): Page {
       kind: "read" as const,
       story: read[1],
       user: "Mrs. Hollywookle"
+    };
+  }
+
+  let login = url.pathname.match(loginPagePath);
+  if (login != null) {
+    return {
+      kind: "login" as const
     };
   }
 

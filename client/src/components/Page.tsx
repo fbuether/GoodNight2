@@ -4,6 +4,7 @@ import DispatchContext from "../DispatchContext";
 
 import Start from "../components/Start";
 import Read from "../components/Read";
+import Login from "../components/Login";
 import Navigation from "../components/Navigation";
 
 
@@ -15,6 +16,7 @@ function getPage(page: Page) {
   switch (page.kind) {
     case "start": return <Start page={page} />;
     case "read": return <Read {...page} />;
+    case "login": return <Login />;
     default: return assertNever(page);
   }
 }
