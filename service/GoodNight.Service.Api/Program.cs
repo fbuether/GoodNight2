@@ -24,7 +24,7 @@ namespace GoodNight.Service.Api
         throw new NullReferenceException();
       }
 
-      store.LoadAll();
+      store.StartJournal();
 
       Console.WriteLine("Finished loading stores. Starting host...");
 

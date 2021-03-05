@@ -4,12 +4,24 @@ using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Storage.Journal;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
+using System.Threading;
 
 namespace GoodNight.Service.Storage
 {
   public class Store : IStore, IDisposable
   {
     private Stream backingStore;
+
+    private bool ownsBackingStore = false;
+
+    private BlockingCollection<string> writeCache;
+
+    private static readonly int WriteCacheSize = 64;
+
+    private Task? writeCacheTask = null;
+
+    private CancellationTokenSource writeCacheCanceler;
 
     private List<BaseRepository> repositories;
 
@@ -22,20 +34,85 @@ namespace GoodNight.Service.Storage
     /// </param>
     public Store(Stream? backingStore = null)
     {
+      ownsBackingStore = backingStore is null;
       this.backingStore = backingStore is null
         ? File.Open("store.json", FileMode.OpenOrCreate)
         : backingStore;
       repositories = new List<BaseRepository>();
+
+      // uses a ConcurrentQueue by default.
+      writeCache = new BlockingCollection<string>(Store.WriteCacheSize);
+      writeCacheCanceler = new CancellationTokenSource();
     }
 
     public void Dispose()
     {
-      ((IDisposable)backingStore).Dispose();
+      backingStore.Flush();
+
+      if (ownsBackingStore)
+      {
+        ((IDisposable)backingStore).Dispose();
+      }
+
+      if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
+      {
+        writeCacheCanceler.Cancel();
+        writeCache.CompleteAdding();
+        writeCacheTask.Wait();
+      }
+
+      ((IDisposable)writeCache).Dispose();
     }
 
-    public void LoadAll()
+    /// <remarks>
+    /// This method is not async, as it should be executed prior to web service
+    /// launch, and should be executed synchronously.
+    /// </remarks>
+    public void StartJournal()
     {
       JournalReader.ReadAll(backingStore, this);
+
+      var writer = new StreamWriter(backingStore);
+      writeCacheTask = Task.Run(() =>
+        this.DoWriteFromCache(writer, writeCacheCanceler.Token));
+    }
+
+    private void DoWriteFromCache(StreamWriter writer,
+      CancellationToken writeCanceler)
+    {
+      while (!writeCanceler.IsCancellationRequested || writeCache.Count > 0)
+      {
+        string? nextItem = null;
+        bool success = false;
+
+        if (writeCache.Count > 0)
+        {
+          nextItem = writeCache.Take();
+          success = true;
+        }
+        else
+        {
+          try
+          {
+            // wait for it...
+            success = writeCache.TryTake(out nextItem, Timeout.Infinite,
+              writeCanceler);
+          }
+          catch (OperationCanceledException)
+          {
+            // don't do anything here. The while loop will quit automatically,
+            // as the cancellation token is cancelled.
+          }
+        }
+
+        if (!success || nextItem is null)
+          continue;
+
+        writer.WriteLine(nextItem);
+      }
+
+      // write out everything as we finished.
+      writer.Flush();
     }
 
     // used by journal reader to find the appropriate repository for an entry.
@@ -59,7 +136,8 @@ namespace GoodNight.Service.Storage
           + $"\"{uniqueName}\" already exists, but not as repository for "
           + $"{nameof(T)},{nameof(K)}.");
 
-      var repos = new Repository<T,K>(new JournalWriter(), uniqueName);
+      var repos = new Repository<T,K>(new JournalWriter(writeCache),
+        uniqueName);
       repositories.Add(repos);
       return repos;
     }

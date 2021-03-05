@@ -4,40 +4,59 @@ using System.Text.Json.Serialization;
 using System.IO;
 using System.Threading.Tasks;
 using System.Text;
+using System.Collections.Concurrent;
 
 namespace GoodNight.Service.Storage.Journal
 {
-  internal class JournalWriter<T,K>
+  internal class JournalWriter
   {
-    private Stream store;
+    private BlockingCollection<string> writeCache;
 
-    private StreamWriter writer;
-
-    internal JournalWriter(Stream target)
+    internal JournalWriter(BlockingCollection<string> writeCache)
     {
-      store = target;
-
-      writer = new StreamWriter(store, Encoding.UTF8);
+      this.writeCache = writeCache;
     }
 
-    internal async Task Write(Entry<T,K> entry)
+    internal void QueueWrite(BaseRepository repos, Entry entry)
     {
-      Console.WriteLine("--- serialising somethign.");
-      Console.WriteLine("--- serialised: " + (JsonSerializer.Serialize(entry, entry.GetType())));
-      await JsonSerializer.SerializeAsync(store, entry, entry.GetType());
-      // await store.FlushAsync();
-      await writer.WriteLineAsync();
-      // await writer.WriteAsync("beeeeeeeeeeeeep");
-      // new StreamWriter(this.store).WriteLine("newline.");
-      await writer.FlushAsync();
-      // await writer.WriteAsync(Environment.NewLine);
-      await store.FlushAsync();
+      var stream = new MemoryStream();
+      var writer = new Utf8JsonWriter(stream);
 
-      // await 
+      writer.WriteStartObject();
+      writer.WriteString("repos", repos.UniqueName);
 
-      // var writer = new StreamWriter(store);
-      // writer.Write("--done--");
-      // Console.WriteLine("--- done.");
+      switch (entry)
+      {
+        case Entry.Add a:
+          writer.WriteString("kind", "Add");
+          writer.WritePropertyName("value");
+          JsonSerializer.Serialize(writer, a.Value, repos.ValueType);
+          break;
+
+        case Entry.Update u:
+          writer.WriteString("kind", "Update");
+          writer.WritePropertyName("key");
+          JsonSerializer.Serialize(writer, u.Key, repos.KeyType);
+          writer.WritePropertyName("value");
+          JsonSerializer.Serialize(writer, u.Value, repos.ValueType);
+          break;
+
+        case Entry.Delete d:
+          writer.WriteString("kind", "Delete");
+          writer.WritePropertyName("key");
+          JsonSerializer.Serialize(writer, d.Key, repos.KeyType);
+          break;
+      }
+
+      writer.WriteEndObject();
+      writer.Flush();
+
+      stream.Flush();
+      stream.Seek(0, SeekOrigin.Begin);
+      var reader = new StreamReader(stream, Encoding.UTF8);
+      var asString = reader.ReadToEnd();
+
+      writeCache.Add(asString);
     }
   }
 }
