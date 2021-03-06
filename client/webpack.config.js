@@ -3,6 +3,22 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
+
+var statsConfig = {
+	all: false,
+	version: false,
+	timings: false,
+	modules: false,
+	modulesSpace: 0,
+	assets: false,
+	assetsSpace: 0,
+	errors: false,
+	errorsCount: true,
+	warnings: false,
+	warningsCount: true,
+	logging: "warn"
+};
+
 module.exports = env => { return {
 
   entry: "./src/index.tsx",
@@ -11,10 +27,16 @@ module.exports = env => { return {
 
   devtool: env.dev ? "inline-source-map" : false,
 
+  stats: statsConfig,
+
   devServer: {
     // noInfo: true,
     serveIndex: false,
-    stats: "minimal",
+
+    // stats: "minimal",
+    stats: statsConfig,
+
+
     port: 32015,
     historyApiFallback: true
   },
@@ -22,6 +44,8 @@ module.exports = env => { return {
   output: {
     path: path.resolve(__dirname, "dist"),
     publicPath: "",
+
+    clean: true,
 
     filename: function(chunk) {
       return chunk.chunk.name == "main"
@@ -34,7 +58,15 @@ module.exports = env => { return {
     rules: [
       {
         test: /\.tsx?$/,
-        loader: "ts-loader",
+        use: [{
+          loader: "ts-loader",
+          options: {
+            colors: false,
+            silent: true,
+            errorFormatter: (message, colors) =>
+              `${message.file}(${message.line},${message.character}): ${message.severity} TS${message.code}: ${message.content}`
+          }
+        }],
         exclude: /node_modules/
       },
       // {
@@ -81,6 +113,17 @@ module.exports = env => { return {
     new MiniCssExtractPlugin({
       filename: "[name]-[contenthash].css",
     }),
+
+    {
+      apply(compiler) {
+        compiler.hooks.done.tap("fbu-format", c => {
+          console.log("");
+          c.compilation.errors.map(err => err.message).sort().forEach(msg =>
+            console.log(msg));
+          console.log("");
+        });
+      }
+    }
   ],
 
 
