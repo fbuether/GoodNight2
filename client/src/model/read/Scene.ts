@@ -1,8 +1,8 @@
 import {requireString, requireBoolean, optionalString,
   deserialiseArray} from "../Deserialise";
 
-import {Quality, asQuality} from "./Quality.ts";
-import {Value, asValue} from "./Value.ts";
+import {Quality, asQuality} from "./Quality";
+import {Value, asValue} from "./Value";
 import {Property, asProperty} from "./Property";
 
 
