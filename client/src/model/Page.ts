@@ -1,15 +1,13 @@
 import * as O from "optics-ts";
 
 import {HomePage} from "./HomePage";
-// import type {SelectStoryReadPage} from "./read/SelectStoryReadPage";
-// import type {ReadPage} from "./read/ReadPage";
+import {ReadPage} from "./read/ReadPage";
 import {WritePage} from "./write/WritePage";
 
 
 export type Page =
     | HomePage
-    // | SelectStoryPage
-    // | ReadPage
+    | ReadPage
     // | LoginPage
     | WritePage;
 
@@ -24,6 +22,7 @@ export const Page = {
   toUrl: (page: Page): string => {
     switch (page.kind) {
       case "HomePage": return HomePage.toUrl(page);
+      case "ReadPage": return ReadPage.toUrl(page);
       case "WritePage": return WritePage.toUrl(page);
     }
   },
@@ -39,6 +38,7 @@ export const Page = {
   toTitle: (page: Page): string => {
     switch (page.kind) {
       case "HomePage": return "";
+      case "ReadPage": return ": " + ReadPage.toTitle(page);
       case "WritePage": return ": " + WritePage.toTitle(page);
     }
   }
