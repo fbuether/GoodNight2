@@ -31,7 +31,6 @@ export const State = {
 }
 
 
-
 export type Update = (state: State) => State;
 
 export function applyUpdate(state: State, update: Update): State {

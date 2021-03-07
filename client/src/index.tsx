@@ -19,6 +19,7 @@ import "bootstrap/js/dist/collapse";
 import "./ui/style.scss";
 
 import {State, Update, applyUpdate} from "./model/State";
+import {registerHistoryListener} from "./History";
 import DispatchContext from "./DispatchContext";
 
 import Page from "./components/Page";
@@ -27,6 +28,8 @@ import Page from "./components/Page";
 let Root = () => {
   const [state, dispatch] = PreactHooks.useReducer<State, Update>(
     applyUpdate, State.ofUrl(new URL(window.location.href).pathname));
+
+  registerHistoryListener(dispatch);
 
   console.log("current state", state);
 
