@@ -117,10 +117,10 @@ module.exports = env => { return {
     {
       apply(compiler) {
         compiler.hooks.done.tap("fbu-format", c => {
-          console.log("");
+          if (c.compilation.errors.length > 0) console.log("");
           c.compilation.errors.map(err => err.message).forEach(msg =>
             console.log(msg));
-          console.log("");
+          if (c.compilation.errors.length > 0) console.log("");
         });
       }
     }
