@@ -177,14 +177,14 @@ nav.navbar {
 
   .navbar-nav {
     .nav-item .nav-link {
-      padding: 0.4rem;
+      padding: 0.5rem 0.4rem 0.3rem 0.4rem;
       margin: 0rem 0.4rem;
     }
 
     .nav-item.active .nav-link,
     .nav-item [aria-current],
     .nav-item a:focus, .nav-item a:hover {
-      padding-bottom: 0.2rem;
+      padding-bottom: 0.1rem;
       border-bottom: 0.2rem solid hsb($base-color, 10%, 20%, 0.4);
       outline: none;
     }
