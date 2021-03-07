@@ -1,5 +1,5 @@
 
-import type {HomePage as State} from "../../model/HomePage";
+import type {HomePage as State} from "../state/HomePage";
 
 
 export default function HomePage(state: State) {
