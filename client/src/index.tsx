@@ -18,7 +18,7 @@ import "bootstrap/js/dist/collapse";
 
 import "./ui/style.scss";
 
-import {State, Update, applyUpdate} from "./model/State";
+import {State, Update, applyUpdate} from "./state/State";
 import {registerHistoryListener} from "./History";
 import DispatchContext from "./DispatchContext";
 

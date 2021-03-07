@@ -1,6 +1,6 @@
 import * as Preact from "preact";
 
-import {State, Update} from "./model/State";
+import {State, Update} from "./state/State";
 
 // Create an empty dispatcher until we fill in the actual proper dispatcher,
 // which happens in index.tsx.

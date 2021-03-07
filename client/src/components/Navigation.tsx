@@ -1,9 +1,10 @@
 import * as O from "optics-ts";
 
-import {Update, State} from "../model/State";
-import {Page} from "../model/Page";
-import {HomePage} from "../model/HomePage";
-import {WritePage} from "../model/write/WritePage";
+import {Update, State} from "../state/State";
+import {Page} from "../state/Page";
+import {HomePage} from "../state/HomePage";
+import {ReadPage} from "../state/read/ReadPage";
+import {WritePage} from "../state/write/WritePage";
 
 import Link from "../components/common/Link";
 

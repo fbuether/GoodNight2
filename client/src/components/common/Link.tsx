@@ -1,8 +1,8 @@
 import * as Preact from "preact";
 import * as PreactHooks from "preact/hooks";
 
-import {State, Update} from "../../model/State";
-import {Page} from "../../model/Page";
+import {State, Update} from "../../state/State";
+import {Page} from "../../state/Page";
 
 import DispatchContext from "../../DispatchContext";
 

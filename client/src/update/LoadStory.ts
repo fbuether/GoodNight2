@@ -1,4 +1,4 @@
-import type State from "../model/State";
+import {State} from "../state/State";
 import request from "../Request";
 
 import {Adventure, asAdventure} from "../model/read/Adventure";

@@ -1,4 +1,4 @@
-import {State, Update} from "./model/State";
+import {State, Update} from "./state/State";
 
 
 export function goTo(url: string, title: string = "GoodNight") {
