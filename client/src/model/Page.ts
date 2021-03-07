@@ -34,5 +34,12 @@ export const Page = {
     return page !== undefined
         ? page.ofUrl(pathname)
         : HomePage.instance;
+  },
+
+  toTitle: (page: Page): string => {
+    switch (page.kind) {
+      case "HomePage": return "";
+      case "WritePage": return ": " + WritePage.toTitle(page);
+    }
   }
 }

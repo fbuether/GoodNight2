@@ -16,15 +16,17 @@ export interface WritePage {
 
 
 export const WritePage = {
+  instance: {
+    kind: "WritePage" as const
+  },
+
+  toTitle: (page: WritePage) => "Write",
+
   guard: (a: Page): a is WritePage => (a.kind == "WritePage"),
 
   path: /^\/write/,
 
   toUrl: (homePage: WritePage): string => "/write",
 
-  ofUrl: (pathname: string): WritePage => {
-    return {
-      kind: "WritePage" as const
-    };
-  }
+  ofUrl: (pathname: string): WritePage => WritePage.instance
 }

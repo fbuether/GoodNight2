@@ -1,7 +1,8 @@
 import * as O from "optics-ts";
 
-import {Page} from "./Page";
+import {goTo} from "../History";
 
+import {Page} from "./Page";
 
 export interface State {
   page: Page;
@@ -16,9 +17,9 @@ export const State = {
     user: O.optic<State>().prop("user")
   },
 
-  toUrl: (state: State): string => {
-    return Page.toUrl(state.page);
-  },
+  toTitle: (state: State): string => "GoodNight" + Page.toTitle(state.page),
+
+  toUrl: (state: State): string => Page.toUrl(state.page),
 
   ofUrl: (pathname: string): State => {
     // todo: load current user.
@@ -26,12 +27,17 @@ export const State = {
       page: Page.ofUrl(pathname),
       user: "Mrs. Hollywookle"
     };
-  }
+  },
 }
+
 
 
 export type Update = (state: State) => State;
 
 export function applyUpdate(state: State, update: Update): State {
-  return update(state);
+  let nextState = update(state);
+  let nextUrl = State.toUrl(nextState);
+  goTo(nextUrl);
+  document.title = State.toTitle(nextState);
+  return nextState;
 }
