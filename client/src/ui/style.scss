@@ -132,7 +132,7 @@ html body {
 
 #page {
   background: hsb($base-color, 2%, 98%);
-  padding-bottom: 3rem !important;
+  padding-bottom: 3rem;
   margin-bottom: 6rem;
 }
 
@@ -169,14 +169,28 @@ html body {
 
 
 
-nav {
-  border-bottom: 0.06rem solid hsba($base-color, 32%, 64%, 0.6);
+nav.navbar {
+  @include media-breakpoint-up(lg) {
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+  }
+
+  .navbar-nav {
+    .nav-item .nav-link {
+      padding: 0.4rem;
+      margin: 0rem 0.4rem;
+    }
+
+    .nav-item.active .nav-link,
+    .nav-item [aria-current],
+    .nav-item a:focus, .nav-item a:hover {
+      padding-bottom: 0.2rem;
+      border-bottom: 0.2rem solid hsb($base-color, 10%, 20%, 0.4);
+      outline: none;
+    }
+  }
 }
 
-
-a:focus {
-  outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
-}
 
 
 //--------------------------------------
