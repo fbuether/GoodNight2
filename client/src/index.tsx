@@ -18,17 +18,15 @@ import "bootstrap/js/dist/collapse";
 
 import "./ui/style.scss";
 
-import State from "./model/State";
+import {State, Update, applyUpdate} from "./model/State";
 import DispatchContext from "./DispatchContext";
-import update, {Update} from "./update/Update";
-import initialState from "./update/InitialState";
 
 import Page from "./components/Page";
 
 
 let Root = () => {
   const [state, dispatch] = PreactHooks.useReducer<State, Update>(
-    update, initialState(new URL(window.location.href)));
+    applyUpdate, State.ofUrl(new URL(window.location.href).pathname));
 
   console.log("current state", state);
 
