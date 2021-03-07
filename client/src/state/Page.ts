@@ -12,6 +12,11 @@ export type Page =
     | WritePage;
 
 
+function assertNever(param: never): never {
+  throw new Error(`Invalid Page kind in state Page: "${param}"`);
+}
+
+
 export const Page = {
   lens: {
     ...O.optic<Page>(),
@@ -24,6 +29,7 @@ export const Page = {
       case "HomePage": return HomePage.toUrl(page);
       case "ReadPage": return ReadPage.toUrl(page);
       case "WritePage": return WritePage.toUrl(page);
+      default: return assertNever(page);
     }
   },
 
@@ -40,6 +46,7 @@ export const Page = {
       case "HomePage": return "";
       case "ReadPage": return ": " + ReadPage.toTitle(page);
       case "WritePage": return ": " + WritePage.toTitle(page);
+      default: return assertNever(page);
     }
   }
 }

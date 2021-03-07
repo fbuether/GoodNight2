@@ -1,23 +1,24 @@
 import * as O from "optics-ts";
 
 import {Page} from "../Page.ts";
-// import {SelectStoryPart} from "./SelectStoryPart";
-// import {ReadStoryPart} from "./ReadStoryPart";
+import {SelectStoryPart} from "./SelectStoryPart";
+import {ReadStoryPart} from "./ReadStoryPart";
 
 
-// export type ReadPagePart =
-//     | SelectStoryPart
-//     | ReadStoryPart;
+export type ReadPagePart =
+    | SelectStoryPart
+    | ReadStoryPart;
 
 export interface ReadPage {
   kind: "ReadPage";
-  // part: ReadPagePart;
+  part: ReadPagePart;
 }
 
 
 export const ReadPage = {
   instance: {
-    kind: "ReadPage" as const
+    kind: "ReadPage" as const,
+    part: SelectStoryPart.instance
   },
 
   toTitle: (page: ReadPage) => "Read",
