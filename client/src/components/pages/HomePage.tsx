@@ -1,8 +1,8 @@
 
-import type {StartPage} from "../model/Page";
+import type {HomePage as State} from "../../model/HomePage";
 
 
-export default function Start(state: { page: StartPage }) {
+export default function HomePage(state: State) {
   return (
     <div id="centre">
       <h1>Willkommen!</h1>
@@ -14,6 +14,9 @@ export default function Start(state: { page: StartPage }) {
         eiskalten Antarktis.
       </p>
       <h2>Index der Geschichten</h2>
+      <p>
+        ~todo: index~
+      </p>
     </div>
   );
 }
