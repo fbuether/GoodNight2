@@ -2,6 +2,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const CircularDependencyPlugin = require("circular-dependency-plugin");
 
 
 var statsConfig = {
@@ -27,6 +28,7 @@ module.exports = env => { return {
 
   devtool: env.dev ? "inline-source-map" : false,
 
+  // stats: "minimal",
   stats: statsConfig,
 
   devServer: {
@@ -35,7 +37,6 @@ module.exports = env => { return {
 
     // stats: "minimal",
     stats: statsConfig,
-
 
     port: 32015,
     historyApiFallback: true
@@ -114,6 +115,7 @@ module.exports = env => { return {
       filename: "[name]-[contenthash].css",
     }),
 
+    // manual inline plugin to format error messages
     {
       apply(compiler) {
         compiler.hooks.done.tap("fbu-format", c => {
@@ -123,7 +125,22 @@ module.exports = env => { return {
           if (c.compilation.errors.length > 0) console.log("");
         });
       }
-    }
+    },
+
+
+    new CircularDependencyPlugin({
+      // // exclude detection of files based on a RegExp
+      // exclude: /a\.js|node_modules/,
+      // include specific files based on a RegExp
+      // include: /dir/,
+      // add errors to webpack instead of warnings
+      failOnError: true,
+      // allow import cycles that include an asyncronous import,
+      // e.g. via import(/* webpackMode: "weak" */ './file.js')
+      allowAsyncCycles: false
+      // set the current working directory for displaying module paths
+      // cwd: process.cwd(),
+    })
   ],
 
 

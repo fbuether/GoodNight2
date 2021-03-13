@@ -480,7 +480,7 @@ export function id<S>(): IdLens<S>
 
 
 //------------------
-
+/*
 
 interface OnlyNumber {
   n: number;
@@ -547,3 +547,6 @@ console.log(sta);
 // console.log(staLens.user.set("wurst")(sta));
 // console.log(staLens.page.set({ kind: "RP" as const, story: "my-story" })(sta));
 console.log("sup", staLens.page.asHP.message.greeting.set("wassup")(sta));
+
+
+*/
