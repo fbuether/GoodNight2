@@ -1,10 +1,10 @@
 
-interface Prism<TObject, TValue> {
+interface PrismAccess<TObject, TValue> {
   get: (obj: TObject) => TValue | null;
   set: (value: TValue) => (obj: TObject) => TObject;
 }
 
-interface Lens<TObject, TValue> extends Prism<TObject, TValue> {
+interface LensAccess<TObject, TValue> extends PrismAccess<TObject, TValue> {
   get: (obj: TObject) => TValue;
 }
 
@@ -13,13 +13,13 @@ interface AddProp<TOrigin, TObject> {
   prop<TKey extends string & keyof TObject, TThis>(
     this: TThis,
     key: TKey)
-  : TThis & Record<TKey, Lens<TOrigin, TObject[TKey]>>;
+  : TThis & Record<TKey, LensAccess<TOrigin, TObject[TKey]>>;
 }
 
 interface AddPrismProp<TOrigin, TObject> {
   prop<TKey extends string & keyof TObject, TThis>(
     this: TThis, key: TKey)
-  : TThis & Record<TKey, Prism<TOrigin, TObject[TKey]>>;
+  : TThis & Record<TKey, PrismAccess<TOrigin, TObject[TKey]>>;
 }
 
 
@@ -27,15 +27,15 @@ type PrismBuilderFunction<
     TOrigin,
     TSubtype,
     TKey extends string,
-    TResult extends FullPrism<TOrigin, TSubtype>>
-    = (id: FullPrism<TOrigin, TSubtype>) => TResult;
+    TResult extends Prism<TOrigin, TSubtype>>
+    = (id: Prism<TOrigin, TSubtype>) => TResult;
 
 type Guard<TObject, TSubtype extends TObject> = (a: TObject) => a is TSubtype;
 
 interface AddUnion<TOrigin, TObject> {
   union<TKey extends string,
       TSubtype extends TObject,
-      TResult extends FullPrism<TOrigin, TSubtype>,
+      TResult extends Prism<TOrigin, TSubtype>,
       TThis>(
     this: TThis,
     key: TKey,
@@ -49,12 +49,12 @@ type LensBuilderFunction<
     TOrigin,
     TObject,
     TKey extends string & keyof TObject,
-    TResult extends FullLens<TOrigin, TObject[TKey]>>
-    = (id: FullLens<TOrigin, TObject[TKey]>) => TResult;
+    TResult extends Lens<TOrigin, TObject[TKey]>>
+    = (id: Lens<TOrigin, TObject[TKey]>) => TResult;
 
 interface AddPath<TOrigin, TObject> {
   path<TKey extends string & keyof TObject,
-      TResult extends FullLens<TOrigin, TObject[TKey]>,
+      TResult extends Lens<TOrigin, TObject[TKey]>,
       TThis>(
         this: TThis,
         key: TKey,
@@ -66,7 +66,7 @@ interface AddPath<TOrigin, TObject> {
 interface AddPrismPath<TOrigin, TObject> {
   path<
       TKey extends string & keyof TObject,
-      TResult extends FullPrism<TOrigin, TObject[TKey]>,
+      TResult extends Prism<TOrigin, TObject[TKey]>,
       TThis>(
         this: TThis,
         key: TKey,
@@ -75,18 +75,20 @@ interface AddPrismPath<TOrigin, TObject> {
 }
 
 
-type FullLens<O,V> = Lens<O,V> & AddProp<O,V> & AddUnion<O,V> & AddPath<O,V>;
+export type Lens<O,V> = LensAccess<O,V> & AddProp<O,V> & AddUnion<O,V> & AddPath<O,V>;
 
-type FullPrism<O,V> = Prism<O,V> & AddPrismProp<O,V> & AddUnion<O,V> & AddPrismPath<O,V>;
+export type Prism<O,V> = PrismAccess<O,V> & AddPrismProp<O,V> & AddUnion<O,V> & AddPrismPath<O,V>;
+
+// export type Optic<O,V> = Lens<O,V> | Prism<O,V>;
 
 
 //------------------------------------------------------------------------------
 
 
 function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
-  baseLens: Lens<TOrigin, TObject>,
+  baseLens: LensAccess<TOrigin, TObject>,
   key: TKey)
-: FullLens<TOrigin, TObject[TKey]> {
+: Lens<TOrigin, TObject[TKey]> {
   return {
     get: (origin: TOrigin) => (baseLens.get(origin))[key],
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
@@ -96,7 +98,7 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
     },
 
     prop: function<TSubKey extends string & keyof TObject[TKey], TThis>(
-      this: TThis & FullLens<TOrigin, TObject[TKey]>,
+      this: TThis & Lens<TOrigin, TObject[TKey]>,
       key: TSubKey) {
 
       return addProp<
@@ -110,9 +112,9 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
     union: function<
         TSubKey extends string,
         TSubtype extends TObject[TKey],
-        TResult extends FullPrism<TOrigin, TSubtype>,
+        TResult extends Prism<TOrigin, TSubtype>,
         TThis>(
-          this: TThis & FullLens<TOrigin, TObject[TKey]>,
+          this: TThis & Lens<TOrigin, TObject[TKey]>,
           key: TSubKey,
           guard: Guard<TObject[TKey], TSubtype>,
           builder: PrismBuilderFunction<TOrigin, TSubtype, TSubKey, TResult>)
@@ -130,19 +132,19 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
 
     path: function<
         TSubKey extends string & keyof TObject[TKey],
-        TResult extends FullLens<TOrigin, TObject[TKey][TSubKey]>,
+        TResult extends Lens<TOrigin, TObject[TKey][TSubKey]>,
         TThis>(
-          this: TThis & FullLens<TOrigin, TObject[TKey]>,
+          this: TThis & Lens<TOrigin, TObject[TKey]>,
           key: TSubKey,
           builder: LensBuilderFunction<TOrigin, TObject[TKey], TSubKey, TResult>)
-    : TThis & FullLens<TOrigin, TObject[TKey]> & Record<TSubKey, TResult> {
+    : TThis & Lens<TOrigin, TObject[TKey]> & Record<TSubKey, TResult> {
 
       return addLensPath<
             TOrigin,
             TObject[TKey],
             TSubKey,
             TResult,
-            TThis & FullLens<TOrigin, TObject[TKey]>>(
+            TThis & Lens<TOrigin, TObject[TKey]>>(
               this, key, builder);
     }
   };
@@ -150,9 +152,9 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
 
 
 function makePrism<TOrigin, TObject, TSubtype extends TObject>(
-  baseLens: Prism<TOrigin, TObject>,
+  baseLens: PrismAccess<TOrigin, TObject>,
   guard: Guard<TObject, TSubtype>)
-: FullPrism<TOrigin, TSubtype> {
+: Prism<TOrigin, TSubtype> {
   return {
     get: (origin: TOrigin): TSubtype | null => {
       let obj = baseLens.get(origin);
@@ -166,7 +168,7 @@ function makePrism<TOrigin, TObject, TSubtype extends TObject>(
     },
 
     prop: function<TKey extends string & keyof TSubtype, TThis>(
-      this: TThis & FullPrism<TOrigin, TSubtype>,
+      this: TThis & Prism<TOrigin, TSubtype>,
       key: TKey) {
       return addPrismProp<
           TKey,
@@ -179,9 +181,9 @@ function makePrism<TOrigin, TObject, TSubtype extends TObject>(
     union: function<
         TKey extends string,
         TSubSubtype extends TSubtype,
-        TResult extends FullPrism<TOrigin, TSubSubtype>,
+        TResult extends Prism<TOrigin, TSubSubtype>,
         TThis>(
-          this: TThis & Prism<TOrigin, TSubtype>,
+          this: TThis & PrismAccess<TOrigin, TSubtype>,
           key: TKey,
           guard: Guard<TSubtype, TSubSubtype>,
           builder: PrismBuilderFunction<TOrigin, TSubSubtype, TKey, TResult>)
@@ -199,10 +201,10 @@ function makePrism<TOrigin, TObject, TSubtype extends TObject>(
 
     path: function<
         TKey extends string & keyof TSubtype,
-        TResult extends FullPrism<TOrigin, TSubtype[TKey]>,
+        TResult extends Prism<TOrigin, TSubtype[TKey]>,
         TThis
         >(
-          this: TThis & Prism<TOrigin, TSubtype>,
+          this: TThis & PrismAccess<TOrigin, TSubtype>,
           key: TKey,
           builder: PrismBuilderFunction<TOrigin, TSubtype[TKey], TKey, TResult>)
     : TThis & Record<TKey, TResult> {
@@ -220,9 +222,9 @@ function makePrism<TOrigin, TObject, TSubtype extends TObject>(
 
 function makePrismFromProp<TOrigin, TObject,
   TKey extends string & keyof TObject>(
-    baseLens: Prism<TOrigin, TObject>,
+    baseLens: PrismAccess<TOrigin, TObject>,
     key: TKey)
-: FullPrism<TOrigin, TObject[TKey]> {
+: Prism<TOrigin, TObject[TKey]> {
   return {
     get: (origin: TOrigin): TObject[TKey] | null => {
       let obj = baseLens.get(origin);
@@ -236,7 +238,7 @@ function makePrismFromProp<TOrigin, TObject,
     },
 
     prop: function<TSubKey extends string & keyof TObject[TKey], TThis>(
-      this: TThis & Prism<TOrigin, TObject[TKey]>,
+      this: TThis & PrismAccess<TOrigin, TObject[TKey]>,
       key: TSubKey) {
       return addPrismProp<
           TSubKey,
@@ -249,9 +251,9 @@ function makePrismFromProp<TOrigin, TObject,
     union: function<
         TSubKey extends string,
         TSubtype extends TObject[TKey],
-        TResult extends FullPrism<TOrigin, TSubtype>,
+        TResult extends Prism<TOrigin, TSubtype>,
         TThis>(
-          this: TThis & Prism<TOrigin, TSubtype>,
+          this: TThis & PrismAccess<TOrigin, TSubtype>,
           key: TSubKey,
           guard: Guard<TObject[TKey], TSubtype>,
           builder: PrismBuilderFunction<TOrigin, TSubtype, TSubKey, TResult>)
@@ -269,10 +271,10 @@ function makePrismFromProp<TOrigin, TObject,
 
     path: function<
         TSubKey extends string & keyof TObject[TKey],
-        TResult extends FullPrism<TOrigin, TObject[TKey][TSubKey]>,
+        TResult extends Prism<TOrigin, TObject[TKey][TSubKey]>,
         TThis
         >(
-          this: TThis & Prism<TOrigin, TObject[TKey]>,
+          this: TThis & PrismAccess<TOrigin, TObject[TKey]>,
           key: TSubKey,
           builder: PrismBuilderFunction<TOrigin, TObject[TKey][TSubKey], TSubKey, TResult>)
     : TThis & Record<TSubKey, TResult> {
@@ -293,18 +295,18 @@ function addProp<TKey extends string,
     TOrigin,
     TObject extends Record<TKey, TObject[TKey]>,
     TThis>(
-      baseLens: TThis & Lens<TOrigin, TObject>,
+      baseLens: TThis & LensAccess<TOrigin, TObject>,
       key: TKey)
-: TThis & Record<TKey, Lens<TOrigin, TObject[TKey]>> {
+: TThis & Record<TKey, LensAccess<TOrigin, TObject[TKey]>> {
 
-  let propLens: Lens<TOrigin, TObject[TKey]> = {
+  let propLens: LensAccess<TOrigin, TObject[TKey]> = {
     get: (origin: TOrigin) => (baseLens.get(origin))[key],
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
       return baseLens.set({ ...baseLens.get(origin), [key]: value })(origin);
     }
   };
 
-  let propLensObj = {[key]: propLens} as Record<TKey, Lens<TOrigin, TObject[TKey]>>;
+  let propLensObj = {[key]: propLens} as Record<TKey, LensAccess<TOrigin, TObject[TKey]>>;
   return {
     ...baseLens,
     ...propLensObj
@@ -316,11 +318,11 @@ function addPrismProp<TKey extends string,
     TOrigin,
     TObject extends Record<TKey, TObject[TKey]>,
     TThis>(
-      basePrism: TThis & Prism<TOrigin, TObject>,
+      basePrism: TThis & PrismAccess<TOrigin, TObject>,
       key: TKey)
-: TThis & Record<TKey, Prism<TOrigin, TObject[TKey]>> {
+: TThis & Record<TKey, PrismAccess<TOrigin, TObject[TKey]>> {
 
-  let propPrism: Prism<TOrigin, TObject[TKey]> = {
+  let propPrism: PrismAccess<TOrigin, TObject[TKey]> = {
     get: (origin: TOrigin) => {
       let base = basePrism.get(origin);
       return base != null ? base[key] : null;
@@ -333,7 +335,7 @@ function addPrismProp<TKey extends string,
     }
   };
 
-  let propPrismObj = {[key]: propPrism} as Record<TKey, Prism<TOrigin, TObject[TKey]>>;
+  let propPrismObj = {[key]: propPrism} as Record<TKey, PrismAccess<TOrigin, TObject[TKey]>>;
   return {
     ...basePrism,
     ...propPrismObj
@@ -347,15 +349,15 @@ function addUnion<
     TObject,
     TKey extends string,
     TSubtype extends TObject,
-    TResult extends FullPrism<TOrigin, TSubtype>,
+    TResult extends Prism<TOrigin, TSubtype>,
     TThis>(
-      baseLens: TThis & Prism<TOrigin, TObject>,
+      baseLens: TThis & PrismAccess<TOrigin, TObject>,
       key: TKey,
       guard: Guard<TObject, TSubtype>,
       builder: PrismBuilderFunction<TOrigin, TSubtype, TKey, TResult>)
 : TThis & Record<TKey, TResult> {
 
-  let keyPrism: FullPrism<TOrigin, TSubtype> = makePrism(baseLens, guard);
+  let keyPrism: Prism<TOrigin, TSubtype> = makePrism(baseLens, guard);
   let unionPrism = builder(keyPrism);
   let unionPrismObj = {[key]: unionPrism} as Record<TKey, TResult>;
   return {
@@ -369,9 +371,9 @@ function addLensPath<
     TOrigin,
     TObject,
     TKey extends string & keyof TObject,
-    TResult extends FullLens<TOrigin, TObject[TKey]>,
+    TResult extends Lens<TOrigin, TObject[TKey]>,
     TThis>(
-  baseLens: TThis & Lens<TOrigin, TObject>,
+  baseLens: TThis & LensAccess<TOrigin, TObject>,
   key: TKey,
   builder: LensBuilderFunction<TOrigin, TObject, TKey, TResult>)
 : TThis & Record<TKey, TResult> {
@@ -390,9 +392,9 @@ function addPrismPath<
     TOrigin,
     TObject,
     TKey extends string & keyof TObject,
-    TResult extends FullPrism<TOrigin, TObject[TKey]>,
+    TResult extends Prism<TOrigin, TObject[TKey]>,
     TThis>(
-  basePrism: TThis & Prism<TOrigin, TObject>,
+  basePrism: TThis & PrismAccess<TOrigin, TObject>,
   key: TKey,
   builder: PrismBuilderFunction<TOrigin, TObject[TKey], TKey, TResult>)
 : TThis & Record<TKey, TResult> {
@@ -411,10 +413,10 @@ function addPrismPath<
 
 
 type PropThisRestriction<TObject, TKey extends string & keyof TObject> =
-    Lens<TObject & Record<TKey, TObject[TKey]>,
+    LensAccess<TObject & Record<TKey, TObject[TKey]>,
          TObject & Record<TKey, TObject[TKey]>>;
 
-class IdLens<TObject> implements FullLens<TObject, TObject> {
+class IdLens<TObject> implements Lens<TObject, TObject> {
   get = (base: TObject) => base;
   set = (newBase: TObject) => (oldBase: TObject) => newBase;
 
@@ -433,9 +435,9 @@ class IdLens<TObject> implements FullLens<TObject, TObject> {
   union = function<
       TKey extends string,
       TSubtype extends TObject,
-      TResult extends FullPrism<TObject, TSubtype>,
+      TResult extends Prism<TObject, TSubtype>,
       TThis>(
-        this: TThis & Lens<TObject, TObject>,
+        this: TThis & LensAccess<TObject, TObject>,
         key: TKey,
         guard: Guard<TObject, TSubtype>,
         builder: PrismBuilderFunction<TObject, TSubtype, TKey, TResult>)
@@ -454,9 +456,9 @@ class IdLens<TObject> implements FullLens<TObject, TObject> {
 
   path = function<
       TKey extends string & keyof TObject,
-      TResult extends FullLens<TObject, TObject[TKey]>,
+      TResult extends Lens<TObject, TObject[TKey]>,
       TThis>(
-    this: TThis & Lens<TObject, TObject>,
+    this: TThis & LensAccess<TObject, TObject>,
     key: TKey,
     builder: LensBuilderFunction<TObject, TObject, TKey, TResult>) {
     return addLensPath<
