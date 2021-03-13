@@ -33,10 +33,6 @@ export default function Navigation(state: State) {
   let activePage = { "aria-current": "page" };
 
   let currentKind = state.page.kind;
-  console.log("current: ", currentKind);
-  for (var p of navItems) {
-    console.log("item:", p.target.page.kind, currentKind == p.target.page.kind);
-  }
 
   let navButtons = navItems
     .map(item => ({...item, current: currentKind == item.target.page.kind}))
