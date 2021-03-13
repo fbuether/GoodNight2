@@ -1,6 +1,5 @@
 import * as P from "./ProtoLens";
 
-import type {StateObject} from "./StateObject";
 import {Page} from "./Page";
 
 

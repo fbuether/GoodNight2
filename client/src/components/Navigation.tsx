@@ -1,4 +1,3 @@
-import * as O from "optics-ts";
 
 import {Update, State} from "../state/State";
 import {Page} from "../state/Page";
@@ -19,19 +18,15 @@ export default function Navigation(state: State) {
   let navItems: Array<{title: string, target: State}> = [
     {
       title: "Home",
-      target: O.set(State.lens.page)(HomePage.instance)(state)
+      target: State.lens.page.set(HomePage.instance)(state)
     },
-    // {
-    //   title: "Read Stories",
-    //   to: {
-    //     kind: "read" as const,
-    //     story: "Hels Schlucht",
-    //     user: state.user
-    //   }
-    // },
+    {
+      title: "Read Stories",
+      target: State.lens.page.set(ReadPage.instance)(state)
+    },
     {
       title: "Write Stories",
-      target: O.set(State.lens.page)(WritePage.instance)(state)
+      target: State.lens.page.set(WritePage.instance)(state)
     },
   ];
 
