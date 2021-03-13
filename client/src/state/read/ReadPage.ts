@@ -1,6 +1,5 @@
-import * as O from "optics-ts";
+import * as P from "../ProtoLens";
 
-import {Page} from "../Page.ts";
 import {SelectStoryPart} from "./SelectStoryPart";
 import {ReadStoryPart} from "./ReadStoryPart";
 
@@ -9,10 +8,17 @@ export type ReadPagePart =
     | SelectStoryPart
     | ReadStoryPart;
 
+
 export interface ReadPage {
   kind: "ReadPage";
   part: ReadPagePart;
 }
+
+
+let guardSelectStoryPart = (a: ReadPagePart): a is SelectStoryPart =>
+    (a.kind == "SelectStoryPart");
+let guardReadStoryPart = (a: ReadPagePart): a is ReadStoryPart =>
+    (a.kind == "ReadStoryPart");
 
 
 export const ReadPage = {
@@ -21,9 +27,16 @@ export const ReadPage = {
     part: SelectStoryPart.instance
   },
 
-  toTitle: (page: ReadPage) => "Read",
+  lens: <T>(id: P.Prism<T,ReadPage>) => id
+    .path("part", lens => lens
+      .union("selectStory", guardSelectStoryPart, SelectStoryPart.lens)
+      .union("readStory", guardReadStoryPart, ReadStoryPart.lens)),
 
-  guard: (a: Page): a is ReadPage => (a.kind == "ReadPage"),
+  update: {
+    part: (part: ReadPagePart) => (readPage: ReadPage) => ({ ...readPage, part: part }),
+  },
+
+  toTitle: (page: ReadPage) => "Read",
 
   path: /^\/read/,
 

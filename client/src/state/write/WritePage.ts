@@ -1,6 +1,5 @@
-import * as O from "optics-ts";
+import * as P from "../ProtoLens";
 
-import {Page} from "../Page.ts";
 // import {SelectStoryPart} from "./SelectStoryPart";
 // import {WriteStoryPart} from "./WriteStoryPart";
 
@@ -20,9 +19,9 @@ export const WritePage = {
     kind: "WritePage" as const
   },
 
-  toTitle: (page: WritePage) => "Write",
+  lens: <T>(id: P.Prism<T, WritePage>) => id,
 
-  guard: (a: Page): a is WritePage => (a.kind == "WritePage"),
+  toTitle: (page: WritePage) => "Write",
 
   path: /^\/write/,
 

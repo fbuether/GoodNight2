@@ -1,21 +1,19 @@
-import * as O from "optics-ts";
+import * as P from "./ProtoLens";
 
-import {goTo} from "../History";
-
+import type {StateObject} from "./StateObject";
 import {Page} from "./Page";
+
 
 export interface State {
   page: Page;
   user: string;
 }
 
-export const State = {
-  lens: {
-    ...O.optic<State>(),
 
-    page: O.optic<State>().prop("page"),
-    user: O.optic<State>().prop("user")
-  },
+export const State = {
+  lens: P.id<State>()
+    .path("page", Page.lens)
+    .prop("user"),
 
   toTitle: (state: State): string => "GoodNight" + Page.toTitle(state.page),
 

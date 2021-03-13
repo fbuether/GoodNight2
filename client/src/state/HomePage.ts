@@ -1,6 +1,4 @@
-import * as O from "optics-ts";
-
-import {Page} from "./Page.ts";
+import * as P from "./ProtoLens";
 
 
 export interface HomePage {
@@ -13,7 +11,7 @@ export const HomePage = {
     kind: "HomePage" as const
   },
 
-  guard: (a: Page): a is HomePage => (a.kind == "HomePage"),
+  lens: <T>(id: P.Prism<T, HomePage>) => id,
 
   path: /^\/(home)?$/,
 
