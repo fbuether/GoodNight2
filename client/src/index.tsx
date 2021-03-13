@@ -1,7 +1,6 @@
 import * as Preact from "preact";
 import * as PreactHooks from "preact/hooks";
 
-
 // Bootstrap imports, filtered.
 
 // Alert
@@ -18,8 +17,8 @@ import "bootstrap/js/dist/collapse";
 
 import "./ui/style.scss";
 
-import {State, Update, applyUpdate} from "./state/State";
-import {registerHistoryListener} from "./History";
+import {State, Update, applyUpdate,
+  registerHistoryListener} from "./state/State";
 import DispatchContext from "./DispatchContext";
 
 import Page from "./components/Page";

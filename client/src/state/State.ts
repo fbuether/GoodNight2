@@ -31,6 +31,8 @@ export const State = {
 }
 
 
+// performing updates to the state.
+
 export type Update = (state: State) => State;
 
 export function applyUpdate(state: State, update: Update): State {
@@ -39,4 +41,32 @@ export function applyUpdate(state: State, update: Update): State {
   goTo(nextUrl);
   document.title = State.toTitle(nextState);
   return nextState;
+}
+
+
+// treating the window.history object.
+
+export function goTo(url: string, title: string = "GoodNight") {
+  let lastUrl = history.state;
+  if (lastUrl != url) {
+    history.pushState(url, title, url);
+  }
+}
+
+
+let registered = false;
+
+export function registerHistoryListener(dispatch: (action: Update) => void) {
+  if (registered) {
+    return;
+  }
+
+  registered = true;
+
+  window.addEventListener("popstate", (event: PopStateEvent) => {
+    let restoredUrl = event.state;
+    let restoredState = State.ofUrl(restoredUrl);
+    let upd = (_: State) => restoredState;
+    dispatch(upd);
+  });
 }
