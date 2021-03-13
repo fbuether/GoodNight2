@@ -4,18 +4,18 @@ import Link from "../../components/common/Link";
 import RequirementC from "../../components/play/Requirement";
 
 import DispatchContext from "../../DispatchContext";
-import {Update} from "../../update/Update";
+import {Update} from "../../state/State";
 
-import type {Page} from "../../model/Page";
+import type {Page} from "../../state/Page";
 import type {Option, Requirement} from "../../model/read/Scene";
 
-import {doOption} from "../../update/DoOption";
+// import {doOption} from "../../update/DoOption";
 
 function dispatchOption(dispatch: (u: Update) => void, option: Option) {
   return async (event: MouseEvent) => {
     event.preventDefault();
-    let consequence = await doOption(option);
-    dispatch({ kind: "ReadOption", consequence: consequence });
+    // let consequence = await doOption(option);
+    // dispatch({ kind: "ReadOption", consequence: consequence });
   }
 }
 
