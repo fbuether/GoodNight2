@@ -92,8 +92,6 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
   return {
     get: (origin: TOrigin) => (baseLens.get(origin))[key],
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
-      console.log("set in makeLens,", key, value, origin);
-
       return baseLens.set({ ...baseLens.get(origin), [key]: value })(origin);
     },
 
@@ -161,8 +159,6 @@ function makePrism<TOrigin, TObject, TSubtype extends TObject>(
       return obj != null && guard(obj) ? obj : null;
     },
     set: (value: TSubtype) => (origin: TOrigin): TOrigin => {
-      console.log("set in prism", value, origin);
-
       let obj = baseLens.get(origin);
       return obj != null && guard(obj) ? baseLens.set(value)(origin) : origin;
     },
@@ -231,8 +227,6 @@ function makePrismFromProp<TOrigin, TObject,
       return obj != null ? obj[key] : null;
     },
     set: (value: TObject[TKey]) => (origin: TOrigin): TOrigin => {
-      console.log("set in makePrism", value, origin);
-
       let obj = baseLens.get(origin);
       return obj != null ? baseLens.set({ ...obj, [key]: value })(origin) : origin;
     },
