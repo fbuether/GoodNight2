@@ -1,4 +1,36 @@
 
+
+//--------------------------------------
+// colour utility.
+
+// from: https://www.sitepoint.com/hsb-colors-with-sass/
+@function hsb($h-hsb, $s-hsb, $b-hsb, $a: 1) {
+  @if $b-hsb == 0 {
+    @return hsla(0, 0, 0, $a)
+  } @else {
+    $l-hsl: ($b-hsb/2) * (2 - ($s-hsb/100));
+    $s-hsl: ($b-hsb * $s-hsb) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
+
+    // @debug "#{$l-hsl} = (#{$b-hsb}/2) * (2 - (#{$s-hsb}/100))";
+
+
+    @return hsla($h-hsb, $s-hsl, $l-hsl, $a);
+  }
+}
+
+
+
+
+
+$base-color: 30;
+
+
+
+
+
+//--------------------------------------
+// bootstrap.
+
 // bootstrap configuration.
 $enable-rounded: false;
 $enable-shadows: false;
@@ -58,7 +90,7 @@ $container-max-widths: map-remove(
 // @import "~bootstrap/scss/button-group";
 @import "~bootstrap/scss/nav";
 @import "~bootstrap/scss/navbar";
-// @import "~bootstrap/scss/card";
+@import "~bootstrap/scss/card";
 // @import "~bootstrap/scss/accordion";
 // @import "~bootstrap/scss/breadcrumb";
 // @import "~bootstrap/scss/pagination";
@@ -81,7 +113,8 @@ $container-max-widths: map-remove(
 
 
 
-//----------
+//--------------------------------------
+// bootstrap overrides.
 
 
 .border-lg {
@@ -111,25 +144,21 @@ hr {
   margin-bottom: 2.8rem !important;
 }
 
+
+.card {
+  background-color: hsla(0, 0%, 100%, 0.6);
+  border: 0.05rem solid hsla(0, 0%, 0%, 0.125);
+}
+
+.card:hover {
+  background-color: hsla(0, 0%, 100%, 0.85);
+  border: 0.05px solid hsla(0, 0%, 0%, 0.25);
+}
+
 //----------
 
 
 
-// from: https://www.sitepoint.com/hsb-colors-with-sass/
-@function hsb($h-hsb, $s-hsb, $b-hsb, $a: 1) {
-  @if $b-hsb == 0 {
-    @return hsla(0, 0, 0, $a)
-  }
-  @else {
-    $l-hsl: ($b-hsb/2) * (2 - ($s-hsb/100));
-    $s-hsl: ($b-hsb * $s-hsb) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
-    @return hsla($h-hsb, $s-hsl, $l-hsl, $a);
-  }
-}
-
-
-
-$base-color: 30;
 
 html body {
   background: hsb($base-color, 4%, 94%);
