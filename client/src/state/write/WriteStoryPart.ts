@@ -25,7 +25,7 @@ export type WritePart =
 
 export interface WriteStoryPart {
   kind: "WriteStoryPart";
-  story: Story;
+  story: Story | null;
   part: WritePart;
 }
 
@@ -34,12 +34,22 @@ let guardStoryOverview = (a: WritePart): a is StoryOverview =>
     (a.kind == "StoryOverview");
 
 export const WriteStoryPart = {
+  instance: {
+    kind: "WriteStoryPart" as const,
+    story: null,
+    part: StoryOverview.instance
+  },
+
   lens: <T>(id: P.Prism<T, WriteStoryPart>) => id
     .prop("story")
     .path("part", (lens: any) => lens
           .union("storyOverview", guardStoryOverview, StoryOverview.lens)),
 
+  path: /^\/story\/(.+)$/,
+
   toUrl: (part: WriteStoryPart): string => {
-    return part.story.urlname;
-  }
+    return part.story ? "/story/" + part.story.urlname : "";
+  },
+
+  ofUrl: (pathname: string): WriteStoryPart => WriteStoryPart.instance
 }

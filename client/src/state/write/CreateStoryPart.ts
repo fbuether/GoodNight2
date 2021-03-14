@@ -13,5 +13,9 @@ export const CreateStoryPart = {
     kind: "CreateStoryPart" as const
   },
 
-  lens: <T>(id: P.Prism<T, CreateStoryPart>) => id
+  lens: <T>(id: P.Prism<T, CreateStoryPart>) => id,
+
+  path: /^\/create\/?$/,
+
+  ofUrl: (pathName: string): CreateStoryPart => CreateStoryPart.instance
 }

@@ -48,10 +48,24 @@ export const WritePage = {
     switch (page.part.kind) {
       case "SelectStoryPart": return "/write";
       case "CreateStoryPart": return "/write/create";
-      case "WriteStoryPart": return "/write/story/" + WriteStoryPart.toUrl(page.part);
+      case "WriteStoryPart": return "/write" + WriteStoryPart.toUrl(page.part);
       default: return assertNever(page.part);
     }
   },
 
-  ofUrl: (pathname: string): WritePage => WritePage.instance
+  ofUrl: (pathname: string): WritePage => {
+    let localPathname = pathname.substring(6);
+    console.log("path:",localPathname);
+
+    let pages = [SelectStoryPart, CreateStoryPart, WriteStoryPart];
+    let page = pages.find(p => p.path.test(localPathname));
+    let defaultedPage = page !== undefined
+        ? page.ofUrl(localPathname)
+        : SelectStoryPart.instance;
+
+    return {
+      kind: "WritePage" as const,
+      part: defaultedPage
+    };
+  }
 }

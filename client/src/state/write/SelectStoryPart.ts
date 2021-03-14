@@ -15,6 +15,10 @@ export const SelectStoryPart = {
     stories: null
   },
 
+  path: /^\/?$/,
+
   lens: <T>(id: P.Prism<T, SelectStoryPart>) => id
-    .prop("stories")
+    .prop("stories"),
+
+  ofUrl: (pathName: string): SelectStoryPart => SelectStoryPart.instance
 }

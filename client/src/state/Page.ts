@@ -38,9 +38,7 @@ export const Page = {
   ofUrl: (pathname: string): Page => {
     let pages = [HomePage, ReadPage, WritePage];
     let page = pages.find(p => p.path.test(pathname));
-    return page !== undefined
-        ? page.ofUrl(pathname)
-        : HomePage.instance;
+    return page !== undefined ? page.ofUrl(pathname) : HomePage.instance;
   },
 
   toTitle: (page: Page): string => {
