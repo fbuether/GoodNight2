@@ -9,36 +9,43 @@ import Link from "../components/common/Link";
 
 
 export default interface Navigation {
+  readonly state: Readonly<State>;
   readonly currentPage: Page;
   readonly user: string;
 }
 
+interface NavItem {
+  title: string;
+  page: Page;
+}
 
-export default function Navigation(state: State) {
-  let navItems: Array<{title: string, target: State}> = [
+
+export default function Navigation(state: Navigation) {
+  let navItems: Array<NavItem> = [
     {
-      title: "Home",
-      target: State.lens.page.set(HomePage.instance)(state)
+      title: "Willkommen",
+      page: HomePage.instance
     },
     {
-      title: "Read Stories",
-      target: State.lens.page.set(ReadPage.instance)(state)
+      title: "Geschichten lesen",
+      page: ReadPage.instance
     },
     {
-      title: "Write Stories",
-      target: State.lens.page.set(WritePage.instance)(state)
+      title: "Geschichten schreiben",
+      page: WritePage.instance
     },
   ];
 
   let activePage = { "aria-current": "page" };
 
-  let currentKind = state.page.kind;
+  let currentKind = state.currentPage.kind;
 
   let navButtons = navItems
-    .map(item => ({...item, current: currentKind == item.target.page.kind}))
+    .map(item => ({...item, current: currentKind == item.page.kind}))
     .map(item => (
       <li class={"nav-item" + (item.current ? " active" : "")}>
-        <Link class="nav-link" current={item.current} target={item.target}>
+        <Link class="nav-link" current={item.current} state={state.state}
+          target={State.lens.page.set(item.page)}>
           {item.title}
         </Link>
       </li>));
