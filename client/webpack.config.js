@@ -70,14 +70,14 @@ module.exports = env => { return {
         }],
         exclude: /node_modules/
       },
-      // {
-      //   test: /\.(png|svg)$/,
-      //   use: "file-loader"
-      // },
       {
         test: /icons\/.*\.svg$/,
-        use: "raw-loader"
+        type: "asset/source"
       },
+      // {
+      //   test: /\.(png|svg)$/,
+      //   type: "asset/resource"
+      // },
       {
         test: /\.scss$/,
         use: [

@@ -1,7 +1,7 @@
 import twocoins from "../../../assets/icons/two-coins.svg";
 import shamrock from "../../../assets/icons/shamrock.svg";
 import swapbag from "../../../assets/icons/swap-bag.svg";
-import sundial from "../../../assets/icons/swap-bag.svg";
+import sundial from "../../../assets/icons/sundial.svg";
 
 
 
@@ -27,11 +27,12 @@ export function isIcon(name: string): name is IconName {
 
 export default interface Icon {
   readonly name: IconName;
+  readonly class?: string;
 }
 
 export default function Icon(icon: Icon) {
   return (
-    <span class="icon"
-    dangerouslySetInnerHTML={ { __html: icons[icon.name] } }></span>
+    <span class={"icon " + (icon.class ?? "")}
+      dangerouslySetInnerHTML={ { __html: icons[icon.name] } }></span>
   );
 }
