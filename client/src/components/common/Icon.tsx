@@ -1,18 +1,22 @@
 import twocoins from "../../../assets/icons/two-coins.svg";
 import shamrock from "../../../assets/icons/shamrock.svg";
 import swapbag from "../../../assets/icons/swap-bag.svg";
+import sundial from "../../../assets/icons/swap-bag.svg";
+
 
 
 export type IconName =
-    "shamrock"
+    | "shamrock"
     | "two-coins"
-    | "swap-bag";
+    | "swap-bag"
+    | "sundial";
 
 
 let icons: Record<IconName, string> = {
   "shamrock": shamrock,
   "two-coins": twocoins,
-  "swap-bag": swapbag
+  "swap-bag": swapbag,
+  "sundial": sundial
 };
 
 
