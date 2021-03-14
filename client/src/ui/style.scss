@@ -110,9 +110,6 @@ $container-max-widths: map-remove(
 @import "~bootstrap/scss/utilities/api";
 
 
-
-
-
 //--------------------------------------
 // bootstrap overrides.
 
@@ -265,7 +262,6 @@ nav.navbar {
     &:hover, &:focus {
       background-color: hsb($base-color, 6%, 94%);
       outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
-
     }
 
     &:disabled {
@@ -283,7 +279,9 @@ nav.navbar {
   width: 1.4rem;
   height: 1.4rem;
   display: inline-block;
-  vertical-align: top;
+  vertical-align: bottom;
+
+  color: hsb($base-color, 76%, 28%);
 
   svg {
     width: auto !important;
@@ -295,15 +293,34 @@ nav.navbar {
       fill-opacity: 0;
     }
 
-    g {
-
+    g, &.bi {
       path {
         fill-opacity: 1;
-        fill: hsb($base-color, 30%, 60%);
+        fill: currentColor;
       }
     }
   }
+
+  &.top {
+    vertical-align: top;
+  }
+
+  &.restrained {
+    opacity: 0.5;
+  }
+
+  &.large {
+    width: 3rem;
+    height: 3rem;
+    margin: 0 0.5rem;
+  }
+
+  &.mr-2 {
+    margin-right: 0.4rem;
+  }
 }
+
+
 
 
 //--------------------------------------
