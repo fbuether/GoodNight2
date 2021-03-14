@@ -1,4 +1,4 @@
-import Icon, {IconName} from "../play/Icon";
+import Icon, {IconName} from "../common/Icon";
 
 import type {Requirement} from "../../model/read/Scene";
 

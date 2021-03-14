@@ -1,4 +1,4 @@
-import Icon, {IconName, isIcon} from "../play/Icon";
+import Icon, {IconName, isIcon} from "../common/Icon";
 
 import type {Quality, QualityType} from "../../model/read/Quality";
 import type {Value} from "../../model/read/Value";
