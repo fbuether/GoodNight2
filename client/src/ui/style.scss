@@ -94,6 +94,13 @@ small {
 }
 
 
+hr {
+  opacity: 0.4;
+
+  &:not([size]) {
+    height: 0.05rem;
+  }
+}
 
 
 .mb-5 {
@@ -275,5 +282,30 @@ nav.navbar {
     background-color: inherit;
     padding: 0.2rem 0rem 0.2rem 0.4rem;
     border: none;
+  }
+}
+
+
+//--------------------------------------
+// Loading indicator
+
+.loading {
+  display: flex;
+  width: 80%;
+  margin: 1em auto;
+  align-items: center;
+
+  .lined {
+    flex-grow: 1;
+    background-color: currentColor;
+    opacity: 0.4;
+    height: 0.05rem;
+  }
+
+  .centre {
+    // min-width: 20%;
+    text-align: center;
+    flex-grow: 0;
+    padding: 0 3rem;
   }
 }
