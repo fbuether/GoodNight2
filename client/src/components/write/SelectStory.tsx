@@ -15,8 +15,15 @@ function loadStories(dispatch: Dispatch, state: SelectStoryPart) {
   return async () => {
 
     let stories: Array<Story> | null = [
-      {name:"abc",urlname:"abc"},
-      {name:"abc2",urlname:"abc2"}
+      {name:"Hels Schlucht",urlname:"hels-schlucht",
+       description: "In der Tiefe warten die letzten Menschen auf einen Helden, der den Toten wieder Ruhe bringt."},
+      {name:"abc2",urlname:"abc2",description: "okay, this is"},
+      {name:"abc",urlname:"abc",description: "okay, this is"},
+      {name:"abc2",urlname:"abc2",description: "okay, this is"},
+      {name:"abc",urlname:"abc",description: "okay, this is"},
+      {name:"abc2",urlname:"abc2",description: "okay, this is"},
+      {name:"abc",urlname:"abc",description: "okay, this is"},
+      {name:"abc2",urlname:"abc2",description: "okay, this is"},
     ];
 
     // await new Promise( resolve => setTimeout(resolve, 500) );
@@ -52,7 +59,7 @@ export default function SelectStory(state: SelectStoryPart) {
                   {story.name}
                 </Link>
               </h5>
-              <p>({story.urlname})</p>
+              <p>{story.description}</p>
             </div>
           </div>
         </div>
@@ -60,14 +67,19 @@ export default function SelectStory(state: SelectStoryPart) {
     });
 
     inner = (
-      <div class="row row-cols-md-3">{stories}</div>
+      <div class="row cards row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-0">
+        {stories}
+      </div>
     );
   }
 
   return (
     <div id="centre" class="row px-0 g-0">
       <h1>Schreibe eine Geschichte</h1>
-      <p>Wähle eine Geschichte, an der du schreiben willst, oder erstelle eine neue Geschichte.</p>
+      <p>
+        Wähle eine Geschichte, die du schreiben willst, oder erstelle eine
+        neue Geschichte.
+      </p>
       {inner}
     </div>
   );
