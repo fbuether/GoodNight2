@@ -50,8 +50,8 @@ $enable-deprecation-messages: true;
 
 
 // colors
-$primary: $purple; // #abc;
-$secondary: $cyan; // #def;
+$primary: hsb($base-color, 12%, 89%);
+$secondary: #99A4CF;
 
 
 $theme-colors: map-remove(
@@ -83,8 +83,8 @@ $container-max-widths: map-remove(
 @import "~bootstrap/scss/containers";
 @import "~bootstrap/scss/grid";
 // @import "~bootstrap/scss/tables";
-// @import "~bootstrap/scss/forms";
-// @import "~bootstrap/scss/buttons";
+@import "~bootstrap/scss/forms";
+@import "~bootstrap/scss/buttons";
 @import "~bootstrap/scss/transitions";
 // @import "~bootstrap/scss/dropdown";
 // @import "~bootstrap/scss/button-group";
@@ -153,6 +153,28 @@ hr {
 }
 
 
+.shadow-around {
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.15);
+}
+
+.shadow-around-lt {
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
+}
+
+
+
+button {
+  box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.09);
+  }
+}
+
+.form-control:focus {
+  border-color: hsb($base-color, 14%, 60%);
+  box-shadow: 0 0 0 0.25rem hsb($base-color, 7%, 91%);
+}
 
 //--------------------------------------
 // page frame styles.
@@ -203,6 +225,9 @@ html body {
   }
 }
 
+//--------------------------------------
+// nav bar
+
 
 
 nav.navbar {
@@ -217,12 +242,22 @@ nav.navbar {
       margin: 0rem 0.4rem;
     }
 
+    .nav-item a:focus {
+      padding-bottom: 0.1rem;
+      border-bottom: 0.2rem solid hsb($base-color, 10%, 70%, 0.4);
+      outline: none;
+    }
+
     .nav-item.active .nav-link,
     .nav-item [aria-current],
-    .nav-item a:focus, .nav-item a:hover {
+    .nav-item a:hover {
       padding-bottom: 0.1rem;
       border-bottom: 0.2rem solid hsb($base-color, 10%, 20%, 0.4);
       outline: none;
+
+      &:focus {
+        border-bottom: 0.2rem solid hsb($base-color, 14%, 50%, 0.4);
+      }
     }
   }
 }
@@ -379,3 +414,5 @@ nav.navbar {
     }
   }
 }
+
+

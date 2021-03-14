@@ -26,7 +26,7 @@ function getPage(page: PageState) {
 export default function Page(state: State) {
   return (
     <div id="page"
-      class="container-lg shadow mt-lg-4 px-2 px-sm-3 px-md-4 pt-lg-1">
+      class="container-lg shadow-around mt-lg-4 px-2 px-sm-3 px-md-4 pt-lg-1">
       <Navigation currentPage={state.page} user={state.user} state={state} />
       <hr class="mt-0" />
       {getPage(state.page)}
