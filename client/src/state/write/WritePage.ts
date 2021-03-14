@@ -1,11 +1,13 @@
 import * as P from "../ProtoLens";
 
 import {SelectStoryPart} from "./SelectStoryPart";
+import {CreateStoryPart} from "./CreateStoryPart";
 import {WriteStoryPart} from "./WriteStoryPart";
 
 
 export type WritePagePart =
     | SelectStoryPart
+    | CreateStoryPart
     | WriteStoryPart;
 
 export interface WritePage {
@@ -16,6 +18,8 @@ export interface WritePage {
 
 let guardSelectStoryPart = (a: WritePagePart): a is SelectStoryPart =>
     (a.kind == "SelectStoryPart");
+let guardCreateStoryPart = (a: WritePagePart): a is CreateStoryPart =>
+    (a.kind == "CreateStoryPart");
 let guardWriteStoryPart = (a: WritePagePart): a is WriteStoryPart =>
     (a.kind == "WriteStoryPart");
 
@@ -33,6 +37,7 @@ export const WritePage = {
   lens: <T>(id: P.Prism<T, WritePage>) => id
     .path("part", lens => lens
       .union("selectStory", guardSelectStoryPart, SelectStoryPart.lens)
+      .union("createStory", guardCreateStoryPart, CreateStoryPart.lens)
       .union("writeStory", guardWriteStoryPart, WriteStoryPart.lens)),
 
   toTitle: (page: WritePage) => "Write",
@@ -42,7 +47,8 @@ export const WritePage = {
   toUrl: (page: WritePage): string => {
     switch (page.part.kind) {
       case "SelectStoryPart": return "/write";
-      case "WriteStoryPart": return "/write/" + WriteStoryPart.toUrl(page.part);
+      case "CreateStoryPart": return "/write/create";
+      case "WriteStoryPart": return "/write/story/" + WriteStoryPart.toUrl(page.part);
       default: return assertNever(page.part);
     }
   },

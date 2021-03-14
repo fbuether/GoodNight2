@@ -5,9 +5,11 @@ import useAsyncEffect from "../../ui/useAsyncEffect";
 import {Story} from "../../model/write/Story";
 import {State, Dispatch} from "../../state/State";
 import {SelectStoryPart} from "../../state/write/SelectStoryPart";
+import {CreateStoryPart} from "../../state/write/CreateStoryPart";
 import {StoryOverview} from "../../state/write/StoryOverview";
 
 import Link from "../common/Link";
+import Icon from "../common/Icon";
 import Loading from "../common/Loading";
 
 
@@ -66,8 +68,24 @@ export default function SelectStory(state: SelectStoryPart) {
       );
     });
 
+    let newLink = State.lens.page.write.part.set(CreateStoryPart.instance);
+
     inner = (
       <div class="row cards row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-0">
+        <div class="col">
+          <div class="card new">
+            <div class="card-body">
+              <h5>
+                <Icon name="sundial" class="top mr-2" />
+                <Link class="stretched-link" target={newLink}>
+                  Neue Geschichte…
+                </Link>
+              </h5>
+              <p>Beginne eine neue Geschichte, ein neues Abenteuer.</p>
+            </div>
+          </div>
+        </div>
+
         {stories}
       </div>
     );
