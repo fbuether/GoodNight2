@@ -1,7 +1,6 @@
 import * as PreactHooks from "preact/hooks";
 
-import {ReadPage as ReadPageState,
-  ReadPagePart} from "../../state/read/ReadPage";
+import {ReadPage as ReadPageState} from "../../state/read/ReadPage";
 
 import SelectStory from "./SelectStory";
 

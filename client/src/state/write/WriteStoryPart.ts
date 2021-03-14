@@ -37,5 +37,9 @@ export const WriteStoryPart = {
   lens: <T>(id: P.Prism<T, WriteStoryPart>) => id
     .prop("story")
     .path("part", (lens: any) => lens
-          .union("storyOverview", guardStoryOverview, StoryOverview.lens))
+          .union("storyOverview", guardStoryOverview, StoryOverview.lens)),
+
+  toUrl: (part: WriteStoryPart): string => {
+    return part.story.urlname;
+  }
 }

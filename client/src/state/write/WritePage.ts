@@ -20,13 +20,14 @@ let guardWriteStoryPart = (a: WritePagePart): a is WriteStoryPart =>
     (a.kind == "WriteStoryPart");
 
 
+function assertNever(param: never): never {
+  throw new Error(`Invalid Page kind in state WritePage: "${param}"`);
+}
+
 export const WritePage = {
   instance: {
     kind: "WritePage" as const,
-    part: {
-      kind: "SelectStoryPart" as const,
-      stories: null
-    }
+    part: SelectStoryPart.instance
   },
 
   lens: <T>(id: P.Prism<T, WritePage>) => id
@@ -38,7 +39,13 @@ export const WritePage = {
 
   path: /^\/write/,
 
-  toUrl: (homePage: WritePage): string => "/write",
+  toUrl: (page: WritePage): string => {
+    switch (page.part.kind) {
+      case "SelectStoryPart": return "/write";
+      case "WriteStoryPart": return "/write/" + WriteStoryPart.toUrl(page.part);
+      default: return assertNever(page.part);
+    }
+  },
 
   ofUrl: (pathname: string): WritePage => WritePage.instance
 }

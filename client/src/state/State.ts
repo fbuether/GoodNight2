@@ -8,6 +8,10 @@ export interface State {
   user: string;
 }
 
+export interface WithState {
+  state: Readonly<State>;
+}
+
 
 export const State = {
   lens: P.id<State>()
@@ -31,6 +35,7 @@ export const State = {
 // performing updates to the state.
 
 export type Update = (state: State) => State;
+export type Dispatch = (action: Update) => void;
 
 export function applyUpdate(state: State, update: Update): State {
   let nextState = update(state);
