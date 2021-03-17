@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Api.Storage;
 using System.Collections.Generic;
+using GoodNight.Service.Domain;
 
 namespace GoodNight.Service.Api.Write
 {
@@ -24,16 +25,19 @@ namespace GoodNight.Service.Api.Write
       return Ok(stories);
     }
 
-    [HttpPost]
-    public ActionResult<Story> Create()
-    {
-      var storyName = "";
+    public record CreateStoryBody(string name);
 
-      if (stories.Get(storyName) is not null)
-        return Conflict("A story of the given name already exists.");
+    [HttpPost]
+    public ActionResult<Story> Create([FromBody] CreateStoryBody newStory)
+    {
+      var urlname = NameConverter.OfString(newStory.name);
+
+      if (stories.Get(urlname) is not null)
+        return Conflict(new ErrorResult(
+            "A story of the given name already exists."));
 
       System.Console.WriteLine("creating new story.");
-      var story = Story.Create(storyName);
+      var story = Story.Create(newStory.name);
       stories.Add(story);
 
       return Ok(story);
