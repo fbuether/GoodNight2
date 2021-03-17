@@ -23,7 +23,11 @@ namespace GoodNight.Service.Api
 
       services.AddCors(corsOptions => {
         corsOptions.AddDefaultPolicy(builder => {
-          builder.WithOrigins("http://localhost:32015",
+          builder
+            .WithHeaders(new[] {
+                "Content-Type"
+              })
+            .WithOrigins("http://localhost:32015",
             "https://goodnight.jasminefields.net");
         });
       });
