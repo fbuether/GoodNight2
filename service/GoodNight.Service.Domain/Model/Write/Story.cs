@@ -6,6 +6,16 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
+  /// <summary>
+  /// A StoryHeader is a Story reduced to its properties required for long
+  /// lists of Stories, e.g. Story selection.
+  /// </summary>
+  public record StoryHeader(
+    string name,
+    string urlname,
+    string description);
+
+
   public record Story(
     string Name,
     IImmutableSet<Scene> Scenes,
@@ -33,6 +43,11 @@ namespace GoodNight.Service.Domain.Model.Write
       return new Story(name,
         ImmutableHashSet<Scene>.Empty,
         ImmutableHashSet<Quality>.Empty);
+    }
+
+    public StoryHeader ToHeader()
+    {
+      return new StoryHeader(Name, Urlname, "-");
     }
   }
 }

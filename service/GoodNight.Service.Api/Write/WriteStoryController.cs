@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using GoodNight.Service.Domain.Model.Write;
 using Microsoft.AspNetCore.Mvc;
@@ -20,9 +21,20 @@ namespace GoodNight.Service.Api.Write
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<Story>> GetAll()
+    public ActionResult<IEnumerable<StoryHeader>> GetAll()
     {
-      return Ok(stories);
+      return Ok(stories.Select(s => s.ToHeader()));
+    }
+
+    [HttpGet("{urlname}")]
+    public ActionResult<Story> Get(string urlname)
+    {
+      var story = stories.Get(urlname);
+      if (story is null)
+        return NotFound(new ErrorResult(
+            "A story with the given name does not exist."));
+
+      return Ok(story);
     }
 
     public record CreateStoryBody(string name);
