@@ -16,7 +16,7 @@ import Loading from "../common/Loading";
 
 function loadStory(dispatch: Dispatch, state: WriteStoryPart, name: string) {
   return async () => {
-    let response = await request<Story>("GET", `api/v1/write/story/${name}`);
+    let response = await request<Story>("GET", `api/v1/write/stories/${name}`);
     if (response.isError) {
       return;
     }

@@ -1,7 +1,16 @@
 
-export interface Story {
-  readonly name: string;
-  readonly urlname: string;
 
-  readonly description: string;
+// used for lists of many stories, e.g. during story selection.
+export interface StoryHeader {
+  name: string;
+  urlname: string;
+  description: string;
+}
+
+
+export interface Story {
+  name: string;
+  urlname: string;
+
+  description: string;
 }

@@ -3,7 +3,7 @@ import DispatchContext from "../../DispatchContext";
 import useAsyncEffect from "../../ui/useAsyncEffect";
 import request from "../../Request";
 
-import {Story} from "../../model/write/Story";
+import {Story, StoryHeader} from "../../model/write/Story";
 import {State, Dispatch} from "../../state/State";
 import {SelectStoryPart} from "../../state/write/SelectStoryPart";
 import {CreateStoryPart} from "../../state/write/CreateStoryPart";
@@ -16,7 +16,8 @@ import Loading from "../common/Loading";
 
 function loadStories(dispatch: Dispatch, state: SelectStoryPart) {
   return async () => {
-    let stories = await request<Array<Story>>("GET", "api/v1/write/stories");
+    let stories = await request<Array<StoryHeader>>(
+      "GET", "api/v1/write/stories");
     if (stories.isError) {
       return;
     }
@@ -40,7 +41,7 @@ export default function SelectStory(state: SelectStoryPart) {
     let stories = state.stories.map(story => {
       let link = State.lens.page.write.part.set({
         kind: "WriteStoryPart" as const,
-        story: story,
+        story: story.urlname,
         part: StoryOverview.instance
       });
 
