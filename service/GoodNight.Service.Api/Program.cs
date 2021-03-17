@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using GoodNight.Service.Storage.Interface;
 using System.Threading.Tasks;
 using GoodNight.Service.Storage;
+using GoodNight.Service.Api.Storage;
 
 namespace GoodNight.Service.Api
 {
@@ -23,6 +24,10 @@ namespace GoodNight.Service.Api
       {
         throw new NullReferenceException();
       }
+
+      // instantiate all stores.
+      host.Services.GetService(typeof(ReadStore));
+      host.Services.GetService(typeof(WriteStore));
 
       store.StartJournal();
 
