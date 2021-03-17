@@ -33,7 +33,7 @@ export default function WriteStory(state: WriteStoryPart) {
     useAsyncEffect(loadStory(dispatch, state, state.story));
     return (
       <div id="centre">
-        <Loading />
+        <Loading class="mt-4" />
       </div>
     );
   }
