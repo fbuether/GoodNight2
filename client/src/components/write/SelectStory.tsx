@@ -1,6 +1,7 @@
 import * as PreactHooks from "preact/hooks";
 import DispatchContext from "../../DispatchContext";
 import useAsyncEffect from "../../ui/useAsyncEffect";
+import request from "../../Request";
 
 import {Story} from "../../model/write/Story";
 import {State, Dispatch} from "../../state/State";

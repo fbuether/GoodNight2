@@ -20,13 +20,17 @@ function submit(dispatch: Dispatch, state: CreateStoryPart) {
   return async(event: JSX.TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    let newStory = await request("POST", "api/v1/write/stories", {
+    let response = await request<Story>("POST", "api/v1/write/stories", {
       name: state.name
-    }) as Story;
+    });
+
+    if (response.isError) {
+      return;
+    }
 
     dispatch(State.lens.page.write.part.set({
       ...WriteStoryPart.instance,
-      story: newStory
+      story: response.message
     }));
   };
 }
