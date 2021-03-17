@@ -8,6 +8,7 @@ import {Story} from "../../model/write/Story";
 
 import {SelectStoryPart} from "../../state/write/SelectStoryPart";
 import {WriteStoryPart} from "../../state/write/WriteStoryPart";
+import {StoryOverview} from "../../state/write/StoryOverview";
 
 import Link from "../common/Link";
 import Icon from "../common/Icon";
@@ -38,13 +39,28 @@ export default function WriteStory(state: WriteStoryPart) {
     );
   }
 
+  let toBase = State.lens.page.write.part.writeStory.part
+    .set(StoryOverview.instance);
+
   return (
-    <div id="centre" class="row px-0 g-0">
-      <h1>Schreibe: {state.story.name}</h1>
-      <p>
-        Eine neue Geschichte beginnt stets mit einem Namen. Dieser Name kann
-        später geändert werden, allerdings nicht seine URL-Form.
-      </p>
+    <div id="centre" class="px-0">
+      <h1><Link target={toBase}>Schreibe: {state.story.name}</Link></h1>
+      <div class="row">
+        <div class="col-3">
+          Szenen
+        </div>
+        <div class="col-3">
+          Qualitäten
+        </div>
+        <div class="col-3">
+          Kategorien
+        </div>
+        <div class="col-3">
+          Tags
+        </div>
+      </div>
+
+
     </div>
   );
 }
