@@ -25,7 +25,7 @@ export type WritePart =
 
 export interface WriteStoryPart {
   kind: "WriteStoryPart";
-  story: Story | null;
+  story: Story | string; // if not a story, then its urlname.
   part: WritePart;
 }
 
@@ -36,7 +36,7 @@ let guardStoryOverview = (a: WritePart): a is StoryOverview =>
 export const WriteStoryPart = {
   instance: {
     kind: "WriteStoryPart" as const,
-    story: null,
+    story: "",
     part: StoryOverview.instance
   },
 
@@ -48,8 +48,13 @@ export const WriteStoryPart = {
   path: /^\/story\/(.+)$/,
 
   toUrl: (part: WriteStoryPart): string => {
-    return part.story ? "/story/" + part.story.urlname : "";
+    return typeof part.story == "string"
+        ? "/story/" + part.story
+        : "/story/" + part.story.urlname;
   },
 
-  ofUrl: (pathname: string): WriteStoryPart => WriteStoryPart.instance
+  ofUrl: (pathname: string): WriteStoryPart => ({
+    ...WriteStoryPart.instance,
+    story: pathname.substring(7)
+  })
 }
