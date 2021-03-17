@@ -35,9 +35,16 @@ namespace GoodNight.Service.Storage
     public Store(Stream? backingStore = null)
     {
       ownsBackingStore = backingStore is null;
-      this.backingStore = backingStore is null
-        ? File.Open("store.json", FileMode.OpenOrCreate)
-        : backingStore;
+      if (backingStore is null)
+      {
+        var cwd = Directory.GetCurrentDirectory();
+        Console.WriteLine($"Store: Using {cwd}/store.json");
+        this.backingStore = File.Open("store.json", FileMode.OpenOrCreate);
+      }
+      else {
+        this.backingStore = backingStore;
+      }
+
       repositories = new List<BaseRepository>();
 
       // uses a ConcurrentQueue by default.
@@ -47,12 +54,6 @@ namespace GoodNight.Service.Storage
 
     public void Dispose()
     {
-      backingStore.Flush();
-
-      if (ownsBackingStore)
-      {
-        ((IDisposable)backingStore).Dispose();
-      }
 
       if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
       {
@@ -62,7 +63,15 @@ namespace GoodNight.Service.Storage
       }
 
       ((IDisposable)writeCache).Dispose();
+
+      backingStore.Flush();
+
+      if (ownsBackingStore)
+      {
+        ((IDisposable)backingStore).Dispose();
+      }
     }
+
 
     /// <remarks>
     /// This method is not async, as it should be executed prior to web service
@@ -107,6 +116,7 @@ namespace GoodNight.Service.Storage
 
         if (!success || nextItem is null)
           continue;
+
 
         writer.WriteLine(nextItem);
       }
