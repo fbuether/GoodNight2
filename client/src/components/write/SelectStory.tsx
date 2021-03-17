@@ -16,22 +16,13 @@ import Loading from "../common/Loading";
 
 function loadStories(dispatch: Dispatch, state: SelectStoryPart) {
   return async () => {
+    let stories = await request<Array<Story>>("GET", "api/v1/write/stories");
+    if (stories.isError) {
+      return;
+    }
 
-    let stories: Array<Story> | null = [
-      {name:"Hels Schlucht",urlname:"hels-schlucht",
-       description: "In der Tiefe warten die letzten Menschen auf einen Helden, der den Toten wieder Ruhe bringt."},
-      {name:"abc2",urlname:"abc2",description: "okay, this is"},
-      {name:"abc",urlname:"abc",description: "okay, this is"},
-      {name:"abc2",urlname:"abc2",description: "okay, this is"},
-      {name:"abc",urlname:"abc",description: "okay, this is"},
-      {name:"abc2",urlname:"abc2",description: "okay, this is"},
-      {name:"abc",urlname:"abc",description: "okay, this is"},
-      {name:"abc2",urlname:"abc2",description: "okay, this is"},
-    ];
-
-    // await new Promise( resolve => setTimeout(resolve, 500) );
-
-    dispatch(State.lens.page.write.part.selectStory.stories.set(stories));
+    dispatch(State.lens.page.write.part.selectStory.stories
+      .set(stories.message));
   }
 }
 
