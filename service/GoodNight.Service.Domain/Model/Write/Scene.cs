@@ -20,6 +20,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Continue,
 
     IImmutableList<Content<string, string>> Content)
+    : IStorable<string>
   {
     public string Urlname
     {

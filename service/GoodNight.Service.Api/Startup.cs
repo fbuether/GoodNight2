@@ -30,6 +30,7 @@ namespace GoodNight.Service.Api
 
       services.AddSingleton<IStore, Store>();
       services.AddSingleton<ReadStore>();
+      services.AddSingleton<WriteStore>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

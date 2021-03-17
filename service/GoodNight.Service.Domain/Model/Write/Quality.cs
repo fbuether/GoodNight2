@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -10,6 +11,7 @@ namespace GoodNight.Service.Domain.Model.Write
     bool Hidden,
     string? Scene,
     string Description)
+    : IStorable<string>
   {
     public string Urlname
     {
@@ -19,6 +21,10 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
+    public string GetKey()
+    {
+      return Urlname;
+    }
 
     public record Bool(
       string Name,
@@ -46,5 +52,5 @@ namespace GoodNight.Service.Domain.Model.Write
       string Description,
       IImmutableDictionary<int, string> Levels)
       : Quality(Name, Type.Enum, Raw, Hidden, Scene, Description) {}
-  }
+    }
 }

@@ -18,10 +18,10 @@ namespace GoodNight.Service.Api.Storage
 
     public ReadStore(IStore store)
     {
-      Actions = store.Create<Action, string>("actions");
-      Qualities = store.Create<Quality, string>("qualities");
-      Scenes = store.Create<Scene, string>("scenes");
-      Stories = store.Create<Story, string>("stories");
+      Actions = store.Create<Action, string>("read-actions");
+      Qualities = store.Create<Quality, string>("read-qualities");
+      Scenes = store.Create<Scene, string>("read-scenes");
+      Stories = store.Create<Story, string>("read-stories");
       Users = store.Create<User, string>("users");
     }
   }

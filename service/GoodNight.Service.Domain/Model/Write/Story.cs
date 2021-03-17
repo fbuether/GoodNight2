@@ -2,6 +2,7 @@ using System;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Parse;
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -9,6 +10,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string Name,
     IImmutableSet<Scene> Scenes,
     IImmutableSet<Quality> Qualities)
+    : IStorable<string>
   {
     public string Urlname
     {
@@ -18,8 +20,14 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
+    public string GetKey()
+    {
+      return Urlname;
+    }
 
-    // Create a new story with a given name.
+    /// <summary>
+    /// Create a new story with a given name.
+    /// </summary>
     public static Story Create(string name)
     {
       return new Story(name,
