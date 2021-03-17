@@ -55,8 +55,6 @@ export const WritePage = {
 
   ofUrl: (pathname: string): WritePage => {
     let localPathname = pathname.substring(6);
-    console.log("path:",localPathname);
-
     let pages = [SelectStoryPart, CreateStoryPart, WriteStoryPart];
     let page = pages.find(p => p.path.test(localPathname));
     let defaultedPage = page !== undefined
