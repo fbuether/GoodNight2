@@ -20,11 +20,14 @@ namespace GoodNight.Service.Api.Write
       stories = store.Stories;
     }
 
+
     [HttpGet]
     public ActionResult<IEnumerable<StoryHeader>> GetAll()
     {
+      // todo: limit to e.g. 100?
       return Ok(stories.Select(s => s.ToHeader()));
     }
+
 
     [HttpGet("{urlname}")]
     public ActionResult<Story> Get(string urlname)
@@ -36,6 +39,7 @@ namespace GoodNight.Service.Api.Write
 
       return Ok(story);
     }
+
 
     public record CreateStoryBody(string name);
 

@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Parse;
 using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Parse;
+using GoodNight.Service.Domain.Util;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -48,6 +50,19 @@ namespace GoodNight.Service.Domain.Model.Write
     public StoryHeader ToHeader()
     {
       return new StoryHeader(Name, Urlname, "-");
+    }
+
+
+    public Result<Scene, string> AddNewScene(string raw)
+    {
+      var parser = new SceneParser();
+      var parseResult = parser.Parse(raw);
+      if (!parseResult.IsSuccessful)
+        return new Result.Failure<Scene, string>(parseResult.ErrorMessage!);
+
+      var parsedScene = parseResult.Result!;
+      var scene = parsedScene.ToModel();
+      return new Result.Success<Scene, string>(scene);
     }
   }
 }
