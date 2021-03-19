@@ -1,19 +1,26 @@
 using System.Linq;
 using System;
 using System.Collections.Immutable;
-using ModelScene = GoodNight.Service.Domain.Model.Write.Scene;
+using WriteScene = GoodNight.Service.Domain.Model.Write.Scene;
+using WriteContent = GoodNight.Service.Domain.Model.Write.Content;
 using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Parse
 {
-  using ModelContent = Content<string, string>;
 
   public record Scene(
     string Raw,
     IImmutableList<Content> Content)
   {
+    public static Scene Empty
+    {
+      get
+      {
+        return new Scene("", ImmutableList.Create<Content>());
+      }
+    }
 
-    private ModelScene AddProps(ModelScene model, Content content)
+    private WriteScene AddProps(WriteScene model, Content content)
     {
       // todo: warn on possibly overriding content?
       switch (content)
@@ -42,49 +49,50 @@ namespace GoodNight.Service.Domain.Model.Parse
       }
     }
 
-    private IImmutableList<ModelContent> TransformContent(
+    private IImmutableList<WriteContent> TransformContent(
       IEnumerable<Content> content) =>
-      content.Aggregate<Content, IImmutableList<ModelContent>>(
-        ImmutableList<ModelContent>.Empty, AddContent);
+      content.Aggregate<Content, IImmutableList<WriteContent>>(
+        ImmutableList<WriteContent>.Empty, AddContent);
 
-    private IImmutableList<ModelContent> AddContent(
-      IImmutableList<ModelContent> modelContent, Content content)
+    private IImmutableList<WriteContent> AddContent(
+      IImmutableList<WriteContent> modelContent, Content content)
     {
       switch (content)
       {
         case Content.Text text:
-          if (modelContent.Last() is ModelContent.Text<string, string> lastText)
+          if (modelContent.Any() &&
+            modelContent.Last() is WriteContent.Text lastText)
           {
             return
               ImmutableList.CreateRange(
                 modelContent
                 .Take(modelContent.Count - 1)
-                .Append(new ModelContent.Text<string, string>(
+                .Append(new WriteContent.Text(
                     lastText.Value + "\n" + text.Value)));
           }
           else {
             return modelContent.Add(
-              new ModelContent.Text<string, string>(text.Value));
+              new WriteContent.Text(text.Value));
           }
 
         case Content.Require require:
           return modelContent.Add(
-            new ModelContent.Require<string, string>(require.Expression));
+            new WriteContent.Require(require.Expression));
 
         case Content.Option option:
           return modelContent.Add(
-            new ModelContent.Option<string, string>(option.Scene,
+            new WriteContent.Option(option.Scene,
               TransformContent(option.Content)));
 
         case Content.Condition cond:
-          return modelContent.Add(new ModelContent.Condition<string, string>(
+          return modelContent.Add(new WriteContent.Condition(
               cond.If,
               TransformContent(cond.Then),
               TransformContent(cond.Else)));
 
         case Content.Include include:
           return modelContent.Add(
-            new ModelContent.Include<string, string>(include.Scene));
+            new WriteContent.Include(include.Scene));
 
         default:
           // todo: warn about possibly unused content?
@@ -92,13 +100,16 @@ namespace GoodNight.Service.Domain.Model.Parse
       }
     }
 
-
-    public ModelScene ToModel()
+    public Scene AddContent(Content newContent)
     {
-      var model = ModelScene.CreateDefault() with { Raw = Raw };
-      model = model with { Content =
-        Content.Aggregate(model.Content, AddContent) };
-      return Content.Aggregate(model, AddProps);
+      return this with { Content = Content.Add(newContent) };
+    }
+
+    public WriteScene ToModel()
+    {
+      var model = WriteScene.Empty with { Raw = Raw };
+      var writeContent = Content.Aggregate(model.Content, AddContent);
+      return Content.Aggregate(model with { Content = writeContent }, AddProps);
     }
   }
 }
