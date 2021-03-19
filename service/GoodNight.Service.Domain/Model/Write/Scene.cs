@@ -5,6 +5,38 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
+  /// <summary>
+  /// Content is a part of a Scene. Each Scene contains a set of Content units
+  /// that specify the text, options, requirements and conditions of this
+  /// Scene.
+  /// </summary>
+  public record Content
+  {
+    public record Text(
+      string Value)
+      : Content {}
+
+    public record Require(
+      Expression<string> Expression)
+      : Content {}
+
+    public record Option(
+      string Scene,
+      IImmutableList<Content> Content)
+      : Content {}
+
+    public record Condition(
+      Expression<string> If,
+      IImmutableList<Content> Then,
+      IImmutableList<Content> Else)
+      : Content {}
+
+    public record Include(
+      string Scene)
+      : Content {}
+  }
+
+
   public record Scene(
     string Name,
     string Raw,
@@ -19,7 +51,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Return,
     string? Continue,
 
-    IImmutableList<Content<string, string>> Content)
+    IImmutableList<Content> Content)
     : IStorable<string>
   {
     public string Urlname
@@ -43,22 +75,12 @@ namespace GoodNight.Service.Domain.Model.Write
         ImmutableList<(string, Expression<string>)>.Empty,
         null,
         null,
-        ImmutableList<Content<string, string>>.Empty);
+        ImmutableList<Content>.Empty);
     }
 
-    public Scene AddContent(Content<string, string> newContent)
+    public Scene AddContent(Content newContent)
     {
       return this with { Content = Content.Add(newContent) };
     }
-
-
-
-
-
-    // public ReadScene Play(IImmutableDictionary<string, Value> qualities)
-    // {
-    //   throw new NotImplementedException();
-    //   // return new ReadScene();
-    // }
   }
 }
