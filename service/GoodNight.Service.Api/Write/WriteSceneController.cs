@@ -48,10 +48,15 @@ namespace GoodNight.Service.Api.Write
 
       var addResult = story.AddNewScene(content.text);
 
+
       return addResult.Map<ActionResult<Scene>>(
-        scene => Created(
-          $"api/v1/write/story/{storyUrlname}/scene/{scene.Urlname}",
-          scene),
+        scene => {
+          scenes.Add(scene);
+
+          return Created(
+            $"api/v1/write/story/{storyUrlname}/scene/{scene.Urlname}",
+            scene);
+        },
         err => this.BadRequest(err));
     }
   }
