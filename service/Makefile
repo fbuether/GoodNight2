@@ -7,9 +7,11 @@ run:
 build:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Production dotnet build
 
+# run like: make test filter=SceneTest
 test:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
-		dotnet test --nologo
+		dotnet test --nologo $(if $(filter),--filter FullyQualifiedName~$(filter),)
+
 
 test-list:
 	DOTNET_CLI_TELEMETRY_OPTOUT=1 ASPNETCORE_ENVIRONMENT=Development          \
