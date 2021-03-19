@@ -67,15 +67,18 @@ namespace GoodNight.Service.Domain.Model.Write
       return Urlname;
     }
 
-    public static Scene CreateDefault()
+    public static Scene Empty
     {
-      return new Scene("", "", false, false, false,
-        ImmutableList<string>.Empty,
-        ImmutableList<string>.Empty,
-        ImmutableList<(string, Expression<string>)>.Empty,
-        null,
-        null,
-        ImmutableList<Content>.Empty);
+      get
+      {
+        return new Scene("", "", false, false, false,
+          ImmutableList<string>.Empty,
+          ImmutableList<string>.Empty,
+          ImmutableList<(string, Expression<string>)>.Empty,
+          null,
+          null,
+          ImmutableList<Content>.Empty);
+      }
     }
 
     public Scene AddContent(Content newContent)
