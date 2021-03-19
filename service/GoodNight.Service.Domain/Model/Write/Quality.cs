@@ -9,7 +9,11 @@ namespace GoodNight.Service.Domain.Model.Write
     Type Type,
     string Raw,
     bool Hidden,
+
+    // IImmutableList<string> Tags,
+    // IImmutableList<string> Category,
     string? Scene,
+
     string Description)
     : IStorable<string>
   {
