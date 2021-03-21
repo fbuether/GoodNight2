@@ -60,5 +60,7 @@ namespace GoodNight.Service.Api.Write
         },
         err => this.BadRequest(err));
     }
+
+    // [HttpPut("/{sceneUrlname}")]
   }
 }
