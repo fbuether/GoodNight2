@@ -31,6 +31,9 @@ export interface WriteStoryPart {
   part: WritePart;
 }
 
+function assertNever(param: never): never {
+  throw new Error(`Invalid Page kind in state WriteStoryPart: "${param}"`);
+}
 
 let guardStoryOverview = (a: WritePart): a is StoryOverview =>
     (a.kind == "StoryOverview");
@@ -60,12 +63,15 @@ export const WriteStoryPart = {
     switch (part.part.kind) {
       case "StoryOverview": return prefix;
       case "WriteScene": return prefix + WriteScene.toUrl(part.part);
+      default: return assertNever(part.part);
     }
   },
 
   ofUrl: (pathname: string, matches: Array<string>): WriteStoryPart => {
     let storyUrlname = matches[1];
     let subPagePath = matches[2];
+
+    console.log("writestorypart.ofurl", matches);
 
     return {
       kind: "WriteStoryPart" as const,

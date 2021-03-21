@@ -14,7 +14,7 @@ export const WriteScene = {
     urlname: null
   },
 
-  path: /^\/write\/(scene\/(.+)|new-scene)$/,
+  path: /^\/(scene\/(.+)|new-scene)$/,
 
   toUrl: (page: WriteScene): string =>
       page.urlname == null
