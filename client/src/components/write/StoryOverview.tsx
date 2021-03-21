@@ -29,26 +29,42 @@ function loadScenes(dispatch: Dispatch, story: string) {
 export default function StoryOverview(state: StoryState) {
   const dispatch = PreactHooks.useContext(DispatchContext);
 
-  let stories;
+  let scenes;
   if (state.scenes == null) {
     useAsyncEffect(loadScenes(dispatch, state.story));
-    stories = <Loading />;
+    scenes = <Loading />;
   }
   else {
-    stories = <ul class="category">
-            <li class="group"><div>Orte</div>
-              <ul>
-                <li class="link"><a href="#">Am Kreuzgang</a></li>
+    let editScene = (s: Scene) =>
+        State.lens.page.write.part.writeStory.part.set({
+          ...WriteScene.instance(state.story),
+          scene: s.raw,
+          urlname: s.urlname
+        });
+
+    scenes = (
+      <ul class="category">
+        <li class="group"><div>Alle Szenen</div>
+          <ul>
+            {state.scenes.map(s => (
+              <li class="link">
+                <Link target={editScene(s)}>{s.name}</Link>
+              </li>
+            ))}
+          </ul>
+        </li>
+      </ul>
+    );
   
-                <li class="group"><div>Hels Schlucht</div>
-                  <ul>
-                    <li class="link"><a href="#">Eingang</a></li>
-                    <li class="link"><a href="#">Schmiede</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>;
+          //       <li class="group"><div>Hels Schlucht</div>
+          //         <ul>
+          //           <li class="link"><a href="#">Eingang</a></li>
+          //           <li class="link"><a href="#">Schmiede</a></li>
+          //         </ul>
+          //       </li>
+          //     </ul>
+          //   </li>
+          // </ul>;
   }
 
   let toNewScene = State.lens.page.write.part.writeStory.part.set(
@@ -71,7 +87,7 @@ export default function StoryOverview(state: StoryState) {
       <div class="row">
         <div class="col-8">
           <h2>Inhalt</h2>
-          {stories}
+          {scenes}
         </div>
         <div class="col-4">
           <h2>Tags</h2>

@@ -29,7 +29,7 @@ export const WriteScene = {
       return {
         kind: "WriteScene" as const,
         story: story,
-        scene: "",
+        scene: null,
         urlname: matches[2]
       };
     }

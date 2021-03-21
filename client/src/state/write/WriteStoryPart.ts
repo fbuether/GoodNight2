@@ -72,8 +72,6 @@ export const WriteStoryPart = {
     let storyUrlname = matches[1];
     let subPagePath = matches[2];
 
-    console.log("writestorypart.ofurl", matches);
-
     return {
       kind: "WriteStoryPart" as const,
       story: storyUrlname,

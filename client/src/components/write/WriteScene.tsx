@@ -10,6 +10,8 @@ import {Scene} from "../../model/write/Scene";
 import {State, Dispatch} from "../../state/State";
 import {WriteScene as WriteSceneState} from "../../state/write/WriteScene";
 
+import Loading from "../common/Loading";
+
 
 function submit(dispatch: Dispatch, state: WriteSceneState) {
   return async(event: JSX.TargetedEvent<HTMLFormElement, Event>) => {
@@ -54,8 +56,14 @@ export default function WriteScene(state: WriteSceneState) {
 
   let title = state.urlname === null ? "Neue Szene" : "Szene bearbeiten";
 
-  if (state.story == "")
-    throw "story is empty!";
+  console.log(state);
+
+  if (state.urlname !== null && state.scene === null) {
+    // todo: request this single scene, store its raw text in state.scene.
+
+    return <Loading />;
+  }
+
 
   return (
     <div class="row">
@@ -64,7 +72,7 @@ export default function WriteScene(state: WriteSceneState) {
         <h2>{title}</h2>
 
         <textarea class="form-control"
-          onChange={setText(dispatch)}>
+          onChange={setText(dispatch)}>{state.scene}
         </textarea>
 
         <div class="buttons w-75 mx-auto mt-3 text-end">
