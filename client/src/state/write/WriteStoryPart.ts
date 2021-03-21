@@ -10,7 +10,7 @@ import {StoryOverview} from "./StoryOverview";
 // import {QualityOverview} from "./QualityOverview";
 // import {TagOverview} from "./TagOverview";
 // import {CategoryOverview} from "./CategoryOverview";
-// import {EditScene} from "./EditScene";
+import {WriteScene} from "./WriteScene";
 // import {EditQuality} from "./EditQuality";
 
 
@@ -20,7 +20,7 @@ export type WritePart =
     // | QualityOverview
     // | TagOverview
     // | CategoryOverview
-    // | EditScene
+    | WriteScene
     // | EditQuality
 ;
 
@@ -34,6 +34,8 @@ export interface WriteStoryPart {
 
 let guardStoryOverview = (a: WritePart): a is StoryOverview =>
     (a.kind == "StoryOverview");
+let guardWriteScene = (a: WritePart): a is WriteScene =>
+    (a.kind == "WriteScene");
 
 export const WriteStoryPart = {
   instance: {
@@ -45,14 +47,20 @@ export const WriteStoryPart = {
   lens: <T>(id: P.Prism<T, WriteStoryPart>) => id
     .prop("story")
     .path("part", (lens: any) => lens
-          .union("storyOverview", guardStoryOverview, StoryOverview.lens)),
+      .union("storyOverview", guardStoryOverview, StoryOverview.lens)
+      .union("writeScene", guardWriteScene, WriteScene.lens)),
 
-  path: /^\/story\/(.+)$/,
+  path: /^\/story\/([^/]+)(.+)?$/,
 
   toUrl: (part: WriteStoryPart): string => {
-    return typeof part.story == "string"
+    let prefix = typeof part.story == "string"
         ? "/story/" + part.story
         : "/story/" + part.story.urlname;
+
+    switch (part.part.kind) {
+      case "StoryOverview": return prefix;
+      case "WriteScene": return prefix + WriteScene.toUrl(part.part);
+    }
   },
 
   ofUrl: (pathname: string, matches: Array<string>): WriteStoryPart => {

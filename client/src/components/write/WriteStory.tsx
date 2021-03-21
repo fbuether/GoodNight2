@@ -9,6 +9,7 @@ import {Story} from "../../model/write/Story";
 import {SelectStoryPart} from "../../state/write/SelectStoryPart";
 import {WriteStoryPart} from "../../state/write/WriteStoryPart";
 import {StoryOverview} from "../../state/write/StoryOverview";
+import {WriteScene} from "../../state/write/WriteScene";
 
 import Link from "../common/Link";
 import Icon from "../common/Icon";
@@ -43,9 +44,9 @@ export default function WriteStory(state: WriteStoryPart) {
     .set(StoryOverview.instance);
 
   let toNewScene = State.lens.page.write.part.writeStory.part
-    .set(StoryOverview.instance);
+    .set(WriteScene.instance);
   let toNewQuality = State.lens.page.write.part.writeStory.part
-    .set(StoryOverview.instance);
+    .set(WriteScene.instance);
 
   return (
     <div id="centre" class="px-0">
