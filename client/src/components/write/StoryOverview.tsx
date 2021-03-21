@@ -1,16 +1,58 @@
+import * as PreactHooks from "preact/hooks";
+import DispatchContext from "../../DispatchContext";
+import useAsyncEffect from "../../ui/useAsyncEffect";
+import request from "../../Request";
 
+import {Scene} from "../../model/write/Scene";
 import {State, Dispatch} from "../../state/State";
-
 import {WriteScene} from "../../state/write/WriteScene";
 import {StoryOverview as StoryState} from "../../state/write/StoryOverview";
 
 import Link from "../common/Link";
+import Loading from "../common/Loading";
+
+
+function loadScenes(dispatch: Dispatch, story: string) {
+  return async () => {
+    let response = await request<Array<Scene>>(
+      "GET", `api/v1/write/story/${story}/scenes`);
+    if (response.isError) {
+      return;
+    }
+
+    dispatch(State.lens.page.write.part.writeStory.part.storyOverview
+      .scenes.set(response.message));
+  }
+}
 
 
 export default function StoryOverview(state: StoryState) {
+  const dispatch = PreactHooks.useContext(DispatchContext);
+
+  let stories;
+  if (state.scenes == null) {
+    useAsyncEffect(loadScenes(dispatch, state.story));
+    stories = <Loading />;
+  }
+  else {
+    stories = <ul class="category">
+            <li class="group"><div>Orte</div>
+              <ul>
+                <li class="link"><a href="#">Am Kreuzgang</a></li>
+  
+                <li class="group"><div>Hels Schlucht</div>
+                  <ul>
+                    <li class="link"><a href="#">Eingang</a></li>
+                    <li class="link"><a href="#">Schmiede</a></li>
+                  </ul>
+                </li>
+              </ul>
+            </li>
+          </ul>;
+  }
+
   let toNewScene = State.lens.page.write.part.writeStory.part.set(
     WriteScene.instance(state.story));
-
 
   let toNewQuality = State.lens.page.write.part.writeStory.part
     .set(WriteScene.instance(state.story));
@@ -29,21 +71,7 @@ export default function StoryOverview(state: StoryState) {
       <div class="row">
         <div class="col-8">
           <h2>Inhalt</h2>
-  
-          <ul class="category">
-            <li class="group"><div>Orte</div>
-              <ul>
-                <li class="link"><a href="#">Am Kreuzgang</a></li>
-  
-                <li class="group"><div>Hels Schlucht</div>
-                  <ul>
-                    <li class="link"><a href="#">Eingang</a></li>
-                    <li class="link"><a href="#">Schmiede</a></li>
-                  </ul>
-                </li>
-              </ul>
-            </li>
-          </ul>
+          {stories}
         </div>
         <div class="col-4">
           <h2>Tags</h2>
