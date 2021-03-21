@@ -41,15 +41,16 @@ let guardWriteScene = (a: WritePart): a is WriteScene =>
     (a.kind == "WriteScene");
 
 export const WriteStoryPart = {
-  instance: {
+  instance: (story: Story | string = "") => ({
     kind: "WriteStoryPart" as const,
-    story: "",
-    part: StoryOverview.instance
-  },
+    story: story,
+    part: StoryOverview.instance(
+      typeof story == "string" ? story : story.urlname)
+  }),
 
   lens: <T>(id: P.Prism<T, WriteStoryPart>) => id
     .prop("story")
-    .path("part", (lens: any) => lens
+    .path("part", lens => lens
       .union("storyOverview", guardStoryOverview, StoryOverview.lens)
       .union("writeScene", guardWriteScene, WriteScene.lens)),
 
@@ -76,8 +77,8 @@ export const WriteStoryPart = {
     return {
       kind: "WriteStoryPart" as const,
       story: storyUrlname,
-      part: OfUrl.union(subPagePath, [WriteScene, StoryOverview],
-         StoryOverview.instance)
+      part: OfUrl.unionWith(subPagePath, [StoryOverview, WriteScene],
+         StoryOverview.instance(storyUrlname), storyUrlname)
     };
   }
 }

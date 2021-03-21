@@ -3,16 +3,18 @@ import * as P from "../ProtoLens";
 
 export interface WriteScene {
   kind: "WriteScene";
-  scene: string;
+  story: string; // urlname of story.
+  scene: string | null; // null if not loaded.
   urlname: string | null; // null means: new scene.
 }
 
 export const WriteScene = {
-  instance: {
+  instance: (story: string) => ({
     kind: "WriteScene" as const,
+    story: story,
     scene: "",
     urlname: null
-  },
+  }),
 
   path: /^\/(scene\/(.+)|new-scene)$/,
 
@@ -21,8 +23,19 @@ export const WriteScene = {
       ? "/new-scene"
       : "/scene/" + page.urlname,
 
-  ofUrl: (pathname: string, matches: Array<string>): WriteScene => {
-    return WriteScene.instance;
+  ofUrl: (pathname: string, matches: Array<string>, story: string)
+  : WriteScene => {
+    if (matches[2] !== undefined) {
+      return {
+        kind: "WriteScene" as const,
+        story: story,
+        scene: "",
+        urlname: matches[2]
+      };
+    }
+    else {
+      return WriteScene.instance(story);
+    }
   },
 
   lens: <T>(id: P.Prism<T, WriteScene>) => id
