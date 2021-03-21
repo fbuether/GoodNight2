@@ -64,5 +64,10 @@ namespace GoodNight.Service.Domain.Model.Write
       var scene = parsedScene.ToModel();
       return new Result.Success<Scene, string>(scene);
     }
+
+    public Story InsertScene(Scene scene)
+    {
+      return this with { Scenes = this.Scenes.Add(scene) };
+    }
   }
 }
