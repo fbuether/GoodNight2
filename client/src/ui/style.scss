@@ -466,6 +466,23 @@ ul.category {
 }
 
 
+//--------------------------------------
+// editing: explanation lists
+
+dl.commands {
+  dt {
+    @extend .font-monospace;
+    @extend .text-nowrap;
+
+    background: hsb(0, 0%, 100%, 0.8);
+    border: 0.05rem solid hsb(0, 0%, 0%, 0.2);
+    padding: 0.2rem 0.4rem;
+    font-weight: normal;
+
+    margin-top: 0.3rem;
+  }
+}
+
 
 
 //--------------------------------------
