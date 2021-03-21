@@ -1,5 +1,7 @@
 import * as P from "./ProtoLens";
 
+import {OfUrl} from "../util/UrlMapper";
+
 import {HomePage} from "./HomePage";
 import {ReadPage} from "./read/ReadPage";
 import {WritePage} from "./write/WritePage";
@@ -36,9 +38,8 @@ export const Page = {
   },
 
   ofUrl: (pathname: string): Page => {
-    let pages = [HomePage, ReadPage, WritePage];
-    let page = pages.find(p => p.path.test(pathname));
-    return page !== undefined ? page.ofUrl(pathname) : HomePage.instance;
+    return OfUrl.union(pathname, [HomePage, ReadPage, WritePage],
+      HomePage.instance);
   },
 
   toTitle: (page: Page): string => {

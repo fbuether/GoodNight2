@@ -1,5 +1,7 @@
 import * as P from "../ProtoLens";
 
+import {OfUrl} from "../../util/UrlMapper";
+
 import {Story} from "../../model/write/Story";
 // import {WritePagePart} from "./WritePage";
 
@@ -53,8 +55,15 @@ export const WriteStoryPart = {
         : "/story/" + part.story.urlname;
   },
 
-  ofUrl: (pathname: string): WriteStoryPart => ({
-    ...WriteStoryPart.instance,
-    story: pathname.substring(7)
-  })
+  ofUrl: (pathname: string, matches: Array<string>): WriteStoryPart => {
+    let storyUrlname = matches[1];
+    let subPagePath = matches[2];
+
+    return {
+      kind: "WriteStoryPart" as const,
+      story: storyUrlname,
+      part: OfUrl.union(subPagePath, [WriteScene, StoryOverview],
+         StoryOverview.instance)
+    };
+  }
 }

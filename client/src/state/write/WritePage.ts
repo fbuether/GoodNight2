@@ -1,5 +1,7 @@
 import * as P from "../ProtoLens";
 
+import {OfUrl} from "../../util/UrlMapper";
+
 import {SelectStoryPart} from "./SelectStoryPart";
 import {CreateStoryPart} from "./CreateStoryPart";
 import {WriteStoryPart} from "./WriteStoryPart";
@@ -42,7 +44,7 @@ export const WritePage = {
 
   toTitle: (page: WritePage) => "Write",
 
-  path: /^\/write/,
+  path: /^\/write(.+)?$/,
 
   toUrl: (page: WritePage): string => {
     switch (page.part.kind) {
@@ -53,17 +55,14 @@ export const WritePage = {
     }
   },
 
-  ofUrl: (pathname: string): WritePage => {
-    let localPathname = pathname.substring(6);
-    let pages = [SelectStoryPart, CreateStoryPart, WriteStoryPart];
-    let page = pages.find(p => p.path.test(localPathname));
-    let defaultedPage = page !== undefined
-        ? page.ofUrl(localPathname)
-        : SelectStoryPart.instance;
+  ofUrl: (pathname: string, matches: Array<string>): WritePage => {
+    let subPathname = matches[1];
 
     return {
       kind: "WritePage" as const,
-      part: defaultedPage
+      part: OfUrl.union(subPathname,
+        [SelectStoryPart, CreateStoryPart, WriteStoryPart],
+        SelectStoryPart.instance)
     };
   }
 }
