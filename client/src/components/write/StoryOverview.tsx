@@ -7,11 +7,13 @@ import {StoryOverview as StoryState} from "../../state/write/StoryOverview";
 import Link from "../common/Link";
 
 
-export default function StoryOverview(status: StoryState) {
-  let toNewScene = State.lens.page.write.part.writeStory.part
-    .set(WriteScene.instance);
+export default function StoryOverview(state: StoryState) {
+  let toNewScene = State.lens.page.write.part.writeStory.part.set(
+    WriteScene.instance(state.story));
+
+
   let toNewQuality = State.lens.page.write.part.writeStory.part
-    .set(WriteScene.instance);
+    .set(WriteScene.instance(state.story));
 
   return (
     <>

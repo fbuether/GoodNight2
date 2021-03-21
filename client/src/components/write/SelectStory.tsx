@@ -42,7 +42,7 @@ export default function SelectStory(state: SelectStoryPart) {
       let link = State.lens.page.write.part.set({
         kind: "WriteStoryPart" as const,
         story: story.urlname,
-        part: StoryOverview.instance
+        part: StoryOverview.instance(story.urlname)
       });
 
       return (

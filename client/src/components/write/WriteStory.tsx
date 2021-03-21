@@ -54,8 +54,12 @@ export default function WriteStory(state: WriteStoryPart) {
     );
   }
 
+  let urlname = typeof state.story == "string"
+      ? state.story
+      : state.story.urlname;
+
   let toBase = State.lens.page.write.part.writeStory.part
-    .set(StoryOverviewState.instance);
+    .set(StoryOverviewState.instance(urlname));
 
   return (
     <div id="centre" class="px-0">

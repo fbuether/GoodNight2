@@ -28,10 +28,8 @@ function submit(dispatch: Dispatch, state: CreateStoryPart) {
       return;
     }
 
-    dispatch(State.lens.page.write.part.set({
-      ...WriteStoryPart.instance,
-      story: response.message
-    }));
+    dispatch(State.lens.page.write.part.set(
+      WriteStoryPart.instance(response.message)));
   };
 }
 
