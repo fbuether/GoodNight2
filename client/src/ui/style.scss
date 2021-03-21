@@ -4,15 +4,18 @@
 // colour utility.
 
 // from: https://www.sitepoint.com/hsb-colors-with-sass/
+// adopted to also work with saturation = 0.
 @function hsb($h-hsb, $s-hsb, $b-hsb, $a: 1) {
   @if $b-hsb == 0 {
     @return hsla(0, 0, 0, $a)
-  } @else {
+  }
+  @elseif $s-hsb == 0 {
+    @return hsla($h-hsb, 0, $b-hsb, $a);
+  }
+  @else {
     $l-hsl: ($b-hsb/2) * (2 - ($s-hsb/100));
     $s-hsl: ($b-hsb * $s-hsb) / if($l-hsl < 50, $l-hsl * 2, 200 - $l-hsl * 2);
-
-    // @debug "#{$l-hsl} = (#{$b-hsb}/2) * (2 - (#{$s-hsb}/100))";
-
+    // @debug "#{$s-hsl} = (#{$b-hsb}/2) * (2 - (#{$s-hsb}/100))";
 
     @return hsla($h-hsb, $s-hsl, $l-hsl, $a);
   }
@@ -23,6 +26,7 @@
 
 
 $base-color: 30;
+$secondary-color: 258;
 
 
 
@@ -179,13 +183,49 @@ button {
 
 
 h1 a, h2 a, h3 a, h4 a, h5 a, h6 a {
-  text-decoration: none;
   color: hsb($base-color, 82%, 36%);
 
   &:hover {
+    text-decoration: none;
     color: hsb($base-color, 89%, 45%);
   }
 }
+
+
+a {
+  text-decoration: none;
+  color: hsb($secondary-color, 52%, 76%);
+
+  &:hover {
+    text-decoration: underline;
+    color: hsb($secondary-color, 89%, 45%);
+  }
+}
+
+a.boxed {
+  @extend .card;
+  display: inline-block;
+  padding: 0.2rem 0.4rem;
+
+  &:hover {
+    text-decoration: none;
+    background-color: hsb(0, 0%, 100%, 1);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.08);
+  }
+}
+
+div.d-flex a.boxed {
+  flex-grow: 1;
+  text-align: center;
+
+  padding: 0.35rem 0.7rem;
+  margin-right: 0.8rem;
+
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
 
 
 //--------------------------------------
@@ -266,6 +306,7 @@ nav.navbar {
       padding-bottom: 0.1rem;
       border-bottom: 0.2rem solid hsb($base-color, 10%, 20%, 0.4);
       outline: none;
+      text-decoration: none;
 
       &:focus {
         border-bottom: 0.2rem solid hsb($base-color, 14%, 50%, 0.4);
@@ -274,48 +315,6 @@ nav.navbar {
   }
 }
 
-
-
-//--------------------------------------
-// log
-
-
-.action-log {
-  border-left: 0.4rem solid hsb($base-color, 10%, 90%);
-  padding-left: 0.6rem;
-  margin-left: 1rem;
-}
-
-
-
-//--------------------------------------
-// options.
-
-
-.options {
-  .list-group-item {
-    background-color: inherit;
-    border: none;
-    width: auto;
-
-    border-left: 0.4rem solid hsb($base-color, 10%, 90%);
-    padding-left: 0.6rem;
-    margin-left: 1rem;
-
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
-    margin-bottom: 0.4rem;
-
-    &:hover, &:focus {
-      background-color: hsb($base-color, 6%, 94%);
-      outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
-    }
-
-    &:disabled {
-      border-left-color: hsb($base-color, 0%, 90%);
-    }
-  }
-}
 
 
 
@@ -370,17 +369,6 @@ nav.navbar {
 
 
 
-//--------------------------------------
-// character state.
-
-#state {
-  .list-group-item {
-    background-color: inherit;
-    padding: 0.2rem 0rem 0.2rem 0.4rem;
-    border: none;
-  }
-}
-
 
 //--------------------------------------
 // Loading indicator
@@ -420,3 +408,115 @@ nav.navbar {
 }
 
 
+
+//--------------------------------------
+// editing: category tree and tags
+
+ul.category {
+  &, ul {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  li {
+    padding-left: 1rem;
+    border-left: 0.5rem solid hsb(0, 0, 0, 0.04);
+
+    &:hover {
+      border-left: 0.5rem solid hsb(0, 0, 0, 0.12);
+    }
+
+    &.link {
+      padding-left: 0rem;
+      border-left: 0;
+    }
+
+    &.group {
+      margin: 0.6rem 0;
+    }
+  }
+
+  div {
+    // border-bottom: 0.05rem solid hsb($base-color, 36%, 82%);
+    // margin-left: -0.4rem;
+  }
+
+  div, a {
+    display: inline-block;
+    padding: 0.2rem 0.4rem;
+    margin-left: -0.4rem;
+  }
+}
+
+
+.tags {
+  a {
+    display: inline-block;
+    padding: 0.15rem 0.3rem;
+    background: hsb($secondary-color, 24%, 86%, 0.3);
+    border: 0.05rem solid hsb($secondary-color, 24%, 86%, 0);
+
+    &:hover {
+      background: hsb($secondary-color, 12%, 98%, 0.8);
+      border: 0.05rem solid hsb($secondary-color, 32%, 90%, 1);
+      text-decoration: none;
+      box-shadow: 0 0 1rem rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+
+
+
+//--------------------------------------
+// log
+
+
+.action-log {
+  border-left: 0.4rem solid hsb($base-color, 10%, 90%);
+  padding-left: 0.6rem;
+  margin-left: 1rem;
+}
+
+
+
+//--------------------------------------
+// options.
+
+
+.options {
+  .list-group-item {
+    background-color: inherit;
+    border: none;
+    width: auto;
+
+    border-left: 0.4rem solid hsb($base-color, 10%, 90%);
+    padding-left: 0.6rem;
+    margin-left: 1rem;
+
+    padding-top: 0.3rem;
+    padding-bottom: 0.3rem;
+    margin-bottom: 0.4rem;
+
+    &:hover, &:focus {
+      background-color: hsb($base-color, 6%, 94%);
+      outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
+    }
+
+    &:disabled {
+      border-left-color: hsb($base-color, 0%, 90%);
+    }
+  }
+}
+
+
+//--------------------------------------
+// character state.
+
+#state {
+  .list-group-item {
+    background-color: inherit;
+    padding: 0.2rem 0rem 0.2rem 0.4rem;
+    border: none;
+  }
+}
