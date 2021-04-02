@@ -14,6 +14,8 @@ namespace GoodNight.Service.Storage
 
     private JournalWriter writer;
 
+    private bool writeUpdates = true;
+
     internal Repository(JournalWriter writer, string uniqueName)
       : base(uniqueName)
     {
@@ -53,7 +55,11 @@ namespace GoodNight.Service.Storage
 
       dict[key] = element;
 
-      writer.QueueWrite(this, new Entry.Add(UniqueName, element));
+      if (writeUpdates)
+      {
+        writer.QueueWrite(this, new Entry.Add(UniqueName, element));
+      }
+
       return new Reference<T,K>(this, key);
     }
 
@@ -75,8 +81,13 @@ namespace GoodNight.Service.Storage
         return null;
 
       dict[key] = newElement;
-      writer.QueueWrite(this, new Entry.Update(UniqueName,
-          key, newElement));
+
+      if (writeUpdates)
+      {
+        writer.QueueWrite(this, new Entry.Update(UniqueName,
+            key, newElement));
+      }
+
       return newElement;
     }
 
@@ -92,15 +103,19 @@ namespace GoodNight.Service.Storage
         return null;
 
       dict[key] = result.Value.Item1;
-      writer.QueueWrite(this, new Entry.Update(UniqueName,
-          key, result.Value.Item1));
-      return result.Value.Item2;
+      if (writeUpdates)
+      {
+        writer.QueueWrite(this, new Entry.Update(UniqueName,
+            key, result.Value.Item1));
       }
+
+      return result.Value.Item2;
+    }
 
     public bool Remove(K key)
     {
       var contains = dict.Remove(key);
-      if (contains)
+      if (contains && writeUpdates)
       {
         writer.QueueWrite(this, new Entry.Delete(UniqueName, key));
       }
@@ -113,35 +128,44 @@ namespace GoodNight.Service.Storage
 
     internal override bool Replay(Entry entry)
     {
-      switch (entry)
+      writeUpdates = false;
+
+      try
       {
-        case Entry.Add a:
-          var addValue = (T)a.Value;
-          if (addValue is null)
+        switch (entry)
+        {
+          case Entry.Add a:
+            var addValue = (T)a.Value;
+            if (addValue is null)
+              return false;
+
+            Add(addValue);
+            return true;
+
+          case Entry.Update u:
+            var updKey = (K)u.Key;
+            var updValue = (T)u.Value;
+            if (updKey is null || updValue is null)
+              return false;
+
+            Update(updKey, _ => updValue);
+            return true;
+
+          case Entry.Delete d:
+            var delKey = (K)d.Key;
+            if (delKey is null)
+              return false;
+
+            Remove(delKey);
+            return true;
+
+          default:
             return false;
-
-          Add(addValue);
-          return true;
-
-        case Entry.Update u:
-          var updKey = (K)u.Key;
-          var updValue = (T)u.Value;
-          if (updKey is null || updValue is null)
-            return false;
-
-          Update(updKey, _ => updValue);
-          return true;
-
-        case Entry.Delete d:
-          var delKey = (K)d.Key;
-          if (delKey is null)
-            return false;
-
-          Remove(delKey);
-          return true;
-
-        default:
-          return false;
+        }
+      }
+      finally
+      {
+        writeUpdates = true;
       }
     }
   }
