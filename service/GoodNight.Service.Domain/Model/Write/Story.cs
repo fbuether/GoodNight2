@@ -53,7 +53,7 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    public Result<Scene, string> AddNewScene(string raw)
+    private Result<Scene, string> Parse(string raw)
     {
       var parser = new SceneParser();
       var parseResult = parser.Parse(raw);
@@ -65,9 +65,25 @@ namespace GoodNight.Service.Domain.Model.Write
       return new Result.Success<Scene, string>(scene);
     }
 
+    public Result<(Story, Scene), string> AddNewScene(string raw)
+    {
+      return Parse(raw).Map(scene => (InsertScene(scene), scene));
+    }
+
+    public Result<(Story, Scene), string> EditScene(Scene oldScene, string raw)
+    {
+      return Parse(raw)
+        .Map(scene => (ReplaceScene(oldScene, scene), scene));
+    }
+
     public Story InsertScene(Scene scene)
     {
       return this with { Scenes = this.Scenes.Add(scene) };
+    }
+
+    public Story ReplaceScene(Scene oldScene, Scene newScene)
+    {
+      return this with { Scenes = this.Scenes.Remove(oldScene).Add(newScene) };
     }
   }
 }

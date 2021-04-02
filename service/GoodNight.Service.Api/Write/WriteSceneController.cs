@@ -35,6 +35,7 @@ namespace GoodNight.Service.Api.Write
       return Ok(story.Scenes);
     }
 
+
     [HttpGet("{sceneUrlname}")]
     public ActionResult<IEnumerable<Scene>> Get(string storyUrlname,
       string sceneUrlname)
@@ -50,6 +51,7 @@ namespace GoodNight.Service.Api.Write
       return Ok(scene);
     }
 
+
     public record RawScene(string text);
 
     [HttpPost]
@@ -60,21 +62,40 @@ namespace GoodNight.Service.Api.Write
       if (story is null)
         return NotFound();
 
-      var addResult = story.AddNewScene(content.text);
-
-      return addResult.Map<ActionResult<Scene>>(
-        scene => {
-          stories.Update(storyUrlname, (Story story) => {
-            scenes.Add(scene);
-            return story.InsertScene(scene);
-          });
-          return Created(
-            $"api/v1/write/story/{storyUrlname}/scene/{scene.Urlname}",
-            scene);
-        },
-        err => this.BadRequest(err));
+      return story.AddNewScene(content.text)
+        .Map<ActionResult<Scene>>(
+          (storyScene) => {
+            var (story, scene) = storyScene;
+            stories.Update(storyUrlname, (_) => story);
+            return Created(
+              $"api/v1/write/story/{storyUrlname}/scenes/{scene.Urlname}",
+              scene);
+          },
+          err => BadRequest(err));
     }
 
-    // [HttpPut("/{sceneUrlname}")]
+    [HttpPut("{sceneUrlname}")]
+    public ActionResult<Scene> Update(string storyUrlname, string sceneUrlname,
+      [FromBody] RawScene content)
+    {
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      if (story is null)
+        return NotFound();
+
+      var scene = story.Scenes.FirstOrDefault(s => s.Urlname == sceneUrlname);
+      if (scene is null)
+        return NotFound();
+
+      return story.EditScene(scene, content.text)
+        .Map<ActionResult<Scene>>(
+          (storyScene) => {
+            var (story, scene) = storyScene;
+            stories.Update(storyUrlname, (_) => story);
+            return Accepted(
+              $"api/v1/write/story/{storyUrlname}/scenes/{scene.Urlname}",
+              scene);
+          },
+          err => BadRequest(err));
+    }
   }
 }
