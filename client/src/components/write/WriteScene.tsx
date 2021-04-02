@@ -11,6 +11,7 @@ import {State, Dispatch} from "../../state/State";
 import {WriteScene as WriteSceneState} from "../../state/write/WriteScene";
 
 import Loading from "../common/Loading";
+import ScalingTextarea from "../common/ScalingTextarea";
 import SceneHelp from "./SceneHelp";
 
 
@@ -68,22 +69,19 @@ export default function WriteScene(state: WriteSceneState) {
 
   return (
     <div class="row">
-
       <form class="col-8" onSubmit={submit(dispatch, state)}>
         <h2>{title}</h2>
 
-        <textarea class="form-control"
-          onChange={setText(dispatch)}>{state.scene}
-        </textarea>
+        <ScalingTextarea class="form-control larger"
+          onChange={setText(dispatch)}
+          content={state.scene} />
 
         <div class="buttons w-75 mx-auto mt-3 text-end">
           <button type="submit" class="btn btn-primary">
             Speichern
           </button>
         </div>
-
       </form>
-
       <div class="col-4">
         <SceneHelp />
       </div>

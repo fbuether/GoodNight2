@@ -228,6 +228,7 @@ div.d-flex a.boxed {
 
 
 
+
 //--------------------------------------
 // page frame styles.
 
@@ -368,8 +369,6 @@ nav.navbar {
 
 
 
-
-
 //--------------------------------------
 // Loading indicator
 
@@ -481,6 +480,11 @@ dl.commands {
 
     margin-top: 0.3rem;
   }
+}
+
+
+textarea.larger {
+  min-height: calc(1.5em + 9rem + 2px);
 }
 
 
