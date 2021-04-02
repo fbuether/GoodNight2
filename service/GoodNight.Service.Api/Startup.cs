@@ -28,7 +28,8 @@ namespace GoodNight.Service.Api
                 "Content-Type"
               })
             .WithOrigins("http://localhost:32015",
-            "https://goodnight.jasminefields.net");
+              "https://goodnight.jasminefields.net")
+            .WithMethods("GET", "PUT", "POST", "DELETE");
         });
       });
 
