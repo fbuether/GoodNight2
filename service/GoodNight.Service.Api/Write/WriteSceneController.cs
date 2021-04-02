@@ -35,6 +35,20 @@ namespace GoodNight.Service.Api.Write
       return Ok(story.Scenes);
     }
 
+    [HttpGet("{sceneUrlname}")]
+    public ActionResult<IEnumerable<Scene>> Get(string storyUrlname,
+      string sceneUrlname)
+    {
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      if (story is null)
+        return NotFound();
+
+      var scene = story.Scenes.FirstOrDefault(s => s.Urlname == sceneUrlname);
+      if (scene is null)
+        return NotFound();
+
+      return Ok(scene);
+    }
 
     public record RawScene(string text);
 
