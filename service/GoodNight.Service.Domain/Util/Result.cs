@@ -6,6 +6,8 @@ namespace GoodNight.Service.Domain.Util
   {
     public abstract T Map<T>(Func<TResult, T> onSuccess,
         Func<TError, T> onError);
+
+    public abstract Result<T, TError> Map<T>(Func<TResult, T> onSuccess);
   }
 
   public static class Result
@@ -18,6 +20,11 @@ namespace GoodNight.Service.Domain.Util
       {
         return onSuccess(this.Result);
       }
+
+      public override Result<T, TError> Map<T>(Func<TResult, T> onSuccess)
+      {
+        return new Result.Success<T, TError>(onSuccess(this.Result));
+      }
     }
 
     public sealed record Failure<TResult, TError>(TError Error)
@@ -27,6 +34,11 @@ namespace GoodNight.Service.Domain.Util
         Func<TError, T> onError)
       {
         return onError(this.Error);
+      }
+
+      public override Result<T, TError> Map<T>(Func<TResult, T> onSuccess)
+      {
+        return new Result.Failure<T, TError>(Error);
       }
     }
 
