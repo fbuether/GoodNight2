@@ -38,7 +38,7 @@ export default function StoryOverview(state: StoryState) {
     let editScene = (s: Scene) =>
         State.lens.page.write.part.writeStory.part.set({
           ...WriteScene.instance(state.story),
-          scene: s.raw,
+          scene: s,
           urlname: s.urlname
         });
 

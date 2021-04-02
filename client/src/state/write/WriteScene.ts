@@ -1,10 +1,13 @@
 import * as P from "../ProtoLens";
 
+import {Scene} from "../../model/write/Scene";
+
 
 export interface WriteScene {
   kind: "WriteScene";
   story: string; // urlname of story.
-  scene: string | null; // null if not loaded.
+  scene: Scene | null; // null if not loaded.
+  raw: string; // "" if not loaded or new; stores updated text from textarea.
   urlname: string | null; // null means: new scene.
 }
 
@@ -12,7 +15,8 @@ export const WriteScene = {
   instance: (story: string) => ({
     kind: "WriteScene" as const,
     story: story,
-    scene: "",
+    scene: null,
+    raw: "",
     urlname: null
   }),
 
@@ -27,9 +31,7 @@ export const WriteScene = {
   : WriteScene => {
     if (matches[2] !== undefined) {
       return {
-        kind: "WriteScene" as const,
-        story: story,
-        scene: null,
+        ...WriteScene.instance(story),
         urlname: matches[2]
       };
     }
@@ -39,5 +41,8 @@ export const WriteScene = {
   },
 
   lens: <T>(id: P.Prism<T, WriteScene>) => id
+    .prop("story")
     .prop("scene")
+    .prop("raw")
+    .prop("urlname")
 }

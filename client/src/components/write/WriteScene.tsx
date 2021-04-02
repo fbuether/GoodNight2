@@ -19,15 +19,13 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
   return async(event: JSX.TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
 
-    let param = {
-      text: state.scene
-    };
-
-    console.log("state:", state);
-
+    let param = { text: state.raw };
     let response = state.urlname === null
-        ? await request<Scene>("POST", `/api/v1/write/story/${state.story}/scenes`, param)
-        : await request<Scene>("PUT", `/api/v1/write/story/${state.story}/scenes/${state.urlname}`, param);
+        ? await request<Scene>("POST",
+            `/api/v1/write/story/${state.story}/scenes`, param)
+        : await request<Scene>("PUT",
+            `/api/v1/write/story/${state.story}/scenes/${state.urlname}`,
+            param);
 
     if (response.isError) {
       return;
@@ -35,18 +33,32 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
 
     dispatch(State.lens.page.write.part.writeStory.part.writeScene.set({
       kind: "WriteScene" as const,
-      scene: response.message.raw,
+      scene: response.message,
       story: state.story,
+      raw: response.message.raw,
       urlname: response.message.urlname
     }));
   };
 }
 
+function loadScene(dispatch: Dispatch, state: WriteSceneState) {
+  return async () => {
+    let sceneResponse = await request<Scene>("GET",
+      `api/v1/write/story/${state.story}/scenes/${state.urlname}`);
+
+    if (sceneResponse.isError) {
+      return;
+    }
+
+    dispatch(State.lens.page.write.part.writeStory.part.writeScene.scene
+      .set(sceneResponse.message));
+  };
+}
 
 
 function setText(dispatch: Dispatch) {
   return (event: JSX.TargetedEvent<HTMLTextAreaElement, Event>) => {
-    dispatch(State.lens.page.write.part.writeStory.part.writeScene.scene
+    dispatch(State.lens.page.write.part.writeStory.part.writeScene.raw
       .set(event.currentTarget.value));
   };
 }
@@ -56,16 +68,16 @@ function setText(dispatch: Dispatch) {
 export default function WriteScene(state: WriteSceneState) {
   const dispatch = PreactHooks.useContext(DispatchContext);
 
-  let title = state.urlname === null ? "Neue Szene" : "Szene bearbeiten";
-
-  console.log(state);
+  let title = state.urlname === null
+      ? "Neue Szene"
+      : "Szene bearbeiten";
 
   if (state.urlname !== null && state.scene === null) {
-    // todo: request this single scene, store its raw text in state.scene.
-
+    useAsyncEffect(loadScene(dispatch, state));
     return <Loading />;
   }
 
+  let text = state.scene != null ? state.scene.raw : state.raw;
 
   return (
     <div class="row">
@@ -74,7 +86,7 @@ export default function WriteScene(state: WriteSceneState) {
 
         <ScalingTextarea class="form-control larger"
           onChange={setText(dispatch)}
-          content={state.scene} />
+          content={text} />
 
         <div class="buttons w-75 mx-auto mt-3 text-end">
           <button type="submit" class="btn btn-primary">

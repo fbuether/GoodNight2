@@ -20,16 +20,12 @@ function refitTextarea(textarea: HTMLTextAreaElement) {
   textarea.style.height = initialCH < fitSH
       ? (fitSH + 9).toString() + "px"
       : initialStyle;
-
-  return initialCH < fitSH;
 }
 
 function updateDataWithCallback(callback: (event: TextAreaEvent) => void) {
   return (event: TextAreaEvent) => {
-    let didRefit = refitTextarea(event.currentTarget);
-    if (didRefit) {
-      callback(event);
-    }
+    refitTextarea(event.currentTarget);
+    callback(event);
   };
 }
 
