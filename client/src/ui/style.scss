@@ -394,6 +394,20 @@ nav.navbar {
 }
 
 
+.btn.loading {
+  @extend .btn;
+
+  display: inline-block;
+  width: initial;
+  margin: 0;
+
+  &.btn-primary {
+    background-color: hsb($base-color, 6%, 94%);
+    box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
+  }
+}
+
+
 //--------------------------------------
 // cards (for stories)
 

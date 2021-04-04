@@ -9,6 +9,8 @@ export interface WriteScene {
   scene: Scene | null; // null if not loaded.
   raw: string; // "" if not loaded or new; stores updated text from textarea.
   urlname: string | null; // null means: new scene.
+
+  isSaving: boolean;
 }
 
 export const WriteScene = {
@@ -17,7 +19,8 @@ export const WriteScene = {
     story: story,
     scene: null,
     raw: "",
-    urlname: null
+    urlname: null,
+    isSaving: false
   }),
 
   path: /^\/(scene\/(.+)|new-scene)$/,
@@ -45,4 +48,5 @@ export const WriteScene = {
     .prop("scene")
     .prop("raw")
     .prop("urlname")
+    .prop("isSaving")
 }

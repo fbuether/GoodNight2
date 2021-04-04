@@ -9,9 +9,11 @@ import {Scene} from "../../model/write/Scene";
 
 import {State, Dispatch} from "../../state/State";
 import {WriteScene as WriteSceneState} from "../../state/write/WriteScene";
+import {WriteStoryPart} from "../../state/write/WriteStoryPart";
 
 import Loading from "../common/Loading";
 import Icon from "../common/Icon";
+import Link from "../common/Link";
 import ScalingTextarea from "../common/ScalingTextarea";
 import SceneHelp from "./SceneHelp";
 
@@ -19,6 +21,9 @@ import SceneHelp from "./SceneHelp";
 function submit(dispatch: Dispatch, state: WriteSceneState) {
   return async(event: JSX.TargetedEvent<HTMLFormElement, Event>) => {
     event.preventDefault();
+
+    dispatch(State.lens.page.write.part.writeStory.part.writeScene.isSaving
+      .set(true));
 
     let param = { text: state.raw };
     let response = state.urlname === null
@@ -37,7 +42,8 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
       scene: response.message,
       story: state.story,
       raw: response.message.raw,
-      urlname: response.message.urlname
+      urlname: response.message.urlname,
+      isSaving: false
     }));
   };
 }
@@ -87,6 +93,19 @@ export default function WriteScene(state: WriteSceneState) {
 
   let text = state.scene != null ? state.scene.raw : state.raw;
 
+  let saveButton = state.isSaving
+      ? <div type="submit" class="btn btn-primary disabled loading">
+          <Icon name="empty-hourglass" class="mr-2" />
+          Speichere…
+        </div>
+      : <button type="submit" class="btn btn-primary">
+          <Icon name="save" class="mr-2" />
+          Speichern
+        </button>;
+
+  let returnLink = State.lens.page.write.part.set(
+    WriteStoryPart.instance(state.story));
+
   return (
     <div class="row">
       <form class="col-8" onSubmit={submit(dispatch, state)}>
@@ -96,11 +115,10 @@ export default function WriteScene(state: WriteSceneState) {
           onChange={setText(dispatch)}
           content={text} />
 
-        <div class="buttons w-75 mx-auto mt-3 text-end">
-          <button type="submit" class="btn btn-primary">
-            <Icon name="save" class="mr-2" />
-            Speichern
-          </button>
+        <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
+          <Link target={returnLink}>Zurück</Link>
+
+          {saveButton}
         </div>
       </form>
       <div class="col-4">
