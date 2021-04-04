@@ -1,37 +1,16 @@
-// import twocoins from "../../../assets/icons/two-coins.svg";
-// import shamrock from "../../../assets/icons/shamrock.svg";
-// import swapbag from "../../../assets/icons/swap-bag.svg";
-// import sundial from "../../../assets/icons/sundial.svg";
-
-
-
-// export type IconName =
-//     | "shamrock"
-//     | "two-coins"
-//     | "swap-bag"
-//     | "sundial";
-
-
-// let icons: Record<IconName, string> = {
-//   "shamrock": shamrock,
-//   "two-coins": twocoins,
-//   "swap-bag": swapbag,
-//   "sundial": sundial
-// };
 
 
 const icons = {
+  "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
+  "save": require("../../../assets/icons/save.svg"),
   "shamrock": require("../../../assets/icons/shamrock.svg"),
-  "two-coins": require("../../../assets/icons/two-coins.svg"),
-  "swap-bag": require("../../../assets/icons/swap-bag.svg"),
   "sundial": require("../../../assets/icons/sundial.svg"),
-  "save": require("../../../assets/icons/save.svg")
+  "swap-bag": require("../../../assets/icons/swap-bag.svg"),
+  "two-coins": require("../../../assets/icons/two-coins.svg"),
 } as const;
 
 
 export type IconName = (keyof typeof icons);
-
-
 
 
 export function isIcon(name: string): name is IconName {
