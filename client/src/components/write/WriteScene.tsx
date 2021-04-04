@@ -11,6 +11,7 @@ import {State, Dispatch} from "../../state/State";
 import {WriteScene as WriteSceneState} from "../../state/write/WriteScene";
 
 import Loading from "../common/Loading";
+import Icon from "../common/Icon";
 import ScalingTextarea from "../common/ScalingTextarea";
 import SceneHelp from "./SceneHelp";
 
@@ -50,8 +51,15 @@ function loadScene(dispatch: Dispatch, state: WriteSceneState) {
       return;
     }
 
-    dispatch(State.lens.page.write.part.writeStory.part.writeScene.scene
-      .set(sceneResponse.message));
+    let scene = sceneResponse.message;
+
+    dispatch(state => {
+      let intermediate = State.lens.page.write.part.writeStory.part
+        .writeScene.scene
+        .set(scene)(state);
+      return State.lens.page.write.part.writeStory.part.writeScene.raw
+        .set(scene.raw)(intermediate);
+    });
   };
 }
 
@@ -90,6 +98,7 @@ export default function WriteScene(state: WriteSceneState) {
 
         <div class="buttons w-75 mx-auto mt-3 text-end">
           <button type="submit" class="btn btn-primary">
+            <Icon name="save" class="mr-2" />
             Speichern
           </button>
         </div>
