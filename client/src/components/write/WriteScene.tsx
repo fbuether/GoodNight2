@@ -4,6 +4,7 @@ import * as PreactHooks from "preact/hooks";
 
 import DispatchContext from "../../DispatchContext";
 import useAsyncEffect from "../../ui/useAsyncEffect";
+import {noEarlierThan} from "../../util/Timer";
 
 import {Scene} from "../../model/write/Scene";
 
@@ -26,12 +27,14 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
       .set(true));
 
     let param = { text: state.raw };
-    let response = state.urlname === null
-        ? await request<Scene>("POST",
+    let req = state.urlname === null
+        ? request<Scene>("POST",
             `/api/v1/write/story/${state.story}/scenes`, param)
-        : await request<Scene>("PUT",
+        : request<Scene>("PUT",
             `/api/v1/write/story/${state.story}/scenes/${state.urlname}`,
             param);
+
+    let response = await noEarlierThan(200, req);
 
     if (response.isError) {
       return;
