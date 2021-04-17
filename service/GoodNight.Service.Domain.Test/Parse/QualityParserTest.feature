@@ -175,7 +175,7 @@ Feature: Parsing of Qualities
     Then the quality has scene somewhere nice
 
 
-  Scenario: An empty scene
+  Scenario: An empty quality
     Given the quality input
       """
       """
@@ -229,3 +229,21 @@ Feature: Parsing of Qualities
     Then the quality has type Int
     Then the quality has minimum 5
     Then the quality has maximum 9
+
+  Scenario: The quality has its own text as raw.
+    Given the quality input
+      """
+      $ name: toast
+      Toast is tasty!
+      $type: int
+      Toasty, even.
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the raw text is
+      """
+      $ name: toast
+      Toast is tasty!
+      $type: int
+      Toasty, even.
+      """

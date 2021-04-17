@@ -10,8 +10,8 @@ namespace GoodNight.Service.Domain.Model.Write
     string Raw,
     bool Hidden,
 
-    // IImmutableList<string> Tags,
-    // IImmutableList<string> Category,
+    IImmutableList<string> Tags,
+    IImmutableList<string> Category,
     string? Scene,
 
     string Description)
@@ -34,27 +34,36 @@ namespace GoodNight.Service.Domain.Model.Write
       string Name,
       string Raw,
       bool Hidden,
+      IImmutableList<string> Tags,
+      IImmutableList<string> Category,
       string? Scene,
       string Description)
-      : Quality(Name, Type.Bool, Raw, Hidden, Scene, Description) {}
+      : Quality(Name, Type.Bool, Raw, Hidden, Tags, Category, Scene,
+        Description) {}
 
     public record Int(
       string Name,
       string Raw,
       bool Hidden,
+      IImmutableList<string> Tags,
+      IImmutableList<string> Category,
       string? Scene,
       string Description,
       int? Minimum,
       int? Maximum)
-      : Quality(Name, Type.Int, Raw, Hidden, Scene, Description) {}
+      : Quality(Name, Type.Int, Raw, Hidden, Tags, Category, Scene,
+        Description) {}
 
     public record Enum(
       string Name,
       string Raw,
       bool Hidden,
+      IImmutableList<string> Tags,
+      IImmutableList<string> Category,
       string? Scene,
       string Description,
       IImmutableDictionary<int, string> Levels)
-      : Quality(Name, Type.Enum, Raw, Hidden, Scene, Description) {}
-    }
+      : Quality(Name, Type.Enum, Raw, Hidden, Tags, Category, Scene,
+        Description) {}
+  }
 }

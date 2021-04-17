@@ -41,7 +41,7 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheParserParsesTheInput()
     {
       Assert.NotNull(input);
-      result = new QualityParser().Parse(input!);
+      result = QualityParser.Parse(input!);
 
       // to debug failing tests.
       output.WriteLine($"IsSuccessful: {result!.IsSuccessful}");
@@ -133,6 +133,13 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheQualityHasSceneName(string name)
     {
       Assert.Equal(name, result!.Result!.Scene);
+    }
+
+    [Then(@"the raw text is")]
+    public void TheRawTextIs(DocString body)
+    {
+      var raw = body.Content;
+      Assert.Equal(raw, result!.Result!.Raw);
     }
   }
 }

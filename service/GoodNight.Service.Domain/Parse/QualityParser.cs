@@ -10,7 +10,7 @@ namespace GoodNight.Service.Domain.Parse
   using QualityMapper = Func<Quality, Quality>;
   using QualityFuncParser = Parser<char, Func<Quality, Quality>>;
 
-  public class QualityParser
+  public static class QualityParser
   {
     private readonly static Parser<char, string> remainingLine =
       Parser.AnyCharExcept("\r\n").ManyString();
@@ -33,6 +33,8 @@ namespace GoodNight.Service.Domain.Parse
           new Quality.Bool(quality.Name,
             quality.Raw,
             quality.Hidden,
+            ImmutableList<string>.Empty,
+            ImmutableList<string>.Empty,
             quality.Scene,
             quality.Description)),
 
@@ -42,6 +44,8 @@ namespace GoodNight.Service.Domain.Parse
           new Quality.Int(quality.Name,
             quality.Raw,
             quality.Hidden,
+            ImmutableList<string>.Empty,
+            ImmutableList<string>.Empty,
             quality.Scene,
             quality.Description,
             null,
@@ -52,6 +56,8 @@ namespace GoodNight.Service.Domain.Parse
           new Quality.Enum(quality.Name,
             quality.Raw,
             quality.Hidden,
+            ImmutableList<string>.Empty,
+            ImmutableList<string>.Empty,
             quality.Scene,
             quality.Description,
             ImmutableDictionary<int, string>.Empty))));
@@ -158,24 +164,34 @@ namespace GoodNight.Service.Domain.Parse
       )
       .SeparatedAndOptionallyTerminated(Parser.EndOfLine)
       .Map(builders => builders.Aggregate(
-          new Quality.Bool("", "", false, null, "") as Quality,
+          new Quality.Bool("", "", false,
+            ImmutableList<string>.Empty,
+            ImmutableList<string>.Empty, null, "") as Quality,
           (a, f) => f(a)));
 
 
 
-    public ParseResult<Quality> Parse(string content)
+    public static ParseResult<Quality> Parse(string content)
     {
       var res = parseLines
         .Before(Parser<char>.End)
         .Parse(content);
 
+      Quality? result = null;
+      if (res.Success) {
+        result = res.Value with { Raw = content };
+
+        if (res.Value.Description.StartsWith("\n"))
+        {
+          result = result with
+            {
+              Description = result.Description.Substring(1)
+            };
+        }
+      }
+
       return new ParseResult<Quality>(res.Success,
-        (res.Success
-          ? (res.Value.Description.StartsWith("\n") 
-            ? res.Value with {
-              Description = res.Value.Description.Substring(1) }
-            : res.Value)
-          : null),
+        result,
         !res.Success && res.Error is not null ? res.Error.Message : null,
         (!res.Success && res.Error is not null
           ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
