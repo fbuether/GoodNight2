@@ -39,7 +39,7 @@ export default function QualityHelp() {
 
         <dt>$tag: <em>tag1</em> <em>tag2</em>…</dt>
         <dd>
-          Füge dieser Qualität Tags hinzu, um sie in der Bearebeitungsansicht zu
+          Füge dieser Qualität Tags hinzu, um sie in der Bearbeitungsansicht zu
           einem Tag mit aufzuführen.<br />
           Kein Effekt für Spieler.
         </dd>

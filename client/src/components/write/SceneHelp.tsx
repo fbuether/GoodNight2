@@ -33,7 +33,7 @@ export default function SceneHelp() {
   
         <dt>$tag: <em>tag1</em> <em>tag2</em>…</dt>
         <dd>
-          Füge dieser Szene Tags hinzu, um sie in der Bearebeitungsansicht zu
+          Füge dieser Szene Tags hinzu, um sie in der Bearbeitungsansicht zu
           einem Tag mit aufzuführen.<br />
           Kein Effekt für Spieler.
         </dd>
