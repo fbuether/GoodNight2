@@ -56,16 +56,6 @@ export default function StoryOverview(state: StoryState) {
         </li>
       </ul>
     );
-  
-          //       <li class="group"><div>Hels Schlucht</div>
-          //         <ul>
-          //           <li class="link"><a href="#">Eingang</a></li>
-          //           <li class="link"><a href="#">Schmiede</a></li>
-          //         </ul>
-          //       </li>
-          //     </ul>
-          //   </li>
-          // </ul>;
   }
 
   let toNewScene = State.lens.page.write.part.writeStory.part.set(
@@ -78,10 +68,10 @@ export default function StoryOverview(state: StoryState) {
     <>
       <div class="d-flex justify-content-around mt-2 mb-3">
         <Link target={toNewScene} class="boxed">
-          Neue Szene hinzufügen
+          Neue Szene
         </Link>
         <Link target={toNewQuality} class="boxed">
-          Neue Qualität hinzufügen
+          Neue Qualität
         </Link>
       </div>
 
