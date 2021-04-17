@@ -46,7 +46,7 @@ export default function SceneHelp() {
           Kein Effekt für Spieler.
         </dd>
   
-        <dt>$set: quality = <em>expr</em></dt>
+        <dt>$set: <em>quality</em> = <em>expr</em></dt>
         <dd>
           Setzt die Qualität eines Spielers auf den errechneten Wert, sobald
           der Spieler diese Szene ausspielt.

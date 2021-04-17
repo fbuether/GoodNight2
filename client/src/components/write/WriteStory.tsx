@@ -17,6 +17,7 @@ import Loading from "../common/Loading";
 
 import StoryOverview from "./StoryOverview";
 import WriteScene from "./WriteScene";
+import WriteQuality from "./WriteQuality";
 
 
 function loadStory(dispatch: Dispatch, state: WriteStoryPart, name: string) {
@@ -38,6 +39,7 @@ function getPage(page: WritePart) {
   switch (page.kind) {
     case "StoryOverview": return <StoryOverview {...page} />;
     case "WriteScene": return <WriteScene {...page} />;
+    case "WriteQuality": return <WriteQuality {...page} />;
     default: return assertNever(page);
   }
 }

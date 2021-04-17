@@ -11,7 +11,7 @@ import {StoryOverview} from "./StoryOverview";
 // import {TagOverview} from "./TagOverview";
 // import {CategoryOverview} from "./CategoryOverview";
 import {WriteScene} from "./WriteScene";
-// import {EditQuality} from "./EditQuality";
+import {WriteQuality} from "./WriteQuality";
 
 
 export type WritePart =
@@ -21,6 +21,7 @@ export type WritePart =
     // | TagOverview
     // | CategoryOverview
     | WriteScene
+    | WriteQuality
     // | EditQuality
 ;
 
@@ -39,6 +40,8 @@ let guardStoryOverview = (a: WritePart): a is StoryOverview =>
     (a.kind == "StoryOverview");
 let guardWriteScene = (a: WritePart): a is WriteScene =>
     (a.kind == "WriteScene");
+let guardWriteQuality = (a: WritePart): a is WriteQuality =>
+    (a.kind == "WriteQuality");
 
 export const WriteStoryPart = {
   instance: (story: Story | string = "") => ({
@@ -52,7 +55,8 @@ export const WriteStoryPart = {
     .prop("story")
     .path("part", lens => lens
       .union("storyOverview", guardStoryOverview, StoryOverview.lens)
-      .union("writeScene", guardWriteScene, WriteScene.lens)),
+      .union("writeScene", guardWriteScene, WriteScene.lens)
+      .union("writeQuality", guardWriteQuality, WriteQuality.lens)),
 
   path: /^\/story\/([^/]+)(.+)?$/,
 
@@ -64,6 +68,7 @@ export const WriteStoryPart = {
     switch (part.part.kind) {
       case "StoryOverview": return prefix;
       case "WriteScene": return prefix + WriteScene.toUrl(part.part);
+      case "WriteQuality": return prefix + WriteQuality.toUrl(part.part);
       default: return assertNever(part.part);
     }
   },
@@ -75,8 +80,9 @@ export const WriteStoryPart = {
     return {
       kind: "WriteStoryPart" as const,
       story: storyUrlname,
-      part: OfUrl.unionWith(subPagePath, [StoryOverview, WriteScene],
-         StoryOverview.instance(storyUrlname), storyUrlname)
+      part: OfUrl.unionWith(subPagePath,
+        [StoryOverview, WriteScene, WriteQuality],
+        StoryOverview.instance(storyUrlname), storyUrlname)
     };
   }
 }

@@ -1,6 +1,6 @@
 import * as P from "../ProtoLens";
 
-import {Scene} from "../../model/write/Scene";
+import type {Scene} from "../../model/write/Scene";
 
 
 export interface WriteScene {

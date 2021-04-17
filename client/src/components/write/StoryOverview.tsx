@@ -6,6 +6,7 @@ import request from "../../Request";
 import {Scene} from "../../model/write/Scene";
 import {State, Dispatch} from "../../state/State";
 import {WriteScene} from "../../state/write/WriteScene";
+import {WriteQuality} from "../../state/write/WriteQuality";
 import {StoryOverview as StoryState} from "../../state/write/StoryOverview";
 
 import Link from "../common/Link";
@@ -45,7 +46,7 @@ export default function StoryOverview(state: StoryState) {
 
     scenes = (
       <ul class="category">
-        <li class="group"><div>Alle Szenen</div>
+        <li class="group"><div>Alle Szenen und Qualitäten</div>
           <ul>
             {state.scenes.map(s => (
               <li class="link">
@@ -62,7 +63,7 @@ export default function StoryOverview(state: StoryState) {
     WriteScene.instance(state.story));
 
   let toNewQuality = State.lens.page.write.part.writeStory.part
-    .set(WriteScene.instance(state.story));
+    .set(WriteQuality.instance(state.story));
 
   return (
     <>
