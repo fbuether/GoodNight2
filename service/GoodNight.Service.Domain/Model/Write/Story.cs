@@ -53,7 +53,7 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    private Result<Scene, string> Parse(string raw)
+    private Result<Scene, string> ParseScene(string raw)
     {
       var parser = new SceneParser();
       var parseResult = parser.Parse(raw);
@@ -67,12 +67,12 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public Result<(Story, Scene), string> AddNewScene(string raw)
     {
-      return Parse(raw).Map(scene => (InsertScene(scene), scene));
+      return ParseScene(raw).Map(scene => (InsertScene(scene), scene));
     }
 
     public Result<(Story, Scene), string> EditScene(Scene oldScene, string raw)
     {
-      return Parse(raw)
+      return ParseScene(raw)
         .Map(scene => (ReplaceScene(oldScene, scene), scene));
     }
 
@@ -84,6 +84,34 @@ namespace GoodNight.Service.Domain.Model.Write
     public Story ReplaceScene(Scene oldScene, Scene newScene)
     {
       return this with { Scenes = this.Scenes.Remove(oldScene).Add(newScene) };
+    }
+
+
+    private Result<Quality, string> ParseQuality(string raw)
+    {
+      var result = QualityParser.Parse(raw);
+      if (!result.IsSuccessful)
+        return new Result.Failure<Quality, string>(result.ErrorMessage!);
+
+      var quality = result.Result!;
+      return new Result.Success<Quality, string>(quality);
+    }
+
+    public Result<(Story, Quality), string> AddNewQuality(string raw)
+    {
+      return ParseQuality(raw).Map(quality => (
+          this with { Qualities = this.Qualities.Add(quality) },
+          quality));
+    }
+
+    public Result<(Story, Quality), string> EditQuality(Quality oldQuality,
+      string raw)
+    {
+      return ParseQuality(raw).Map(quality => (
+          this with {
+            Qualities = this.Qualities.Remove(oldQuality).Add(quality)
+          },
+          quality));
     }
   }
 }
