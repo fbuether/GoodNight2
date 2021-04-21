@@ -1,3 +1,4 @@
+using System.Linq;
 using System;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Parse;
@@ -5,6 +6,7 @@ using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Parse;
 using GoodNight.Service.Domain.Util;
+using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -16,6 +18,24 @@ namespace GoodNight.Service.Domain.Model.Write
     string name,
     string urlname,
     string description);
+
+
+  public record Category(
+    string name,
+    IImmutableList<Category> categories,
+    IImmutableList<Scene> scenes,
+    IImmutableList<Quality> qualities)
+  {
+    public static Category Empty = new Category("",
+      ImmutableList<Category>.Empty,
+      ImmutableList<Scene>.Empty,
+      ImmutableList<Quality>.Empty);
+
+    public static Category OfName(string name) => Category.Empty with
+      {
+        name = name
+      };
+  }
 
 
   public record Story(
@@ -50,6 +70,63 @@ namespace GoodNight.Service.Domain.Model.Write
     public StoryHeader ToHeader()
     {
       return new StoryHeader(Name, Urlname, "-");
+    }
+
+
+    private Category AddSceneToCategories(Category root,
+      Scene scene, IEnumerable<string> path)
+    {
+      if (!path.Any())
+      {
+        return root with { scenes = root.scenes.Add(scene) };
+      }
+
+      var first = path.First();
+      var cat = root.categories.FirstOrDefault(c => c.name == first);
+
+      var newCategories = cat is not null
+        ? root.categories.Remove(cat)
+        : root.categories;
+      var subCategory = cat is not null
+        ? cat
+        : Category.OfName(first);
+
+      return root with { categories = newCategories.Add(
+          AddSceneToCategories(subCategory, scene, path.Skip(1))) };
+    }
+
+    private Category AddQualityToCategories(Category root, Quality quality,
+      IEnumerable<string> path)
+    {
+      if (!path.Any())
+      {
+        return root with { qualities = root.qualities.Add(quality) };
+      }
+
+      var first = path.First();
+      var cat = root.categories.FirstOrDefault(c => c.name == first);
+
+      var newCategories = cat is not null
+        ? root.categories.Remove(cat)
+        : root.categories;
+      var subCategory = cat is not null
+        ? cat
+        : Category.OfName(first);
+
+      return root with { categories = newCategories.Add(
+          AddQualityToCategories(subCategory, quality, path.Skip(1))) };
+    }
+
+    public Category GetContentAsCategories()
+    {
+      var category = this.Scenes.Aggregate(Category.Empty,
+        (cat, scene) => AddSceneToCategories(cat, scene, scene.Category));
+
+      category = this.Qualities.Aggregate(category,
+        (cat, quality) => AddQualityToCategories(
+          cat, quality, quality.Category));
+
+      return category;
     }
 
 

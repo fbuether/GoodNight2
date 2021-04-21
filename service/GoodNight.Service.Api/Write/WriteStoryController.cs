@@ -30,14 +30,27 @@ namespace GoodNight.Service.Api.Write
 
 
     [HttpGet("{urlname}")]
-    public ActionResult<Story> Get(string urlname)
+    public ActionResult<StoryHeader> Get(string urlname)
     {
       var story = stories.Get(urlname);
       if (story is null)
         return NotFound(new ErrorResult(
             "A story with the given name does not exist."));
 
-      return Ok(story);
+      return Ok(story.ToHeader());
+    }
+
+
+    [HttpGet("{urlname}/content-by-category")]
+    public ActionResult<IEnumerable<Category>> GetContentByCategory(
+      string urlname)
+    {
+      var story = stories.Get(urlname);
+      if (story is null)
+        return NotFound(new ErrorResult(
+            "A story with the given name does not exist."));
+
+      return Ok(story.GetContentAsCategories());
     }
 
 
