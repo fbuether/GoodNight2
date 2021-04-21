@@ -12,5 +12,5 @@ export interface Story {
   name: string;
   urlname: string;
 
-  description: string;
+  description: string; // todo: not yet present in service.
 }
