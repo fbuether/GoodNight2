@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GoodNight.Service.Api.Write
 {
   [ApiController]
-  [Route("api/v1/write/story/{storyUrlname}/qualities")]
+  [Route("api/v1/write/stories/{storyUrlname}/qualities")]
   public class WriteQualityController : ControllerBase
   {
     private IRepository<Story, string> stories;
@@ -55,7 +55,7 @@ namespace GoodNight.Service.Api.Write
             var (story, quality) = storyQuality;
             stories.Update(storyUrlname, (_) => story);
             return Created(
-              $"api/v1/write/story/{storyUrlname}/qualitys/{quality.Urlname}",
+              $"api/v1/write/stories/{storyUrlname}/qualitys/{quality.Urlname}",
               quality);
           },
           err => BadRequest(err));
@@ -79,7 +79,7 @@ namespace GoodNight.Service.Api.Write
             var (story, quality) = storyQuality;
             stories.Update(storyUrlname, (_) => story);
             return Accepted(
-              $"api/v1/write/story/{storyUrlname}/qualitys/{quality.Urlname}",
+              $"api/v1/write/stories/{storyUrlname}/qualitys/{quality.Urlname}",
               quality);
           },
           err => BadRequest(err));

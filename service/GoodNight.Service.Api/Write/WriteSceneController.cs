@@ -11,7 +11,7 @@ using System;
 namespace GoodNight.Service.Api.Write
 {
   [ApiController]
-  [Route("api/v1/write/story/{storyUrlname}/scenes")]
+  [Route("api/v1/write/stories/{storyUrlname}/scenes")]
   public class WriteSceneController : ControllerBase
   {
     private IRepository<Scene, string> scenes;
@@ -68,7 +68,7 @@ namespace GoodNight.Service.Api.Write
             var (story, scene) = storyScene;
             stories.Update(storyUrlname, (_) => story);
             return Created(
-              $"api/v1/write/story/{storyUrlname}/scenes/{scene.Urlname}",
+              $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Urlname}",
               scene);
           },
           err => BadRequest(err));
@@ -92,7 +92,7 @@ namespace GoodNight.Service.Api.Write
             var (story, scene) = storyScene;
             stories.Update(storyUrlname, (_) => story);
             return Accepted(
-              $"api/v1/write/story/{storyUrlname}/scenes/{scene.Urlname}",
+              $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Urlname}",
               scene);
           },
           err => BadRequest(err));
