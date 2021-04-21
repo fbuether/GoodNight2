@@ -12,9 +12,13 @@ namespace GoodNight.Service.Storage.Journal
   {
     private BlockingCollection<string> writeCache;
 
-    internal JournalWriter(BlockingCollection<string> writeCache)
+    private JsonSerializerOptions options;
+
+    internal JournalWriter(BlockingCollection<string> writeCache,
+      JsonSerializerOptions options)
     {
       this.writeCache = writeCache;
+      this.options = options;
     }
 
     internal void QueueWrite(BaseRepository repos, Entry entry)
@@ -30,21 +34,21 @@ namespace GoodNight.Service.Storage.Journal
         case Entry.Add a:
           writer.WriteString("kind", "Add");
           writer.WritePropertyName("value");
-          JsonSerializer.Serialize(writer, a.Value, repos.ValueType);
+          JsonSerializer.Serialize(writer, a.Value, repos.ValueType, options);
           break;
 
         case Entry.Update u:
           writer.WriteString("kind", "Update");
           writer.WritePropertyName("key");
-          JsonSerializer.Serialize(writer, u.Key, repos.KeyType);
+          JsonSerializer.Serialize(writer, u.Key, repos.KeyType, options);
           writer.WritePropertyName("value");
-          JsonSerializer.Serialize(writer, u.Value, repos.ValueType);
+          JsonSerializer.Serialize(writer, u.Value, repos.ValueType, options);
           break;
 
         case Entry.Delete d:
           writer.WriteString("kind", "Delete");
           writer.WritePropertyName("key");
-          JsonSerializer.Serialize(writer, d.Key, repos.KeyType);
+          JsonSerializer.Serialize(writer, d.Key, repos.KeyType, options);
           break;
       }
 

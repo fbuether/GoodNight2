@@ -6,6 +6,7 @@ using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Api.Converter;
 using GoodNight.Service.Api.Storage;
+using System.Text.Json;
 
 namespace GoodNight.Service.Api
 {
@@ -13,12 +14,18 @@ namespace GoodNight.Service.Api
   {
     public void ConfigureServices(IServiceCollection services)
     {
+      var jsonOptions = new JsonSerializerOptions();
+      jsonOptions.Converters.Add(new ActionChoiceConverter());
+      jsonOptions.Converters.Add(new ExpressionValueConverter());
+      jsonOptions.Converters.Add(new WriteQualityConverter());
+      services.AddSingleton<JsonSerializerOptions>(jsonOptions);
+
       services.AddControllers()
         .AddJsonOptions(options => {
-          options.JsonSerializerOptions.Converters.Add(
-            new ActionChoiceConverter());
-          options.JsonSerializerOptions.Converters.Add(
-            new ExpressionValueConverter());
+          foreach (var converter in jsonOptions.Converters)
+          {
+            options.JsonSerializerOptions.Converters.Add(converter);
+          }
         });
 
       services.AddCors(corsOptions => {

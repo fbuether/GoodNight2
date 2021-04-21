@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Collections.Concurrent;
 using System.Threading;
+using System.Text.Json;
 
 namespace GoodNight.Service.Storage
 {
@@ -23,6 +24,8 @@ namespace GoodNight.Service.Storage
 
     private CancellationTokenSource writeCacheCanceler;
 
+    private JsonSerializerOptions jsonOptions;
+
     private List<BaseRepository> repositories;
 
     /// <param name="backingStore">
@@ -32,7 +35,7 @@ namespace GoodNight.Service.Storage
     /// to the stream as well as the underlying data. It will dispose the stream
     /// when either this store or the repository is disposed.
     /// </param>
-    public Store(Stream? backingStore = null)
+    public Store(JsonSerializerOptions jsonOptions, Stream? backingStore = null)
     {
       ownsBackingStore = backingStore is null;
       if (backingStore is null)
@@ -47,6 +50,8 @@ namespace GoodNight.Service.Storage
 
       repositories = new List<BaseRepository>();
 
+      this.jsonOptions = jsonOptions;
+
       // uses a ConcurrentQueue by default.
       writeCache = new BlockingCollection<string>(Store.WriteCacheSize);
       writeCacheCanceler = new CancellationTokenSource();
@@ -54,7 +59,6 @@ namespace GoodNight.Service.Storage
 
     public void Dispose()
     {
-
       if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
       {
         writeCacheCanceler.Cancel();
@@ -79,7 +83,7 @@ namespace GoodNight.Service.Storage
     /// </remarks>
     public void StartJournal()
     {
-      JournalReader.ReadAll(backingStore, this);
+      JournalReader.ReadAll(backingStore, this, jsonOptions);
 
       var writer = new StreamWriter(backingStore);
       writeCacheTask = Task.Run(() =>
@@ -146,8 +150,8 @@ namespace GoodNight.Service.Storage
           + $"\"{uniqueName}\" already exists, but not as repository for "
           + $"{nameof(T)},{nameof(K)}.");
 
-      var repos = new Repository<T,K>(new JournalWriter(writeCache),
-        uniqueName);
+      var repos = new Repository<T,K>(new JournalWriter(writeCache,
+          jsonOptions), uniqueName);
       repositories.Add(repos);
       return repos;
     }

@@ -54,21 +54,21 @@ namespace GoodNight.Service.Storage.Journal
       return value;
     }
 
-    private static object ReadObject(ref Utf8JsonReader reader, Type type)
+    private static object ReadObject(ref Utf8JsonReader reader, Type type, JsonSerializerOptions options)
     {
       if (type == typeof(string))
       {
         return ReadStringProperty(ref reader);
       }
 
-      var obj = JsonSerializer.Deserialize(ref reader, type);
+      var obj = JsonSerializer.Deserialize(ref reader, type, options);
       if (obj is null)
         throw new JsonException($"Reading \"{nameof(type)}\", but Deserialize returned null.");
 
       return obj;
     }
 
-    private static long ReadEntry(byte[] bytes, Store store)
+    private static long ReadEntry(byte[] bytes, Store store, JsonSerializerOptions options)
     {
       var reader = new Utf8JsonReader(bytes);
 
@@ -88,7 +88,7 @@ namespace GoodNight.Service.Storage.Journal
       {
         case "Add":
           ReadPropertyName(ref reader, "value");
-          var addValue = ReadObject(ref reader, repos.ValueType);
+          var addValue = ReadObject(ref reader, repos.ValueType, options);
           var added = repos.Replay(new Entry.Add(reposName, addValue));
           if (!added)
             throw new JsonException($"Did not replay Entry.Add({reposName}, {addValue})");
@@ -96,9 +96,9 @@ namespace GoodNight.Service.Storage.Journal
 
         case "Update":
           ReadPropertyName(ref reader, "key");
-          var updKey = ReadObject(ref reader, repos.KeyType);
+          var updKey = ReadObject(ref reader, repos.KeyType, options);
           ReadPropertyName(ref reader, "value");
-          var updValue = ReadObject(ref reader, repos.ValueType);
+          var updValue = ReadObject(ref reader, repos.ValueType, options);
           var updated = repos.Replay(new Entry.Update(reposName, updKey, updValue));
           if (!updated)
             throw new JsonException($"Did not replay Entry.Update({reposName}, {updKey}, {updValue})");
@@ -106,7 +106,7 @@ namespace GoodNight.Service.Storage.Journal
 
         case "Delete":
           ReadPropertyName(ref reader, "key");
-          var delKey = ReadObject(ref reader, repos.KeyType);
+          var delKey = ReadObject(ref reader, repos.KeyType, options);
           var deleted = repos.Replay(new Entry.Delete(reposName, delKey));
           if (!deleted)
             throw new JsonException($"Did not replay Entry.Delete({reposName}, {delKey})");
@@ -118,7 +118,7 @@ namespace GoodNight.Service.Storage.Journal
       return reader.BytesConsumed;
     }
 
-    public static void ReadAll(Stream stream, Store store)
+    public static void ReadAll(Stream stream, Store store, JsonSerializerOptions options)
     {
       stream.Seek(0, SeekOrigin.Begin);
 
@@ -130,7 +130,7 @@ namespace GoodNight.Service.Storage.Journal
           break;
 
         var bytes = Encoding.UTF8.GetBytes(line);
-        var readCount = ReadEntry(bytes, store);
+        var readCount = ReadEntry(bytes, store, options);
 
         if (readCount < bytes.Length)
         {

@@ -25,17 +25,17 @@ namespace GoodNight.Service.Api
         throw new NullReferenceException();
       }
 
-      // instantiate all stores.
+      // instantiate all stores, in order to have them available when
+      // `store.StartJournal` reads the whole journal.
       host.Services.GetService(typeof(ReadStore));
       host.Services.GetService(typeof(WriteStore));
 
+      // deserialising the database requires proper json converters, as
+      // configured in startup. Extract these and pass them to the
+      // journalreader.
       store.StartJournal();
 
       Console.WriteLine("Finished loading stores. Starting host...");
-
-      // var readStore = await ReadStore.Initialise(store);
-      // var loadStores = await host.Services.GetService(
-
       host.Run();
     }
   }
