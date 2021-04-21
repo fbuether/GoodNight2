@@ -29,9 +29,9 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
     let param = { text: state.raw };
     let req = state.urlname === null
         ? request<Scene>("POST",
-            `/api/v1/write/story/${state.story}/scenes`, param)
+            `/api/v1/write/stories/${state.story}/scenes`, param)
         : request<Scene>("PUT",
-            `/api/v1/write/story/${state.story}/scenes/${state.urlname}`,
+            `/api/v1/write/stories/${state.story}/scenes/${state.urlname}`,
             param);
 
     let response = await noEarlierThan(200, req);
@@ -54,7 +54,7 @@ function submit(dispatch: Dispatch, state: WriteSceneState) {
 function loadScene(dispatch: Dispatch, state: WriteSceneState) {
   return async () => {
     let sceneResponse = await request<Scene>("GET",
-      `api/v1/write/story/${state.story}/scenes/${state.urlname}`);
+      `api/v1/write/stories/${state.story}/scenes/${state.urlname}`);
 
     if (sceneResponse.isError) {
       return;

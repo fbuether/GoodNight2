@@ -16,7 +16,7 @@ import Loading from "../common/Loading";
 function loadScenes(dispatch: Dispatch, story: string) {
   return async () => {
     let response = await request<Array<Scene>>(
-      "GET", `api/v1/write/story/${story}/scenes`);
+      "GET", `api/v1/write/stories/${story}/scenes`);
     if (response.isError) {
       return;
     }

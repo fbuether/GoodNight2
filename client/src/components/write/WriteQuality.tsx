@@ -29,9 +29,9 @@ function submit(dispatch: Dispatch, state: WriteQualityState) {
     let param = { text: state.raw };
     let req = state.urlname === null
         ? request<Quality>("POST",
-            `/api/v1/write/story/${state.story}/qualities`, param)
+            `/api/v1/write/stories/${state.story}/qualities`, param)
         : request<Quality>("PUT",
-            `/api/v1/write/story/${state.story}/qualities/${state.urlname}`,
+            `/api/v1/write/stories/${state.story}/qualities/${state.urlname}`,
             param);
 
     let response = await noEarlierThan(200, req);
@@ -53,7 +53,7 @@ function submit(dispatch: Dispatch, state: WriteQualityState) {
 function loadQuality(dispatch: Dispatch, state: WriteQualityState) {
   return async () => {
     let qualityResponse = await request<Quality>("GET",
-      `api/v1/write/story/${state.story}/qualities/${state.urlname}`);
+      `api/v1/write/stories/${state.story}/qualities/${state.urlname}`);
 
     if (qualityResponse.isError) {
       return;
