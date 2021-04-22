@@ -111,9 +111,11 @@ export default function StoryOverview(state: StoryState) {
     <>
       <div class="d-flex justify-content-around mt-2 mb-3">
         <Link target={toNewScene} class="boxed">
+          <Icon class="restrained color-primary mr-1" name="horizon-road" />
           Neue Szene
         </Link>
         <Link target={toNewQuality} class="boxed">
+          <Icon class="restrained color-secondary mr-1" name="swap-bag" />
           Neue Qualität
         </Link>
       </div>

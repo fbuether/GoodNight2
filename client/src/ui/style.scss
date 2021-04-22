@@ -214,6 +214,11 @@ a.boxed {
   }
 }
 
+a.btn {
+  @extend button;
+  text-decoration: none;
+}
+
 div.d-flex a.boxed {
   flex-grow: 1;
   text-align: center;
