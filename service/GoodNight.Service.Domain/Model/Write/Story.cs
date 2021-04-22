@@ -137,7 +137,19 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public Result<(Story, Scene), string> AddNewScene(string raw)
     {
-      return ParseScene(raw).Map(scene => (InsertScene(scene), scene));
+      return ParseScene(raw).Bind<(Story, Scene)>(scene =>
+      {
+        if (this.Scenes.Any(s => s.Urlname == scene.Urlname))
+        {
+          return new Result.Failure<(Story, Scene), string>(
+            "A scene of that name already exists.");
+        }
+        else
+        {
+          return new Result.Success<(Story, Scene), string>(
+            (InsertScene(scene), scene));
+        }
+      });
     }
 
     public Result<(Story, Scene), string> EditScene(Scene oldScene, string raw)
@@ -164,9 +176,19 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public Result<(Story, Quality), string> AddNewQuality(string raw)
     {
-      return ParseQuality(raw).Map(quality => (
-          this with { Qualities = this.Qualities.Add(quality) },
-          quality));
+      return ParseQuality(raw).Bind<(Story, Quality)>(quality =>
+      {
+        if (this.Qualities.Any(q => q.Urlname == quality.Urlname))
+        {
+          return new Result.Failure<(Story, Quality), string>(
+            "A quality of that name already exists.");
+        }
+        else {
+          return new Result.Success<(Story, Quality), string>(
+            (this with { Qualities = this.Qualities.Add(quality) },
+              quality));
+        }
+      });
     }
 
     public Result<(Story, Quality), string> EditQuality(Quality oldQuality,
