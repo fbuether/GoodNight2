@@ -70,7 +70,15 @@ namespace GoodNight.Service.Storage
         : null;
     }
 
-    public T? Update(K key, Func<T, T?> update)
+    public IStorableReference<T, K> Save(T element)
+    {
+      var reference = this.Update(element.GetKey(), _ => element);
+      return reference is null
+        ? this.Add(element)! // if reference is null, adding will succeed.
+        : reference;
+    }
+
+    public IStorableReference<T,K>? Update(K key, Func<T, T?> update)
     {
       var oldElement = dict.GetValueOrDefault(key);
       if (oldElement is null)
@@ -84,12 +92,30 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(UniqueName,
-            key, newElement));
+        writer.QueueWrite(this, new Entry.Update(UniqueName, key, newElement));
       }
 
-      return newElement;
+      return new Reference<T,K>(this, key);
     }
+
+
+    public IStorableReference<T, K>? Update(T element)
+    {
+      var key = element.GetKey();
+      var hasElement = dict.ContainsKey(key);
+      if (!hasElement)
+        return null;
+
+      dict[key] = element;
+
+      if (writeUpdates)
+      {
+        writer.QueueWrite(this, new Entry.Update(UniqueName, key, element));
+      }
+
+      return new Reference<T,K>(this, key);
+    }
+
 
     public U? Update<U>(K key, Func<T, (T, U)?> update)
       where U : class

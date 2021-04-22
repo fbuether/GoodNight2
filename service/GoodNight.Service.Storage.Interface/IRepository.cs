@@ -58,6 +58,22 @@ namespace GoodNight.Service.Storage.Interface
     T? Get(K key);
 
     /// <summary>
+    /// Replaces the element with key K, if it exists in the store, ignoring the
+    /// existing element.
+    /// This is guaranteed to always replace the current instance of element,
+    /// and will be handled like an atomic operation. Consequently, `update` may
+    /// not be async.
+    /// </summary>
+    /// <param name="element">
+    /// The element that should replace the existing element with the same key.
+    /// </param>
+    /// <returns>
+    /// A reference to the replaced element, or null if no element with the same
+    /// key did exist.
+    /// </returns>
+    IStorableReference<T,K>? Update(T element);
+
+    /// <summary>
     /// Mutates the element with key K, if it exists in the store, and replaces
     /// the stored version with the new version.
     /// This is guaranteed to always update the current instance of element, and
@@ -73,10 +89,10 @@ namespace GoodNight.Service.Storage.Interface
     /// in storage.
     /// </param>
     /// <returns>
-    /// The updated element, or null if `key` did not exist or `update` returned
-    /// null.
+    /// A reference to the update element, or null if `key` did not exist or
+    /// `update` returned null.
     /// </returns>
-    T? Update(K key, Func<T,T?> update);
+    IStorableReference<T,K>? Update(K key, Func<T,T?> update);
 
     /// <summary>
     /// Mutates the element with key K, if it exists in the store, and replaces
@@ -98,6 +114,19 @@ namespace GoodNight.Service.Storage.Interface
     /// </returns>
     U? Update<U>(K key, Func<T, (T, U)?> update)
       where U : class;
+
+
+    /// <summary>
+    /// Adds or replaces this element. If its key does not yet exist, it is
+    /// added, otherwise the existing element is replaced with this.
+    /// </summary>
+    /// <param name="element">
+    /// The element to be stored.
+    /// </param>
+    /// <returns>
+    /// The reference to the saved element.
+    /// </returns>
+    IStorableReference<T,K> Save(T element);
 
 
     /// <summary>
