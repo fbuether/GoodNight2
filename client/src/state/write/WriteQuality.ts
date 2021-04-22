@@ -11,6 +11,7 @@ export interface WriteQuality {
   urlname: string | null; // null: new.
 
   isSaving: boolean;
+  error: string | null;
 }
 
 export const WriteQuality = {
@@ -20,7 +21,8 @@ export const WriteQuality = {
     quality: null,
     raw: "",
     urlname: null,
-    isSaving: false
+    isSaving: false,
+    error: null
   }),
 
   path: /^\/(quality\/(.+)|new-quality)$/,
@@ -49,4 +51,5 @@ export const WriteQuality = {
     .prop("raw")
     .prop("urlname")
     .prop("isSaving")
+    .prop("error")
 }

@@ -35,18 +35,28 @@ function submit(dispatch: Dispatch, state: WriteQualityState) {
             param);
 
     let response = await noEarlierThan(200, req);
-    if (response.isError) {
-      return;
+
+    let newState;
+    switch (response.kind) {
+      case "result":
+        newState = {
+          ...WriteQualityState.instance(state.story),
+          quality: response.message,
+          raw: response.message.raw,
+          urlname: response.message.urlname
+        };
+        break;
+      case "error":
+        newState = {
+          ...state,
+          isSaving: false,
+          error: response.message
+        };
+        break;
     }
 
-    dispatch(State.lens.page.write.part.writeStory.part.writeQuality.set({
-      kind: "WriteQuality" as const,
-      quality: response.message,
-      story: state.story,
-      raw: response.message.raw,
-      urlname: response.message.urlname,
-      isSaving: false
-    }));
+    dispatch(State.lens.page.write.part.writeStory.part.writeQuality
+      .set(newState));
   };
 }
 
@@ -107,6 +117,10 @@ export default function WriteQuality(state: WriteQualityState) {
           Speichern
         </button>;
 
+  let error = state.error !== null
+      ? <div class="alert alert-danger alert-raw my-3">{state.error}</div>
+      : <></>;
+
   let returnLink = State.lens.page.write.part.set(
     WriteStoryPart.instance(state.story));
 
@@ -119,9 +133,9 @@ export default function WriteQuality(state: WriteQualityState) {
           onChange={setText(dispatch)}
           content={text} />
 
+        {error}
         <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
           <Link target={returnLink}>Zurück</Link>
-
           {saveButton}
         </div>
       </form>

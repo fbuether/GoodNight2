@@ -11,6 +11,7 @@ export interface WriteScene {
   urlname: string | null; // null means: new scene.
 
   isSaving: boolean;
+  error: string | null;
 }
 
 export const WriteScene = {
@@ -20,7 +21,8 @@ export const WriteScene = {
     scene: null,
     raw: "",
     urlname: null,
-    isSaving: false
+    isSaving: false,
+    error: null
   }),
 
   path: /^\/(scene\/(.+)|new-scene)$/,
@@ -49,4 +51,5 @@ export const WriteScene = {
     .prop("raw")
     .prop("urlname")
     .prop("isSaving")
+    .prop("error")
 }
