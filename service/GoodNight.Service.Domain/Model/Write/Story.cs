@@ -7,6 +7,7 @@ using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Parse;
 using GoodNight.Service.Domain.Util;
 using System.Collections.Generic;
+using ReadStory = GoodNight.Service.Domain.Model.Read.Story;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -199,6 +200,12 @@ namespace GoodNight.Service.Domain.Model.Write
             Qualities = this.Qualities.Remove(oldQuality).Add(quality)
           },
           quality));
+    }
+
+
+    public ReadStory? ToReadStory()
+    {
+      return ReadStory.Create(Name);
     }
   }
 }

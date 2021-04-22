@@ -33,5 +33,10 @@ namespace GoodNight.Service.Domain.Model.Read
         return NameConverter.OfString(Name);
       }
     }
+
+    public static Story Create(string name, string description = "") =>
+      new Story(name, null, description, false,
+        ImmutableHashSet<IStorableReference<Scene, string>>.Empty,
+        ImmutableHashSet<IStorableReference<Quality, string>>.Empty);
   }
 }
