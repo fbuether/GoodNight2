@@ -6,6 +6,8 @@ namespace GoodNight.Service.Domain.Model.Write
 {
   public abstract record Quality(
     string Name,
+    string Story, // urlname of the story, for the key
+
     Type Type,
     string Raw,
     bool Hidden,
@@ -27,22 +29,24 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public string GetKey()
     {
-      return Urlname;
+      return NameConverter.Concat(Story, Urlname);
     }
 
     public record Bool(
       string Name,
+      string Story, // urlname of the story, for the key
       string Raw,
       bool Hidden,
       IImmutableList<string> Tags,
       IImmutableList<string> Category,
       string? Scene,
       string Description)
-      : Quality(Name, Type.Bool, Raw, Hidden, Tags, Category, Scene,
+      : Quality(Name, Story, Type.Bool, Raw, Hidden, Tags, Category, Scene,
         Description) {}
 
     public record Int(
       string Name,
+      string Story, // urlname of the story, for the key
       string Raw,
       bool Hidden,
       IImmutableList<string> Tags,
@@ -51,11 +55,12 @@ namespace GoodNight.Service.Domain.Model.Write
       string Description,
       int? Minimum,
       int? Maximum)
-      : Quality(Name, Type.Int, Raw, Hidden, Tags, Category, Scene,
+      : Quality(Name, Story, Type.Int, Raw, Hidden, Tags, Category, Scene,
         Description) {}
 
     public record Enum(
       string Name,
+      string Story, // urlname of the story, for the key
       string Raw,
       bool Hidden,
       IImmutableList<string> Tags,
@@ -63,7 +68,7 @@ namespace GoodNight.Service.Domain.Model.Write
       string? Scene,
       string Description,
       IImmutableDictionary<int, string> Levels)
-      : Quality(Name, Type.Enum, Raw, Hidden, Tags, Category, Scene,
+      : Quality(Name, Story, Type.Enum, Raw, Hidden, Tags, Category, Scene,
         Description) {}
   }
 }

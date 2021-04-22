@@ -39,6 +39,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
   public record Scene(
     string Name,
+    string Story, // urlname of story, for the key
     string Raw,
     bool IsStart,
     bool ShowAlways,
@@ -64,14 +65,14 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public string GetKey()
     {
-      return Urlname;
+      return NameConverter.Concat(Story, Urlname);
     }
 
     public static Scene Empty
     {
       get
       {
-        return new Scene("", "", false, false, false,
+        return new Scene("", "", "", false, false, false,
           ImmutableList<string>.Empty,
           ImmutableList<string>.Empty,
           ImmutableList<(string, Expression<string>)>.Empty,
