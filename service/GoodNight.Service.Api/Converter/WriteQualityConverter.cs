@@ -19,6 +19,7 @@ namespace GoodNight.Service.Api.Converter
 
       string type = "";
       string name = "";
+      string story = "";
       string raw = "";
       bool hidden = false;
       ImmutableList<string> tags = ImmutableList<string>.Empty;
@@ -35,11 +36,11 @@ namespace GoodNight.Service.Api.Converter
         if (reader.TokenType == JsonTokenType.EndObject)
         {
           switch (type) {
-            case "bool": return new Quality.Bool(name, raw, hidden, tags,
+            case "bool": return new Quality.Bool(name, story, raw, hidden, tags,
               category, scene, description);
-            case "int": return new Quality.Int(name, raw, hidden, tags,
+            case "int": return new Quality.Int(name, story, raw, hidden, tags,
               category, scene, description, min, max);
-            case "enum": return new Quality.Enum(name, raw, hidden, tags,
+            case "enum": return new Quality.Enum(name, story, raw, hidden, tags,
               category, scene, description, levels);
             default: return null;
           }
@@ -55,6 +56,8 @@ namespace GoodNight.Service.Api.Converter
             type = reader.GetString() ?? type;
           else if (property == "name")
             name = reader.GetString() ?? name;
+          else if (property == "story")
+            story = reader.GetString() ?? story;
           else if (property == "raw")
             raw = reader.GetString() ?? raw;
           else if (property == "hidden")
@@ -96,6 +99,7 @@ namespace GoodNight.Service.Api.Converter
       writer.WriteString("raw", value.Raw);
       if (value.Scene is not null)
         writer.WriteString("scene", value.Scene);
+      writer.WriteString("story", value.Story);
       writer.WritePropertyName("tags");
       JsonSerializer.Serialize(writer, value.Tags, options);
       writer.WriteString("urlname", value.Urlname);
