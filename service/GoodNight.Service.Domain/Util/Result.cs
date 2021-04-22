@@ -1,4 +1,5 @@
 using System;
+using System.Diagnostics.CodeAnalysis;
 
 namespace GoodNight.Service.Domain.Util
 {
@@ -7,7 +8,12 @@ namespace GoodNight.Service.Domain.Util
     public abstract T Map<T>(Func<TResult, T> onSuccess,
       Func<TError, T> onError);
 
+    public abstract Result<TResult, TError> Filter(
+      Func<TResult, bool> predicate, TError error);
+
     public abstract Result<T, TError> Map<T>(Func<TResult, T> onSuccess);
+
+    public abstract TResult GetOrError(Func<TError, TResult> transformer);
 
     public abstract Result<T, TError> Bind<T>(
       Func<TResult, Result<T, TError>> transformer);
@@ -22,6 +28,19 @@ namespace GoodNight.Service.Domain.Util
         Func<TResult, Result<T, TError>> transformer)
       {
         return transformer(Result);
+      }
+
+      public override Result<TResult, TError> Filter(
+        Func<TResult, bool> predicate, TError error)
+      {
+        return predicate(Result)
+          ? this
+          : new Result.Failure<TResult, TError>(error);
+      }
+
+      public override TResult GetOrError(Func<TError, TResult> transformer)
+      {
+        return Result;
       }
 
       public override T Map<T>(Func<TResult, T> onSuccess,
@@ -43,6 +62,17 @@ namespace GoodNight.Service.Domain.Util
         Func<TResult, Result<T, TError>> transformer)
       {
         return new Result.Failure<T, TError>(Error);
+      }
+
+      public override Result<TResult, TError> Filter(
+        Func<TResult, bool> predicate, TError error)
+      {
+        return this;
+      }
+
+      public override TResult GetOrError(Func<TError, TResult> transformer)
+      {
+        return transformer(Error);
       }
 
       public override T Map<T>(Func<TResult, T> onSuccess,
@@ -70,6 +100,14 @@ namespace GoodNight.Service.Domain.Util
         default:
           throw new InvalidOperationException();
       }
+    }
+
+    public static Result<T, TError> FailOnNull<T, TError>(T? value,
+      TError error)
+    {
+      return value is not null
+        ? new Result.Success<T, TError>(value)
+        : new Result.Failure<T, TError>(error);
     }
   }
 }
