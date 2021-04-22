@@ -64,7 +64,7 @@ namespace GoodNight.Service.Domain.Parse
         }
 
         return new ParseResult.Failure<T>(
-          error.Message ?? "No error message produced.",
+          error.Message ?? "An Error occurred, but produced no message.",
           Tuple.Create(error.ErrorPos.Line, error.ErrorPos.Col),
           error.Unexpected.HasValue
             ? error.Unexpected.Value.ToString()
