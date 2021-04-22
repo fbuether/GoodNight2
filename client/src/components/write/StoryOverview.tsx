@@ -12,6 +12,7 @@ import {WriteQuality} from "../../state/write/WriteQuality";
 import {StoryOverview as StoryState} from "../../state/write/StoryOverview";
 
 import Link from "../common/Link";
+import Icon from "../common/Icon";
 import Loading from "../common/Loading";
 
 
@@ -51,10 +52,20 @@ function renderCategory(storyUrlname: string, category: Category, withHeader: bo
       : <></>;
 
   let scenes = category.scenes.map(s => (
-    <li class="link s"><Link target={editScene(s)}>{s.name}</Link></li>));
+    <li class="link s">
+      <Link target={editScene(s)}>
+        <Icon class="restrained color-primary mr-1" name="horizon-road" />
+        {s.name}
+      </Link>
+    </li>));
 
   let qualities = category.qualities.map(q => (
-    <li class="link q"><Link target={editQuality(q)}>{q.name}</Link></li>));
+    <li class="link q">
+      <Link target={editQuality(q)}>
+        <Icon class="restrained color-secondary mr-1" name="swap-bag" />
+        {q.name}
+      </Link>
+    </li>));
 
   let categories = category.categories.map(c =>
       renderCategory(storyUrlname, c, true));
