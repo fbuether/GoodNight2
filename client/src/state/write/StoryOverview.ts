@@ -1,12 +1,13 @@
 import * as P from "../ProtoLens";
 
-import {Scene} from "../../model/write/Scene";
+import type {Scene} from "../../model/write/Scene";
+import type {Category} from "../../model/write/Story";
 
 
 export interface StoryOverview {
   kind: "StoryOverview";
   story: string;
-  scenes: Array<Scene> | null;
+  categories: Category | null;
 }
 
 
@@ -14,7 +15,7 @@ export const StoryOverview = {
   instance: (story: string) => ({
     kind: "StoryOverview" as const,
     story: story,
-    scenes: null
+    categories: null
   }),
 
   path: /^\/?$/,
@@ -25,5 +26,5 @@ export const StoryOverview = {
 
   lens: <T>(id: P.Prism<T, StoryOverview>) => id
     .prop("story")
-    .prop("scenes")
+    .prop("categories")
 }

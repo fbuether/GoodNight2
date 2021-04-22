@@ -1,16 +1,17 @@
+import type {Scene} from "./Scene";
+import type {Quality} from "./Quality";
 
 
-// used for lists of many stories, e.g. during story selection.
-export interface StoryHeader {
+export interface Category {
   name: string;
-  urlname: string;
-  description: string;
+  categories: Array<Category>;
+  scenes: Array<Scene>;
+  qualities: Array<Quality>;
 }
 
 
 export interface Story {
   name: string;
   urlname: string;
-
   description: string; // todo: not yet present in service.
 }

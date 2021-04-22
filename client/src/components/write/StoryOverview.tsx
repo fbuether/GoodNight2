@@ -4,6 +4,8 @@ import useAsyncEffect from "../../ui/useAsyncEffect";
 import request from "../../Request";
 
 import {Scene} from "../../model/write/Scene";
+import {Quality} from "../../model/write/Quality";
+import {Story, Category} from "../../model/write/Story";
 import {State, Dispatch} from "../../state/State";
 import {WriteScene} from "../../state/write/WriteScene";
 import {WriteQuality} from "../../state/write/WriteQuality";
@@ -15,14 +17,64 @@ import Loading from "../common/Loading";
 
 function loadScenes(dispatch: Dispatch, story: string) {
   return async () => {
-    let response = await request<Array<Scene>>(
-      "GET", `api/v1/write/stories/${story}/scenes`);
+    let response = await request<Category>(
+      "GET", `api/v1/write/stories/${story}/content-by-category`);
     if (response.isError) {
       return;
     }
 
     dispatch(State.lens.page.write.part.writeStory.part.storyOverview
-      .scenes.set(response.message));
+      .categories.set(response.message));
+  }
+}
+
+
+function renderCategory(storyUrlname: string, category: Category, withHeader: boolean): JSX.Element {
+  let editScene = (s: Scene) =>
+      State.lens.page.write.part.writeStory.part.set({
+        ...WriteScene.instance(storyUrlname),
+        scene: s,
+        raw: s.raw,
+        urlname: s.urlname
+      });
+
+  let editQuality = (q: Quality) =>
+      State.lens.page.write.part.writeStory.part.set({
+        ...WriteQuality.instance(storyUrlname),
+        quality: q,
+        raw: q.raw,
+        urlname: q.urlname
+      });
+
+  let name = category.name != ""
+      ? <li>{category.name}</li>
+      : <></>;
+
+  let scenes = category.scenes.map(s => (
+    <li class="link s"><Link target={editScene(s)}>{s.name}</Link></li>));
+
+  let qualities = category.qualities.map(q => (
+    <li class="link q"><Link target={editQuality(q)}>{q.name}</Link></li>));
+
+  let categories = category.categories.map(c =>
+      renderCategory(storyUrlname, c, true));
+
+  if (withHeader) {
+    return (
+      <ul class="category">
+        <li class="group">
+          <div>{category.name}</div>
+          <ul>{scenes}{qualities}</ul>
+          {categories}
+        </li>
+      </ul>
+    );
+  }
+  else {
+    return (<>
+        <ul class="category">{scenes}{qualities}</ul>
+        {categories}
+      </>);
   }
 }
 
@@ -30,34 +82,13 @@ function loadScenes(dispatch: Dispatch, story: string) {
 export default function StoryOverview(state: StoryState) {
   const dispatch = PreactHooks.useContext(DispatchContext);
 
-  let scenes;
-  if (state.scenes == null) {
+  if (state.categories == null) {
     useAsyncEffect(loadScenes(dispatch, state.story));
-    scenes = <Loading />;
   }
-  else {
-    let editScene = (s: Scene) =>
-        State.lens.page.write.part.writeStory.part.set({
-          ...WriteScene.instance(state.story),
-          scene: s,
-          raw: s.raw,
-          urlname: s.urlname
-        });
 
-    scenes = (
-      <ul class="category">
-        <li class="group"><div>Alle Szenen und Qualitäten</div>
-          <ul>
-            {state.scenes.map(s => (
-              <li class="link">
-                <Link target={editScene(s)}>{s.name}</Link>
-              </li>
-            ))}
-          </ul>
-        </li>
-      </ul>
-    );
-  }
+  let scenes = state.categories == null
+      ? <Loading />
+      : renderCategory(state.story, state.categories, false);
 
   let toNewScene = State.lens.page.write.part.writeStory.part.set(
     WriteScene.instance(state.story));

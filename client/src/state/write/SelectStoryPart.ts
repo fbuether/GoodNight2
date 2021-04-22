@@ -1,11 +1,11 @@
 import * as P from "../ProtoLens";
 
-import {StoryHeader} from "../../model/write/Story";
+import {Story} from "../../model/write/Story";
 
 
 export interface SelectStoryPart {
   kind: "SelectStoryPart";
-  stories: Array<StoryHeader> | null;
+  stories: Array<Story> | null;
 }
 
 
