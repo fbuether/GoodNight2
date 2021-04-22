@@ -1,5 +1,7 @@
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Parse;
+using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
@@ -70,5 +72,11 @@ namespace GoodNight.Service.Domain.Model.Write
       IImmutableDictionary<int, string> Levels)
       : Quality(Name, Story, Type.Enum, Raw, Hidden, Tags, Category, Scene,
         Description) {}
+
+
+    public static Result<Quality, string> Parse(string raw)
+    {
+      return QualityParser.Parse(raw).ToResult();
+    }
   }
 }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Write;
+using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 using Microsoft.AspNetCore.Mvc;
 
@@ -26,16 +27,12 @@ namespace GoodNight.Service.Api.Write
     public ActionResult<IEnumerable<Quality>> Get(string storyUrlname,
       string qualityUrlname)
     {
-      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
-      if (story is null)
-        return NotFound();
-
-      var quality = story.Qualities.FirstOrDefault(
-        s => s.Urlname == qualityUrlname);
-      if (quality is null)
-        return NotFound();
-
-      return Ok(quality);
+      var quality = stories.FirstOrDefault(s => s.Urlname == storyUrlname)
+        ?.GetQuality(qualityUrlname)
+        ?.Get();
+      return quality is not null
+        ? Ok(quality)
+        : NotFound();
     }
 
 
@@ -49,16 +46,16 @@ namespace GoodNight.Service.Api.Write
       if (story is null)
         return NotFound();
 
-      return story.AddNewQuality(content.text)
-        .Map<ActionResult<Quality>>(
-          (storyQuality) => {
-            var (story, quality) = storyQuality;
-            stories.Update(storyUrlname, (_) => story);
-            return Created(
-              $"api/v1/write/stories/{storyUrlname}/qualitys/{quality.Urlname}",
-              quality);
-          },
-          err => BadRequest(new ErrorResult(err)));
+      return Quality.Parse(content.text)
+        .Map(story.SeizeQuality)
+        .Map(qualities.Add)
+        .Bind(q => Result.FailOnNull(q, "The quality already exists."))
+        .Map(story.InsertNewQuality)
+        .Map(sq => sq.MapFirst(stories.Save).Item2)
+        .Map<ActionResult<Quality>>(quality => Accepted(
+            $"api/v1/write/stories/{storyUrlname}/qualities/{quality.Key}",
+            quality))
+        .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
     [HttpPut("{qualityUrlname}")]
@@ -69,20 +66,16 @@ namespace GoodNight.Service.Api.Write
       if (story is null)
         return NotFound();
 
-      var quality = story.Qualities.FirstOrDefault(s => s.Urlname == qualityUrlname);
-      if (quality is null)
-        return NotFound();
-
-      return story.EditQuality(quality, content.text)
-        .Map<ActionResult<Quality>>(
-          (storyQuality) => {
-            var (story, quality) = storyQuality;
-            stories.Update(storyUrlname, (_) => story);
-            return Accepted(
-              $"api/v1/write/stories/{storyUrlname}/qualitys/{quality.Urlname}",
-              quality);
-          },
-          err => BadRequest(new ErrorResult(err)));
+      return Quality.Parse(content.text)
+        .Filter(q => q.Urlname == qualityUrlname,
+          "Qualities may not change name.")
+        .Map(story.SeizeQuality)
+        .Map(qualities.Update)
+        .Bind(q => Result.FailOnNull(q, "The quality does not exist."))
+        .Map<ActionResult<Quality>>(quality => Accepted(
+            $"api/v1/write/stories/{storyUrlname}/qualities/{quality.Key}",
+            quality))
+        .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
   }
 }

@@ -41,8 +41,8 @@ namespace GoodNight.Service.Domain.Model.Write
 
   public record Story(
     string Name,
-    IImmutableSet<Scene> Scenes,
-    IImmutableSet<Quality> Qualities)
+    IImmutableSet<IStorableReference<Scene, string>> Scenes,
+    IImmutableSet<IStorableReference<Quality, string>> Qualities)
     : IStorable<string>
   {
     public string Urlname
@@ -64,8 +64,8 @@ namespace GoodNight.Service.Domain.Model.Write
     public static Story Create(string name)
     {
       return new Story(name,
-        ImmutableHashSet<Scene>.Empty,
-        ImmutableHashSet<Quality>.Empty);
+        ImmutableHashSet<IStorableReference<Scene, string>>.Empty,
+        ImmutableHashSet<IStorableReference<Quality, string>>.Empty);
     }
 
     public StoryHeader ToHeader()
@@ -121,85 +121,78 @@ namespace GoodNight.Service.Domain.Model.Write
     public Category GetContentAsCategories()
     {
       var category = this.Scenes.Aggregate(Category.Empty,
-        (cat, scene) => AddSceneToCategories(cat, scene, scene.Category));
+        (cat, sceneRef) => {
+          var scene = sceneRef.Get();
+          return scene is not null
+            ? AddSceneToCategories(cat, scene, scene.Category)
+            : cat;
+        });
 
       category = this.Qualities.Aggregate(category,
-        (cat, quality) => AddQualityToCategories(
-          cat, quality, quality.Category));
+        (cat, qualityRef) => {
+          var quality = qualityRef.Get();
+          return quality is not null
+            ? AddQualityToCategories(cat, quality, quality.Category)
+            : cat;
+        });
 
       return category;
     }
 
 
-    private Result<Scene, string> ParseScene(string raw)
+    public IStorableReference<Scene, string>? GetScene(string sceneUrlname)
     {
-      return SceneParser.Parse(raw).ToResult().Map(s => s.ToModel());
+      var name = NameConverter.Concat(Name, sceneUrlname);
+      return Scenes.FirstOrDefault(s => s.Key == name);
     }
 
-    public Result<(Story, Scene), string> AddNewScene(string raw)
+    /// <summary>
+    /// Adopts this scene to be a scene of this story.
+    /// Technically sets the field Story, so that the key of the scene can
+    /// be generated properly; must be done prior to adding to the store.
+    /// </summary>
+    public Scene SeizeScene(Scene scene)
     {
-      return ParseScene(raw).Bind<(Story, Scene)>(scene =>
-      {
-        if (this.Scenes.Any(s => s.Urlname == scene.Urlname))
-        {
-          return new Result.Failure<(Story, Scene), string>(
-            "A scene of that name already exists.");
-        }
-        else
-        {
-          return new Result.Success<(Story, Scene), string>(
-            (InsertScene(scene), scene));
-        }
-      });
+      return scene with {Story = Urlname};
     }
 
-    public Result<(Story, Scene), string> EditScene(Scene oldScene, string raw)
+    public (Story, IStorableReference<Scene, string>) InsertNewScene(
+      IStorableReference<Scene, string> scene)
     {
-      return ParseScene(raw)
-        .Map(scene => (ReplaceScene(oldScene, scene), scene));
+      return (this with {Scenes = Scenes.Add(scene)}, scene);
     }
 
-    public Story InsertScene(Scene scene)
+    public (Story, IStorableReference<Scene, string>) ReplaceScene(
+      IStorableReference<Scene, string> scene)
     {
-      return this with { Scenes = this.Scenes.Add(scene) };
-    }
-
-    public Story ReplaceScene(Scene oldScene, Scene newScene)
-    {
-      return this with { Scenes = this.Scenes.Remove(oldScene).Add(newScene) };
+      var oldElement = Scenes.FirstOrDefault(s => s.Key == scene.Key);
+      var withoutOld = oldElement is null ? Scenes : Scenes.Remove(oldElement);
+      return (this with {Scenes = withoutOld.Add(scene)}, scene);
     }
 
 
-    private Result<Quality, string> ParseQuality(string raw)
+    public IStorableReference<Quality, string>? GetQuality(
+      string qualityUrlname)
     {
-      return QualityParser.Parse(raw).ToResult();
+      var name = NameConverter.Concat(Name, qualityUrlname);
+      return Qualities.FirstOrDefault(q => q.Key == name);
     }
 
-    public Result<(Story, Quality), string> AddNewQuality(string raw)
+    public Quality SeizeQuality(Quality quality)
     {
-      return ParseQuality(raw).Bind<(Story, Quality)>(quality =>
-      {
-        if (this.Qualities.Any(q => q.Urlname == quality.Urlname))
-        {
-          return new Result.Failure<(Story, Quality), string>(
-            "A quality of that name already exists.");
-        }
-        else {
-          return new Result.Success<(Story, Quality), string>(
-            (this with { Qualities = this.Qualities.Add(quality) },
-              quality));
-        }
-      });
+      return quality with {Story = Urlname};
     }
 
-    public Result<(Story, Quality), string> EditQuality(Quality oldQuality,
-      string raw)
+    public (Story, IStorableReference<Quality, string>) InsertNewQuality(
+      IStorableReference<Quality, string> quality)
     {
-      return ParseQuality(raw).Map(quality => (
-          this with {
-            Qualities = this.Qualities.Remove(oldQuality).Add(quality)
-          },
-          quality));
+      return (this with {Qualities = Qualities.Add(quality)}, quality);
+    }
+
+    public (Story, IStorableReference<Quality, string>) ReplaceQuality(
+      IStorableReference<Quality, string> quality)
+    {
+      return (this with {Qualities = Qualities.Add(quality)}, quality);
     }
 
 

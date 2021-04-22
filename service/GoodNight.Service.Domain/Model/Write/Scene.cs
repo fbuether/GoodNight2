@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Parse;
+using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
@@ -80,6 +82,11 @@ namespace GoodNight.Service.Domain.Model.Write
           null,
           ImmutableList<Content>.Empty);
       }
+    }
+
+    public static Result<Scene, string> Parse(string raw)
+    {
+      return SceneParser.Parse(raw).ToResult().Map(s => s.ToModel());
     }
 
     public Scene AddContent(Content newContent)
