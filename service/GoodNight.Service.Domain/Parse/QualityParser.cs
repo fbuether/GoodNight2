@@ -30,7 +30,7 @@ namespace GoodNight.Service.Domain.Parse
         Parser.CIString("bool")
         .Then(Parser.Try(Parser.CIString("ean")).Optional())
         .WithResult<QualityMapper>(quality =>
-          new Quality.Bool(quality.Name,
+          new Quality.Bool(quality.Name, "",
             quality.Raw,
             quality.Hidden,
             ImmutableList<string>.Empty,
@@ -41,7 +41,7 @@ namespace GoodNight.Service.Domain.Parse
         Parser.CIString("int")
         .Then(Parser.Try(Parser.CIString("eger")).Optional())
         .WithResult<QualityMapper>(quality =>
-          new Quality.Int(quality.Name,
+          new Quality.Int(quality.Name, "",
             quality.Raw,
             quality.Hidden,
             ImmutableList<string>.Empty,
@@ -53,7 +53,7 @@ namespace GoodNight.Service.Domain.Parse
 
         Parser.CIString("enum")
         .WithResult<QualityMapper>(quality =>
-          new Quality.Enum(quality.Name,
+          new Quality.Enum(quality.Name, "",
             quality.Raw,
             quality.Hidden,
             ImmutableList<string>.Empty,
@@ -164,7 +164,7 @@ namespace GoodNight.Service.Domain.Parse
       )
       .SeparatedAndOptionallyTerminated(Parser.EndOfLine)
       .Map(builders => builders.Aggregate(
-          new Quality.Bool("", "", false,
+          new Quality.Bool("", "", "", false,
             ImmutableList<string>.Empty,
             ImmutableList<string>.Empty, null, "") as Quality,
           (a, f) => f(a)));
