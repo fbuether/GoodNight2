@@ -71,7 +71,7 @@ namespace GoodNight.Service.Api.Write
               $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Urlname}",
               scene);
           },
-          err => BadRequest(err));
+          err => BadRequest(new ErrorResult(err)));
     }
 
     [HttpPut("{sceneUrlname}")]
@@ -95,7 +95,7 @@ namespace GoodNight.Service.Api.Write
               $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Urlname}",
               scene);
           },
-          err => BadRequest(err));
+          err => BadRequest(new ErrorResult(err)));
     }
   }
 }

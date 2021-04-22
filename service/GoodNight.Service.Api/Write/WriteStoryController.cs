@@ -34,8 +34,7 @@ namespace GoodNight.Service.Api.Write
     {
       var story = stories.Get(urlname);
       if (story is null)
-        return NotFound(new ErrorResult(
-            "A story with the given name does not exist."));
+        return NotFound();
 
       return Ok(story.ToHeader());
     }
@@ -47,8 +46,7 @@ namespace GoodNight.Service.Api.Write
     {
       var story = stories.Get(urlname);
       if (story is null)
-        return NotFound(new ErrorResult(
-            "A story with the given name does not exist."));
+        return NotFound();
 
       return Ok(story.GetContentAsCategories());
     }
@@ -65,7 +63,6 @@ namespace GoodNight.Service.Api.Write
         return Conflict(new ErrorResult(
             "A story of the given name already exists."));
 
-      System.Console.WriteLine("creating new story.");
       var story = Story.Create(newStory.name);
       stories.Add(story);
 
