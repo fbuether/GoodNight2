@@ -177,31 +177,13 @@ namespace GoodNight.Service.Domain.Parse
         .Before(Parser<char>.End)
         .Parse(content);
 
-      Quality? result = null;
-      if (res.Success) {
-        result = res.Value with { Raw = content };
-
-        if (res.Value.Description.StartsWith("\n"))
-        {
-          result = result with
-            {
-              Description = result.Description.Substring(1)
-            };
-        }
-      }
-
-      return new ParseResult<Quality>(res.Success,
-        result,
-        !res.Success && res.Error is not null ? res.Error.Message : null,
-        (!res.Success && res.Error is not null
-          ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
-          : null),
-        (!res.Success && res.Error is not null && res.Error.Unexpected.HasValue
-          ? res.Error.Unexpected.Value.ToString()
-          : null),
-        (!res.Success && res.Error is not null
-          ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
-          : null));
+      return res.Success
+        ? new ParseResult.Success<Quality>(res.Value with
+          {
+            Raw = content,
+            Description = res.Value.Description.Trim()
+          })
+        : ParseResult.Failure<Quality>.OfError(res.Error);
     }
   }
 }

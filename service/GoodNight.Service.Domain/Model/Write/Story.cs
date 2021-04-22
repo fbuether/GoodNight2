@@ -132,14 +132,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
     private Result<Scene, string> ParseScene(string raw)
     {
-      var parser = new SceneParser();
-      var parseResult = parser.Parse(raw);
-      if (!parseResult.IsSuccessful)
-        return new Result.Failure<Scene, string>(parseResult.ErrorMessage!);
-
-      var parsedScene = parseResult.Result!;
-      var scene = parsedScene.ToModel();
-      return new Result.Success<Scene, string>(scene);
+      return SceneParser.Parse(raw).ToResult().Map(s => s.ToModel());
     }
 
     public Result<(Story, Scene), string> AddNewScene(string raw)
@@ -166,12 +159,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
     private Result<Quality, string> ParseQuality(string raw)
     {
-      var result = QualityParser.Parse(raw);
-      if (!result.IsSuccessful)
-        return new Result.Failure<Quality, string>(result.ErrorMessage!);
-
-      var quality = result.Result!;
-      return new Result.Success<Quality, string>(quality);
+      return QualityParser.Parse(raw).ToResult();
     }
 
     public Result<(Story, Quality), string> AddNewQuality(string raw)

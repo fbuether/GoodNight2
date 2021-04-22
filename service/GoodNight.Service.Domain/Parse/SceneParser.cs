@@ -10,7 +10,7 @@ namespace GoodNight.Service.Domain.Parse
 {
   using ContentParser = Parser<char, IEnumerable<Content>>;
 
-  public class SceneParser
+  public static class SceneParser
   {
     private readonly static Parser<char, Content> nameContent =
       Parser.Try(Parser.String("name"))
@@ -197,26 +197,17 @@ namespace GoodNight.Service.Domain.Parse
       Parser.Rec<char, IEnumerable<Content>>(parseLines);
 
 
-    public ParseResult<Scene> Parse(string content)
+    public static ParseResult<Scene> Parse(string content)
     {
       var res = parseLinesRec
         .Before(Parser<char>.End)
         .Parse(content);
 
-      return new ParseResult<Scene>(res.Success,
-        (res.Success
-          ? new Scene(content, ImmutableArray.Create<Content>(res.Value.ToArray()))
-          : null),
-        !res.Success && res.Error is not null ? res.Error.Message : null,
-        (!res.Success && res.Error is not null
-          ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
-          : null),
-        (!res.Success && res.Error is not null && res.Error.Unexpected.HasValue
-          ? res.Error.Unexpected.Value.ToString()
-          : null),
-        (!res.Success && res.Error is not null
-          ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
-          : null));
+      return res.Success
+        ? new ParseResult.Success<Scene>(
+          new Scene(content,
+            ImmutableArray.Create<Content>(res.Value.ToArray())))
+        : ParseResult.Failure<Scene>.OfError(res.Error);
     }
   }
 }

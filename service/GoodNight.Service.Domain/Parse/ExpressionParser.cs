@@ -137,20 +137,9 @@ namespace GoodNight.Service.Domain.Parse
         .Before(Parser<char>.End)
         .Parse(input);
 
-      return new ParseResult<Expr>(res.Success,
-        res.Success ? res.Value : null,
-        !res.Success && res.Error is not null
-        ? res.Error.Message
-        : null,
-        !res.Success && res.Error is not null
-        ? new Tuple<int,int>(res.Error.ErrorPos.Line, res.Error.ErrorPos.Col)
-        : null,
-        !res.Success && res.Error is not null && res.Error.Unexpected.HasValue
-        ? res.Error.Unexpected.Value.ToString()
-        : null,
-        !res.Success && res.Error is not null
-        ? String.Join(", ", res.Error.Expected.Select(e => e.ToString()))
-        : null);
+      return res.Success
+        ? new ParseResult.Success<Expr>(res.Value)
+        : ParseResult.Failure<Expr>.OfError(res.Error);
     }
   }
 }
