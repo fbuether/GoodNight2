@@ -12,7 +12,7 @@ namespace GoodNight.Service.Domain.Parse
   using BinaryExprFun = Func<Expression<string>, Expression<string>,
     Expression<string>>;
 
-  public class ExpressionParser
+  public static class ExpressionParser
   {
     private readonly static Parser<char, Expr> boolExpr =
       Parser.String("true")
@@ -129,7 +129,7 @@ namespace GoodNight.Service.Domain.Parse
 
 
 
-    public ParseResult<Expr> Parse(string input)
+    public static ParseResult<Expr> Parse(string input)
     {
       var res =
         NameParser.InlineWhitespace // leading whitespace
