@@ -1,5 +1,7 @@
 import * as P from "../ProtoLens";
 
+import {OfUrl} from "../../util/UrlMapper";
+
 import {SelectStoryPart} from "./SelectStoryPart";
 import {ReadStoryPart} from "./ReadStoryPart";
 
@@ -21,6 +23,10 @@ let guardReadStoryPart = (a: ReadPagePart): a is ReadStoryPart =>
     (a.kind == "ReadStoryPart");
 
 
+function assertNever(param: never): never {
+  throw new Error(`Invalid Page kind in state ReadPage: "${param}"`);
+}
+
 export const ReadPage = {
   instance: {
     kind: "ReadPage" as const,
@@ -32,15 +38,22 @@ export const ReadPage = {
       .union("selectStory", guardSelectStoryPart, SelectStoryPart.lens)
       .union("readStory", guardReadStoryPart, ReadStoryPart.lens)),
 
-  update: {
-    part: (part: ReadPagePart) => (readPage: ReadPage) => ({ ...readPage, part: part }),
-  },
-
   toTitle: (page: ReadPage) => "Read",
 
-  path: /^\/read/,
+  path: /^\/read(.+)?$/,
 
-  toUrl: (homePage: ReadPage): string => "/read",
+  toUrl: (page: ReadPage): string => {
+    switch (page.part.kind) {
+      case "SelectStoryPart": return "/read";
+      case "ReadStoryPart": return "/read" + ReadStoryPart.toUrl(page.part);
+      default: return assertNever(page.part);
+    }
+  },
 
-  ofUrl: (pathname: string): ReadPage => ReadPage.instance
+  ofUrl: (pathname: string, matches: Array<string>): ReadPage => ({
+    kind: "ReadPage" as const,
+    part: OfUrl.union(matches[1],
+      [SelectStoryPart, ReadStoryPart],
+      SelectStoryPart.instance)
+  })
 }
