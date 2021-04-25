@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -67,26 +68,32 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheParserParsesTheInput()
     {
       Assert.NotNull(input);
-      result = new SceneParser().Parse(input!);
+      result = SceneParser.Parse(input!);
 
       // to debug failing tests.
-      output.WriteLine($"IsSuccessful: {result!.IsSuccessful}");
-      output.WriteLine("Result:");
-      if (result is not null && result.Result is not null)
-      {
-        foreach (var node in FindAllNodes(result.Result.Content))
-        {
-          output.WriteLine($"  node: {node}");
-          if (node is Content.Condition c) {
-            output.WriteLine($"then: {c.Then.Count}, else: {c.Else.Count}");
-          }
-        }
-      }
+      switch (result) {
+        case ParseResult.Success<Scene> r:
+          output.WriteLine($"Result is sucess.");
+          output.WriteLine($"Value: {r.Result}.");
 
-      output.WriteLine($"ErrorMessage: {result!.ErrorMessage}");
-      output.WriteLine($"ErrorPosition: {result!.ErrorPosition}");
-      output.WriteLine($"UnexpectedToken: {result!.UnexpectedToken}");
-      output.WriteLine($"ExpectedToken: {result!.ExpectedToken}");
+          output.WriteLine("Result:");
+          foreach (var node in FindAllNodes(r.Result.Content))
+          {
+            output.WriteLine($"  node: {node}");
+            if (node is Content.Condition c) {
+              output.WriteLine($"then: {c.Then.Count}, else: {c.Else.Count}");
+            }
+          }
+
+          break;
+        case ParseResult.Failure<Scene> r:
+          output.WriteLine($"Result is failure.");
+          output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
+          output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
+          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}.");
+          output.WriteLine($"ExpectedToken: {r.ExpectedToken}.");
+          break;
+      }
     }
 
 
@@ -94,27 +101,40 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void ParsingFails()
     {
       Assert.NotNull(result);
-      Assert.False(result!.IsSuccessful);
+      Assert.IsType<ParseResult.Failure<Scene>>(result);
     }
 
     [Then("parsing succeeds")]
     public void ParsingSucceeds()
     {
       Assert.NotNull(result);
-      Assert.True(result!.IsSuccessful);
-      Assert.NotNull(result!.Result);
+      Assert.IsType<ParseResult.Success<Scene>>(result);
+      Assert.NotNull((result as ParseResult.Success<Scene>)!.Result);
+    }
+
+    private Scene Get(ParseResult<Scene>? result)
+    {
+      Assert.NotNull(result);
+      Assert.IsType<ParseResult.Success<Scene>>(result!);
+ 
+      switch (result!) {
+        case ParseResult.Success<Scene> r:
+          return r.Result;
+      }
+
+      throw new Exception();
     }
 
     [Then(@"the result has (\d+) nodes?")]
     public void TheResultHasNNodes(int count)
     {
-      Assert.Equal(count, result!.Result!.Content.Count());
+      Assert.Equal(count, Get(result).Content.Count());
     }
 
     [Then(@"the scene has name ""(.*)""")]
     public void TheSceneHasNameString(string name)
     {
-      Assert.Contains(result!.Result!.Content, node =>
+      Assert.Contains(Get(result).Content, node =>
         (node as Content.Name)!.DisplayName == name);
     }
 
@@ -122,14 +142,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the node (\d+) is a ""(.*)""")]
     public void TheNodeNIsAType(int position, string type)
     {
-      Assert.True(position <= result!.Result!.Content.Count());
-      Assert.Equal(type, result!.Result!.Content[position-1].GetType().Name);
+      Assert.True(position <= Get(result).Content.Count());
+      Assert.Equal(type, Get(result).Content[position-1].GetType().Name);
     }
 
     [Then(@"the result has only ""(.*)"" nodes")]
     public void TheResultHasOnlyTypeNodes(string type)
     {
-      Assert.All(result!.Result!.Content, node => {
+      Assert.All(Get(result).Content, node => {
         Assert.Equal(type, node.GetType().Name);
       });
     }
@@ -158,14 +178,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has (\d+) ""(.*)"" nodes in branches")]
     public void TheResultHasNumberTypeNodesInBranches(int count, string type)
     {
-      Assert.Equal(count, CountNodesOfType(result!.Result!.Content, type));
+      Assert.Equal(count, CountNodesOfType(Get(result).Content, type));
     }
 
     [Then(@"the node (\d+) has text ""(.*)""")]
     public void TheNodeNHasTextContent(int position, string content)
     {
-      Assert.True(position <= result!.Result!.Content.Count());
-      var node = result!.Result!.Content[position-1];
+      Assert.True(position <= Get(result).Content.Count());
+      var node = Get(result).Content[position-1];
       Assert.IsType<Content.Text>(node);
       var text = node as Content.Text;
       Assert.Equal(content, text!.Value);
@@ -174,14 +194,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has the tag ""(.*)""")]
     public void TheResultHasTagName(string tag)
     {
-      Assert.Contains(result!.Result!.Content, node =>
+      Assert.Contains(Get(result).Content, node =>
         (node as Content.Tag)!.TagName == tag);
     }
 
     [Then(@"the result has the category ""(.*)""")]
     public void TheResultHasTheCategoryName(string name)
     {
-      var category = result!.Result!.Content
+      var category = Get(result).Content
         .Single(n => n is Content.Category)
         as Content.Category;
 

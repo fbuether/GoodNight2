@@ -69,37 +69,56 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheParserParsesTheInput()
     {
       Assert.NotNull(input);
-      result = new ExpressionParser().Parse(input!);
+      result = ExpressionParser.Parse(input!);
 
       // to debug failing tests.
-      output.WriteLine($"IsSuccessful: {result!.IsSuccessful}");
-      output.WriteLine("Result:");
-      if (result is not null && result.Result is not null)
-      {
-        foreach (var node in FindAllNodes(result.Result))
-        {
-          output.WriteLine($"  node: {node}");
-        }
-      }
+      switch (result) {
+        case ParseResult.Success<Expression> r:
+          output.WriteLine($"Result is sucess.");
+          output.WriteLine($"Value: {r.Result}.");
+          output.WriteLine("Result:");
+          foreach (var node in FindAllNodes(r.Result))
+          {
+            output.WriteLine($"  node: {node}");
+          }
 
-      output.WriteLine($"ErrorMessage: {result!.ErrorMessage}");
-      output.WriteLine($"ErrorPosition: {result!.ErrorPosition}");
-      output.WriteLine($"UnexpectedToken: {result!.UnexpectedToken}");
-      output.WriteLine($"ExpectedToken: {result!.ExpectedToken}");
+          break;
+        case ParseResult.Failure<Expression> r:
+          output.WriteLine($"Result is failure.");
+          output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
+          output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
+          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}.");
+          output.WriteLine($"ExpectedToken: {r.ExpectedToken}.");
+          break;
+      }
     }
 
     [Then("parsing fails")]
     public void ParsingFails()
     {
       Assert.NotNull(result);
-      Assert.False(result!.IsSuccessful);
+      Assert.IsType<ParseResult.Failure<Expression>>(result);
     }
 
     [Then("parsing succeeds")]
     public void ParsingSucceeds()
     {
       Assert.NotNull(result);
-      Assert.True(result!.IsSuccessful);
+      Assert.IsType<ParseResult.Success<Expression>>(result);
+      Assert.NotNull((result as ParseResult.Success<Expression>)!.Result);
+    }
+
+    private Expression Get(ParseResult<Expression>? result)
+    {
+      Assert.NotNull(result);
+      Assert.IsType<ParseResult.Success<Expression>>(result!);
+ 
+      switch (result!) {
+        case ParseResult.Success<Expression> r:
+          return r.Result;
+      }
+
+      throw new Exception();
     }
 
     // helper tools to build reference expressions.
@@ -176,7 +195,7 @@ namespace GoodNight.Service.Domain.Test.Parse
         throw new ArgumentException($"result string \"{val}\" not known.");
       }
 
-      Assert.Equal(expr, result!.Result);
+      Assert.Equal(expr, Get(result));
     }
   }
 }

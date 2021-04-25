@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -41,15 +42,22 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheParserParsesTheInput()
     {
       Assert.NotNull(input);
-      result = QualityParser.Parse(input!);
+      result = QualityParser.Parse(input!)!;
 
       // to debug failing tests.
-      output.WriteLine($"IsSuccessful: {result!.IsSuccessful}");
-      output.WriteLine($"Result: {result!.Result}");
-      output.WriteLine($"ErrorMessage: {result!.ErrorMessage}");
-      output.WriteLine($"ErrorPosition: {result!.ErrorPosition}");
-      output.WriteLine($"UnexpectedToken: {result!.UnexpectedToken}");
-      output.WriteLine($"ExpectedToken: {result!.ExpectedToken}");
+      switch (result) {
+        case ParseResult.Success<Quality> r:
+          output.WriteLine($"Result is sucess.");
+          output.WriteLine($"Value: {r.Result}.");
+          break;
+        case ParseResult.Failure<Quality> r:
+          output.WriteLine($"Result is failure.");
+          output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
+          output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
+          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}.");
+          output.WriteLine($"ExpectedToken: {r.ExpectedToken}.");
+          break;
+      }
     }
 
 
@@ -57,39 +65,52 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void ParsingFails()
     {
       Assert.NotNull(result);
-      Assert.False(result!.IsSuccessful);
+      Assert.IsType<ParseResult.Failure<Quality>>(result);
     }
 
     [Then("parsing succeeds")]
     public void ParsingSucceeds()
     {
       Assert.NotNull(result);
-      Assert.True(result!.IsSuccessful);
-      Assert.NotNull(result!.Result);
+      Assert.IsType<ParseResult.Success<Quality>>(result);
+      Assert.NotNull((result as ParseResult.Success<Quality>)!.Result);
+    }
+
+    public Quality Get(ParseResult<Quality>? result)
+    {
+      Assert.NotNull(result);
+      Assert.IsType<ParseResult.Success<Quality>>(result!);
+ 
+      switch (result!) {
+        case ParseResult.Success<Quality> r:
+          return r.Result;
+      }
+
+      throw new Exception();
     }
 
     [Then(@"the quality has name ""(.*)""")]
     public void TheQualityHasNameString(string name)
     {
-      Assert.Equal(name, result!.Result!.Name);
+      Assert.Equal(name, Get(result).Name);
     }
 
     [Then(@"the quality has description ""(.*)""")]
     public void TheQualityHasDescriptionString(string description)
     {
-      Assert.Equal(description, result!.Result!.Description);
+      Assert.Equal(description, Get(result).Description);
     }
 
     [Then("the quality has no scene")]
     public void TheQualityHasNoScene()
     {
-      Assert.Null(result!.Result!.Scene);
+      Assert.Null(Get(result).Scene);
     }
 
     [Then(@"the quality has type (.*)")]
     public void TheQualityHasTypeName(string typeName)
     {
-      Assert.Equal(typeName, result!.Result!.GetType().Name);
+      Assert.Equal(typeName, Get(result).GetType().Name);
     }
 
     [Then(@"the quality is( not)? hidden")]
@@ -97,33 +118,33 @@ namespace GoodNight.Service.Domain.Test.Parse
     {
       if (not == " not")
       {
-        Assert.False(result!.Result!.Hidden);
+        Assert.False(Get(result).Hidden);
       }
       else
       {
-        Assert.True(result!.Result!.Hidden);
+        Assert.True(Get(result).Hidden);
       }
     }
 
     [Then(@"the quality has minimum (\d+)")]
     public void TheQualityHasMinimumValue(int min)
     {
-      Assert.IsType<Quality.Int>(result!.Result!);
-      Assert.Equal(min, (result!.Result as Quality.Int)!.Minimum);
+      Assert.IsType<Quality.Int>(Get(result));
+      Assert.Equal(min, (Get(result) as Quality.Int)!.Minimum);
     }
 
     [Then(@"the quality has maximum (\d+)")]
     public void TheQualityHasMaximumValue(int max)
     {
-      Assert.IsType<Quality.Int>(result!.Result!);
-      Assert.Equal(max, (result!.Result as Quality.Int)!.Maximum);
+      Assert.IsType<Quality.Int>(Get(result));
+      Assert.Equal(max, (Get(result) as Quality.Int)!.Maximum);
     }
 
     [Then(@"the quality has level (\d+) with text (.*)")]
     public void TheQualityHasLevelNWithTextString(int level, string text)
     {
-      Assert.IsType<Quality.Enum>(result!.Result!);
-      var e = result!.Result as Quality.Enum;
+      Assert.IsType<Quality.Enum>(Get(result));
+      var e = Get(result) as Quality.Enum;
       Assert.True(e!.Levels.ContainsKey(level));
       Assert.Equal(text, e!.Levels[level]);
     }
@@ -132,14 +153,14 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the quality has scene (.*)")]
     public void TheQualityHasSceneName(string name)
     {
-      Assert.Equal(name, result!.Result!.Scene);
+      Assert.Equal(name, Get(result).Scene);
     }
 
     [Then(@"the raw text is")]
     public void TheRawTextIs(DocString body)
     {
       var raw = body.Content;
-      Assert.Equal(raw, result!.Result!.Raw);
+      Assert.Equal(raw, Get(result).Raw);
     }
   }
 }

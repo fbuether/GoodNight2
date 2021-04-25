@@ -7,6 +7,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using Gherkin.Ast;
+using System.Text.Json.Serialization;
 
 namespace GoodNight.Service.Storage.Test
 {
@@ -17,7 +18,7 @@ namespace GoodNight.Service.Storage.Test
     private string? journalContent = null;
 
     private IStore? store = null;
-    private IRepository<Demo, string>? repos = null;
+    private IRepository<Demo>? repos = null;
 
     public void Dispose()
     {
@@ -27,7 +28,7 @@ namespace GoodNight.Service.Storage.Test
     private record Demo(
       string Key,
       int Value)
-      : IStorable<string>
+      : IStorable
     {
       public string GetKey()
       {
@@ -42,11 +43,11 @@ namespace GoodNight.Service.Storage.Test
       journal = new MemoryStream();
       journalContent = null;
 
-      var newStore = new Store(journal);
+      var newStore = new Store(new JsonConverter[] {}, journal);
       Assert.NotNull(newStore);
       store = newStore;
 
-      repos = store.Create<Demo,string>("Demo");
+      repos = store.Create<Demo>("Demo");
       Assert.NotNull(repos);
 
       newStore.StartJournal();
@@ -64,11 +65,11 @@ namespace GoodNight.Service.Storage.Test
       writer.Flush();
       journal.Seek(0, SeekOrigin.Begin);
 
-      var newStore = new Store(journal);
+      var newStore = new Store(new JsonConverter[] {}, journal);
       Assert.NotNull(newStore);
       store = newStore;
 
-      repos = store.Create<Demo,string>("Demo");
+      repos = store.Create<Demo>("Demo");
       Assert.NotNull(repos);
 
       newStore.StartJournal();
