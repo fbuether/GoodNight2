@@ -12,8 +12,6 @@ namespace GoodNight.Service.Storage
       UniqueName = uniqueName;
     }
 
-    internal abstract Type KeyType { get; }
-
     internal abstract Type ValueType { get; }
 
     internal abstract bool Replay(Entry entry);

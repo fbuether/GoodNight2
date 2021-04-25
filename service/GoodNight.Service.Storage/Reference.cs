@@ -3,23 +3,23 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Storage
 {
-  internal class Reference<T,K> : IStorableReference<T,K>
-    where T : class, IStorable<K>
-    where K : notnull
+  internal class Reference<T> : IReference<T>
+    where T : class, IStorable
   {
-    private IRepository<T,K> repository;
+    public string Key { get; init; }
 
-    public K Key { get; init; }
+    internal Repository<T> Repository { get; init; }
 
-    internal Reference(IRepository<T,K> repository, K key)
+    internal Reference(Repository<T> repository, string key)
     {
-      this.repository = repository;
+      Repository = repository;
       Key = key;
     }
 
     public T? Get()
     {
-      return repository.Get(Key);
+      return Repository.Get(Key);
+    }
     }
   }
 }

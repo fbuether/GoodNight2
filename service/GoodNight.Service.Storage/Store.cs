@@ -139,19 +139,19 @@ namespace GoodNight.Service.Storage
       return null;
     }
 
-    IRepository<T,K> IStore.Create<T,K>(string uniqueName)
+    IRepository<T> IStore.Create<T>(string uniqueName)
     {
       var existing = repositories.Find(repos => repos.UniqueName == uniqueName);
-      if (existing is IRepository<T,K> existingRepos)
+      if (existing is IRepository<T> existingRepos)
         return existingRepos;
 
-      if (existing is not null && existing is not IRepository<T,K>)
+      if (existing is not null && existing is not IRepository<T>)
         throw new Exception($"Invalid Repository creation. Unique Name "
           + $"\"{uniqueName}\" already exists, but not as repository for "
-          + $"{nameof(T)},{nameof(K)}.");
+          + $"{nameof(T)}.");
 
-      var repos = new Repository<T,K>(new JournalWriter(writeCache,
           jsonOptions), uniqueName);
+      var repos = new Repository<T>(new JournalWriter(writeCache,
       repositories.Add(repos);
       return repos;
     }

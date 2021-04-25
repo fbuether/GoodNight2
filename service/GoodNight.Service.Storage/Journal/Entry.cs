@@ -20,14 +20,14 @@ namespace GoodNight.Service.Storage.Journal
 
     internal record Update(
       string Repos,
-      object Key,
+      string Key,
       object Value)
       : Entry(Repos, EntryType.Update)
     {}
 
     internal record Delete(
       string Repos,
-      object Key)
+      string Key)
       : Entry(Repos, EntryType.Delete)
     {}
   }

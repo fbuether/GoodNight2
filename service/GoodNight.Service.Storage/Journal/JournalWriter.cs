@@ -39,16 +39,14 @@ namespace GoodNight.Service.Storage.Journal
 
         case Entry.Update u:
           writer.WriteString("kind", "Update");
-          writer.WritePropertyName("key");
-          JsonSerializer.Serialize(writer, u.Key, repos.KeyType, options);
+          writer.WriteString("key", u.Key);
           writer.WritePropertyName("value");
           JsonSerializer.Serialize(writer, u.Value, repos.ValueType, options);
           break;
 
         case Entry.Delete d:
           writer.WriteString("kind", "Delete");
-          writer.WritePropertyName("key");
-          JsonSerializer.Serialize(writer, d.Key, repos.KeyType, options);
+          writer.WriteString("key", d.Key);
           break;
       }
 

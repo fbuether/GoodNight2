@@ -96,7 +96,7 @@ namespace GoodNight.Service.Storage.Journal
 
         case "Update":
           ReadPropertyName(ref reader, "key");
-          var updKey = ReadObject(ref reader, repos.KeyType, options);
+          var updKey = ReadStringProperty(ref reader);
           ReadPropertyName(ref reader, "value");
           var updValue = ReadObject(ref reader, repos.ValueType, options);
           var updated = repos.Replay(new Entry.Update(reposName, updKey, updValue));
@@ -106,7 +106,7 @@ namespace GoodNight.Service.Storage.Journal
 
         case "Delete":
           ReadPropertyName(ref reader, "key");
-          var delKey = ReadObject(ref reader, repos.KeyType, options);
+          var delKey = ReadStringProperty(ref reader);
           var deleted = repos.Replay(new Entry.Delete(reposName, delKey));
           if (!deleted)
             throw new JsonException($"Did not replay Entry.Delete({reposName}, {delKey})");

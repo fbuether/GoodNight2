@@ -6,11 +6,10 @@ using GoodNight.Service.Storage.Journal;
 
 namespace GoodNight.Service.Storage
 {
-  internal class Repository<T,K> : BaseRepository, IRepository<T,K>
-    where T : class, IStorable<K>
-    where K : notnull
+  internal class Repository<T> : BaseRepository, IRepository<T>
+    where T : class, IStorable
   {
-    private Dictionary<K,T> dict = new Dictionary<K,T>();
+    private Dictionary<string,T> dict = new Dictionary<string,T>();
 
     private JournalWriter writer;
 
@@ -24,8 +23,6 @@ namespace GoodNight.Service.Storage
 
 
     // BaseRepository.
-
-    internal override Type KeyType => typeof(K);
 
     internal override Type ValueType => typeof(T);
 
@@ -47,7 +44,7 @@ namespace GoodNight.Service.Storage
 
     // IRepository.
 
-    public IStorableReference<T,K>? Add(T element)
+    public IReference<T>? Add(T element)
     {
       var key = element.GetKey();
       if (dict.ContainsKey(key))
@@ -60,17 +57,24 @@ namespace GoodNight.Service.Storage
         writer.QueueWrite(this, new Entry.Add(UniqueName, element));
       }
 
-      return new Reference<T,K>(this, key);
+      return new Reference<T>(this, key);
     }
 
-    public T? Get(K key)
+    public T? Get(string key)
     {
       return dict.ContainsKey(key)
         ? dict[key]
         : null;
     }
 
-    public IStorableReference<T, K> Save(T element)
+
+    public IReference<T>? GetReference(string key)
+    {
+      return new Reference<T>(this, key);
+    }
+
+
+    public IReference<T> Save(T element)
     {
       var reference = this.Update(element.GetKey(), _ => element);
       return reference is null
@@ -78,7 +82,7 @@ namespace GoodNight.Service.Storage
         : reference;
     }
 
-    public IStorableReference<T,K>? Update(K key, Func<T, T?> update)
+    public IReference<T>? Update(string key, Func<T, T?> update)
     {
       var oldElement = dict.GetValueOrDefault(key);
       if (oldElement is null)
@@ -95,11 +99,11 @@ namespace GoodNight.Service.Storage
         writer.QueueWrite(this, new Entry.Update(UniqueName, key, newElement));
       }
 
-      return new Reference<T,K>(this, key);
+      return new Reference<T>(this, key);
     }
 
 
-    public IStorableReference<T, K>? Update(T element)
+    public IReference<T>? Update(T element)
     {
       var key = element.GetKey();
       var hasElement = dict.ContainsKey(key);
@@ -113,11 +117,11 @@ namespace GoodNight.Service.Storage
         writer.QueueWrite(this, new Entry.Update(UniqueName, key, element));
       }
 
-      return new Reference<T,K>(this, key);
+      return new Reference<T>(this, key);
     }
 
 
-    public U? Update<U>(K key, Func<T, (T, U)?> update)
+    public U? Update<U>(string key, Func<T, (T, U)?> update)
       where U : class
     {
       var oldElement = dict.GetValueOrDefault(key);
@@ -136,9 +140,9 @@ namespace GoodNight.Service.Storage
       }
 
       return result.Value.Item2;
-    }
+      }
 
-    public bool Remove(K key)
+    public bool Remove(string key)
     {
       var contains = dict.Remove(key);
       if (contains && writeUpdates)
@@ -169,7 +173,7 @@ namespace GoodNight.Service.Storage
             return true;
 
           case Entry.Update u:
-            var updKey = (K)u.Key;
+            var updKey = u.Key;
             var updValue = (T)u.Value;
             if (updKey is null || updValue is null)
               return false;
@@ -178,7 +182,7 @@ namespace GoodNight.Service.Storage
             return true;
 
           case Entry.Delete d:
-            var delKey = (K)d.Key;
+            var delKey = d.Key;
             if (delKey is null)
               return false;
 
