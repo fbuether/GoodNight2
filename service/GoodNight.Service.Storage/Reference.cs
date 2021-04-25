@@ -20,6 +20,10 @@ namespace GoodNight.Service.Storage
     {
       return Repository.Get(Key);
     }
+
+    public string GetTag()
+    {
+      return Repository.UniqueName;
     }
   }
 }

@@ -1,12 +1,14 @@
-using System.Collections.Generic;
 using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Storage.Journal;
-using System.IO;
-using System.Threading.Tasks;
-using System.Collections.Concurrent;
-using System.Threading;
-using System.Text.Json;
+using GoodNight.Service.Storage.Serialisation;
 
 namespace GoodNight.Service.Storage
 {
@@ -24,9 +26,10 @@ namespace GoodNight.Service.Storage
 
     private CancellationTokenSource writeCacheCanceler;
 
-    private JsonSerializerOptions jsonOptions;
-
     private List<BaseRepository> repositories;
+
+    internal JsonSerializerOptions JsonSerializerOptions { get; } =
+      new JsonSerializerOptions();
 
     /// <param name="backingStore">
     /// A stream onto the backing store. The stream must be able to seek to
@@ -35,7 +38,8 @@ namespace GoodNight.Service.Storage
     /// to the stream as well as the underlying data. It will dispose the stream
     /// when either this store or the repository is disposed.
     /// </param>
-    public Store(JsonSerializerOptions jsonOptions, Stream? backingStore = null)
+    public Store(IEnumerable<JsonConverter> converters,
+      Stream? backingStore = null)
     {
       ownsBackingStore = backingStore is null;
       if (backingStore is null)
@@ -50,11 +54,14 @@ namespace GoodNight.Service.Storage
 
       repositories = new List<BaseRepository>();
 
-      this.jsonOptions = jsonOptions;
-
       // uses a ConcurrentQueue by default.
       writeCache = new BlockingCollection<string>(Store.WriteCacheSize);
       writeCacheCanceler = new CancellationTokenSource();
+
+      foreach (var converter in converters)
+      {
+        JsonSerializerOptions.Converters.Add(converter);
+      }
     }
 
     public void Dispose()
@@ -83,7 +90,7 @@ namespace GoodNight.Service.Storage
     /// </remarks>
     public void StartJournal()
     {
-      JournalReader.ReadAll(backingStore, this, jsonOptions);
+      JournalReader.ReadAll(backingStore, this, JsonSerializerOptions);
 
       var writer = new StreamWriter(backingStore);
       writeCacheTask = Task.Run(() =>
@@ -150,15 +157,20 @@ namespace GoodNight.Service.Storage
           + $"\"{uniqueName}\" already exists, but not as repository for "
           + $"{nameof(T)}.");
 
-          jsonOptions), uniqueName);
       var repos = new Repository<T>(new JournalWriter(writeCache,
+          JsonSerializerOptions), uniqueName);
       repositories.Add(repos);
+
+      JsonSerializerOptions.Converters.Add(new ReferenceConverter<T>(this));
+
       return repos;
     }
 
-    Task IStore.Sync()
+    internal Repository<T>? GetRepository<T>(string uniqueName)
+      where T : class, IStorable
     {
-      throw new NotImplementedException();
+      return repositories.Find(repos => repos.UniqueName == uniqueName)
+        as Repository<T>;
     }
   }
 }
