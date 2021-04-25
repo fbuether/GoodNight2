@@ -45,36 +45,27 @@ namespace GoodNight.Service.Domain.Model.Read
     IImmutableList<Option> Options,
     IReference<Scene>? Return,
     IReference<Scene>? Continue)
-    : IStorable
   {
-    public string GetKey()
+    public (IReference<Log>?, IReference<Scene>?) ContinueWith(
+      IRepository<Log> logRepos, string player, uint lastLogNumber,
+      string optionname)
     {
-      return Scene.Key;
-    }
+      Func<Choice,IReference<Log>?> buildLog = (Choice choice) => logRepos.Add(
+        new Log(player, lastLogNumber + 1, Scene, Text, Effects, choice));
 
-
-    public (Log?, IReference<Scene>?)
-      ContinueWith(string optionname)
-    {
       if (optionname == "return" && Return != null)
       {
-        return (
-          new Log(Scene, Text, Effects, new Choice.Return()),
-          Return);
+        return (buildLog(new Choice.Return()), Return);
       }
       else if (optionname == "continue" && Continue != null)
       {
-        return (
-          new Log(Scene, Text, Effects, new Choice.Continue()),
-          Continue);
+        return (buildLog(new Choice.Continue()), Continue);
       }
 
       var option = Options.First(o => o.Urlname == optionname);
       if (option != null)
       {
-        return (
-          new Log(Scene, Text, Effects,
-            new Choice.Action(
+        return (buildLog(new Choice.Action(
               option.Urlname,
               option.Text,
               option.Icon,

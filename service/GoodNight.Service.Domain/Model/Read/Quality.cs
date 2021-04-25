@@ -11,6 +11,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </summary>
   public abstract record Quality(
     string Name,
+    string Story, // the urlname of the story.
     string? Icon,
     string Description,
     bool IsVisible,
@@ -19,11 +20,12 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public record Bool(
       string Name,
+      string Story,
       string? Icon,
       string Description,
       bool IsVisible,
       IReference<Scene>? Scene)
-      : Quality(Name, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Bool;
 
@@ -38,13 +40,14 @@ namespace GoodNight.Service.Domain.Model.Read
     /// </summary>
     public record Int(
       string Name,
+      string Story,
       string? Icon,
       string Description,
       bool IsVisible,
       IReference<Scene>? Scene,
       int? Minimum,
       int? Maximum)
-      : Quality(Name, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Int;
 
@@ -62,12 +65,13 @@ namespace GoodNight.Service.Domain.Model.Read
     /// </summary>
     public record Enum(
       string Name,
+      string Story,
       string? Icon,
       string Description,
       bool IsVisible,
       IReference<Scene>? Scene,
       IImmutableDictionary<int, string> Values)
-      : Quality(Name, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Enum;
 
@@ -87,7 +91,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public string GetKey()
     {
-      return Urlname;
+      return NameConverter.Concat(Story, Urlname);
     }
 
     public abstract Value GetDefault();

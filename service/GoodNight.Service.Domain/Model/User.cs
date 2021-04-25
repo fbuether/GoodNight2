@@ -14,32 +14,41 @@ namespace GoodNight.Service.Domain.Model
   /// This type is a group root and can be stored directly.
   /// </remarks>
   public record User(
+    string Guid,
     string Name,
     string EMail,
 
-    IImmutableSet<Adventure> Adventures)
+    IImmutableSet<IReference<Adventure>> Adventures)
     : IStorable
   {
     public string GetKey()
     {
-      return this.EMail;
+      return this.Guid;
     }
 
-    public (User, Consequence)? ContinueAdventure(Story story,
-      string optionname)
+    public (User, Consequence)? ContinueAdventure(
+      IRepository<Adventure> adventureRepos, IRepository<Log> logRepos,
+      Story story, string optionname)
     {
-      var adventure = this.Adventures.First(a => a.Story.Key == story.GetKey());
-      if (adventure is null)
+      var adventureRef = this.Adventures
+        .First(a => a.Get()?.Story.Key == story.GetKey());
+      var adventure = adventureRef?.Get();
+      if (adventure is null || adventureRef is null)
         return null;
 
-      var (newAdventure, consequence) = adventure.ContinueWith(optionname);
+      var (newAdventure, consequence) = adventure.ContinueWith(logRepos,
+        optionname);
       if (newAdventure is null || consequence is null)
+        return null;
+
+      var newAdventureRef = adventureRepos.Add(newAdventure);
+      if (newAdventureRef is null)
         return null;
 
       var newSelf = this with {
         Adventures = this.Adventures
-          .Remove(adventure)
-          .Add(newAdventure)
+          .Remove(adventureRef)
+          .Add(newAdventureRef)
       };
 
       return (newSelf, consequence);

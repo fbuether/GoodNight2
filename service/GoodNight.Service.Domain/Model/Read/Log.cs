@@ -32,9 +32,17 @@ namespace GoodNight.Service.Domain.Model.Read
   /// Logs are only persisted as part of an Adventure, which is part of a User.
   /// </remarks>
   public record Log(
+    string Player,
+    uint Number, // sequential number for all Logs of this player.
     IReference<Scene> Scene,
     string Text,
     IImmutableList<Property> Effects,
     Choice Chosen)
-  {}
+    : IStorable
+  {
+    public string GetKey()
+    {
+      return NameConverter.Concat(Player, Scene.Key, Number.ToString());
+    }
+  }
 }

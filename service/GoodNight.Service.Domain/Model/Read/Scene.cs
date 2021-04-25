@@ -177,6 +177,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </summary>
   public record Scene(
     string Name,
+    string Story, // the urlname of the story.
     IImmutableList<Content> Content)
     : IStorable
   {
@@ -190,7 +191,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public string GetKey()
     {
-      return Urlname;
+      return NameConverter.Concat(Story, Urlname);
     }
 
     public Action Play(IReference<Scene> thisRef, Player player)

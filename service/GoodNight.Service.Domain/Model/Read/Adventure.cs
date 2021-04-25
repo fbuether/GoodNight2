@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
 
@@ -14,10 +15,17 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Adventure(
     Player Player,
+    string User,
     IReference<Story> Story,
-    IImmutableList<Log> History,
+    IImmutableList<IReference<Log>> History,
     Action Current)
+    : IStorable
   {
+    public string GetKey()
+    {
+      return NameConverter.Concat(User, Story.Key);
+    }
+
     /// <summary>
     /// Performs the next step in this Adventure given by the passed Option.
     /// This returns the new Adventure as well as a Consequence, which just
@@ -27,22 +35,25 @@ namespace GoodNight.Service.Domain.Model.Read
     /// One of the options in Current.Options, or Current.Return or
     /// Current.Continue.
     /// <param>
-    public (Adventure?, Consequence?) ContinueWith(string optionname)
+    public (Adventure?, Consequence?) ContinueWith(IRepository<Log> logRepos,
+      string optionname)
     {
-      var (log, nextScene) = Current.ContinueWith(optionname);
-      if (log is null || nextScene is null)
-        return (null, null);
+      var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var scene = nextScene.Get();
-      if (scene == null)
+      var (logRef, nextSceneRef) = Current.ContinueWith(logRepos, Player.Name,
+        lastNumber, optionname);
+      var log = logRef?.Get();
+      var nextScene = nextSceneRef?.Get();
+      if (logRef is null || log is null
+        || nextSceneRef is null || nextScene is null)
         return (null, null);
 
       var playerAfterChoice = Player.Apply(log.Effects);
-      var action = scene.Play(nextScene, playerAfterChoice);
+      var action = nextScene.Play(nextSceneRef, playerAfterChoice);
       var playerAfterScene = playerAfterChoice.Apply(action.Effects);
 
       var adventure = this with {
-        History = History.Add(log),
+        History = History.Add(logRef),
         Current = action
       };
 
