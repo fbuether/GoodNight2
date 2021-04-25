@@ -55,7 +55,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Continue,
 
     IImmutableList<Content> Content)
-    : IStorable<string>
+    : IStorable
   {
     public string Urlname
     {

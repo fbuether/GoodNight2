@@ -17,7 +17,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Player(
     string Name,
-    IImmutableDictionary<IStorableReference<Quality, string>, Value> State)
+    IImmutableDictionary<IReference<Quality>, Value> State)
   {
     public Player Apply(IImmutableList<Property> effects)
     {
@@ -30,7 +30,7 @@ namespace GoodNight.Service.Domain.Model.Read
       return this with { State = newState };
     }
 
-    public Value GetValueOf(IStorableReference<Quality, string> quality)
+    public Value GetValueOf(IReference<Quality> quality)
     {
       return State.GetValueOrDefault(quality)
         ?? quality.Get()?.GetDefault()

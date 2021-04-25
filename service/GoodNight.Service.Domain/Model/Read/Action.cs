@@ -12,7 +12,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// evaluate to true or false for the Player, which is given by Passed.
   /// </summary>
   public record Requirement(
-    Expression<IStorableReference<Quality, string>> Expression,
+    Expression<IReference<Quality>> Expression,
     bool Passed)
   {}
 
@@ -30,7 +30,7 @@ namespace GoodNight.Service.Domain.Model.Read
     bool IsAvailable,
     IImmutableList<Requirement> Requirements,
     IImmutableList<Property> Effects,
-    IStorableReference<Scene, string> Scene)
+    IReference<Scene> Scene)
   {}
 
   /// <summary>
@@ -39,13 +39,13 @@ namespace GoodNight.Service.Domain.Model.Read
   /// of effects, and a set of options that the player may (or may not) take.
   /// </summary>
   public record Action(
-    IStorableReference<Scene, string> Scene,
+    IReference<Scene> Scene,
     string Text,
     IImmutableList<Property> Effects,
     IImmutableList<Option> Options,
-    IStorableReference<Scene, string>? Return,
-    IStorableReference<Scene, string>? Continue)
-    : IStorable<string>
+    IReference<Scene>? Return,
+    IReference<Scene>? Continue)
+    : IStorable
   {
     public string GetKey()
     {
@@ -53,7 +53,7 @@ namespace GoodNight.Service.Domain.Model.Read
     }
 
 
-    public (Log?, IStorableReference<Scene, string>?)
+    public (Log?, IReference<Scene>?)
       ContinueWith(string optionname)
     {
       if (optionname == "return" && Return != null)

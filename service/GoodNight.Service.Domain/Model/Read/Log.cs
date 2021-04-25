@@ -32,7 +32,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// Logs are only persisted as part of an Adventure, which is part of a User.
   /// </remarks>
   public record Log(
-    IStorableReference<Scene, string> Scene,
+    IReference<Scene> Scene,
     string Text,
     IImmutableList<Property> Effects,
     Choice Chosen)

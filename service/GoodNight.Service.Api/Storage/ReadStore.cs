@@ -6,23 +6,23 @@ namespace GoodNight.Service.Api.Storage
 {
   public class ReadStore
   {
-    internal IRepository<Action, string> Actions { get; }
+    internal IRepository<Action> Actions { get; }
 
-    internal IRepository<Quality, string> Qualities { get; }
+    internal IRepository<Quality> Qualities { get; }
 
-    internal IRepository<Scene, string> Scenes { get; }
+    internal IRepository<Scene> Scenes { get; }
 
-    internal IRepository<Story, string> Stories { get; }
+    internal IRepository<Story> Stories { get; }
 
-    internal IRepository<User, string> Users { get; }
+    internal IRepository<User> Users { get; }
 
     public ReadStore(IStore store)
     {
-      Actions = store.Create<Action, string>("read-actions");
-      Qualities = store.Create<Quality, string>("read-qualities");
-      Scenes = store.Create<Scene, string>("read-scenes");
-      Stories = store.Create<Story, string>("read-stories");
-      Users = store.Create<User, string>("users");
+      Actions = store.Create<Action>("read-actions");
+      Qualities = store.Create<Quality>("read-qualities");
+      Scenes = store.Create<Scene>("read-scenes");
+      Stories = store.Create<Story>("read-stories");
+      Users = store.Create<User>("users");
     }
   }
 }

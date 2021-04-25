@@ -41,9 +41,9 @@ namespace GoodNight.Service.Domain.Model.Write
 
   public record Story(
     string Name,
-    IImmutableSet<IStorableReference<Scene, string>> Scenes,
-    IImmutableSet<IStorableReference<Quality, string>> Qualities)
-    : IStorable<string>
+    IImmutableSet<IReference<Scene>> Scenes,
+    IImmutableSet<IReference<Quality>> Qualities)
+    : IStorable
   {
     public string Urlname
     {
@@ -64,8 +64,8 @@ namespace GoodNight.Service.Domain.Model.Write
     public static Story Create(string name)
     {
       return new Story(name,
-        ImmutableHashSet<IStorableReference<Scene, string>>.Empty,
-        ImmutableHashSet<IStorableReference<Quality, string>>.Empty);
+        ImmutableHashSet<IReference<Scene>>.Empty,
+        ImmutableHashSet<IReference<Quality>>.Empty);
     }
 
     public StoryHeader ToHeader()
@@ -140,7 +140,7 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    public IStorableReference<Scene, string>? GetScene(string sceneUrlname)
+    public IReference<Scene>? GetScene(string sceneUrlname)
     {
       var name = NameConverter.Concat(Name, sceneUrlname);
       return Scenes.FirstOrDefault(s => s.Key == name);
@@ -156,14 +156,14 @@ namespace GoodNight.Service.Domain.Model.Write
       return scene with {Story = Urlname};
     }
 
-    public (Story, IStorableReference<Scene, string>) InsertNewScene(
-      IStorableReference<Scene, string> scene)
+    public (Story, IReference<Scene>) InsertNewScene(
+      IReference<Scene> scene)
     {
       return (this with {Scenes = Scenes.Add(scene)}, scene);
     }
 
-    public (Story, IStorableReference<Scene, string>) ReplaceScene(
-      IStorableReference<Scene, string> scene)
+    public (Story, IReference<Scene>) ReplaceScene(
+      IReference<Scene> scene)
     {
       var oldElement = Scenes.FirstOrDefault(s => s.Key == scene.Key);
       var withoutOld = oldElement is null ? Scenes : Scenes.Remove(oldElement);
@@ -171,7 +171,7 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    public IStorableReference<Quality, string>? GetQuality(
+    public IReference<Quality>? GetQuality(
       string qualityUrlname)
     {
       var name = NameConverter.Concat(Name, qualityUrlname);
@@ -183,14 +183,14 @@ namespace GoodNight.Service.Domain.Model.Write
       return quality with {Story = Urlname};
     }
 
-    public (Story, IStorableReference<Quality, string>) InsertNewQuality(
-      IStorableReference<Quality, string> quality)
+    public (Story, IReference<Quality>) InsertNewQuality(
+      IReference<Quality> quality)
     {
       return (this with {Qualities = Qualities.Add(quality)}, quality);
     }
 
-    public (Story, IStorableReference<Quality, string>) ReplaceQuality(
-      IStorableReference<Quality, string> quality)
+    public (Story, IReference<Quality>) ReplaceQuality(
+      IReference<Quality> quality)
     {
       return (this with {Qualities = Qualities.Add(quality)}, quality);
     }

@@ -14,7 +14,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Adventure(
     Player Player,
-    IStorableReference<Story, string> Story,
+    IReference<Story> Story,
     IImmutableList<Log> History,
     Action Current)
   {

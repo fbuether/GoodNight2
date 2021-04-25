@@ -11,7 +11,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// Properties are only persisted as parts of their parent elements.
   /// </remarks>
   public record Property(
-    IStorableReference<Quality, string> Quality,
+    IReference<Quality> Quality,
     Value Value)
   {}
 }

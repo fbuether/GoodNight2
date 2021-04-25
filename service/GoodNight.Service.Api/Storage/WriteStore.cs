@@ -5,17 +5,17 @@ namespace GoodNight.Service.Api.Storage
 {
   public class WriteStore
   {
-    internal IRepository<Quality, string> Qualities { get; }
+    internal IRepository<Quality> Qualities { get; }
 
-    internal IRepository<Scene, string> Scenes { get; }
+    internal IRepository<Scene> Scenes { get; }
 
-    internal IRepository<Story, string> Stories { get; }
+    internal IRepository<Story> Stories { get; }
 
     public WriteStore(IStore store)
     {
-      Qualities = store.Create<Quality, string>("write-qualities");
-      Scenes = store.Create<Scene, string>("write-scenes");
-      Stories = store.Create<Story, string>("write-stories");
+      Qualities = store.Create<Quality>("write-qualities");
+      Scenes = store.Create<Scene>("write-scenes");
+      Stories = store.Create<Story>("write-stories");
     }
   }
 }

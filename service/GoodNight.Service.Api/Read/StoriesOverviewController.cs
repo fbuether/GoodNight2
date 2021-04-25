@@ -10,7 +10,7 @@ namespace GoodNight.Service.Api.Read
   [Route("api/v1/read/stories")]
   public class StoriesOverviewController : ControllerBase
   {
-    private IRepository<Story, string> stories;
+    private IRepository<Story> stories;
 
     public StoriesOverviewController(ReadStore store)
     {

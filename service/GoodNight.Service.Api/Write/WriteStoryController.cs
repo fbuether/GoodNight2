@@ -13,7 +13,7 @@ namespace GoodNight.Service.Api.Write
   [Route("api/v1/write/stories")]
   public class WriteStoryController : ControllerBase
   {
-    private IRepository<Story, string> stories;
+    private IRepository<Story> stories;
 
     public WriteStoryController(WriteStore store)
     {

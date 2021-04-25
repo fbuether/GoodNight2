@@ -18,7 +18,7 @@ namespace GoodNight.Service.Domain.Model
     string EMail,
 
     IImmutableSet<Adventure> Adventures)
-    : IStorable<string>
+    : IStorable
   {
     public string GetKey()
     {

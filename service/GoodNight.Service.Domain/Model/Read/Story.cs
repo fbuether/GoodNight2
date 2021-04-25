@@ -17,9 +17,9 @@ namespace GoodNight.Service.Domain.Model.Read
     string Description,
     bool Public,
 
-    IImmutableSet<IStorableReference<Scene, string>> Scenes,
-    IImmutableSet<IStorableReference<Quality, string>> Qualities)
-    : IStorable<string>
+    IImmutableSet<IReference<Scene>> Scenes,
+    IImmutableSet<IReference<Quality>> Qualities)
+    : IStorable
   {
     public string GetKey()
     {
@@ -36,7 +36,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public static Story Create(string name, string description = "") =>
       new Story(name, null, description, false,
-        ImmutableHashSet<IStorableReference<Scene, string>>.Empty,
-        ImmutableHashSet<IStorableReference<Quality, string>>.Empty);
+        ImmutableHashSet<IReference<Scene>>.Empty,
+        ImmutableHashSet<IReference<Quality>>.Empty);
   }
 }

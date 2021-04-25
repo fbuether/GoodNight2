@@ -12,9 +12,9 @@ namespace GoodNight.Service.Api.Write
   [Route("api/v1/write/stories/{storyUrlname}/qualities")]
   public class WriteQualityController : ControllerBase
   {
-    private IRepository<Story, string> stories;
+    private IRepository<Story> stories;
 
-    private IRepository<Quality, string> qualities;
+    private IRepository<Quality> qualities;
 
     public WriteQualityController(WriteStore repos)
     {

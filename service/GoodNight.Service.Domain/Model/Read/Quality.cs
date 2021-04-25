@@ -14,15 +14,15 @@ namespace GoodNight.Service.Domain.Model.Read
     string? Icon,
     string Description,
     bool IsVisible,
-    IStorableReference<Scene, string>? Scene)
-    : IStorable<string>
+    IReference<Scene>? Scene)
+    : IStorable
   {
     public record Bool(
       string Name,
       string? Icon,
       string Description,
       bool IsVisible,
-      IStorableReference<Scene, string>? Scene)
+      IReference<Scene>? Scene)
       : Quality(Name, Icon, Description, IsVisible, Scene)
     {
       public override Type Type { get; } = Type.Bool;
@@ -41,7 +41,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string? Icon,
       string Description,
       bool IsVisible,
-      IStorableReference<Scene, string>? Scene,
+      IReference<Scene>? Scene,
       int? Minimum,
       int? Maximum)
       : Quality(Name, Icon, Description, IsVisible, Scene)
@@ -65,7 +65,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string? Icon,
       string Description,
       bool IsVisible,
-      IStorableReference<Scene, string>? Scene,
+      IReference<Scene>? Scene,
       IImmutableDictionary<int, string> Values)
       : Quality(Name, Icon, Description, IsVisible, Scene)
     {

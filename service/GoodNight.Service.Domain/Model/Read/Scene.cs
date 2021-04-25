@@ -7,8 +7,8 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
-  using StoredQuality = IStorableReference<Quality, string>;
-  using Expression = Expression<IStorableReference<Quality, string>>;
+  using StoredQuality = IReference<Quality>;
+  using Expression = Expression<IReference<Quality>>;
 
   public interface Content
   {
@@ -45,7 +45,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string? Icon,
       IImmutableList<Expression> Requirements,
       IImmutableList<(StoredQuality, Expression)> Effects,
-      IStorableReference<Scene, string> Scene)
+      IReference<Scene> Scene)
       : Content
     {
       public Action AddTo(Player player, Action action)
@@ -83,7 +83,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// manifestation of a Scene.
     /// </summary>
     public record Return(
-      IStorableReference<Scene, string> Scene)
+      IReference<Scene> Scene)
       : Content
     {
       public Action AddTo(Player player, Action action)
@@ -101,7 +101,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// manifestation of a Scene.
     /// </summary>
     public record Continue(
-      IStorableReference<Scene, string> Scene)
+      IReference<Scene> Scene)
       : Content
     {
       public Action AddTo(Player player, Action action)
@@ -148,7 +148,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// Content.
     /// </summary>
     public record Include(
-      IStorableReference<Scene, string> Scene)
+      IReference<Scene> Scene)
       : Content
     {
       public Action AddTo(Player player, Action action)
@@ -178,7 +178,7 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Scene(
     string Name,
     IImmutableList<Content> Content)
-    : IStorable<string>
+    : IStorable
   {
     public string Urlname
     {
@@ -193,7 +193,7 @@ namespace GoodNight.Service.Domain.Model.Read
       return Urlname;
     }
 
-    public Action Play(IStorableReference<Scene, string> thisRef, Player player)
+    public Action Play(IReference<Scene> thisRef, Player player)
     {
       // todo: replace thisRef with this, as soon as storable objects can get
       // references to themselves.

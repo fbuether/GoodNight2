@@ -19,7 +19,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Scene,
 
     string Description)
-    : IStorable<string>
+    : IStorable
   {
     public string Urlname
     {
