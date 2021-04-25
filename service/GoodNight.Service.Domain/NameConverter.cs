@@ -11,7 +11,7 @@ namespace GoodNight.Service.Domain
       return Regex.Replace(Name, "[^a-zA-Z0-9]", "-").Trim().ToLower();
     }
 
-    internal static string Concat(params string[] parts)
+    public static string Concat(params string[] parts)
     {
       return string.Join("/", parts);
     }
