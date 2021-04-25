@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 
 namespace GoodNight.Service.Storage.Interface
 {
@@ -35,15 +34,7 @@ namespace GoodNight.Service.Storage.Interface
     /// A new store for elements of the given type using the given stream as
     /// backing store and containing data as present on the stream.
     /// </returns>
-    IRepository<T,K> Create<T,K>(string uniqueName)
-      where T : class, IStorable<K>
-      where K : notnull;
-
-    /// <summary>
-    /// Returns a Task that waits for all currently outstanding I/O to finish.
-    /// Await this right after store operations to ensure that they are safely
-    /// persisted.
-    /// </summary>
-    Task Sync();
+    IRepository<T> Create<T>(string uniqueName)
+      where T : class, IStorable;
   }
 }

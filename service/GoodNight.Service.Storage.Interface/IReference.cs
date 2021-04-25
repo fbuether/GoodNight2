@@ -17,26 +17,20 @@ namespace GoodNight.Service.Storage.Interface
   /// This is a rather thin object, and contains only pointers to its key,
   /// the backing repository, and possibly the object it points to.
   /// </remarks>
-  public interface IStorableReference<T, K>
-    where T : IStorable<K>
-    where K : notnull
+  public interface IReference<T>
+    where T : IStorable
   {
     /// <summary>
     /// Returns the key of this reference.
     /// </summary>
-    K Key { get; }
-
-    // /// <summary>
-    // /// Sets this element to reference a specific element in the store.
-    // /// </summary>
-    // public void Set(K key);
+    string Key { get; }
 
     /// <summary>
     /// Resolves this reference in the store it was created in.
     /// </summary>
     /// <returns>
-    /// The element associated with the saved key in this store, or null if the
-    /// key does not point to an element.
+    /// The element associated with the saved key in this store, or null if this
+    /// reference is invalid, that is, the key is not assigned in the store.
     /// </returns>
     T? Get();
   }

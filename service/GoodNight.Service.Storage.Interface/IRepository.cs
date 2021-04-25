@@ -6,21 +6,17 @@ namespace GoodNight.Service.Storage.Interface
   /// <summary>
   /// A IRepository persistently stores elements of a specific type.
   ///
-  /// Each element is stored at a unique key, to allow fast lookup. This key
-  /// behaves similar to a primary key in a relational database.
-  /// Changes to the store persist in a backing store, e.g. a file. It is
-  /// associated when the IRepository gets created by `IStore:Create`.
+  /// Each element is stored at a unique string key, to allow fast
+  /// lookup. This key behaves similar to a primary key in a
+  /// relational database. Changes to the store persist in a backing
+  /// store, e.g. a file. It is associated when the IRepository gets
+  /// created by `IStore:Create`.
   /// </summary>
   /// <typeparam name="T">
   /// The type of the elements to store.
   /// </typeparam>
-  /// <typeparam name="K">
-  /// The type of the keys to store elements at. This may not be nullable,
-  /// and ideally should have a good hash function.
-  /// </typeparam>
-  public interface IRepository<T,K> : IReadOnlyCollection<T>
-    where T : class, IStorable<K>
-    where K : notnull
+  public interface IRepository<T> : IReadOnlyCollection<T>
+    where T : class, IStorable
   {
     /// <summary>
     /// Add a new element to the store.
@@ -43,7 +39,7 @@ namespace GoodNight.Service.Storage.Interface
     /// time for it to be safely persisted to disk. Use `IStore:Sync()` to be
     /// sure that it is written.
     /// </remarks>
-    IStorableReference<T,K>? Add(T element);
+    IReference<T>? Add(T element);
 
     /// <summary>
     /// Load an element from the store.
@@ -55,7 +51,20 @@ namespace GoodNight.Service.Storage.Interface
     /// The element associated with the key, or null if no element with the key
     /// is stored here.
     /// </returns>
-    T? Get(K key);
+    T? Get(string key);
+
+    /// <summary>
+    /// Creates a reference to a specified key, if an element with that key
+    /// exists in this repository.
+    /// </summary>
+    /// <param name="key">
+    /// The unique key of the element to create the reference for.
+    /// </param>
+    /// <returns>
+    /// A reference to the element with the given key, or `null` if the element
+    /// does not exist.
+    /// </returns>
+    IReference<T>? GetReference(string key);
 
     /// <summary>
     /// Replaces the element with key K, if it exists in the store, ignoring the
@@ -71,7 +80,7 @@ namespace GoodNight.Service.Storage.Interface
     /// A reference to the replaced element, or null if no element with the same
     /// key did exist.
     /// </returns>
-    IStorableReference<T,K>? Update(T element);
+    IReference<T>? Update(T element);
 
     /// <summary>
     /// Mutates the element with key K, if it exists in the store, and replaces
@@ -92,7 +101,7 @@ namespace GoodNight.Service.Storage.Interface
     /// A reference to the update element, or null if `key` did not exist or
     /// `update` returned null.
     /// </returns>
-    IStorableReference<T,K>? Update(K key, Func<T,T?> update);
+    IReference<T>? Update(string key, Func<T,T?> update);
 
     /// <summary>
     /// Mutates the element with key K, if it exists in the store, and replaces
@@ -112,7 +121,7 @@ namespace GoodNight.Service.Storage.Interface
     /// The result of `update`, or null if `key` did not exist or `update`
     /// returned null.
     /// </returns>
-    U? Update<U>(K key, Func<T, (T, U)?> update)
+    U? Update<U>(string key, Func<T, (T, U)?> update)
       where U : class;
 
 
@@ -126,7 +135,7 @@ namespace GoodNight.Service.Storage.Interface
     /// <returns>
     /// The reference to the saved element.
     /// </returns>
-    IStorableReference<T,K> Save(T element);
+    IReference<T> Save(T element);
 
 
     /// <summary>
@@ -138,6 +147,6 @@ namespace GoodNight.Service.Storage.Interface
     /// <returns>
     /// true if the element existed, and false otherwise.
     /// </returns>
-    bool Remove(K key);
+    bool Remove(string key);
   }
 }
