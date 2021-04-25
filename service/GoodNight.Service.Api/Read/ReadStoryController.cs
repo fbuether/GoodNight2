@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api.Read
 {
@@ -12,11 +14,17 @@ namespace GoodNight.Service.Api.Read
   [Route("api/v1/read/stories/{storyUrlname}/")]
   public class ReadStoryController : ControllerBase
   {
-    private ReadStore store;
+    private IRepository<Adventure> adventures;
+    private IRepository<User> users;
+    private IRepository<Story> stories;
+    private IRepository<Log> logs;
 
     public ReadStoryController(ReadStore store)
     {
-      this.store = store;
+      adventures = store.Adventures;
+      users = store.Users;
+      stories = store.Stories;
+      logs = store.Logs;
     }
 
 
@@ -28,16 +36,17 @@ namespace GoodNight.Service.Api.Read
     {
       var username = "current-user-name";
 
-      var user = store.Users.Get(username);
-      if (user == null)
+      var user = users.Get(username);
+      if (user is null)
         return Unauthorized("Authentication not found or invalid.");
 
-      var story = store.Stories.Get(storyUrlname);
-      if (story == null)
+      var story = stories.Get(storyUrlname);
+      if (story is null)
         return NotFound("Story not found.");
 
-      var adventure = user.Adventures.First(a => a.Story.Key == storyUrlname);
-      if (adventure == null)
+      var advKey = NameConverter.Concat(user.GetKey(), story.GetKey());
+      var adventure = user.Adventures.First(a => a.Key == advKey);
+      if (adventure is null)
         return Forbid("User has not started Adventure.");
 
       return Ok(adventure);
@@ -56,18 +65,18 @@ namespace GoodNight.Service.Api.Read
       if (String.IsNullOrEmpty(optionname))
         return BadRequest("No Option given.");
 
-      var user = store.Users.Get(username);
-      if (user == null)
+      var user = users.Get(username);
+      if (user is null)
         return Unauthorized("Authentication not found or invalid.");
 
-      var story = store.Stories.Get(storyUrlname);
-      if (story == null)
+      var story = stories.Get(storyUrlname);
+      if (story is null)
         return NotFound("Story not found.");
 
-      var consequence = store.Users.Update(username, (User user) =>
-        user.ContinueAdventure(story, optionname));
+      var consequence = users.Update(username, (User user) =>
+        user.ContinueAdventure(adventures, logs, story, optionname));
 
-      if (consequence == null)
+      if (consequence is null)
         return BadRequest("Option not found or not valid now.");
 
       return Ok(consequence);
