@@ -54,7 +54,7 @@ namespace GoodNight.Service.Api.Write
         .Map(sq => sq.MapFirst(stories.Save).Item2)
         .Map<ActionResult<Quality>>(quality => Accepted(
             $"api/v1/write/stories/{storyUrlname}/qualities/{quality.Key}",
-            quality))
+            quality.Get()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
@@ -74,7 +74,7 @@ namespace GoodNight.Service.Api.Write
         .Bind(q => Result.FailOnNull(q, "The quality does not exist."))
         .Map<ActionResult<Quality>>(quality => Accepted(
             $"api/v1/write/stories/{storyUrlname}/qualities/{quality.Key}",
-            quality))
+            quality.Get()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
   }

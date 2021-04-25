@@ -64,7 +64,8 @@ namespace GoodNight.Service.Api.Write
         .Map(story.InsertNewScene)
         .Map(ss => ss.MapFirst(stories.Save).Item2)
         .Map<ActionResult<Scene>>(scene => Accepted(
-            $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}", scene))
+            $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
+            scene.Get()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
@@ -82,7 +83,8 @@ namespace GoodNight.Service.Api.Write
         .Map(scenes.Update)
         .Bind(s => Result.FailOnNull(s, "The scene does not exist."))
         .Map<ActionResult<Scene>>(scene => Accepted(
-            $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}", scene))
+            $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
+            scene.Get()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
   }

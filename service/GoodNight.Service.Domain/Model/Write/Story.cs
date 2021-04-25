@@ -142,7 +142,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public IReference<Scene>? GetScene(string sceneUrlname)
     {
-      var name = NameConverter.Concat(Name, sceneUrlname);
+      var name = NameConverter.Concat(Urlname, sceneUrlname);
       return Scenes.FirstOrDefault(s => s.Key == name);
     }
 
@@ -174,7 +174,7 @@ namespace GoodNight.Service.Domain.Model.Write
     public IReference<Quality>? GetQuality(
       string qualityUrlname)
     {
-      var name = NameConverter.Concat(Name, qualityUrlname);
+      var name = NameConverter.Concat(Urlname, qualityUrlname);
       return Qualities.FirstOrDefault(q => q.Key == name);
     }
 
