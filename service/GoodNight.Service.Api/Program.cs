@@ -1,10 +1,11 @@
 using System;
-using Microsoft.Extensions.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using GoodNight.Service.Storage.Interface;
-using System.Threading.Tasks;
-using GoodNight.Service.Storage;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using GoodNight.Service.Api.Storage;
+using GoodNight.Service.Storage;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api
 {
@@ -19,7 +20,7 @@ namespace GoodNight.Service.Api
         })
         .Build();
 
-      var store = host.Services.GetService(typeof(IStore)) as Store;
+      var store = host.Services.GetService<IStore>() as Store;
       if (store is null)
       {
         throw new NullReferenceException();
@@ -27,12 +28,10 @@ namespace GoodNight.Service.Api
 
       // instantiate all stores, in order to have them available when
       // `store.StartJournal` reads the whole journal.
-      host.Services.GetService(typeof(ReadStore));
-      host.Services.GetService(typeof(WriteStore));
+      host.Services.GetService<ReadStore>();
+      host.Services.GetService<WriteStore>();
 
-      // deserialising the database requires proper json converters, as
-      // configured in startup. Extract these and pass them to the
-      // journalreader.
+      // Start reading the stored journal.
       store.StartJournal();
 
       Console.WriteLine("Finished loading stores. Starting host...");

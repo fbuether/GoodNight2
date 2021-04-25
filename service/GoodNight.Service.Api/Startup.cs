@@ -1,12 +1,13 @@
 using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
-using GoodNight.Service.Storage;
-using GoodNight.Service.Storage.Interface;
+using Microsoft.Extensions.Options;
 using GoodNight.Service.Api.Converter;
 using GoodNight.Service.Api.Storage;
-using System.Text.Json;
+using GoodNight.Service.Storage;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api
 {
@@ -14,19 +15,16 @@ namespace GoodNight.Service.Api
   {
     public void ConfigureServices(IServiceCollection services)
     {
-      var jsonOptions = new JsonSerializerOptions();
-      jsonOptions.Converters.Add(new ActionChoiceConverter());
-      jsonOptions.Converters.Add(new ExpressionValueConverter());
-      jsonOptions.Converters.Add(new WriteQualityConverter());
-      services.AddSingleton<JsonSerializerOptions>(jsonOptions);
+      var mvcBuilder = services.AddControllers();
 
-      services.AddControllers()
-        .AddJsonOptions(options => {
-          foreach (var converter in jsonOptions.Converters)
-          {
-            options.JsonSerializerOptions.Converters.Add(converter);
-          }
-        });
+      services.Configure<JsonOptions>(options =>
+      {
+        var converters = options.JsonSerializerOptions.Converters;
+        converters.Add(new ActionChoiceConverter());
+        converters.Add(new ExpressionValueConverter());
+        converters.Add(new WriteQualityConverter());
+        converters.Add(new WriteSceneContentConverter());
+      });
 
       services.AddCors(corsOptions => {
         corsOptions.AddDefaultPolicy(builder => {
@@ -40,7 +38,14 @@ namespace GoodNight.Service.Api
         });
       });
 
-      services.AddSingleton<IStore, Store>();
+      services.AddSingleton<IStore, Store>((IServiceProvider services) =>
+      {
+        var options = services.GetService<IOptions<JsonOptions>>();
+        if (options is null)
+          throw new Exception();
+
+        return new Store(options.Value.JsonSerializerOptions.Converters);
+      });
       services.AddSingleton<ReadStore>();
       services.AddSingleton<WriteStore>();
     }
