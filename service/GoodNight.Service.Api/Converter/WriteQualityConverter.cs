@@ -42,7 +42,7 @@ namespace GoodNight.Service.Api.Converter
               category, scene, description, min, max);
             case "enum": return new Quality.Enum(name, story, raw, hidden, tags,
               category, scene, description, levels);
-            default: return null;
+            default: throw new JsonException();
           }
         }
         else if (reader.TokenType == JsonTokenType.PropertyName)
