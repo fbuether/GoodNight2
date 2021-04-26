@@ -7,7 +7,6 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
-  using StoredQuality = IReference<Quality>;
   using Expression = Expression<IReference<Quality>>;
 
   public interface Content
@@ -21,7 +20,7 @@ namespace GoodNight.Service.Domain.Model.Read
     }
 
     public record Effect(
-      StoredQuality Quality,
+      IReference<Quality> Quality,
       Expression Expression)
       : Content
     {
@@ -44,7 +43,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string Description,
       string? Icon,
       IImmutableList<Expression> Requirements,
-      IImmutableList<(StoredQuality, Expression)> Effects,
+      IImmutableList<(IReference<Quality>, Expression)> Effects,
       IReference<Scene> Scene)
       : Content
     {
@@ -157,7 +156,7 @@ namespace GoodNight.Service.Domain.Model.Read
         if (scene is null)
           throw new InvalidSceneException($"Scene {Scene.Key} does not exist.");
 
-        return ((Content)this).OnAction(player, action, scene.Content);
+        return ((Content)this).OnAction(player, action, scene.Contents);
       }
     }
 
@@ -167,6 +166,10 @@ namespace GoodNight.Service.Domain.Model.Read
       content.Aggregate(action,
         (action, content) => content.AddTo(player, action));
 
+    /// <summary>
+    /// Apply this Content to a Player and a partial Action, yielding a
+    /// more complete Action representing the current Scene.
+    /// </summary>
     public abstract Action AddTo(Player player, Action action);
   }
 
@@ -178,7 +181,10 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Scene(
     string Name,
     string Story, // the urlname of the story.
-    IImmutableList<Content> Content)
+    // bool IsStart,
+    // bool ShowAlways,
+    // bool ForceShow,
+    IImmutableList<Content> Contents)
     : IStorable
   {
     public string Urlname
@@ -194,6 +200,11 @@ namespace GoodNight.Service.Domain.Model.Read
       return NameConverter.Concat(Story, Urlname);
     }
 
+    /// <summary>
+    /// Play this scene onto a given Player.
+    /// This computes the effects that this Scene has onto a specific player,
+    /// resulting in the Action that the Player has taken.
+    /// </summary>
     public Action Play(IReference<Scene> thisRef, Player player)
     {
       // todo: replace thisRef with this, as soon as storable objects can get
@@ -201,7 +212,7 @@ namespace GoodNight.Service.Domain.Model.Read
       var action = new Action(thisRef, "",
         ImmutableList<Property>.Empty,
         ImmutableList<Option>.Empty, null, null);
-      return Content.Aggregate(action,
+      return Contents.Aggregate(action,
         (action, content) => content.AddTo(player, action));
     }
   }

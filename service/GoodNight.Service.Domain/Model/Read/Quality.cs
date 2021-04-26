@@ -45,6 +45,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string Description,
       bool Hidden,
       IReference<Scene>? Scene,
+
       int? Minimum,
       int? Maximum)
       : Quality(Name, Story, Icon, Description, Hidden, Scene)
@@ -70,6 +71,7 @@ namespace GoodNight.Service.Domain.Model.Read
       string Description,
       bool Hidden,
       IReference<Scene>? Scene,
+
       IImmutableDictionary<int, string> Values)
       : Quality(Name, Story, Icon, Description, Hidden, Scene)
     {
