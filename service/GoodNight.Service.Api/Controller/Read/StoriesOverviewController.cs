@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 
@@ -12,9 +11,9 @@ namespace GoodNight.Service.Api.Controller.Read
   {
     private IRepository<Story> stories;
 
-    public StoriesOverviewController(ReadStore store)
+    public StoriesOverviewController(IStore store)
     {
-      stories = store.Stories;
+      stories = store.Create<Story>();
     }
 
     [HttpGet]

@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain;
 using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Read;
@@ -19,12 +18,12 @@ namespace GoodNight.Service.Api.Controller.Read
     private IRepository<Story> stories;
     private IRepository<Log> logs;
 
-    public ReadStoryController(ReadStore store)
+    public ReadStoryController(IStore store)
     {
-      adventures = store.Adventures;
-      users = store.Users;
-      stories = store.Stories;
-      logs = store.Logs;
+      adventures = store.Create<Adventure>();
+      users = store.Create<User>();
+      stories = store.Create<Story>();
+      logs = store.Create<Log>();
     }
 
 

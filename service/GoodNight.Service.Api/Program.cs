@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
 
@@ -22,14 +21,7 @@ namespace GoodNight.Service.Api
 
       var store = host.Services.GetService<IStore>() as Store;
       if (store is null)
-      {
         throw new NullReferenceException();
-      }
-
-      // instantiate all stores, in order to have them available when
-      // `store.StartJournal` reads the whole journal.
-      host.Services.GetService<ReadStore>();
-      host.Services.GetService<WriteStore>();
 
       // Start reading the stored journal.
       store.StartJournal();

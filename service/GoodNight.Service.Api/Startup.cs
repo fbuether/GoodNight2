@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using GoodNight.Service.Api.Converter;
-using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
 
@@ -46,8 +45,6 @@ namespace GoodNight.Service.Api
 
         return new Store(options.Value.JsonSerializerOptions.Converters);
       });
-      services.AddSingleton<ReadStore>();
-      services.AddSingleton<WriteStore>();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

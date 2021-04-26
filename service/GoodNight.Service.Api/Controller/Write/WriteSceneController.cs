@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
@@ -16,10 +15,10 @@ namespace GoodNight.Service.Api.Controller.Write
 
     private IRepository<Story> stories;
 
-    public WriteSceneController(WriteStore repos)
+    public WriteSceneController(IStore store)
     {
-      scenes = repos.Scenes;
-      stories = repos.Stories;
+      scenes = store.Create<Scene>();
+      stories = store.Create<Story>();
     }
 
 
