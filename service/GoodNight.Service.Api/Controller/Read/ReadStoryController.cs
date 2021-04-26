@@ -3,9 +3,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Api.Storage;
-using GoodNight.Service.Domain.Model.Read;
-using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain;
+using GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api.Controller.Read

@@ -3,8 +3,8 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Write;
-using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Util;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api.Controller.Write
 {

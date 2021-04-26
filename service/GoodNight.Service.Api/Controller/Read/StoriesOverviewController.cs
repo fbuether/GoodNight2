@@ -1,8 +1,8 @@
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Api.Storage;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
-using Microsoft.AspNetCore.Mvc;
 
 namespace GoodNight.Service.Api.Controller.Read
 {

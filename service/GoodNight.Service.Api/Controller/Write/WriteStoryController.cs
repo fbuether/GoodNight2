@@ -1,11 +1,10 @@
-using System.Linq;
-using System.Threading.Tasks;
-using GoodNight.Service.Domain.Model.Write;
-using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Storage.Interface;
-using GoodNight.Service.Api.Storage;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using GoodNight.Service.Api.Storage;
+using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
