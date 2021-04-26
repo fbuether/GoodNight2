@@ -5,7 +5,7 @@ using System.Text.Json;
 
 namespace GoodNight.Service.Storage.Journal
 {
-  public static class JournalReader
+  internal static class JournalReader
   {
     private static void ReadStartObject(ref Utf8JsonReader reader)
     {
@@ -118,7 +118,7 @@ namespace GoodNight.Service.Storage.Journal
       return reader.BytesConsumed;
     }
 
-    public static void ReadAll(Stream stream, Store store, JsonSerializerOptions options)
+    internal static void ReadAll(Stream stream, Store store, JsonSerializerOptions options)
     {
       stream.Seek(0, SeekOrigin.Begin);
 

@@ -59,6 +59,7 @@ namespace GoodNight.Service.Storage
       writeCache = new BlockingCollection<string>(Store.WriteCacheSize);
       writeCacheCanceler = new CancellationTokenSource();
 
+      JsonSerializerOptions.Converters.Add(new ReferenceConverterFactory(this));
       foreach (var converter in converters)
       {
         JsonSerializerOptions.Converters.Add(converter);
@@ -147,9 +148,6 @@ namespace GoodNight.Service.Storage
       var repos = new Repository<T>(new JournalWriter(writeCache,
           JsonSerializerOptions), typeName);
       repositories.Add(repos);
-
-      JsonSerializerOptions.Converters.Add(new ReferenceConverter<T>(this));
-
       return repos;
     }
 

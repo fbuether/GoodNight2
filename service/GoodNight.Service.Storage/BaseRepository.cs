@@ -7,7 +7,7 @@ namespace GoodNight.Service.Storage
   {
     internal string TypeName { init; get; }
 
-    public BaseRepository(string typeName)
+    internal BaseRepository(string typeName)
     {
       TypeName = typeName;
     }

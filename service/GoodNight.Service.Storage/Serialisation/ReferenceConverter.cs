@@ -5,7 +5,7 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Storage.Serialisation
 {
-  public class ReferenceConverter<T> : JsonConverter<IReference<T>>
+  internal class ReferenceConverter<T> : JsonConverter<IReference<T>>
     where T : class, IStorable
   {
     private record SerialisedReference(string typeName, string key);

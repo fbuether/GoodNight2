@@ -1,6 +1,4 @@
 
-using System;
-
 namespace GoodNight.Service.Storage.Journal
 {
   internal record Entry(string Repos, Entry.EntryType Type)
