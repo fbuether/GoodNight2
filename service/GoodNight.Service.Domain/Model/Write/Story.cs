@@ -16,27 +16,10 @@ namespace GoodNight.Service.Domain.Model.Write
   /// lists of Stories, e.g. Story selection.
   /// </summary>
   public record StoryHeader(
-    string name,
-    string urlname,
-    string description);
-
-
-  public record Category(
-    string name,
-    IImmutableList<Category> categories,
-    IImmutableList<Scene> scenes,
-    IImmutableList<Quality> qualities)
-  {
-    public static Category Empty = new Category("",
-      ImmutableList<Category>.Empty,
-      ImmutableList<Scene>.Empty,
-      ImmutableList<Quality>.Empty);
-
-    public static Category OfName(string name) => Category.Empty with
-      {
-        name = name
-      };
-  }
+    string Name,
+    string Urlname,
+    // string Icon,
+    string Description);
 
 
   public record Story(
@@ -74,57 +57,13 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    private Category AddSceneToCategories(Category root,
-      Scene scene, IEnumerable<string> path)
-    {
-      if (!path.Any())
-      {
-        return root with { scenes = root.scenes.Add(scene) };
-      }
-
-      var first = path.First();
-      var cat = root.categories.FirstOrDefault(c => c.name == first);
-
-      var newCategories = cat is not null
-        ? root.categories.Remove(cat)
-        : root.categories;
-      var subCategory = cat is not null
-        ? cat
-        : Category.OfName(first);
-
-      return root with { categories = newCategories.Add(
-          AddSceneToCategories(subCategory, scene, path.Skip(1))) };
-    }
-
-    private Category AddQualityToCategories(Category root, Quality quality,
-      IEnumerable<string> path)
-    {
-      if (!path.Any())
-      {
-        return root with { qualities = root.qualities.Add(quality) };
-      }
-
-      var first = path.First();
-      var cat = root.categories.FirstOrDefault(c => c.name == first);
-
-      var newCategories = cat is not null
-        ? root.categories.Remove(cat)
-        : root.categories;
-      var subCategory = cat is not null
-        ? cat
-        : Category.OfName(first);
-
-      return root with { categories = newCategories.Add(
-          AddQualityToCategories(subCategory, quality, path.Skip(1))) };
-    }
-
     public Category GetContentAsCategories()
     {
       var category = this.Scenes.Aggregate(Category.Empty,
         (cat, sceneRef) => {
           var scene = sceneRef.Get();
           return scene is not null
-            ? AddSceneToCategories(cat, scene, scene.Category)
+            ? cat.AddScene(scene, scene.Category)
             : cat;
         });
 
@@ -132,7 +71,7 @@ namespace GoodNight.Service.Domain.Model.Write
         (cat, qualityRef) => {
           var quality = qualityRef.Get();
           return quality is not null
-            ? AddQualityToCategories(cat, quality, quality.Category)
+            ? cat.AddQuality(quality, quality.Category)
             : cat;
         });
 
@@ -196,9 +135,11 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    public ReadStory? ToReadStory()
+    public ReadStory ToReadStory()
     {
-      return ReadStory.Create(Name);
+      var readStory = ReadStory.Create(Name);
+
+      return readStory;
     }
   }
 }
