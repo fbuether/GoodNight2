@@ -34,7 +34,7 @@ namespace GoodNight.Service.Storage.Interface
     /// A new store for elements of the given type using the given stream as
     /// backing store and containing data as present on the stream.
     /// </returns>
-    IRepository<T> Create<T>(string uniqueName)
+    IRepository<T> Create<T>()
       where T : class, IStorable;
   }
 }

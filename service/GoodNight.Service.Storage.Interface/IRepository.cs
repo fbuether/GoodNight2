@@ -66,6 +66,20 @@ namespace GoodNight.Service.Storage.Interface
     /// </returns>
     IReference<T> GetReference(string key);
 
+
+    /// <summary>
+    /// Adds or replaces this element. If its key does not yet exist, it is
+    /// added, otherwise the existing element is replaced with this.
+    /// </summary>
+    /// <param name="element">
+    /// The element to be stored.
+    /// </param>
+    /// <returns>
+    /// The reference to the saved element.
+    /// </returns>
+    IReference<T> Save(T element);
+
+
     /// <summary>
     /// Replaces the element with key K, if it exists in the store, ignoring the
     /// existing element.
@@ -123,19 +137,6 @@ namespace GoodNight.Service.Storage.Interface
     /// </returns>
     U? Update<U>(string key, Func<T, (T, U)?> update)
       where U : class;
-
-
-    /// <summary>
-    /// Adds or replaces this element. If its key does not yet exist, it is
-    /// added, otherwise the existing element is replaced with this.
-    /// </summary>
-    /// <param name="element">
-    /// The element to be stored.
-    /// </param>
-    /// <returns>
-    /// The reference to the saved element.
-    /// </returns>
-    IReference<T> Save(T element);
 
 
     /// <summary>
