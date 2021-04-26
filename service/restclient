@@ -46,7 +46,7 @@ GET http://localhost:32016/api/v1/write/stories
 #
 
 
-GET http://localhost:32016/api/v1/write/stories/hels-schlucht/scenes
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
 
 
 #

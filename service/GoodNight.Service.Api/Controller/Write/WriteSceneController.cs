@@ -23,17 +23,6 @@ namespace GoodNight.Service.Api.Controller.Write
     }
 
 
-    [HttpGet]
-    public ActionResult<IEnumerable<Scene>> GetAll(string storyUrlname)
-    {
-      var scenes = stories.FirstOrDefault(s => s.Urlname == storyUrlname)
-        ?.Scenes;
-      return scenes is not null
-        ? Ok(scenes)
-        : NotFound();
-    }
-
-
     [HttpGet("{sceneUrlname}")]
     public ActionResult<IEnumerable<Scene>> Get(string storyUrlname,
       string sceneUrlname)
