@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Parse;
 using GoodNight.Service.Domain.Util;
@@ -12,30 +14,37 @@ namespace GoodNight.Service.Domain.Model.Write
   /// that specify the text, options, requirements and conditions of this
   /// Scene.
   /// </summary>
-  public record Content
+  public abstract record Content
   {
     public record Text(
       string Value)
-      : Content {}
+      : Content;
 
+    /// <summary>
+    /// Requirements pose expressions that must hold true for an option to be
+    /// available.
+    /// Consequently, they may only occur inside an Option.
+    /// </summary>
     public record Require(
       Expression<string> Expression)
       : Content {}
 
     public record Option(
       string Scene,
-      IImmutableList<Content> Content)
-      : Content {}
+      IImmutableList<Content> Contents)
+      : Content
+    {
+    }
 
     public record Condition(
       Expression<string> If,
       IImmutableList<Content> Then,
       IImmutableList<Content> Else)
-      : Content {}
+      : Content;
 
     public record Include(
       string Scene)
-      : Content {}
+      : Content;
   }
 
 
@@ -54,7 +63,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Return,
     string? Continue,
 
-    IImmutableList<Content> Content)
+    IImmutableList<Content> Contents)
     : IStorable
   {
     public string Urlname
@@ -91,7 +100,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public Scene AddContent(Content newContent)
     {
-      return this with { Content = Content.Add(newContent) };
+      return this with { Contents = Contents.Add(newContent) };
     }
   }
 }

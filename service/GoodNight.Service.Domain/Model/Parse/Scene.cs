@@ -1,8 +1,6 @@
-using System.Linq;
 using System;
+using System.Linq;
 using System.Collections.Immutable;
-using WriteScene = GoodNight.Service.Domain.Model.Write.Scene;
-using WriteContent = GoodNight.Service.Domain.Model.Write.Content;
 using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Parse
@@ -20,7 +18,7 @@ namespace GoodNight.Service.Domain.Model.Parse
       }
     }
 
-    private WriteScene AddProps(WriteScene model, Content content)
+    private Write.Scene AddProps(Write.Scene model, Content content)
     {
       // todo: warn on possibly overriding content?
       switch (content)
@@ -49,50 +47,50 @@ namespace GoodNight.Service.Domain.Model.Parse
       }
     }
 
-    private IImmutableList<WriteContent> TransformContent(
+    private IImmutableList<Write.Content> TransformContent(
       IEnumerable<Content> content) =>
-      content.Aggregate<Content, IImmutableList<WriteContent>>(
-        ImmutableList<WriteContent>.Empty, AddContent);
+      content.Aggregate<Content, IImmutableList<Write.Content>>(
+        ImmutableList<Write.Content>.Empty, AddContent);
 
-    private IImmutableList<WriteContent> AddContent(
-      IImmutableList<WriteContent> modelContent, Content content)
+    private IImmutableList<Write.Content> AddContent(
+      IImmutableList<Write.Content> modelContent, Content content)
     {
       switch (content)
       {
         case Content.Text text:
           if (modelContent.Any() &&
-            modelContent.Last() is WriteContent.Text lastText)
+            modelContent.Last() is Write.Content.Text lastText)
           {
             return
               ImmutableList.CreateRange(
                 modelContent
                 .Take(modelContent.Count - 1)
-                .Append(new WriteContent.Text(
+                .Append(new Write.Content.Text(
                     lastText.Value + "\n" + text.Value)));
           }
           else {
             return modelContent.Add(
-              new WriteContent.Text(text.Value));
+              new Write.Content.Text(text.Value));
           }
 
         case Content.Require require:
           return modelContent.Add(
-            new WriteContent.Require(require.Expression));
+            new Write.Content.Require(require.Expression));
 
         case Content.Option option:
           return modelContent.Add(
-            new WriteContent.Option(option.Scene,
+            new Write.Content.Option(option.Scene,
               TransformContent(option.Content)));
 
         case Content.Condition cond:
-          return modelContent.Add(new WriteContent.Condition(
+          return modelContent.Add(new Write.Content.Condition(
               cond.If,
               TransformContent(cond.Then),
               TransformContent(cond.Else)));
 
         case Content.Include include:
           return modelContent.Add(
-            new WriteContent.Include(include.Scene));
+            new Write.Content.Include(include.Scene));
 
         default:
           // todo: warn about possibly unused content?
@@ -105,11 +103,16 @@ namespace GoodNight.Service.Domain.Model.Parse
       return this with { Content = Content.Add(newContent) };
     }
 
-    public WriteScene ToModel()
+    public Write.Scene ToWriteModel()
     {
-      var model = WriteScene.Empty with { Raw = Raw };
-      var writeContent = Content.Aggregate(model.Content, AddContent);
-      return Content.Aggregate(model with { Content = writeContent }, AddProps);
+      var model = Write.Scene.Empty with { Raw = Raw };
+      var contents = Content.Aggregate(model.Contents, AddContent);
+      return Content.Aggregate(model with { Contents = contents }, AddProps);
+    }
+
+    public Read.Scene ToReadModel()
+    {
+      throw new NotImplementedException();
     }
   }
 }

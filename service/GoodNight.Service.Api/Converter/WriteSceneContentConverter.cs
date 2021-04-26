@@ -97,7 +97,7 @@ namespace GoodNight.Service.Api.Converter
           writer.WriteString("type", "option");
           writer.WriteString("scene", o.Scene);
           writer.WritePropertyName("content");
-          JsonSerializer.Serialize(writer, o.Content, options);
+          JsonSerializer.Serialize(writer, o.Contents, options);
           break;
 
         case Content.Condition c:

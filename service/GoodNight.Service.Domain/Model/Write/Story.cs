@@ -24,6 +24,8 @@ namespace GoodNight.Service.Domain.Model.Write
 
   public record Story(
     string Name,
+    // string Icon,
+    // string Description,
     IImmutableSet<IReference<Scene>> Scenes,
     IImmutableSet<IReference<Quality>> Qualities)
     : IStorable
@@ -132,14 +134,6 @@ namespace GoodNight.Service.Domain.Model.Write
       IReference<Quality> quality)
     {
       return (this with {Qualities = Qualities.Add(quality)}, quality);
-    }
-
-
-    public ReadStory ToReadStory()
-    {
-      var readStory = ReadStory.Create(Name);
-
-      return readStory;
     }
   }
 }

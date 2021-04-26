@@ -55,6 +55,7 @@ namespace GoodNight.Service.Domain.Model.Write
       IImmutableList<string> Category,
       string? Scene,
       string Description,
+
       int? Minimum,
       int? Maximum)
       : Quality(Name, Story, Type.Int, Raw, Hidden, Tags, Category, Scene,
@@ -69,6 +70,7 @@ namespace GoodNight.Service.Domain.Model.Write
       IImmutableList<string> Category,
       string? Scene,
       string Description,
+
       IImmutableDictionary<int, string> Levels)
       : Quality(Name, Story, Type.Enum, Raw, Hidden, Tags, Category, Scene,
         Description) {}
