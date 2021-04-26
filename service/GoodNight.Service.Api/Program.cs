@@ -28,7 +28,7 @@ namespace GoodNight.Service.Api
 
       var proc = System.Diagnostics.Process.GetCurrentProcess();
       proc.Refresh();
-      var usage = Math.Truncate(proc.WorkingSet64 / 1048576.0);
+      var usage = Math.Round(proc.WorkingSet64 / 1048576.0);
 
       Console.WriteLine("Finished loading stores.");
       Console.WriteLine($"Memory usage: {usage}m");
