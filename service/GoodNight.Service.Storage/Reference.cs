@@ -23,7 +23,7 @@ namespace GoodNight.Service.Storage
 
     public string GetTag()
     {
-      return Repository.UniqueName;
+      return Repository.TypeName;
     }
   }
 }

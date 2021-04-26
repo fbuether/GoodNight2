@@ -27,7 +27,7 @@ namespace GoodNight.Service.Storage.Journal
       var writer = new Utf8JsonWriter(stream);
 
       writer.WriteStartObject();
-      writer.WriteString("repos", repos.UniqueName);
+      writer.WriteString("repos", repos.TypeName);
 
       switch (entry)
       {

@@ -15,8 +15,8 @@ namespace GoodNight.Service.Storage
 
     private bool writeUpdates = true;
 
-    internal Repository(JournalWriter writer, string uniqueName)
-      : base(uniqueName)
+    internal Repository(JournalWriter writer, string typeName)
+      : base(typeName)
     {
       this.writer = writer;
     }
@@ -54,7 +54,7 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Add(UniqueName, element));
+        writer.QueueWrite(this, new Entry.Add(TypeName, element));
       }
 
       return new Reference<T>(this, key);
@@ -96,7 +96,7 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(UniqueName, key, newElement));
+        writer.QueueWrite(this, new Entry.Update(TypeName, key, newElement));
       }
 
       return new Reference<T>(this, key);
@@ -114,7 +114,7 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(UniqueName, key, element));
+        writer.QueueWrite(this, new Entry.Update(TypeName, key, element));
       }
 
       return new Reference<T>(this, key);
@@ -135,7 +135,7 @@ namespace GoodNight.Service.Storage
       dict[key] = result.Value.Item1;
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(UniqueName,
+        writer.QueueWrite(this, new Entry.Update(TypeName,
             key, result.Value.Item1));
       }
 
@@ -147,7 +147,7 @@ namespace GoodNight.Service.Storage
       var contains = dict.Remove(key);
       if (contains && writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Delete(UniqueName, key));
+        writer.QueueWrite(this, new Entry.Delete(TypeName, key));
       }
 
       return contains;

@@ -77,7 +77,7 @@ namespace GoodNight.Service.Storage.Journal
       ReadPropertyName(ref reader, "repos");
       var reposName = ReadStringProperty(ref reader);
 
-      var repos = store.Get(reposName);
+      var repos = store.GetRepository(reposName);
       if (repos is null)
         throw new JsonException($"Got Entry for repos \"{reposName}\", but repos does not exist.");
 

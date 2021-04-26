@@ -5,11 +5,11 @@ namespace GoodNight.Service.Storage
 {
   internal abstract class BaseRepository
   {
-    internal string UniqueName { init; get; }
+    internal string TypeName { init; get; }
 
-    public BaseRepository(string uniqueName)
+    public BaseRepository(string typeName)
     {
-      UniqueName = uniqueName;
+      TypeName = typeName;
     }
 
     internal abstract Type ValueType { get; }
