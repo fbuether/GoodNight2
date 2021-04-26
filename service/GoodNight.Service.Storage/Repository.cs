@@ -68,7 +68,7 @@ namespace GoodNight.Service.Storage
     }
 
 
-    public IReference<T>? GetReference(string key)
+    public IReference<T> GetReference(string key)
     {
       return new Reference<T>(this, key);
     }

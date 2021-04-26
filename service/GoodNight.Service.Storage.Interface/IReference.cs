@@ -14,7 +14,7 @@ namespace GoodNight.Service.Storage.Interface
   /// The type of the element to store.
   /// </typeparam>
   /// <remarks>
-  /// This is a rather thin object, and contains only pointers to its key,
+  /// This is a rather thin object, and contains only its key,
   /// the backing repository, and possibly the object it points to.
   /// </remarks>
   public interface IReference<T>

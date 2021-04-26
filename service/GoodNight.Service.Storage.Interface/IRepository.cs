@@ -64,7 +64,7 @@ namespace GoodNight.Service.Storage.Interface
     /// A reference to the element with the given key, or `null` if the element
     /// does not exist.
     /// </returns>
-    IReference<T>? GetReference(string key);
+    IReference<T> GetReference(string key);
 
     /// <summary>
     /// Replaces the element with key K, if it exists in the store, ignoring the
