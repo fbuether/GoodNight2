@@ -17,6 +17,8 @@ namespace GoodNight.Service.Domain.Util
 
     public abstract Result<T, TError> Bind<T>(
       Func<TResult, Result<T, TError>> transformer);
+
+    public abstract Result<TResult, TError> Do(Action<TResult> action);
   }
 
   public static class Result
@@ -28,6 +30,12 @@ namespace GoodNight.Service.Domain.Util
         Func<TResult, Result<T, TError>> transformer)
       {
         return transformer(Result);
+      }
+
+      public override Result<TResult, TError> Do(Action<TResult> action)
+      {
+        action(Result);
+        return this;
       }
 
       public override Result<TResult, TError> Filter(
@@ -62,6 +70,11 @@ namespace GoodNight.Service.Domain.Util
         Func<TResult, Result<T, TError>> transformer)
       {
         return new Result.Failure<T, TError>(Error);
+      }
+
+      public override Result<TResult, TError> Do(Action<TResult> action)
+      {
+        return this;
       }
 
       public override Result<TResult, TError> Filter(
