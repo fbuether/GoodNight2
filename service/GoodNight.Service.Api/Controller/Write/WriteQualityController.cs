@@ -6,7 +6,7 @@ using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GoodNight.Service.Api.Write
+namespace GoodNight.Service.Api.Controller.Write
 {
   [ApiController]
   [Route("api/v1/write/stories/{storyUrlname}/qualities")]

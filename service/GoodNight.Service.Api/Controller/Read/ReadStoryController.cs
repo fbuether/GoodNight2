@@ -8,7 +8,7 @@ using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain;
 using GoodNight.Service.Storage.Interface;
 
-namespace GoodNight.Service.Api.Read
+namespace GoodNight.Service.Api.Controller.Read
 {
   [ApiController]
   [Route("api/v1/read/stories/{storyUrlname}/")]

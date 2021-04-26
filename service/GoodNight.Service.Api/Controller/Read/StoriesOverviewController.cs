@@ -4,7 +4,7 @@ using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 using Microsoft.AspNetCore.Mvc;
 
-namespace GoodNight.Service.Api.Read
+namespace GoodNight.Service.Api.Controller.Read
 {
   [ApiController]
   [Route("api/v1/read/stories")]

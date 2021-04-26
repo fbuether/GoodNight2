@@ -7,7 +7,7 @@ using GoodNight.Service.Api.Storage;
 using System.Collections.Generic;
 using GoodNight.Service.Domain;
 
-namespace GoodNight.Service.Api.Write
+namespace GoodNight.Service.Api.Controller.Write
 {
   [ApiController]
   [Route("api/v1/write/stories")]
