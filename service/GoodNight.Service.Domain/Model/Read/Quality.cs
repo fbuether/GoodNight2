@@ -14,7 +14,7 @@ namespace GoodNight.Service.Domain.Model.Read
     string Story, // the urlname of the story.
     string? Icon,
     string Description,
-    bool IsVisible,
+    bool Hidden,
     IReference<Scene>? Scene)
     : IStorable
   {
@@ -23,9 +23,9 @@ namespace GoodNight.Service.Domain.Model.Read
       string Story,
       string? Icon,
       string Description,
-      bool IsVisible,
+      bool Hidden,
       IReference<Scene>? Scene)
-      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, Hidden, Scene)
     {
       public override Type Type { get; } = Type.Bool;
 
@@ -43,11 +43,11 @@ namespace GoodNight.Service.Domain.Model.Read
       string Story,
       string? Icon,
       string Description,
-      bool IsVisible,
+      bool Hidden,
       IReference<Scene>? Scene,
       int? Minimum,
       int? Maximum)
-      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, Hidden, Scene)
     {
       public override Type Type { get; } = Type.Int;
 
@@ -68,10 +68,10 @@ namespace GoodNight.Service.Domain.Model.Read
       string Story,
       string? Icon,
       string Description,
-      bool IsVisible,
+      bool Hidden,
       IReference<Scene>? Scene,
       IImmutableDictionary<int, string> Values)
-      : Quality(Name, Story, Icon, Description, IsVisible, Scene)
+      : Quality(Name, Story, Icon, Description, Hidden, Scene)
     {
       public override Type Type { get; } = Type.Enum;
 
