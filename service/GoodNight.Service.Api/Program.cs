@@ -34,7 +34,13 @@ namespace GoodNight.Service.Api
       // Start reading the stored journal.
       store.StartJournal();
 
-      Console.WriteLine("Finished loading stores. Starting host...");
+      var proc = System.Diagnostics.Process.GetCurrentProcess();
+      proc.Refresh();
+      var usage = Math.Truncate(proc.WorkingSet64 / 1048576.0);
+
+      Console.WriteLine("Finished loading stores.");
+      Console.WriteLine($"Memory usage: {usage}m");
+      Console.WriteLine("Starting host...");
       host.Run();
     }
   }
