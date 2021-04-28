@@ -24,13 +24,7 @@ namespace GoodNight.Service.Domain.Model.Write
     IImmutableSet<IReference<Quality>> Qualities)
     : IStorable<Story>
   {
-    public string Urlname
-    {
-      get
-      {
-        return NameConverter.OfString(Name);
-      }
-    }
+    public string Urlname => NameConverter.OfString(Name);
 
     public string Key => Urlname;
 

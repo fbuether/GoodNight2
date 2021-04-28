@@ -24,13 +24,7 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public string Key => Urlname;
 
-    public string Urlname
-    {
-      get
-      {
-        return NameConverter.OfString(Name);
-      }
-    }
+    public string Urlname => NameConverter.OfString(Name);
 
     public static Story Create(string name, string description = "") =>
       new Story(name, null, description, false,

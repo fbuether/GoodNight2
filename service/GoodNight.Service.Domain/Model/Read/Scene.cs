@@ -188,13 +188,7 @@ namespace GoodNight.Service.Domain.Model.Read
     IImmutableList<Content> Contents)
     : IStorable<Scene>
   {
-    public string Urlname
-    {
-      get
-      {
-        return NameConverter.OfString(Name);
-      }
-    }
+    public string Urlname => NameConverter.OfString(Name);
 
     public string Key => NameConverter.Concat(Story, Urlname);
 

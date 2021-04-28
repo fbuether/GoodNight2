@@ -83,13 +83,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public virtual Type Type { get; }
 
-    public string Urlname
-    {
-      get
-      {
-        return NameConverter.OfString(Name);
-      }
-    }
+    public string Urlname => NameConverter.OfString(Name);
 
     public string Key => NameConverter.Concat(Story, Urlname);
 
