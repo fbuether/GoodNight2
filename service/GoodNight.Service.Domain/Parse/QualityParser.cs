@@ -2,187 +2,154 @@ using System.Linq;
 using System;
 using Pidgin;
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model;
-using GoodNight.Service.Domain.Model.Write;
+using GoodNight.Service.Domain.Model.Parse;
+using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Parse
 {
-  using QualityMapper = Func<Quality, Quality>;
-  using QualityFuncParser = Parser<char, Func<Quality, Quality>>;
+  // using QualityMapper = Func<Quality, Quality>;
+  // using QualityParser = Parser<char, IEnumerable>;
+  using ContentParser = Parser<char, Quality.Content>;
+  using ContentListParser = Parser<char, IEnumerable<Quality.Content>>;
+
 
   public static class QualityParser
   {
-    private readonly static Parser<char, string> remainingLine =
-      Parser.AnyCharExcept("\r\n").ManyString();
-
-
-    private readonly static QualityFuncParser nameContent =
+    private readonly static ContentParser nameContent =
       Parser.Try(Parser.String("name"))
       .Then(NameParser.Colon)
       .Then(NameParser.QualityName)
-      .Map<QualityMapper>(name => 
-        quality => quality with { Name = name });
+      .Map<Quality.Content>(name => new Quality.Content.Name(name.Trim()));
 
-    private readonly static QualityFuncParser typeContent =
+    private readonly static ContentListParser tagsContent =
+      Parser.String("tag")
+      .Then(Parser.Char('s').Optional())
+      .Then(NameParser.Colon)
+      .Then(NameParser.TagName.Separated(Parser.Char(',')))
+      .Map<IEnumerable<Quality.Content>>(tags =>
+        tags.Select(t =>
+          new Quality.Content.Tag(t.Trim())));
+
+    private readonly static ContentParser categoryContent =
+      Parser.Try(Parser.String("cat")
+        .Then(Parser.String("egory").Optional()))
+      .Then(NameParser.Colon)
+      .Then(NameParser.CategoryName.Separated(Parser.Char('/')))
+      .Map<Quality.Content>(cs => new Quality.Content.Category(
+          ImmutableArray.CreateRange(cs)));
+
+    private readonly static ContentParser typeContent =
       Parser.Try(Parser.String("type"))
       .Then(NameParser.Colon)
       .Then(Parser.OneOf(
         Parser.CIString("bool")
         .Then(Parser.Try(Parser.CIString("ean")).Optional())
-        .WithResult<QualityMapper>(quality =>
-          new Quality.Bool(quality.Name, "",
-            quality.Raw,
-            quality.Hidden,
-            ImmutableList<string>.Empty,
-            ImmutableList<string>.Empty,
-            quality.Scene,
-            quality.Description)),
+        .WithResult<Quality.Content>(new Quality.Content.Type(
+            Model.Expressions.Type.Bool)),
 
         Parser.CIString("int")
         .Then(Parser.Try(Parser.CIString("eger")).Optional())
-        .WithResult<QualityMapper>(quality =>
-          new Quality.Int(quality.Name, "",
-            quality.Raw,
-            quality.Hidden,
-            ImmutableList<string>.Empty,
-            ImmutableList<string>.Empty,
-            quality.Scene,
-            quality.Description,
-            null,
-            null)),
+        .WithResult<Quality.Content>(new Quality.Content.Type(
+            Model.Expressions.Type.Int)),
 
         Parser.CIString("enum")
-        .WithResult<QualityMapper>(quality =>
-          new Quality.Enum(quality.Name, "",
-            quality.Raw,
-            quality.Hidden,
-            ImmutableList<string>.Empty,
-            ImmutableList<string>.Empty,
-            quality.Scene,
-            quality.Description,
-            ImmutableDictionary<int, string>.Empty))));
+        .WithResult<Quality.Content>(new Quality.Content.Type(
+            Model.Expressions.Type.Enum))));
 
 
-    private readonly static QualityFuncParser hiddenContent =
+    private readonly static ContentParser hiddenContent =
       Parser.Try(Parser.String("hidden"))
-      .Map<QualityMapper>(name => 
-        quality => quality with { Hidden = true });
+      .WithResult<Quality.Content>(new Quality.Content.Hidden());
 
 
-    private readonly static QualityFuncParser levelContent =
+    private readonly static ContentParser levelContent =
       Parser.Try(Parser.String("level"))
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.DecimalNum)
       .Before(NameParser.Colon)
-      .Then<string, QualityMapper>(NameParser.RemainingLine,
-        (int num, string text) =>
-        quality => {
-          switch (quality)
-          {
-            case Quality.Enum e:
-              return e with { Levels = e.Levels.Add(num, text.Trim()) };
-            default:
-              return quality;
-          }
-        });
+      .Then<string, Quality.Content>(NameParser.RemainingLine,
+        (int num, string text) => new Quality.Content.Level(num, text));
 
-    private readonly static QualityFuncParser sceneContent =
+    private readonly static ContentParser sceneContent =
       Parser.Try(Parser.String("scene"))
       .Then(NameParser.Colon)
       .Then(NameParser.SceneName)
-      .Map<QualityMapper>(name => 
-        quality => quality with { Scene = name });
+      .Map<Quality.Content>(name => new Quality.Content.Scene(name));
 
 
-    private readonly static QualityFuncParser minContent =
+    private readonly static ContentParser minContent =
       Parser.Try(Parser.String("min")
         .Then(Parser.String("imum").Optional()))
       .Before(NameParser.Colon)
       .Then(Parser.DecimalNum)
-      .Map<QualityMapper>(num => quality => {
-          switch (quality)
-          {
-            case Quality.Int e:
-              return e with { Minimum = num };
-            default:
-              return quality;
-          }
-        });
+      .Map<Quality.Content>(num => new Quality.Content.Minimum(num));
 
-    private readonly static QualityFuncParser maxContent =
+    private readonly static ContentParser maxContent =
       Parser.Try(Parser.String("max")
         .Then(Parser.String("imum").Optional()))
       .Before(NameParser.Colon)
       .Then(Parser.DecimalNum)
-      .Map<QualityMapper>(num => quality => {
-          switch (quality)
-          {
-            case Quality.Int e:
-              return e with { Maximum = num };
-            default:
-              return quality;
-          }
-        });
+      .Map<Quality.Content>(num => new Quality.Content.Maximum(num));
 
 
-    private readonly static QualityFuncParser settingContent =
+    private static ContentListParser ToList<T>(Parser<char, T> parser)
+      where T : Quality.Content =>
+      parser.Map<IEnumerable<Quality.Content>>(content => new[] { content });
+
+    private readonly static ContentListParser settingContent =
       Parser.Char('$')
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.OneOf(
-          nameContent,
-          typeContent,
-          hiddenContent,
-          levelContent,
-          sceneContent,
-          minContent,
-          maxContent
+          ToList(nameContent),
+          tagsContent,
+          ToList(categoryContent),
+          ToList(typeContent),
+          ToList(hiddenContent),
+          ToList(levelContent),
+          ToList(sceneContent),
+          ToList(minContent),
+          ToList(maxContent)
           ))
-      .Before(NameParser.InlineWhitespace)
-      .Select<QualityMapper>(c => c);
+      .Before(NameParser.InlineWhitespace);
+      // .Select<IEnumerable<Quality.Content>>(c => c);
 
-    private readonly static QualityFuncParser textContent =
-      Parser.AnyCharExcept("$\r\n")
-      .Then(remainingLine, (lead, tail) => lead + tail)
-      .Map<QualityMapper>(text =>
-        quality => quality with {
-          Description = quality.Description + "\n" + text });
+    private readonly static ContentParser textContent =
+      Parser.AnyCharExcept("$\r\n") // not EOL or setting starting with $
+      .Then(NameParser.RemainingLine, (lead, tail) => lead + tail)
+      .Map<Quality.Content>(text => new Quality.Content.Text(text));
 
-    private readonly static QualityFuncParser emptyLine =
+    private readonly static ContentParser emptyLine =
       Parser.Lookahead(Parser.EndOfLine)
-      .WithResult<QualityMapper>(
-        quality => quality with {
-          Description = quality.Description + "\n" });
+      .WithResult<Quality.Content>(new Quality.Content.Text(""));
 
-    private readonly static QualityFuncParser parseLine =
+
+    private static ContentListParser parseLine(ContentListParser parseLines) =>
       Parser.Try(settingContent)
-      .Or(Parser.Try(textContent))
-      .Or(emptyLine);
+      .Or(Parser.Try(ToList(textContent)))
+      .Or(ToList(emptyLine));
 
-    private readonly static Parser<char, Quality> parseLines =
-      Parser.Try(parseLine
-        // .Trace(f => $"--debut \"{f}\"  parsed a line!")
-      )
+
+    private static ContentListParser parseLines(ContentListParser self) =>
+      Parser.Try(parseLine(self))
       .SeparatedAndOptionallyTerminated(Parser.EndOfLine)
-      .Map(builders => builders.Aggregate(
-          new Quality.Bool("", "", "", false,
-            ImmutableList<string>.Empty,
-            ImmutableList<string>.Empty, null, "") as Quality,
-          (a, f) => f(a)));
+      // flatten due to double wraping of settings
+      .Map<IEnumerable<Quality.Content>>(c => c.SelectMany(c => c).ToArray());
+
+
+    private readonly static ContentListParser parseLinesRec =
+      Parser.Rec<char, IEnumerable<Quality.Content>>(parseLines);
 
 
 
     public static ParseResult<Quality> Parse(string content)
     {
-      var res = parseLines
+      var res = parseLinesRec
         .Before(Parser<char>.End)
         .Parse(content);
 
       return res.Success
-        ? new ParseResult.Success<Quality>(res.Value with
-          {
-            Raw = content,
-            Description = res.Value.Description.Trim()
-          })
+        ? new ParseResult.Success<Quality>(
+          new Quality(ImmutableList.CreateRange(res.Value)))
         : ParseResult.Failure<Quality>.OfError(res.Error);
     }
   }
