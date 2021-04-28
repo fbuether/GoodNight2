@@ -19,6 +19,9 @@ namespace GoodNight.Service.Domain.Util
       Func<TResult, Result<T, TError>> transformer);
 
     public abstract Result<TResult, TError> Do(Action<TResult> action);
+
+    public abstract Result<(TResult, TResult2), TError> And<TResult2>(
+      Result<TResult2, TError> other);
   }
 
   public static class Result
@@ -26,6 +29,12 @@ namespace GoodNight.Service.Domain.Util
     public sealed record Success<TResult, TError>(TResult Result)
       : Result<TResult, TError>
     {
+      public override Result<(TResult, TResult2), TError> And<TResult2>(
+        Result<TResult2, TError> other)
+      {
+        return other.Map(otherResult => (Result,otherResult));
+      }
+
       public override Result<T, TError> Bind<T>(
         Func<TResult, Result<T, TError>> transformer)
       {
@@ -66,6 +75,12 @@ namespace GoodNight.Service.Domain.Util
     public sealed record Failure<TResult, TError>(TError Error)
       : Result<TResult, TError>
     {
+      public override Result<(TResult, TResult2), TError> And<TResult2>(
+        Result<TResult2, TError> other)
+      {
+        return new Result.Failure<(TResult, TResult2), TError>(Error);
+      }
+
       public override Result<T, TError> Bind<T>(
         Func<TResult, Result<T, TError>> transformer)
       {
