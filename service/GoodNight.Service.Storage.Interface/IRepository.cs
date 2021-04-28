@@ -16,7 +16,7 @@ namespace GoodNight.Service.Storage.Interface
   /// The type of the elements to store.
   /// </typeparam>
   public interface IRepository<T> : IReadOnlyCollection<T>
-    where T : class, IStorable
+    where T : class, IStorable<T>
   {
     /// <summary>
     /// Add a new element to the store.

@@ -18,7 +18,7 @@ namespace GoodNight.Service.Storage.Interface
   /// the backing repository, and possibly the object it points to.
   /// </remarks>
   public interface IReference<T>
-    where T : IStorable
+    where T : class, IStorable<T>
   {
     /// <summary>
     /// Returns the key of this reference.

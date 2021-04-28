@@ -35,6 +35,6 @@ namespace GoodNight.Service.Storage.Interface
     /// backing store and containing data as present on the stream.
     /// </returns>
     IRepository<T> Create<T>()
-      where T : class, IStorable;
+      where T : class, IStorable<T>;
   }
 }
