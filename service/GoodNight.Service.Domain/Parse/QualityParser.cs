@@ -21,6 +21,12 @@ namespace GoodNight.Service.Domain.Parse
       .Then(NameParser.QualityName)
       .Map<Quality.Content>(name => new Quality.Content.Name(name.Trim()));
 
+    private readonly static ContentParser iconContent =
+      Parser.Try(Parser.String("icon"))
+      .Then(NameParser.Colon)
+      .Then(NameParser.IconName)
+      .Map<Quality.Content>(name => new Quality.Content.Name(name.Trim()));
+
     private readonly static ContentListParser tagsContent =
       Parser.String("tag")
       .Then(Parser.Char('s').Optional())
@@ -101,6 +107,7 @@ namespace GoodNight.Service.Domain.Parse
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.OneOf(
           ToList(nameContent),
+          ToList(iconContent),
           tagsContent,
           ToList(categoryContent),
           ToList(typeContent),

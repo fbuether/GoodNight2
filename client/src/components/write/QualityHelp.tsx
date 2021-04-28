@@ -26,6 +26,12 @@ export default function QualityHelp() {
         </ul>
       </dd>
 
+      <dt>$icon: <em>icon</em></dt>
+      <dd>
+        Legt ein Icon für diese Qualität fest. Es steht eine feste Auswahl
+        von Icons zur Verfügung.
+      </dd>
+
       <dt>$hidden</dt>
       <dd>
         Die Qualität wird nie angezeigt, auch wenn der Spieler sie besitzt.

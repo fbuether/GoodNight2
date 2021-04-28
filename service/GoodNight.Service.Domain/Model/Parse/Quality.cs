@@ -17,6 +17,11 @@ namespace GoodNight.Service.Domain.Model.Parse
         string Value)
         : Content;
 
+      // The icon for this quality as the filename name of the icon.
+      public record Icon(
+        string Value)
+        : Content;
+
       // to classify scenes for writing add categories or tags
       // tags are opaque strings
       // several tags may be attached to each scene

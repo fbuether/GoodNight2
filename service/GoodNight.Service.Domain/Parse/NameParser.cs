@@ -59,6 +59,9 @@ namespace GoodNight.Service.Domain.Parse
       .Or(Parser.OneOf("_- !\"%^&*()=+[]{}`;:'@#~|<>.?\t"));
 
 
+    internal readonly static Parser<char, string> IconName =
+      Parser.LetterOrDigit.Or(Parser.OneOf("_- ")).ManyString();
+
     internal readonly static Parser<char, string> SceneName =
       nameCommonLetters.Or(Parser.OneOf(",\\/")).ManyString();
 
