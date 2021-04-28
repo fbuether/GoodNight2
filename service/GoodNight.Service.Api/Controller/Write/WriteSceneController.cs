@@ -45,6 +45,8 @@ namespace GoodNight.Service.Api.Controller.Write
         return NotFound();
 
       return Scene.Parse(content.text)
+        .Filter(s => story.GetScene(s.Urlname) is null,
+          "A scene with this name already exists.")
         .Map(story.AddScene)
         .Do(ss => stories.Save(ss.Item1))
         .Map(ss => ss.Item2)
