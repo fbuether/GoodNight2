@@ -52,7 +52,7 @@ namespace GoodNight.Service.Domain.Test.Model.Parse
     {
       Assert.NotNull(pscene);
 
-      wscene = pscene!.ToModel();
+      wscene = pscene!.ToWriteModel();
       Assert.NotNull(wscene);
     }
 
@@ -116,21 +116,21 @@ namespace GoodNight.Service.Domain.Test.Model.Parse
     [Then(@"the Write.Scene has no content")]
     public void TheWriteSceneHasNoContent()
     {
-      Assert.Empty(wscene!.Content);
+      Assert.Empty(wscene!.Contents);
     }
 
     [Then(@"the Write.Scene has (\d+) content nodes?")]
     public void TheWriteSceneHasNContentNodes(int number)
     {
-      Assert.Equal(number, wscene!.Content.Count);
+      Assert.Equal(number, wscene!.Contents.Count);
     }
 
     [Then(@"content (\d+) of Write.Scene is text")]
     public void ContentNumberOfWriteSceneIsTextString(int number,
       DocString body)
     {
-      Assert.True(wscene!.Content.Count > number);
-      var content = wscene!.Content[number];
+      Assert.True(wscene!.Contents.Count > number);
+      var content = wscene!.Contents[number];
 
       Assert.IsType<WContent.Text>(content);
       var textContent = content as WContent.Text;
