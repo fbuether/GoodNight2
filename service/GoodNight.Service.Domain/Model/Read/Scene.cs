@@ -1,4 +1,5 @@
 
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using GoodNight.Service.Domain.Model.Expressions;
@@ -202,11 +203,9 @@ namespace GoodNight.Service.Domain.Model.Read
     /// This computes the effects that this Scene has onto a specific player,
     /// resulting in the Action that the Player has taken.
     /// </summary>
-    public Action Play(IReference<Scene> thisRef, Player player)
+    public Action Play(Player player)
     {
-      // todo: replace thisRef with this, as soon as storable objects can get
-      // references to themselves.
-      var action = new Action(thisRef, "",
+      var action = new Action(this, "",
         ImmutableList<Property>.Empty,
         ImmutableList<Option>.Empty, null, null);
       return Contents.Aggregate(action,

@@ -23,32 +23,29 @@ namespace GoodNight.Service.Domain.Model
   {
     public string Key => Guid;
 
-    public (User, Consequence)? ContinueAdventure(
-      IRepository<Adventure> adventureRepos, IRepository<Log> logRepos,
-      Story story, string optionname)
+    public (User, Consequence)? ContinueAdventure(Story story,
+      string optionname)
     {
-      var adventureRef = this.Adventures
-        .First(a => a.Get()?.Story.Key == story.Key);
-      var adventure = adventureRef?.Get();
-      if (adventure is null || adventureRef is null)
+      var adventure = this.Adventures
+        .First(a => a.Get()?.Story.Key == story.Key)?
+        .Get();
+      if (adventure is null)
         return null;
 
-      var (newAdventure, consequence) = adventure.ContinueWith(logRepos,
-        optionname);
+      var (newAdventure, consequence) = adventure.ContinueWith(optionname);
       if (newAdventure is null || consequence is null)
         return null;
 
-      var newAdventureRef = adventureRepos.Add(newAdventure);
-      if (newAdventureRef is null)
-        return null;
+      return (AddAdventure(newAdventure), consequence);
+    }
 
-      var newSelf = this with {
-        Adventures = this.Adventures
-          .Remove(adventureRef)
-          .Add(newAdventureRef)
-      };
+    public User AddAdventure(Adventure adventure)
+    {
+      var filteredAdventures = ImmutableHashSet.CreateRange(
+        this.Adventures
+        .Where(a => a.Key != adventure.Key));
 
-      return (newSelf, consequence);
+      return this with {Adventures = filteredAdventures.Add(adventure)};
     }
   }
 }

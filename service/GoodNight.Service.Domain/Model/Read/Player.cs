@@ -17,7 +17,12 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Player(
     string Name,
-    IImmutableDictionary<IReference<Quality>, Value> State)
+
+    /// <summary>
+    /// The state of this player. Associates each quality key with a state of
+    /// the type of the quality.
+    /// </summary>
+    IImmutableDictionary<string, Value> State)
   {
     public Player Apply(IImmutableList<Property> effects)
     {
@@ -25,15 +30,26 @@ namespace GoodNight.Service.Domain.Model.Read
         return this;
 
       var newState = effects.Aggregate(State, (state, effect) =>
-        state.SetItem(effect.Quality, effect.Value));
+        state.SetItem(effect.Quality.Key, effect.Value));
 
       return this with { State = newState };
     }
 
-    public Value GetValueOf(IReference<Quality> quality)
+    public Value GetValueOf(IReference<Quality> qualityRef)
     {
-      return State.GetValueOrDefault(quality)
-        ?? quality.Get()?.GetDefault()
+      var quality = qualityRef.Get();
+      if (quality is null)
+        // Best guess: It may be bool.
+        // todo: This is a rather weak fallback.
+        return new Value.Bool(false);
+
+      return GetValueOf(quality);
+    }
+
+    public Value GetValueOf(Quality quality)
+    {
+      return State.GetValueOrDefault(quality.Key)
+        ?? quality.GetDefault()
         ?? throw new InvalidQualityException($"Materialising Scene found " +
           $"invalid Quality {quality.Key}.");
     }

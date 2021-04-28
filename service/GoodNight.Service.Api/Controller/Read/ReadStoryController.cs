@@ -16,14 +16,12 @@ namespace GoodNight.Service.Api.Controller.Read
     private IRepository<Adventure> adventures;
     private IRepository<User> users;
     private IRepository<Story> stories;
-    private IRepository<Log> logs;
 
     public ReadStoryController(IStore store)
     {
       adventures = store.Create<Adventure>();
       users = store.Create<User>();
       stories = store.Create<Story>();
-      logs = store.Create<Log>();
     }
 
 
@@ -43,7 +41,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (story is null)
         return NotFound("Story not found.");
 
-      var advKey = NameConverter.Concat(user.GetKey(), story.GetKey());
+      var advKey = NameConverter.Concat(user.Key, story.Key);
       var adventure = user.Adventures.First(a => a.Key == advKey);
       if (adventure is null)
         return Forbid("User has not started Adventure.");
@@ -72,8 +70,8 @@ namespace GoodNight.Service.Api.Controller.Read
       if (story is null)
         return NotFound("Story not found.");
 
-      var consequence = users.Update(username, (User user) =>
-        user.ContinueAdventure(adventures, logs, story, optionname));
+      var consequence = users.Update(username, user =>
+        user.ContinueAdventure(story, optionname));
 
       if (consequence is null)
         return BadRequest("Option not found or not valid now.");

@@ -32,27 +32,24 @@ namespace GoodNight.Service.Domain.Model.Read
     /// One of the options in Current.Options, or Current.Return or
     /// Current.Continue.
     /// <param>
-    public (Adventure?, Consequence?) ContinueWith(IRepository<Log> logRepos,
-      string optionname)
+    public (Adventure?, Consequence?) ContinueWith(string optionname)
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var (logRef, nextSceneRef) = Current.ContinueWith(logRepos, Player.Name,
-        lastNumber, optionname);
-      var log = logRef?.Get();
-      var nextScene = nextSceneRef?.Get();
-      if (logRef is null || log is null
-        || nextSceneRef is null || nextScene is null)
+      var (log, nextScene) = Current.ContinueWith(Player.Name, lastNumber,
+        optionname);
+      if (log is null || nextScene is null)
         return (null, null);
 
       var playerAfterChoice = Player.Apply(log.Effects);
-      var action = nextScene.Play(nextSceneRef, playerAfterChoice);
+      var action = nextScene.Play(playerAfterChoice);
       var playerAfterScene = playerAfterChoice.Apply(action.Effects);
 
-      var adventure = this with {
-        History = History.Add(logRef),
-        Current = action
-      };
+      var adventure = this with
+        {
+          History = History.Add(log),
+          Current = action
+        };
 
       return (adventure, new Consequence(log, action));
     }

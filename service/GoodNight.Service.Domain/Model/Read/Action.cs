@@ -46,20 +46,19 @@ namespace GoodNight.Service.Domain.Model.Read
     IReference<Scene>? Return,
     IReference<Scene>? Continue)
   {
-    public (IReference<Log>?, IReference<Scene>?) ContinueWith(
-      IRepository<Log> logRepos, string player, uint lastLogNumber,
+    public (Log?, Scene?) ContinueWith(string player, uint lastLogNumber,
       string optionname)
     {
-      Func<Choice,IReference<Log>?> buildLog = (Choice choice) => logRepos.Add(
-        new Log(player, lastLogNumber + 1, Scene, Text, Effects, choice));
+      Func<Choice,Log> buildLog = (Choice choice) =>
+        new Log(player, lastLogNumber + 1, Scene, Text, Effects, choice);
 
       if (optionname == "return" && Return != null)
       {
-        return (buildLog(new Choice.Return()), Return);
+        return (buildLog(new Choice.Return()), Return.Get());
       }
       else if (optionname == "continue" && Continue != null)
       {
-        return (buildLog(new Choice.Continue()), Continue);
+        return (buildLog(new Choice.Continue()), Continue.Get());
       }
 
       var option = Options.First(o => o.Urlname == optionname);
@@ -70,7 +69,7 @@ namespace GoodNight.Service.Domain.Model.Read
               option.Text,
               option.Icon,
               option.Effects)),
-          option.Scene);
+          option.Scene.Get());
       }
 
       return (null, null);
