@@ -28,13 +28,7 @@ namespace GoodNight.Service.Storage.Test
     private record Demo(
       string Key,
       int Value)
-      : IStorable
-    {
-      public string GetKey()
-      {
-        return Key;
-      }
-    }
+      : IStorable<Demo> {}
 
     [Given("a repository for Demo")]
     public void ARepositoryForDemo()
@@ -47,7 +41,7 @@ namespace GoodNight.Service.Storage.Test
       Assert.NotNull(newStore);
       store = newStore;
 
-      repos = store.Create<Demo>("Demo");
+      repos = store.Create<Demo>();
       Assert.NotNull(repos);
 
       newStore.StartJournal();
@@ -69,7 +63,7 @@ namespace GoodNight.Service.Storage.Test
       Assert.NotNull(newStore);
       store = newStore;
 
-      repos = store.Create<Demo>("Demo");
+      repos = store.Create<Demo>();
       Assert.NotNull(repos);
 
       newStore.StartJournal();

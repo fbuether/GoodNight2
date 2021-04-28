@@ -46,16 +46,16 @@ Feature: Store
   Scenario: Reading an Add entry
     Given a store with journal and repository for Demo
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"replayed","Value":7}}
       """
     Then getting key "replayed" returns Demo with value 7
 
   Scenario: Reading several Add entries
     Given a store with journal and repository for Demo
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
-      {"repos":"Demo","kind":"Add","value":{"Key":"else","Value":17}}
-      {"repos":"Demo","kind":"Add","value":{"Key":"or not?","Value":42}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"else","Value":17}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"or not?","Value":42}}
       """
     Then getting key "replayed" returns Demo with value 7
     Then getting key "else" returns Demo with value 17
@@ -65,16 +65,16 @@ Feature: Store
   Scenario: Reading an Add as well as an Update
     Given a store with journal and repository for Demo
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
-      {"repos":"Demo","kind":"Update","key":"replayed","value":{"Key":"replayed","Value":144}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Update","key":"replayed","value":{"Key":"replayed","Value":144}}
       """
     Then getting key "replayed" returns Demo with value 144
 
   Scenario: Reading an Add and a Delete
     Given a store with journal and repository for Demo
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"replayed","Value":7}}
-      {"repos":"Demo","kind":"Delete","key":"replayed"}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"replayed","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Delete","key":"replayed"}
       """
     Then getting key "replayed" returns null
 
@@ -85,7 +85,7 @@ Feature: Store
     Then the journal is not empty
     Then the journal is this
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"dem key","Value":2}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"dem key","Value":2}}
 
       """
 
@@ -95,7 +95,7 @@ Feature: Store
     Then the journal is not empty
     Then the journal is this
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"dem\\\u0022 key","Value":2}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"dem\\\u0022 key","Value":2}}
 
       """
 
@@ -106,8 +106,8 @@ Feature: Store
     Then the journal is not empty
     Then the journal is this
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
-      {"repos":"Demo","kind":"Update","key":"mutating","value":{"Key":"mutating","Value":31}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Update","key":"mutating","value":{"Key":"mutating","Value":31}}
 
       """
 
@@ -118,8 +118,8 @@ Feature: Store
     Then the journal is not empty
     Then the journal is this
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
-      {"repos":"Demo","kind":"Delete","key":"mutating"}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Delete","key":"mutating"}
 
       """
 
@@ -131,8 +131,8 @@ Feature: Store
     Then the journal is not empty
     Then the journal is this
       """
-      {"repos":"Demo","kind":"Add","value":{"Key":"mutating","Value":7}}
-      {"repos":"Demo","kind":"Add","value":{"Key":"more item","Value":71}}
-      {"repos":"Demo","kind":"Add","value":{"Key":"something else?","Value":771}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"mutating","Value":7}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"more item","Value":71}}
+      {"repos":"GoodNight.Service.Storage.Test.RepositoryTest\u002BDemo, GoodNight.Service.Storage.Test, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","kind":"Add","value":{"Key":"something else?","Value":771}}
 
       """
