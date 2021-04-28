@@ -1,8 +1,8 @@
 
 
 export enum QualityType {
-  Int = 1,
-  Bool = 2,
+  Bool = 1,
+  Int = 2,
   Enum = 3
 }
 
