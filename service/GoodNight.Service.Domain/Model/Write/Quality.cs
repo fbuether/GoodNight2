@@ -19,7 +19,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Scene,
 
     string Description)
-    : IStorable
+    : IStorable<Quality>
   {
     public string Urlname
     {
@@ -29,10 +29,7 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
-    public string GetKey()
-    {
-      return NameConverter.Concat(Story, Urlname);
-    }
+    public string Key => NameConverter.Concat(Story, Urlname);
 
     public record Bool(
       string Name,

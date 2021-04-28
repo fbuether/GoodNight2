@@ -64,7 +64,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Continue,
 
     IImmutableList<Content> Contents)
-    : IStorable
+    : IStorable<Scene>
   {
     public string Urlname
     {
@@ -74,10 +74,7 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
-    public string GetKey()
-    {
-      return NameConverter.Concat(Story, Urlname);
-    }
+    public string Key => NameConverter.Concat(Story, Urlname);
 
     public static Scene Empty
     {
@@ -92,6 +89,7 @@ namespace GoodNight.Service.Domain.Model.Write
           ImmutableList<Content>.Empty);
       }
     }
+
 
     public static Result<Scene, string> Parse(string raw)
     {

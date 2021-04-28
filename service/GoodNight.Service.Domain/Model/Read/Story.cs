@@ -19,12 +19,9 @@ namespace GoodNight.Service.Domain.Model.Read
 
     IImmutableSet<IReference<Scene>> Scenes,
     IImmutableSet<IReference<Quality>> Qualities)
-    : IStorable
+    : IStorable<Story>
   {
-    public string GetKey()
-    {
-      return Urlname;
-    }
+    public string Key => Urlname;
 
     public string Urlname
     {

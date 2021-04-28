@@ -38,11 +38,9 @@ namespace GoodNight.Service.Domain.Model.Read
     string Text,
     IImmutableList<Property> Effects,
     Choice Chosen)
-    : IStorable
+    : IStorable<Log>
   {
-    public string GetKey()
-    {
-      return NameConverter.Concat(Player, Scene.Key, Number.ToString());
-    }
+    public string Key => NameConverter.Concat(Player, Scene.Key,
+      Number.ToString());
   }
 }

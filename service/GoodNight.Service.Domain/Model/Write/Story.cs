@@ -28,7 +28,7 @@ namespace GoodNight.Service.Domain.Model.Write
     // string Description,
     IImmutableSet<IReference<Scene>> Scenes,
     IImmutableSet<IReference<Quality>> Qualities)
-    : IStorable
+    : IStorable<Story>
   {
     public string Urlname
     {
@@ -38,10 +38,7 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
-    public string GetKey()
-    {
-      return Urlname;
-    }
+    public string Key => Urlname;
 
     /// <summary>
     /// Create a new story with a given name.

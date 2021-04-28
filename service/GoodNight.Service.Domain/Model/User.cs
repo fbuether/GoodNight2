@@ -19,19 +19,16 @@ namespace GoodNight.Service.Domain.Model
     string EMail,
 
     IImmutableSet<IReference<Adventure>> Adventures)
-    : IStorable
+    : IStorable<User>
   {
-    public string GetKey()
-    {
-      return this.Guid;
-    }
+    public string Key => Guid;
 
     public (User, Consequence)? ContinueAdventure(
       IRepository<Adventure> adventureRepos, IRepository<Log> logRepos,
       Story story, string optionname)
     {
       var adventureRef = this.Adventures
-        .First(a => a.Get()?.Story.Key == story.GetKey());
+        .First(a => a.Get()?.Story.Key == story.Key);
       var adventure = adventureRef?.Get();
       if (adventure is null || adventureRef is null)
         return null;

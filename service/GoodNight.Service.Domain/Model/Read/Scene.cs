@@ -185,7 +185,7 @@ namespace GoodNight.Service.Domain.Model.Read
     // bool ShowAlways,
     // bool ForceShow,
     IImmutableList<Content> Contents)
-    : IStorable
+    : IStorable<Scene>
   {
     public string Urlname
     {
@@ -195,10 +195,7 @@ namespace GoodNight.Service.Domain.Model.Read
       }
     }
 
-    public string GetKey()
-    {
-      return NameConverter.Concat(Story, Urlname);
-    }
+    public string Key => NameConverter.Concat(Story, Urlname);
 
     /// <summary>
     /// Play this scene onto a given Player.

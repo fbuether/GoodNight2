@@ -19,12 +19,9 @@ namespace GoodNight.Service.Domain.Model.Read
     IReference<Story> Story,
     IImmutableList<IReference<Log>> History,
     Action Current)
-    : IStorable
+    : IStorable<Adventure>
   {
-    public string GetKey()
-    {
-      return NameConverter.Concat(User, Story.Key);
-    }
+    public string Key => NameConverter.Concat(User, Story.Key);
 
     /// <summary>
     /// Performs the next step in this Adventure given by the passed Option.

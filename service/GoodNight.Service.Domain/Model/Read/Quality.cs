@@ -16,7 +16,7 @@ namespace GoodNight.Service.Domain.Model.Read
     string Description,
     bool Hidden,
     IReference<Scene>? Scene)
-    : IStorable
+    : IStorable<Quality>
   {
     public record Bool(
       string Name,
@@ -91,10 +91,7 @@ namespace GoodNight.Service.Domain.Model.Read
       }
     }
 
-    public string GetKey()
-    {
-      return NameConverter.Concat(Story, Urlname);
-    }
+    public string Key => NameConverter.Concat(Story, Urlname);
 
     public abstract Value GetDefault();
   }
