@@ -39,5 +39,15 @@ namespace GoodNight.Service.Domain.Model.Read
       var removed = oldScene is null ? Scenes : Scenes.Remove(oldScene);
       return this with {Scenes = removed.Add(newScene)};
     }
+
+    public Story AddQuality(Quality quality)
+    {
+      var newQuality = quality with {Story = Urlname};
+      var oldQuality = Qualities.FirstOrDefault(s => s.Key == newQuality.Key);
+      var removed = oldQuality is null
+        ? Qualities
+        : Qualities.Remove(oldQuality);
+      return this with {Qualities = removed.Add(newQuality)};
+    }
   }
 }
