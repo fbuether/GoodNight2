@@ -8,7 +8,7 @@ namespace GoodNight.Service.Domain.Model.Parse
 
   public record Scene(
     string Raw,
-    IImmutableList<Content> Content)
+    IImmutableList<Content> Contents)
   {
     public static Scene Empty
     {
@@ -100,17 +100,29 @@ namespace GoodNight.Service.Domain.Model.Parse
 
     public Scene AddContent(Content newContent)
     {
-      return this with { Content = Content.Add(newContent) };
+      return this with { Contents = Contents.Add(newContent) };
     }
 
-    public Write.Scene ToWriteModel()
+
+    public bool HasValidName(Predicate<string> isValidName)
+    {
+      var name = this.Contents
+        .OfType<Content.Name>()
+        .Select(c => c.DisplayName)
+        .FirstOrDefault();
+
+      return name is not null && isValidName(name);
+    }
+
+
+    public Write.Scene ToWriteScene()
     {
       var model = Write.Scene.Empty with { Raw = Raw };
-      var contents = Content.Aggregate(model.Contents, AddContent);
-      return Content.Aggregate(model with { Contents = contents }, AddProps);
+      var contents = Contents.Aggregate(model.Contents, AddContent);
+      return Contents.Aggregate(model with { Contents = contents }, AddProps);
     }
 
-    public Read.Scene ToReadModel()
+    public Read.Scene ToReadScene()
     {
       throw new NotImplementedException();
     }

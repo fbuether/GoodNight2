@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
@@ -35,5 +36,14 @@ namespace GoodNight.Service.Domain.Model.Read
       new Story(name, null, description, false,
         ImmutableHashSet<IReference<Scene>>.Empty,
         ImmutableHashSet<IReference<Quality>>.Empty);
+
+
+    public Story AddScene(Scene scene)
+    {
+      var newScene = scene with {Story = Urlname};
+      var oldScene = Scenes.FirstOrDefault(s => s.Key == newScene.Key);
+      var removed = oldScene is null ? Scenes : Scenes.Remove(oldScene);
+      return this with {Scenes = removed.Add(newScene)};
+    }
   }
 }

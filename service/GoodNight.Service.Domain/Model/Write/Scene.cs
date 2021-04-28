@@ -90,12 +90,6 @@ namespace GoodNight.Service.Domain.Model.Write
       }
     }
 
-
-    public static Result<Scene, string> Parse(string raw)
-    {
-      return SceneParser.Parse(raw).ToResult().Map(s => s.ToWriteModel());
-    }
-
     public Scene AddContent(Content newContent)
     {
       return this with { Contents = Contents.Add(newContent) };
