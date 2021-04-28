@@ -6,7 +6,7 @@ using GoodNight.Service.Storage.Interface;
 namespace GoodNight.Service.Storage.Serialisation
 {
   internal class ReferenceConverter<T> : JsonConverter<IReference<T>>
-    where T : class, IStorable
+    where T : class, IStorable<T>
   {
     private record SerialisedReference(string typeName, string key);
 
@@ -44,6 +44,13 @@ namespace GoodNight.Service.Storage.Serialisation
       var typeName = typeof(T).AssemblyQualifiedName;
       if (typeName is null)
         throw new Exception();
+
+      // if this is not a reference, but a live object, add it to the
+      // repository, so it can be saved.
+      if (value is T tValue)
+      {
+        store.GetRepository<T>(typeName).Save(tValue);
+      }
 
       var serialised = new SerialisedReference(typeName, value.Key);
       JsonSerializer.Serialize<SerialisedReference>(

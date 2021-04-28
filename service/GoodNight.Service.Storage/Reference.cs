@@ -4,7 +4,7 @@ using GoodNight.Service.Storage.Interface;
 namespace GoodNight.Service.Storage
 {
   internal class Reference<T> : IReference<T>
-    where T : class, IStorable
+    where T : class, IStorable<T>
   {
     public string Key { get; init; }
 
@@ -24,6 +24,11 @@ namespace GoodNight.Service.Storage
     public string GetTag()
     {
       return Repository.TypeName;
+    }
+
+    public override string ToString()
+    {
+      return $"IReference{{repos: \"{typeof(T).Name}\",key: \"{Key}\"}}";
     }
   }
 }

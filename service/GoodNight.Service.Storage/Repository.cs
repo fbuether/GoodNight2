@@ -7,7 +7,7 @@ using GoodNight.Service.Storage.Journal;
 namespace GoodNight.Service.Storage
 {
   internal class Repository<T> : BaseRepository, IRepository<T>
-    where T : class, IStorable
+    where T : class, IStorable<T>
   {
     private Dictionary<string,T> dict = new Dictionary<string,T>();
 
@@ -46,7 +46,7 @@ namespace GoodNight.Service.Storage
 
     public IReference<T>? Add(T element)
     {
-      var key = element.GetKey();
+      var key = element.Key;
       if (dict.ContainsKey(key))
         return null;
 
@@ -76,7 +76,7 @@ namespace GoodNight.Service.Storage
 
     public IReference<T> Save(T element)
     {
-      var reference = this.Update(element.GetKey(), _ => element);
+      var reference = this.Update(element.Key, _ => element);
       return reference is null
         ? this.Add(element)! // if reference is null, adding will succeed.
         : reference;
@@ -105,7 +105,7 @@ namespace GoodNight.Service.Storage
 
     public IReference<T>? Update(T element)
     {
-      var key = element.GetKey();
+      var key = element.Key;
       var hasElement = dict.ContainsKey(key);
       if (!hasElement)
         return null;

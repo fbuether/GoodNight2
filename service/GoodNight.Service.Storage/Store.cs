@@ -139,7 +139,7 @@ namespace GoodNight.Service.Storage
     }
 
     private Repository<T> CreateRepository<T>(string typeName)
-      where T : class, IStorable
+      where T : class, IStorable<T>
     {
       var existing = repositories.Find(repos => repos.TypeName == typeName);
       if (existing is Repository<T> existingRepos)
@@ -174,7 +174,7 @@ namespace GoodNight.Service.Storage
     }
 
     internal Repository<T> GetRepository<T>(string typeName)
-      where T : class, IStorable
+      where T : class, IStorable<T>
     {
       var repos = GetRepository(typeName) as Repository<T>;
       if (repos is null)
