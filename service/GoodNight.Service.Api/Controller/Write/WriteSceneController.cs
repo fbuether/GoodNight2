@@ -27,8 +27,7 @@ namespace GoodNight.Service.Api.Controller.Write
       string sceneUrlname)
     {
       var scene = stories.FirstOrDefault(s => s.Urlname == storyUrlname)
-        ?.GetScene(sceneUrlname)
-        ?.Get();
+        ?.GetScene(sceneUrlname);
       return scene is not null
         ? Ok(scene)
         : NotFound();
@@ -46,16 +45,15 @@ namespace GoodNight.Service.Api.Controller.Write
         return NotFound();
 
       return Scene.Parse(content.text)
-        .Map(story.SeizeScene)
-        .Map(scenes.Add)
-        .Bind(s => Result.FailOnNull(s, "The scene already exists."))
-        .Map(story.InsertNewScene)
-        .Map(ss => ss.MapFirst(stories.Save).Item2)
+        .Map(story.AddScene)
+        .Do(ss => stories.Save(ss.Item1))
+        .Map(ss => ss.Item2)
         .Map<ActionResult<Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
-            scene.Get()))
+            scene))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
+
 
     [HttpPut("{sceneUrlname}")]
     public ActionResult<Scene> Update(string storyUrlname, string sceneUrlname,
@@ -67,7 +65,7 @@ namespace GoodNight.Service.Api.Controller.Write
 
       return Scene.Parse(content.text)
         .Filter(s => s.Urlname == sceneUrlname, "Scenes may not change name.")
-        .Map(story.SeizeScene)
+        .Map(s => s with {Story = story.Urlname})
         .Map(scenes.Update)
         .Bind(s => Result.FailOnNull(s, "The scene does not exist."))
         .Map<ActionResult<Scene>>(scene => Accepted(

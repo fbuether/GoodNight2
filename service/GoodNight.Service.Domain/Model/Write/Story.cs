@@ -1,13 +1,7 @@
-using System.Linq;
 using System;
+using System.Linq;
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Parse;
-using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Storage.Interface;
-using GoodNight.Service.Domain.Parse;
-using GoodNight.Service.Domain.Util;
-using System.Collections.Generic;
-using ReadStory = GoodNight.Service.Domain.Model.Read.Story;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -78,59 +72,36 @@ namespace GoodNight.Service.Domain.Model.Write
     }
 
 
-    public IReference<Scene>? GetScene(string sceneUrlname)
+    public Scene? GetScene(string sceneUrlname)
     {
       var name = NameConverter.Concat(Urlname, sceneUrlname);
-      return Scenes.FirstOrDefault(s => s.Key == name);
+      return Scenes.FirstOrDefault(s => s.Key == name)?.Get();
     }
 
-    /// <summary>
-    /// Adopts this scene to be a scene of this story.
-    /// Technically sets the field Story, so that the key of the scene can
-    /// be generated properly; must be done prior to adding to the store.
-    /// </summary>
-    public Scene SeizeScene(Scene scene)
+    public (Story, Scene) AddScene(Scene scene)
     {
-      return scene with {Story = Urlname};
-    }
-
-    public (Story, IReference<Scene>) InsertNewScene(
-      IReference<Scene> scene)
-    {
-      return (this with {Scenes = Scenes.Add(scene)}, scene);
-    }
-
-    public (Story, IReference<Scene>) ReplaceScene(
-      IReference<Scene> scene)
-    {
-      var oldElement = Scenes.FirstOrDefault(s => s.Key == scene.Key);
+      var newScene = scene with {Story = Urlname};
+      var oldElement = Scenes.FirstOrDefault(s => s.Key == newScene.Key);
       var withoutOld = oldElement is null ? Scenes : Scenes.Remove(oldElement);
-      return (this with {Scenes = withoutOld.Add(scene)}, scene);
+      return (this with {Scenes = withoutOld.Add(newScene)}, newScene);
     }
 
 
-    public IReference<Quality>? GetQuality(
+    public Quality? GetQuality(
       string qualityUrlname)
     {
       var name = NameConverter.Concat(Urlname, qualityUrlname);
-      return Qualities.FirstOrDefault(q => q.Key == name);
+      return Qualities.FirstOrDefault(q => q.Key == name)?.Get();
     }
 
-    public Quality SeizeQuality(Quality quality)
+    public (Story, Quality) AddQuality(Quality quality)
     {
-      return quality with {Story = Urlname};
-    }
-
-    public (Story, IReference<Quality>) InsertNewQuality(
-      IReference<Quality> quality)
-    {
-      return (this with {Qualities = Qualities.Add(quality)}, quality);
-    }
-
-    public (Story, IReference<Quality>) ReplaceQuality(
-      IReference<Quality> quality)
-    {
-      return (this with {Qualities = Qualities.Add(quality)}, quality);
+      var newQl = quality with {Story = Urlname};
+      var oldElement = Qualities.FirstOrDefault(q => q.Key == newQl.Key);
+      var withoutOld = oldElement is null
+        ? Qualities
+        : Qualities.Remove(oldElement);
+      return (this with {Qualities = withoutOld.Add(newQl)}, newQl);
     }
   }
 }
