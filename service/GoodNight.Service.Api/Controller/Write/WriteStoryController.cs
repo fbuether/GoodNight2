@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain;
 using GoodNight.Service.Storage.Interface;
+using Model = GoodNight.Service.Domain.Model;
+using GoodNight.Service.Domain.Model.Write;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
@@ -12,10 +13,12 @@ namespace GoodNight.Service.Api.Controller.Write
   public class WriteStoryController : ControllerBase
   {
     private IRepository<Story> stories;
+    private IRepository<Model.Read.Story> readStories;
 
     public WriteStoryController(IStore store)
     {
       stories = store.Create<Story>();
+      readStories = store.Create<Model.Read.Story>();
     }
 
 
@@ -63,6 +66,7 @@ namespace GoodNight.Service.Api.Controller.Write
 
       var story = Story.Create(newStory.name);
       stories.Add(story);
+      readStories.Add(Model.Read.Story.Create(newStory.name));
 
       return Ok(story);
     }
