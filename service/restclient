@@ -14,23 +14,6 @@ POST http://localhost:32016/api/v1/read/mystory/do
 Content-Type: application/json
 "name of next option"
 
-
-#
-
-POST http://localhost:32016/api/v1/write/scenes
-$ name: it 'as a name, though!
-this is a first scene
-it's just a string.
-
-#
-
-PUT http://localhost:32016/api/v1/write/scenes/4
-"WOAH, ME TOO"
-
-#
-
-DELETE http://localhost:32016/api/v1/write/scenes/something-or-other
-
 #
 
 POST http://localhost:32016/api/v1/write/stories
