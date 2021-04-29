@@ -21,13 +21,13 @@ namespace GoodNight.Service.Domain.Test.Parse
       this.output = output;
     }
 
-    private IEnumerable<Content> FindAllNodes(IEnumerable<Content> nodes)
+    private IEnumerable<Scene.Content> FindAllNodes(IEnumerable<Scene.Content> nodes)
     {
       foreach (var node in nodes)
       {
         yield return node;
 
-        if (node is Content.Condition c)
+        if (node is Scene.Content.Condition c)
         {
           foreach (var thenNode in FindAllNodes(c.Then))
           {
@@ -39,7 +39,7 @@ namespace GoodNight.Service.Domain.Test.Parse
             yield return elseNode;
           }
         }
-        else if (node is Content.Option o)
+        else if (node is Scene.Content.Option o)
         {
           foreach (var contentNode in FindAllNodes(o.Content))
           {
@@ -77,10 +77,10 @@ namespace GoodNight.Service.Domain.Test.Parse
           output.WriteLine($"Value: {r.Result}.");
 
           output.WriteLine("Result:");
-          foreach (var node in FindAllNodes(r.Result.Content))
+          foreach (var node in FindAllNodes(r.Result.Contents))
           {
             output.WriteLine($"  node: {node}");
-            if (node is Content.Condition c) {
+            if (node is Scene.Content.Condition c) {
               output.WriteLine($"then: {c.Then.Count}, else: {c.Else.Count}");
             }
           }
@@ -128,34 +128,34 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has (\d+) nodes?")]
     public void TheResultHasNNodes(int count)
     {
-      Assert.Equal(count, Get(result).Content.Count());
+      Assert.Equal(count, Get(result).Contents.Count());
     }
 
     [Then(@"the scene has name ""(.*)""")]
     public void TheSceneHasNameString(string name)
     {
-      Assert.Contains(Get(result).Content, node =>
-        (node as Content.Name)!.DisplayName == name);
+      Assert.Contains(Get(result).Contents, node =>
+        (node as Scene.Content.Name)!.DisplayName == name);
     }
 
 
     [Then(@"the node (\d+) is a ""(.*)""")]
     public void TheNodeNIsAType(int position, string type)
     {
-      Assert.True(position <= Get(result).Content.Count());
-      Assert.Equal(type, Get(result).Content[position-1].GetType().Name);
+      Assert.True(position <= Get(result).Contents.Count());
+      Assert.Equal(type, Get(result).Contents[position-1].GetType().Name);
     }
 
     [Then(@"the result has only ""(.*)"" nodes")]
     public void TheResultHasOnlyTypeNodes(string type)
     {
-      Assert.All(Get(result).Content, node => {
+      Assert.All(Get(result).Contents, node => {
         Assert.Equal(type, node.GetType().Name);
       });
     }
 
 
-    private int CountNodesOfType(IEnumerable<Content> cs, string type)
+    private int CountNodesOfType(IEnumerable<Scene.Content> cs, string type)
     {
       int count = 0;
       foreach (var content in cs)
@@ -165,7 +165,7 @@ namespace GoodNight.Service.Domain.Test.Parse
           count += 1;
         }
 
-        if (content is Content.Condition condition)
+        if (content is Scene.Content.Condition condition)
         {
           count += CountNodesOfType(condition.Then, type);
           count += CountNodesOfType(condition.Else, type);
@@ -178,32 +178,31 @@ namespace GoodNight.Service.Domain.Test.Parse
     [Then(@"the result has (\d+) ""(.*)"" nodes in branches")]
     public void TheResultHasNumberTypeNodesInBranches(int count, string type)
     {
-      Assert.Equal(count, CountNodesOfType(Get(result).Content, type));
+      Assert.Equal(count, CountNodesOfType(Get(result).Contents, type));
     }
 
     [Then(@"the node (\d+) has text ""(.*)""")]
     public void TheNodeNHasTextContent(int position, string content)
     {
-      Assert.True(position <= Get(result).Content.Count());
-      var node = Get(result).Content[position-1];
-      Assert.IsType<Content.Text>(node);
-      var text = node as Content.Text;
+      Assert.True(position <= Get(result).Contents.Count());
+      var node = Get(result).Contents[position-1];
+      Assert.IsType<Scene.Content.Text>(node);
+      var text = node as Scene.Content.Text;
       Assert.Equal(content, text!.Value);
     }
 
     [Then(@"the result has the tag ""(.*)""")]
     public void TheResultHasTagName(string tag)
     {
-      Assert.Contains(Get(result).Content, node =>
-        (node as Content.Tag)!.TagName == tag);
+      Assert.Contains(Get(result).Contents, node =>
+        (node as Scene.Content.Tag)!.TagName == tag);
     }
 
     [Then(@"the result has the category ""(.*)""")]
     public void TheResultHasTheCategoryName(string name)
     {
-      var category = Get(result).Content
-        .Single(n => n is Content.Category)
-        as Content.Category;
+      var category = Get(result).Contents.OfType<Scene.Content.Category>()
+        .Single();
 
       var expected = name == "quest/Hildas Hammer"
         ? new[] { "quest", "Hildas Hammer" }
