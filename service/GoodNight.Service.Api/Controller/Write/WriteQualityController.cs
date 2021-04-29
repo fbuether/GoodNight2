@@ -64,7 +64,7 @@ namespace GoodNight.Service.Api.Controller.Write
         .Bind(parsed => QualityFactory.Build(
             parsed, content.text, story.Urlname))
         .Map(story.AddQuality)
-        .Filter(sq => story.Qualities.Any(q => q.Key == sq.Item2.Key),
+        .Assure(sq => qualities.Get(sq.Item2.Key) is null,
           "A quality of this name already exists.");
 
       return writeQuality.And(readQuality)
@@ -99,9 +99,9 @@ namespace GoodNight.Service.Api.Controller.Write
         .Bind(parsed => QualityFactory.Build(
             parsed, content.text, story.Urlname))
         .Map(story.AddQuality)
-        .Filter(sq => !story.Qualities.Any(q => q.Key == sq.Item2.Key),
+        .Assure(sq => qualities.Get(sq.Item2.Key) is not null,
           "The quality does not exist.")
-        .Filter(sq => sq.Item2.Urlname != qualityUrlname,
+        .Assure(sq => sq.Item2.Urlname == qualityUrlname,
           "Qualities may not change their name. Create a new quality.");
 
       return writeQuality.And(readQuality)

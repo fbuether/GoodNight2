@@ -62,7 +62,7 @@ namespace GoodNight.Service.Api.Controller.Write
       var writeScene = parsed
         .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
         .Map(story.AddScene)
-        .Filter(sq => story.Scenes.Any(s => s.Key == sq.Item2.Key),
+        .Assure(sq => scenes.Get(sq.Item2.Key) is null,
           "A scene with that name already exists.");
 
       var readScene = parsed
@@ -98,10 +98,10 @@ namespace GoodNight.Service.Api.Controller.Write
       var writeScene = parsed
         .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
         .Map(story.AddScene)
-        .Filter(sq => !story.Scenes.Any(s => s.Key == sq.Item2.Key),
+        .Assure(sq => scenes.Get(sq.Item2.Key) is not null,
           "The scene does not exist.")
-        .Filter(sq => sq.Item2.Urlname != sceneUrlname,
-          "Scenes may not change their name. Create a new scene.");
+        .Assure(sq => sq.Item2.Urlname != sceneUrlname,
+          $"The scene has a different name than before, which is not allowed.");
 
       var readScene = parsed
         .Bind(parsed => Model.Read.SceneFactory.Build(readScenes, readQualities,

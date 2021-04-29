@@ -8,7 +8,11 @@ namespace GoodNight.Service.Domain.Util
     public abstract T Map<T>(Func<TResult, T> onSuccess,
       Func<TError, T> onError);
 
-    public abstract Result<TResult, TError> Filter(
+    /// <summary>
+    /// Returns the original value, if Result satisfies predicate, and
+    /// Failure with error otherwise.
+    /// </summary>
+    public abstract Result<TResult, TError> Assure(
       Func<TResult, bool> predicate, TError error);
 
     public abstract Result<T, TError> Map<T>(Func<TResult, T> onSuccess);
@@ -47,7 +51,7 @@ namespace GoodNight.Service.Domain.Util
         return this;
       }
 
-      public override Result<TResult, TError> Filter(
+      public override Result<TResult, TError> Assure(
         Func<TResult, bool> predicate, TError error)
       {
         return predicate(Result)
@@ -92,7 +96,7 @@ namespace GoodNight.Service.Domain.Util
         return this;
       }
 
-      public override Result<TResult, TError> Filter(
+      public override Result<TResult, TError> Assure(
         Func<TResult, bool> predicate, TError error)
       {
         return this;
