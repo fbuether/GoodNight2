@@ -92,8 +92,11 @@ namespace GoodNight.Service.Storage
       if (newElement is null)
         return null;
 
-      dict[key] = newElement;
+      // if the element does not change, do not write this.
+      if (newElement == oldElement)
+        return new Reference<T>(this, key);
 
+      dict[key] = newElement;
       if (writeUpdates)
       {
         writer.QueueWrite(this, new Entry.Update(TypeName, key, newElement));
@@ -109,6 +112,10 @@ namespace GoodNight.Service.Storage
       var hasElement = dict.ContainsKey(key);
       if (!hasElement)
         return null;
+
+      // if the element does not change, do not write it out.
+      if (dict[key] == element)
+        return new Reference<T>(this, key);
 
       dict[key] = element;
 
@@ -131,6 +138,10 @@ namespace GoodNight.Service.Storage
       var result = update(oldElement);
       if (result is null)
         return null;
+
+      // If the value did not change, return result without re-writing.
+      if (dict[key] == result.Value.Item1)
+        return result.Value.Item2;
 
       dict[key] = result.Value.Item1;
       if (writeUpdates)
