@@ -1,9 +1,9 @@
-using System.Linq;
 using System;
-using Pidgin;
-using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Parse;
 using System.Collections.Generic;
+using System.Collections.Immutable;
+using System.Linq;
+using Pidgin;
+using GoodNight.Service.Domain.Model.Parse;
 
 namespace GoodNight.Service.Domain.Parse
 {
@@ -28,7 +28,7 @@ namespace GoodNight.Service.Domain.Parse
       .Map<Quality.Content>(name => new Quality.Content.Name(name.Trim()));
 
     private readonly static ContentListParser tagsContent =
-      Parser.String("tag")
+      Parser.Try(Parser.String("tag"))
       .Then(Parser.Char('s').Optional())
       .Then(NameParser.Colon)
       .Then(NameParser.TagName.Separated(Parser.Char(',')))
@@ -118,7 +118,6 @@ namespace GoodNight.Service.Domain.Parse
           ToList(maxContent)
           ))
       .Before(NameParser.InlineWhitespace);
-      // .Select<IEnumerable<Quality.Content>>(c => c);
 
     private readonly static ContentParser textContent =
       Parser.AnyCharExcept("$\r\n") // not EOL or setting starting with $
