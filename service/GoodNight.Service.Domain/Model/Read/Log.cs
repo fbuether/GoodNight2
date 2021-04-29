@@ -14,13 +14,13 @@ namespace GoodNight.Service.Domain.Model.Read
       string Text,
       string? Icon,
       IImmutableList<Property> Effects)
-      : Choice {}
+      : Choice;
 
     public record Return
-      : Choice {}
+      : Choice;
 
     public record Continue
-      : Choice {}
+      : Choice;
   }
 
   /// <summary>
@@ -32,7 +32,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// Logs are only persisted as part of an Adventure, which is part of a User.
   /// </remarks>
   public record Log(
-    string Player,
+    string Player, // used for the key
     uint Number, // sequential number for all Logs of this player.
     IReference<Scene> Scene,
     string Text,
