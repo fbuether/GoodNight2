@@ -14,6 +14,7 @@ interface FetchInit {
 
 export interface ErrorResponse {
   kind: "error";
+  status: number;
   isError: true;
   isResult: false;
   type: string;
@@ -39,12 +40,13 @@ function makeResult<T>(body: unknown): ResultResponse<T> {
   };
 }
 
-function makeError(body: any): ErrorResponse {
+function makeError(status: number, body: any): ErrorResponse {
   let errorType = "type" in body ? body.type : "no error type on response.";
   let message = "message" in body ? body.message : "no message on response.";
 
   return {
     kind: "error",
+    status: status,
     isError: true,
     isResult: false,
     type: errorType,
@@ -79,6 +81,6 @@ export default async function request<T>(method: Method, url: string,
   }
   else {
     console.warn("Returned invalid result", response.status, json);
-    return makeError(json);
+    return makeError(response.status, json);
   }
 }
