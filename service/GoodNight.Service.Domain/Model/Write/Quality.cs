@@ -1,6 +1,4 @@
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Expressions;
-using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write

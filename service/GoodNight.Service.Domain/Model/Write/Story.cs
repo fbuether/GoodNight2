@@ -12,13 +12,13 @@ namespace GoodNight.Service.Domain.Model.Write
   public record StoryHeader(
     string Name,
     string Urlname,
-    // string Icon,
+    string? Icon,
     string Description);
 
 
   public record Story(
     string Name,
-    // string Icon,
+    // string? Icon,
     // string Description,
     IImmutableSet<IReference<Scene>> Scenes,
     IImmutableSet<IReference<Quality>> Qualities)
@@ -40,7 +40,7 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public StoryHeader ToHeader()
     {
-      return new StoryHeader(Name, Urlname, "-");
+      return new StoryHeader(Name, Urlname, null, "");
     }
 
 
