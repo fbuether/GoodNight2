@@ -7,6 +7,7 @@ using Microsoft.Extensions.Options;
 using GoodNight.Service.Api.Converter;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Serialisation.Read;
 
 namespace GoodNight.Service.Api
 {
@@ -22,7 +23,7 @@ namespace GoodNight.Service.Api
         converters.Add(new ActionChoiceConverter());
         converters.Add(new ExpressionValueConverter());
         converters.Add(new WriteQualityConverter());
-        // converters.Add(new ReadSceneContentConverter());
+        converters.Add(new SceneContentConverter());
       });
 
       services.AddCors(corsOptions => {
