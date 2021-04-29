@@ -54,7 +54,7 @@ Content-Type: application/json
 
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities
 Content-Type: application/json
-{"text":"$name: toasty too much\nthis is toasty.\n$type: int\nokay!"}
+{"text":"$name: toasty\nthis is toasty.\n$type: int\nokay!"}
 
 #
 
