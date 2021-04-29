@@ -35,19 +35,22 @@ namespace GoodNight.Service.Api.Controller.Read
 
       var user = users.Get(username);
       if (user is null)
-        return Unauthorized("Authentication not found or invalid.");
+        return Unauthorized();
 
       var story = stories.Get(storyUrlname);
       if (story is null)
-        return NotFound("Story not found.");
+        return NotFound();
 
       var advKey = NameConverter.Concat(user.Key, story.Key);
       var adventure = user.Adventures.First(a => a.Key == advKey);
       if (adventure is null)
-        return Forbid("User has not started Adventure.");
+        return BadRequest(new ErrorResult("User has not started Adventure."));
 
       return Ok(adventure);
     }
+
+
+    public record Choice(string choice);
 
     [HttpPost("do")]
     [ProducesResponseType(StatusCodes.Status200OK)]
@@ -55,20 +58,21 @@ namespace GoodNight.Service.Api.Controller.Read
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Consequence> DoOption(string storyUrlname,
-      [FromBody] string optionname)
+      [FromBody] Choice choice)
     {
       var username = "current-user-name";
 
-      if (String.IsNullOrEmpty(optionname))
-        return BadRequest("No Option given.");
-
       var user = users.Get(username);
       if (user is null)
-        return Unauthorized("Authentication not found or invalid.");
+        return Unauthorized();
 
       var story = stories.Get(storyUrlname);
       if (story is null)
-        return NotFound("Story not found.");
+        return NotFound();
+
+      var optionname = choice.choice;
+      if (String.IsNullOrEmpty(optionname))
+        return BadRequest(new ErrorResult("No Option given."));
 
       var consequence = users.Update(username, user =>
         user.ContinueAdventure(story, optionname));

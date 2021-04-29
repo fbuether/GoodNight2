@@ -4,6 +4,11 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
+  public record StoryHeader(
+    string Name,
+    string? Icon,
+    string Description);
+
   /// <summary>
   /// A Story is group of interlinked Scenes that a Player can play as an
   /// Adventure.
@@ -27,7 +32,7 @@ namespace GoodNight.Service.Domain.Model.Read
     public string Urlname => NameConverter.OfString(Name);
 
     public static Story Create(string name, string description = "") =>
-      new Story(name, null, description, false,
+      new Story(name, null, description, true,
         ImmutableHashSet<IReference<Scene>>.Empty,
         ImmutableHashSet<IReference<Quality>>.Empty);
 
@@ -48,6 +53,11 @@ namespace GoodNight.Service.Domain.Model.Read
         ? Qualities
         : Qualities.Remove(oldQuality);
       return this with {Qualities = removed.Add(newQuality)};
+    }
+
+    public StoryHeader ToHeader()
+    {
+      return new StoryHeader(Name, Icon, Description);
     }
   }
 }
