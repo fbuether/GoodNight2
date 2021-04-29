@@ -6,6 +6,7 @@ import request from "../../Request";
 import {Story} from "../../model/read/Story";
 
 import {State, Dispatch} from "../../state/State";
+import {ReadStoryPart} from "../../state/read/ReadStoryPart";
 import {SelectStoryPart as PartState} from "../../state/read/SelectStoryPart";
 
 import Loading from "../common/Loading";
@@ -25,10 +26,8 @@ function loadStories(dispatch: Dispatch) {
 }
 
 function StoryCard(state: { story: Story }) {
-  let link = State.lens.page.read.part.set({
-    kind: "ReadStoryPart" as const,
-    story: state.story
-  });
+  let link = State.lens.page.read.part
+    .set(ReadStoryPart.instance(state.story.urlname));
 
   return (
     <div class="col">

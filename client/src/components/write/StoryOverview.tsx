@@ -26,7 +26,7 @@ function loadScenes(dispatch: Dispatch, story: string) {
 
     dispatch(State.lens.page.write.part.writeStory.part.storyOverview
       .categories.set(response.message));
-  }
+  };
 }
 
 

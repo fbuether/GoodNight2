@@ -3,6 +3,7 @@ import * as PreactHooks from "preact/hooks";
 import {ReadPage as ReadPageState} from "../../state/read/ReadPage";
 
 import SelectStory from "./SelectStory";
+import ReadStory from "./ReadStory";
 
 import Scene from "../play/Scene";
 import State from "../play/State";
@@ -16,7 +17,7 @@ function assertNever(param: never): never {
 export default function ReadPage(page: ReadPageState) {
   switch (page.part.kind) {
     case "SelectStoryPart": return <SelectStory {...page.part} />;
-    case "ReadStoryPart": return <>"reading!"</>;
+    case "ReadStoryPart": return <ReadStory {...page.part} />;
     default: assertNever(page.part);
   }
 }
