@@ -56,12 +56,9 @@ function ShowStories(state: { stories: Array<Story> | null }) {
   }
   else {
     return (
-      <>
-      <div>weee, {state.stories.length} stories!</div>
       <div class="row cards row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-0">
         {state.stories.map(story => <StoryCard story={story} />)}
       </div>
-      </>
     );
   }
 }
