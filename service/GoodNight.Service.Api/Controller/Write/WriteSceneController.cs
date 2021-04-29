@@ -100,7 +100,7 @@ namespace GoodNight.Service.Api.Controller.Write
         .Map(story.AddScene)
         .Assure(sq => scenes.Get(sq.Item2.Key) is not null,
           "The scene does not exist.")
-        .Assure(sq => sq.Item2.Urlname != sceneUrlname,
+        .Assure(sq => sq.Item2.Urlname == sceneUrlname,
           $"The scene has a different name than before, which is not allowed.");
 
       var readScene = parsed
