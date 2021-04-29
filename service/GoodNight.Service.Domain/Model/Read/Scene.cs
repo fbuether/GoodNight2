@@ -182,9 +182,9 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Scene(
     string Name,
     string Story, // the urlname of the story.
-    // bool IsStart,
-    // bool ShowAlways,
-    // bool ForceShow,
+    bool IsStart,
+    bool ShowAlways,
+    bool ForceShow,
     IImmutableList<Content> Contents)
     : IStorable<Scene>
   {
