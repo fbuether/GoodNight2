@@ -6,6 +6,7 @@ namespace GoodNight.Service.Domain.Model.Read
 {
   public record StoryHeader(
     string Name,
+    string Urlname,
     string? Icon,
     string Description);
 
@@ -57,7 +58,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public StoryHeader ToHeader()
     {
-      return new StoryHeader(Name, Icon, Description);
+      return new StoryHeader(Name, Urlname, Icon, Description);
     }
   }
 }
