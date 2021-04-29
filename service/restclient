@@ -41,24 +41,24 @@ Content-Type: application/json
 
 #
 
-GET http://localhost:32016/api/v1/write/stories/hels-schlucht/scenes/it--as-a-name--though-
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/it--as-a-name--though-
 
 #
 
-PUT http://localhost:32016/api/v1/write/stories/hels-schlucht/scenes/it--as-a-name--though-
+PUT http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/an-actual-scene
 Content-Type: application/json
-{"text":"$ name: it 'as a name, though!\nthis is a first scene\nit's just a string.\nRight?"}
+{"text":"$ name: an actual scene\nthis is a first scene\nit's just a string.\nRight?"}
 
 
 #
 
-POST http://localhost:32016/api/v1/write/stories/hels-schlucht/qualities
+POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities
 Content-Type: application/json
 {"text":"$name: toasty too much\nthis is toasty.\n$type: int\nokay!"}
 
 #
 
-GET http://localhost:32016/api/v1/write/stories/hels-schlucht/content-by-category
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
 
 #
 
