@@ -10,8 +10,20 @@ export interface Category {
 }
 
 
-export interface Story {
+export interface StoryHeader {
   name: string;
   urlname: string;
-  description: string; // todo: not yet present in service.
+  icon: string | null;
+  description: string;
 }
+
+
+/* inspect: This never reaches the client.
+export interface Story {
+  name: string;
+  // icon: string | null;
+  // description: string;
+  scenes: Array<Scene>;
+  qualities: Array<Quality>;
+}
+*/
