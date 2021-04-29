@@ -16,17 +16,30 @@ import Loading from "../common/Loading";
 
 function loadAdventure(dispatch: Dispatch, story: string) {
   return async () => {
-    let response = await request<Adventure>(
+/*
+    let adventureResponse = await request<Adventure>(
       "GET", `api/v1/read/stories/${story}/continue`);
 
+    // not logged in.
+    if (adventureResponse.isError) {
+      if (adventureResponse.status == 401) {
+        let storyResponse = await request<Story>(
+          "GET", `api/v1/read/stories/${story}`);
 
-    // todo!
+        if (storyResponse.isResult) {
+          dispatch(State.lens.page.read.part.readStory.part
+            .set(CreatePlayerSubPart.instance(storyResponse.message)));
+        }
+      }
 
-    // if (response.isError) {
+      // if there is nothing else we can do, redirect back to story selection.
+      dispatch(State.lens.page.read.part
+        .set(SelectStoryPart.instance));
+    }
 
-    // }
-
-    
+    dispatch(State.lens.page.read.part
+      .set(ReadAdventurePart.instance(adventureResponse.message)));
+*/
   };
 }
 
@@ -34,10 +47,10 @@ function loadAdventure(dispatch: Dispatch, story: string) {
 export default function ReadStory(state: ReadStoryPart) {
   const dispatch = PreactHooks.useContext(DispatchContext);
 
-  if (state.adventure == null) {
-    useAsyncEffect(loadAdventure(dispatch, state.story));
-    return <Loading />;
-  }
+  // if (state.adventure == null) {
+  //   useAsyncEffect(loadAdventure(dispatch, state.story));
+  //   return <Loading />;
+  // }
 
   return (
     <div id="centre" class="row px-0 g-0">

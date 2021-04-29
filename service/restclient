@@ -1,18 +1,10 @@
 # -*- mode: restclient; -*-
 
-
 GET http://localhost:32016/api/v1/status
 
-
 #
 
-GET http://localhost:32016/api/v1/read/mystory/continue
-
-#
-
-POST http://localhost:32016/api/v1/read/mystory/do
-Content-Type: application/json
-"name of next option"
+GET http://localhost:32016/api/v1/write/stories
 
 #
 
@@ -20,24 +12,15 @@ POST http://localhost:32016/api/v1/write/stories
 Content-Type: application/json
 {"name": "Eine neue Geschichte!"}
 
-
 #
-
-GET http://localhost:32016/api/v1/write/stories
-
-
-#
-
 
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
-
 
 #
 
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes
 Content-Type: application/json
 {"text":"$ name: an actual scene\nthis is a first scene\nit's just a string."}
-
 
 #
 
@@ -48,7 +31,6 @@ GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/it-
 PUT http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/an-actual-scene
 Content-Type: application/json
 {"text":"$ name: an actual scene\nthis is a first scene\nit's just a string.\nRight?"}
-
 
 #
 
