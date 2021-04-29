@@ -100,7 +100,9 @@ namespace GoodNight.Service.Api.Controller.Write
             parsed, content.text, story.Urlname))
         .Map(story.AddQuality)
         .Filter(sq => !story.Qualities.Any(q => q.Key == sq.Item2.Key),
-          "The quality does not exist.");
+          "The quality does not exist.")
+        .Filter(sq => sq.Item2.Urlname != qualityUrlname,
+          "Qualities may not change their name. Create a new quality.");
 
       return writeQuality.And(readQuality)
         .Do(wsqrsq => stories.Save(wsqrsq.Item1.Item1))

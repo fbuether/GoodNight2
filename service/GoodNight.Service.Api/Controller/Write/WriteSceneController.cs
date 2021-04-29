@@ -16,15 +16,18 @@ namespace GoodNight.Service.Api.Controller.Write
   public class WriteSceneController : ControllerBase
   {
     private IRepository<Scene> scenes;
-
     private IRepository<Story> stories;
     private IRepository<Model.Read.Story> readStories;
+    private IRepository<Model.Read.Scene> readScenes;
+    private IRepository<Model.Read.Quality> readQualities;
 
     public WriteSceneController(IStore store)
     {
       scenes = store.Create<Scene>();
       stories = store.Create<Story>();
       readStories = store.Create<Model.Read.Story>();
+      readScenes = store.Create<Model.Read.Scene>();
+      readQualities = store.Create<Model.Read.Quality>();
     }
 
 
@@ -50,32 +53,27 @@ namespace GoodNight.Service.Api.Controller.Write
       if (story is null)
         return NotFound();
 
-      Predicate<string> validateName = (string name) => story.Scenes
-        .All(s => s.Get()?.Urlname != NameConverter.OfString(name));
-
-      var parsed = SceneParser.Parse(content.text)
-        .ToResult()
-        .Filter(parsed => parsed.HasValidName(validateName),
-          "A scene with that name already exists.");
+      var parsed = SceneParser.Parse(content.text).ToResult();
 
       var readStory = readStories.FirstOrDefault(s => s.Key == story.Key);
       if (readStory is null)
         return NotFound();
 
       var writeScene = parsed
-        .Map(parsed => parsed.ToWriteScene())
+        .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
         .Map(story.AddScene)
-        .Do(ss => stories.Save(ss.Item1))
-        .Map(ss => ss.Item2);
+        .Filter(sq => story.Scenes.Any(s => s.Key == sq.Item2.Key),
+          "A scene with that name already exists.");
 
       var readScene = parsed
-        .Map(parsed => parsed.ToReadScene())
-        .Map(readStory.AddScene)
-        .Do(scene => readStories.Save(scene));
+        .Bind(parsed => Model.Read.SceneFactory.Build(readScenes, readQualities,
+            parsed, story.Urlname))
+        .Map(readStory.AddScene);
 
-      return writeScene
-        .And(readScene)
-        .Map(wr => wr.Item1)
+      return writeScene.And(readScene)
+        .Do(wsrs => stories.Save(wsrs.Item1.Item1))
+        .Do(wsrs => readStories.Save(wsrs.Item2))
+        .Map(wr => wr.Item1.Item2)
         .Map<ActionResult<Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
             scene))
@@ -91,32 +89,29 @@ namespace GoodNight.Service.Api.Controller.Write
       if (story is null)
         return NotFound();
 
-      Predicate<string> validateName = (string name) => story.Scenes
-        .Any(s => s.Get()?.Urlname == NameConverter.OfString(name));
-
-      var parsed = SceneParser.Parse(content.text)
-        .ToResult()
-        .Filter(parsed => parsed.HasValidName(validateName),
-          "A scene with that name does not exist.");
+      var parsed = SceneParser.Parse(content.text).ToResult();
 
       var readStory = readStories.FirstOrDefault(s => s.Key == story.Key);
       if (readStory is null)
         return NotFound();
 
       var writeScene = parsed
-        .Map(parsed => parsed.ToWriteScene())
+        .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
         .Map(story.AddScene)
-        .Do(ss => stories.Save(ss.Item1))
-        .Map(ss => ss.Item2);
+        .Filter(sq => !story.Scenes.Any(s => s.Key == sq.Item2.Key),
+          "The scene does not exist.")
+        .Filter(sq => sq.Item2.Urlname != sceneUrlname,
+          "Scenes may not change their name. Create a new scene.");
 
       var readScene = parsed
-        .Map(parsed => parsed.ToReadScene())
-        .Map(readStory.AddScene)
-        .Do(scene => readStories.Save(scene));
+        .Bind(parsed => Model.Read.SceneFactory.Build(readScenes, readQualities,
+            parsed, story.Urlname))
+        .Map(readStory.AddScene);
 
-      return writeScene
-        .And(readScene)
-        .Map(wr => wr.Item1)
+      return writeScene.And(readScene)
+        .Do(wsrs => stories.Save(wsrs.Item1.Item1))
+        .Do(wsrs => readStories.Save(wsrs.Item2))
+        .Map(wr => wr.Item1.Item2)
         .Map<ActionResult<Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
             scene))
