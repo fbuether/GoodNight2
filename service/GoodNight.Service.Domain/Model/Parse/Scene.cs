@@ -9,7 +9,7 @@ namespace GoodNight.Service.Domain.Model.Parse
     string Raw,
     IImmutableList<Scene.Content> Contents)
   {
-    public abstract record Content
+    public interface Content
     {
       // actual text for the player to read. This can be markdown.
       public record Text(

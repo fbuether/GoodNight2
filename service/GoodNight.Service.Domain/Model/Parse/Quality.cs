@@ -5,7 +5,7 @@ namespace GoodNight.Service.Domain.Model.Parse
   public record Quality(
     IImmutableList<Quality.Content> Contents)
   {
-    public abstract record Content
+    public interface Content
     {
       // actual text for the player to read. This can be markdown.
       public record Text(

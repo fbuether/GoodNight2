@@ -149,7 +149,8 @@ namespace GoodNight.Service.Domain.Parse
 
     private static ContentListParser ToList<T>(Parser<char, T> parser)
       where T : Scene.Content =>
-      parser.Map<IEnumerable<Scene.Content>>(content => new[] { content });
+      parser.Map<IEnumerable<Scene.Content>>(content =>
+        new Scene.Content[] { content });
 
 
     private static ContentListParser settingContent(

@@ -100,7 +100,8 @@ namespace GoodNight.Service.Domain.Parse
 
     private static ContentListParser ToList<T>(Parser<char, T> parser)
       where T : Quality.Content =>
-      parser.Map<IEnumerable<Quality.Content>>(content => new[] { content });
+      parser.Map<IEnumerable<Quality.Content>>(content =>
+        new Quality.Content[] { content });
 
     private readonly static ContentListParser settingContent =
       Parser.Char('$')
