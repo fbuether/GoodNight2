@@ -8,81 +8,82 @@ using GoodNight.Service.Domain.Model.Parse;
 
 namespace GoodNight.Service.Domain.Parse
 {
-  using ContentParser = Parser<char, IEnumerable<Content>>;
+  using ContentParser = Parser<char, Scene.Content>;
+  using ContentListParser = Parser<char, IEnumerable<Scene.Content>>;
 
   public static class SceneParser
   {
-    private readonly static Parser<char, Content> nameContent =
+    private readonly static ContentParser nameContent =
       Parser.Try(Parser.String("name"))
       .Then(NameParser.Colon)
       .Then(NameParser.SceneName)
-      .Map<Content>(name => new Content.Name(name.Trim()));
+      .Map<Scene.Content>(name => new Scene.Content.Name(name.Trim()));
 
-    private readonly static Parser<char, Content> isStartContent =
+    private readonly static ContentParser isStartContent =
       Parser.Try(Parser.String("start"))
-      .Map<Content>(_ => new Content.IsStart());
+      .Map<Scene.Content>(_ => new Scene.Content.IsStart());
 
-    private readonly static Parser<char, Content> showAlwaysContent =
+    private readonly static ContentParser showAlwaysContent =
       Parser.Try(Parser.String("show"))
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("always"))
       .Or(Parser.String("always")
         .Then(NameParser.InlineWhitespace)
         .Then(Parser.String("show")))
-      .Map<Content>(_ => new Content.ShowAlways());
+      .Map<Scene.Content>(_ => new Scene.Content.ShowAlways());
 
-    private readonly static Parser<char, Content> forceShowContent =
+    private readonly static ContentParser forceShowContent =
       Parser.String("force")
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.String("show"))
-      .Map<Content>(_ => new Content.ForceShow());
+      .Map<Scene.Content>(_ => new Scene.Content.ForceShow());
 
-    private readonly static ContentParser tagsContent =
+    private readonly static ContentListParser tagsContent =
       Parser.String("tag")
       .Then(Parser.Char('s').Optional())
       .Then(NameParser.Colon)
       .Then(NameParser.TagName.Separated(Parser.Char(',')))
-      .Map<IEnumerable<Content>>(tags =>
+      .Map<IEnumerable<Scene.Content>>(tags =>
         tags.Select(t =>
-          new Content.Tag(t.Trim())));
+          new Scene.Content.Tag(t.Trim())));
 
-    private readonly static Parser<char, Content> categoryContent =
+    private readonly static ContentParser categoryContent =
       Parser.Try(Parser.String("cat")
         .Then(Parser.String("egory").Optional()))
       .Then(NameParser.Colon)
       .Then(NameParser.CategoryName.Separated(Parser.Char('/')))
-      .Map<Content>(cs => new Content.Category(
+      .Map<Scene.Content>(cs => new Scene.Content.Category(
           ImmutableArray.Create<string>(cs.ToArray())));
 
 
-    private readonly static Parser<char, Content> setContent =
+    private readonly static ContentParser setContent =
       Parser.String("set")
       .Then(NameParser.Colon)
       .Then(NameParser.QualityName)
       .Before(NameParser.InlineWhitespace
         .Then(Parser.Char('='))
         .Then(NameParser.InlineWhitespace)).
-      Then<Expression<string>, Content>(ExpressionParser.Expression,
-        (quality,expr) => new Content.Set(quality, expr));
+      Then<Expression<string>, Scene.Content>(ExpressionParser.Expression,
+        (quality,expr) => new Scene.Content.Set(quality, expr));
 
-    private readonly static Parser<char, Content> requireContent =
+    private readonly static ContentParser requireContent =
       Parser.Try(Parser.String("require"))
       .Then(NameParser.Colon)
       .Then(ExpressionParser.Expression)
-      .Map<Content>(expr => new Content.Require(expr));
+      .Map<Scene.Content>(expr => new Scene.Content.Require(expr));
 
 
-    private readonly static Parser<char, Content> nextSceneContent =
+    private readonly static ContentParser nextSceneContent =
       Parser.OneOf(
         Parser.Try(Parser.String("return"))
-        .WithResult(typeof(Content.Return)),
+        .WithResult(typeof(Scene.Content.Return)),
         Parser.Try(Parser.String("include"))
-        .WithResult(typeof(Content.Include)),
+        .WithResult(typeof(Scene.Content.Include)),
         Parser.Try(Parser.String("continue"))
-        .WithResult(typeof(Content.Continue)))
+        .WithResult(typeof(Scene.Content.Continue)))
       .Before(NameParser.Colon)
-      .Then<string, Content>(NameParser.SceneName,
-        (T, scene) => (Content)Activator.CreateInstance(T, scene)!);
+      .Then<string, Scene.Content>(NameParser.SceneName,
+        (T, scene) => (Scene.Content)Activator.CreateInstance(T, scene)!);
 
 
 
@@ -108,50 +109,51 @@ namespace GoodNight.Service.Domain.Parse
       .Then(NameParser.InlineWhitespace)
       .Map(_ => Unit.Value);
 
-    private static Parser<char, Content> conditionalContent(
-      ContentParser parseLines) =>
+    private static ContentParser conditionalContent(
+      ContentListParser parseLines) =>
       conditionIf
       .Then(parseLines,
-        (Expression<string> cond, IEnumerable<Content> then) => (cond, then))
-      .Then<Maybe<IEnumerable<Content>>, Content>(
+        (Expression<string> cond, IEnumerable<Scene.Content> then) => (cond, then))
+      .Then<Maybe<IEnumerable<Scene.Content>>, Scene.Content>(
         Parser.Try(
           conditionElse
           .Then(parseLines)
         ).Optional()
         .Before(endContent),
 
-        ((Expression<string>, IEnumerable<Content>) condThen,
-          Maybe<IEnumerable<Content>> elseContent) =>
-        new Content.Condition(condThen.Item1,
-          ImmutableArray.Create<Content>(condThen.Item2.ToArray()),
-          ImmutableArray.Create<Content>(
+        ((Expression<string>, IEnumerable<Scene.Content>) condThen,
+          Maybe<IEnumerable<Scene.Content>> elseContent) =>
+        new Scene.Content.Condition(condThen.Item1,
+          ImmutableArray.Create<Scene.Content>(condThen.Item2.ToArray()),
+          ImmutableArray.Create<Scene.Content>(
             elseContent
             .Select(elseContent => elseContent.ToArray())
-            .GetValueOrDefault(new Content[] { }))));
+            .GetValueOrDefault(new Scene.Content[] { }))));
 
 
-    private static Parser<char, Content> optionContent(
-      ContentParser parseLines) =>
+    private static ContentParser optionContent(
+      ContentListParser parseLines) =>
       Parser.Try(Parser.String("option"))
       .Then(NameParser.Colon)
       .Then(NameParser.SceneName)
       .Before(NameParser.InlineWhitespace)
       .Before(Parser.EndOfLine)
-      .Then<IEnumerable<Content>, Content>(
+      .Then<IEnumerable<Scene.Content>, Scene.Content>(
         parseLines
         .Before(endContent),
-        (string sceneName, IEnumerable<Content> optionContent) =>
-        new Content.Option(sceneName,
-          ImmutableArray.Create<Content>(optionContent.ToArray())));
+        (string sceneName, IEnumerable<Scene.Content> optionContent) =>
+        new Scene.Content.Option(sceneName,
+          ImmutableArray.Create<Scene.Content>(optionContent.ToArray())));
 
 
 
-    private static ContentParser ToList<T>(Parser<char, T> parser)
-      where T : Content =>
-      parser.Map<IEnumerable<Content>>(content => new[] { content });
+    private static ContentListParser ToList<T>(Parser<char, T> parser)
+      where T : Scene.Content =>
+      parser.Map<IEnumerable<Scene.Content>>(content => new[] { content });
 
 
-    private static ContentParser settingContent(ContentParser parseLines) =>
+    private static ContentListParser settingContent(
+      ContentListParser parseLines) =>
       Parser.Char('$')
       .Then(NameParser.InlineWhitespace)
       .Then(Parser.OneOf(
@@ -159,7 +161,7 @@ namespace GoodNight.Service.Domain.Parse
           ToList(isStartContent),
           ToList(showAlwaysContent),
           ToList(forceShowContent),
-          tagsContent.Map<IEnumerable<Content>>(contents => contents.ToArray()),
+          tagsContent.Map<IEnumerable<Scene.Content>>(contents => contents.ToArray()),
           ToList(categoryContent),
           ToList(setContent),
           ToList(requireContent),
@@ -168,33 +170,33 @@ namespace GoodNight.Service.Domain.Parse
           ToList(conditionalContent(parseLines))
         ))
       .Before(NameParser.InlineWhitespace)
-      .Select<IEnumerable<Content>>(c => c);
+      .Select<IEnumerable<Scene.Content>>(c => c);
 
-    private readonly static Parser<char, Content.Text> textContent =
+    private readonly static Parser<char, Scene.Content.Text> textContent =
       Parser.AnyCharExcept("$\r\n") // not EOL or setting starting with $
       .Then(NameParser.RemainingLine, (lead, tail) => lead + tail)
-      .Map(text => new Content.Text(text));
+      .Map(text => new Scene.Content.Text(text));
 
-    private readonly static ContentParser emptyLine =
+    private readonly static ContentListParser emptyLine =
       ToList(Parser.Lookahead(Parser.EndOfLine)
-        .WithResult<Content>(new Content.Text("")));
+        .WithResult<Scene.Content>(new Scene.Content.Text("")));
 
 
-    private static ContentParser parseLine(ContentParser parseLines) =>
+    private static ContentListParser parseLine(ContentListParser parseLines) =>
       Parser.Try(settingContent(parseLines))
       .Or(Parser.Try(ToList(textContent)))
       .Or(emptyLine);
 
 
-    private static ContentParser parseLines(ContentParser self) =>
+    private static ContentListParser parseLines(ContentListParser self) =>
       Parser.Try(parseLine(self))
       .SeparatedAndOptionallyTerminated(Parser.EndOfLine)
       // flatten due to double wraping of settings
-      .Map<IEnumerable<Content>>(c => c.SelectMany(c => c).ToArray());
+      .Map<IEnumerable<Scene.Content>>(c => c.SelectMany(c => c).ToArray());
 
 
-    private readonly static ContentParser parseLinesRec =
-      Parser.Rec<char, IEnumerable<Content>>(parseLines);
+    private readonly static ContentListParser parseLinesRec =
+      Parser.Rec<char, IEnumerable<Scene.Content>>(parseLines);
 
 
     public static ParseResult<Scene> Parse(string content)
@@ -206,7 +208,7 @@ namespace GoodNight.Service.Domain.Parse
       return res.Success
         ? new ParseResult.Success<Scene>(
           new Scene(content,
-            ImmutableArray.Create<Content>(res.Value.ToArray())))
+            ImmutableArray.Create<Scene.Content>(res.Value.ToArray())))
         : ParseResult.Failure<Scene>.OfError(res.Error);
     }
   }
