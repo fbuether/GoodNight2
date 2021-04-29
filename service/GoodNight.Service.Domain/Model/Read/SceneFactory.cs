@@ -9,7 +9,7 @@ namespace GoodNight.Service.Domain.Model.Read
 {
   public static class SceneFactory
   {
-    private static IEnumerable<Content> ToReadContent(
+    private static IEnumerable<Scene.Content> ToReadContent(
       IRepository<Scene> scenes,
       IRepository<Quality> qualities,
       Parse.Scene.Content parsed,
@@ -18,11 +18,11 @@ namespace GoodNight.Service.Domain.Model.Read
       switch (parsed)
       {
         case Parse.Scene.Content.Text c:
-          yield return new Content.Text(c.Value);
+          yield return new Scene.Content.Text(c.Value);
           break;
 
         case Parse.Scene.Content.Set c:
-          yield return new Content.Effect(
+          yield return new Scene.Content.Effect(
             qualities.GetReference(c.Quality),
             c.Expression.Map(qualities.GetReference));
           break;
@@ -40,7 +40,7 @@ namespace GoodNight.Service.Domain.Model.Read
             .Select(s => (qualities.GetReference(s.Quality),
                 s.Expression.Map(qualities.GetReference))));
 
-          yield return new Content.Option(
+          yield return new Scene.Content.Option(
             NameConverter.Concat(c.Scene, index.ToString()),
             description,
             "", // todo: icon
@@ -50,15 +50,15 @@ namespace GoodNight.Service.Domain.Model.Read
           break;
 
         case Parse.Scene.Content.Return c:
-          yield return new Content.Return(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Return(scenes.GetReference(c.Scene));
           break;
 
         case Parse.Scene.Content.Continue c:
-          yield return new Content.Continue(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Continue(scenes.GetReference(c.Scene));
           break;
 
         case Parse.Scene.Content.Condition c:
-          yield return new Content.Condition(
+          yield return new Scene.Content.Condition(
             c.If.Map(qualities.GetReference),
             ToReadContentList(scenes, qualities, c.Then),
             ToReadContentList(scenes, qualities, c.Else)
@@ -66,12 +66,12 @@ namespace GoodNight.Service.Domain.Model.Read
           break;
 
         case Parse.Scene.Content.Include c:
-          yield return new Content.Include(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Include(scenes.GetReference(c.Scene));
           break;
       }
     }
 
-    private static ImmutableList<Content> ToReadContentList(
+    private static ImmutableList<Scene.Content> ToReadContentList(
       IRepository<Scene> scenes,
       IRepository<Quality> qualities,
       IEnumerable<Parse.Scene.Content> parsedContent)
