@@ -3,11 +3,12 @@ using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Domain.Model.Expressions;
-using GoodNight.Service.Domain.Model.Write;
+using GoodNight.Service.Domain.Model.Read;
 using SysType = System.Type;
 
 namespace GoodNight.Service.Api.Converter
 {
+/*
   internal class WriteSceneContentConverter : JsonConverter<Content>
   {
     public override Content? Read(ref Utf8JsonReader reader,
@@ -22,10 +23,10 @@ namespace GoodNight.Service.Api.Converter
       string value = "";
       Expression<string> expr = new Expression<string>.Bool<string>(false);
       string scene = "";
-      ImmutableList<Content> content = ImmutableList<Content>.Empty;
-      Expression<string> ifExpr = expr;
-      ImmutableList<Content> thenExpr = ImmutableList<Content>.Empty;
-      ImmutableList<Content> elseExpr = ImmutableList<Content>.Empty;
+      // ImmutableList<Content> content = ImmutableList<Content>.Empty;
+      // Expression<string> ifExpr = expr;
+      // ImmutableList<Content> thenExpr = ImmutableList<Content>.Empty;
+      // ImmutableList<Content> elseExpr = ImmutableList<Content>.Empty;
 
       while (reader.Read())
       {
@@ -33,8 +34,12 @@ namespace GoodNight.Service.Api.Converter
         {
           switch (type) {
             case "text": return new Content.Text(value);
-            case "require": return new Content.Require(expr);
-            case "option": return new Content.Option(scene, content);
+            case "effect": return new Content.Effect(quality, expr);
+            case "option": return new Content.Option(urlname, description,
+              "", // todo: icon
+              requirements, effects, scene);
+            case "return": return new Content.Return(scene);
+            case "continue": return new Content.Continue(scene);
             case "condition": return new Content.Condition(ifExpr, thenExpr,
               elseExpr);
             case "include": return new Content.Include(scene);
@@ -119,4 +124,5 @@ namespace GoodNight.Service.Api.Converter
       writer.WriteEndObject();
     }
   }
+*/
 }

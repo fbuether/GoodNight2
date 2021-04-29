@@ -22,7 +22,7 @@ namespace GoodNight.Service.Api
         converters.Add(new ActionChoiceConverter());
         converters.Add(new ExpressionValueConverter());
         converters.Add(new WriteQualityConverter());
-        converters.Add(new WriteSceneContentConverter());
+        // converters.Add(new ReadSceneContentConverter());
       });
 
       services.AddCors(corsOptions => {
