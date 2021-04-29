@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Gherkin.Ast;
-using GoodNight.Service.Domain.Model;
-using GoodNight.Service.Domain.Model.Write;
+using GoodNight.Service.Domain.Model.Parse;
 using GoodNight.Service.Domain.Parse;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.Gherkin.Quick;
+using Content = GoodNight.Service.Domain.Model.Parse.Quality.Content;
+using ExprType = GoodNight.Service.Domain.Model.Expressions.Type;
 
 namespace GoodNight.Service.Domain.Test.Parse
 {
@@ -22,11 +23,11 @@ namespace GoodNight.Service.Domain.Test.Parse
       this.output = output;
     }
 
-
     private string? input;
 
     private ParseResult<Quality>? result;
 
+    private IImmutableList<Quality.Content>? contents;
 
 
     [Given("the quality input")]
@@ -42,13 +43,17 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheParserParsesTheInput()
     {
       Assert.NotNull(input);
-      result = QualityParser.Parse(input!)!;
+      result = QualityParser.Parse(input!);
 
       // to debug failing tests.
       switch (result) {
         case ParseResult.Success<Quality> r:
           output.WriteLine($"Result is sucess.");
           output.WriteLine($"Value: {r.Result}.");
+          foreach (var content in r.Result.Contents)
+          {
+            output.WriteLine($"Content: {content}");
+          }
           break;
         case ParseResult.Failure<Quality> r:
           output.WriteLine($"Result is failure.");
@@ -74,93 +79,91 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.NotNull(result);
       Assert.IsType<ParseResult.Success<Quality>>(result);
       Assert.NotNull((result as ParseResult.Success<Quality>)!.Result);
+
+      contents = (result as ParseResult.Success<Quality>)?.Result.Contents;
+      Assert.NotNull(contents);
     }
 
-    public Quality Get(ParseResult<Quality>? result)
+    private T GetAs<T>(int number)
+      where T : Content
     {
-      Assert.NotNull(result);
-      Assert.IsType<ParseResult.Success<Quality>>(result!);
- 
-      switch (result!) {
-        case ParseResult.Success<Quality> r:
-          return r.Result;
-      }
-
-      throw new Exception();
+      Assert.True(contents!.Count >= number);
+      Assert.IsType<T>(contents[number-1]);
+      return (contents[number-1] as T)!;
     }
 
-    [Then(@"the quality has name ""(.*)""")]
-    public void TheQualityHasNameString(string name)
+    [Then(@"there is (\d) content")]
+    public void ThereIsNumberContent(int count)
     {
-      Assert.Equal(name, Get(result).Name);
+      Assert.Equal(count, contents!.Count);
     }
 
-    [Then(@"the quality has description ""(.*)""")]
-    public void TheQualityHasDescriptionString(string description)
+    [Then(@"content (\d) is a text with value ""(.*)""")]
+    public void ContentNumberIsATextWithValueString(int number, string text)
     {
-      Assert.Equal(description, Get(result).Description);
+      Assert.Equal(text, GetAs<Content.Text>(number).Value);
     }
 
-    [Then("the quality has no scene")]
-    public void TheQualityHasNoScene()
+    [Then(@"content (\d) is a name with value ""(.*)""")]
+    public void ContentNumberIsANameWithValueString(int number, string name)
     {
-      Assert.Null(Get(result).Scene);
+      Assert.Equal(name, GetAs<Content.Name>(number).Value);
     }
 
-    [Then(@"the quality has type (.*)")]
-    public void TheQualityHasTypeName(string typeName)
+    [Then(@"content (\d) is a type of (bool|int|enum)")]
+    public void ContentNumberIsATypeOfBoolIntEnum(int number, string type)
     {
-      Assert.Equal(typeName, Get(result).GetType().Name);
+      var target = type == "bool"
+        ? ExprType.Bool
+        : type == "int"
+        ? ExprType.Int
+        : ExprType.Enum;
+
+      Assert.Equal(target, GetAs<Content.Type>(number).Value);
     }
 
-    [Then(@"the quality is( not)? hidden")]
-    public void TheQualityIsMaybeHidden(string not)
+    [Then("no content is hidden")]
+    public void NoContentIsHidden()
     {
-      if (not == " not")
-      {
-        Assert.False(Get(result).Hidden);
-      }
-      else
-      {
-        Assert.True(Get(result).Hidden);
-      }
+      Assert.All(contents, Assert.IsNotType<Content.Hidden>);
     }
 
-    [Then(@"the quality has minimum (\d+)")]
-    public void TheQualityHasMinimumValue(int min)
+    [Then(@"content (\d) is hidden")]
+    public void ContentNumberIsHidden(int number)
     {
-      Assert.IsType<Quality.Int>(Get(result));
-      Assert.Equal(min, (Get(result) as Quality.Int)!.Minimum);
+      GetAs<Content.Hidden>(number);
     }
 
-    [Then(@"the quality has maximum (\d+)")]
-    public void TheQualityHasMaximumValue(int max)
+    [Then("no content is scene")]
+    public void NoContentIsScene()
     {
-      Assert.IsType<Quality.Int>(Get(result));
-      Assert.Equal(max, (Get(result) as Quality.Int)!.Maximum);
+      Assert.All(contents, Assert.IsNotType<Content.Scene>);
     }
 
-    [Then(@"the quality has level (\d+) with text (.*)")]
-    public void TheQualityHasLevelNWithTextString(int level, string text)
+    [Then(@"content (\d) is scene with name ""(.*)""")]
+    public void ContentNumberIsSceneWithNameString(int number, string scene)
     {
-      Assert.IsType<Quality.Enum>(Get(result));
-      var e = Get(result) as Quality.Enum;
-      Assert.True(e!.Levels.ContainsKey(level));
-      Assert.Equal(text, e!.Levels[level]);
+      Assert.Equal(scene, GetAs<Content.Scene>(number).Urlname);
     }
 
-
-    [Then(@"the quality has scene (.*)")]
-    public void TheQualityHasSceneName(string name)
+    [Then(@"content (\d) is a level of number (\d) and text ""(.*)""")]
+    public void ContentNumberIsALevelOfNumberNumberAndTextString(
+      int content, int number, string caption)
     {
-      Assert.Equal(name, Get(result).Scene);
+      Assert.Equal(number, GetAs<Content.Level>(content).Number);
+      Assert.Equal(caption, GetAs<Content.Level>(content).Description);
     }
 
-    [Then(@"the raw text is")]
-    public void TheRawTextIs(DocString body)
+    [Then(@"content (\d) is a minimum of (\d)")]
+    public void ContentNumberIsAMinimumOfNumber(int number, int min)
     {
-      var raw = body.Content;
-      Assert.Equal(raw, Get(result).Raw);
+      Assert.Equal(min, GetAs<Content.Minimum>(number).Value);
+    }
+
+    [Then(@"content (\d) is a maximum of (\d)")]
+    public void ContentNumberIsAMaximumOfNumber(int number, int max)
+    {
+      Assert.Equal(max, GetAs<Content.Maximum>(number).Value);
     }
   }
 }
