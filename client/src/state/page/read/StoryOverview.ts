@@ -1,6 +1,7 @@
 import request from "../../../Request";
 import {Dispatch} from "../../Dispatch";
 import type {State} from "../../State";
+import type {PageState} from "../../model/PageState";
 import type {PageDescriptor} from "../../model/PageDescriptor";
 import {Lens} from "../../model/PageState";
 
@@ -13,28 +14,28 @@ export type StoryOverview = Component;
 
 async function onLoad(dispatch: Dispatch, state: State) {
 
-  console.log("onLoad 1");
+  // console.log("onLoad 1");
 
   var loadingState = Lens.StoryOverview.stories.state.get(state.page);
 
   if (loadingState == "unloaded") {
-  console.log("onLoad 2");
+  // console.log("onLoad 2");
     dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "loading" })));
 
-    console.log("onLoad 3");
+    // console.log("onLoad 3");
 
     // await new Promise(resolve => setTimeout(resolve, 500));
 
     var storiesResponse = await request<Array<Story>>(
       "GET", "api/v1/read/stories");
-    console.log("onLoad 5");
+    // console.log("onLoad 5");
 
     if (storiesResponse.isResult) {
       dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "loaded", result: storiesResponse.message })));
 
     }
     else {
-      console.log("got error.");
+      // console.log("got error.");
       dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "failed", error: storiesResponse.message })));
     }
 
@@ -49,7 +50,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
 
   }
 
-  console.log("onLoad 4");
+  // console.log("onLoad 4");
   // if (Lens..get(state.page) == "StoryOverview") {
 
   // var page = state.page;

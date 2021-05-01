@@ -12,6 +12,7 @@ import {Navigation} from "./navigation/Navigation";
 
 
 import {PageState} from "../state/model/PageState";
+import {User} from "../state/User";
 
 // import type {Page as PageState} from "../state/Page";
 
@@ -38,6 +39,7 @@ import {PageState} from "../state/model/PageState";
 
 export interface Page {
   page: PageState;
+  user: User;
 }
 
 
@@ -56,7 +58,7 @@ export default function Page(state: Page) {
   return (
     <div id="page"
       class="container-lg shadow-around mt-lg-4 px-2 px-sm-3 px-md-4 pt-lg-1">
-        <Navigation user={"thatuser"} page={state.page.page} />
+        <Navigation page={state.page.page} user={state.user} />
       <hr class="mt-0" />
       {renderPage(state.page)}
     </div>

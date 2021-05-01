@@ -1,92 +1,51 @@
-// import {createElement} from "preact";
-import * as PreactHooks from "preact/hooks";
-// import {UserService, User as UserData} from "../../service/UserService";
-import DispatchContext from "../../DispatchContext";
-// import useAsyncEffect from "../../ui/useAsyncEffect";
+import {dispatch, Dispatch} from "../../state/Dispatch";
 
-// import {State, Dispatch} from "../../state/State";
-
-import {SignIn} from "./SignIn";
-import {SignOut} from "./SignOut";
-
-// import Loading from "../common/Loading";
+import Link from "../common/Link";
+import Icon from "../common/Icon";
 
 
-export interface User {
-  user: UserData | null;
+type SignedIn = {
+  kind: "SignedIn";
+  name: string;
+  signOut: () => Promise<void>;
 }
 
 
-export function User(state: User) {
-  const dispatch = PreactHooks.useContext(DispatchContext);
+type SignedOut = {
+  kind: "SignedOut";
+  signIn: () => Promise<void>;
+}
 
-  var user = state.user;
-  if (user == null) {
+export type User = SignedIn | SignedOut;
+
+
+export function User(state: User) {
+  if (state.kind == "SignedOut") {
     return (
-      <SignIn.C doSignIn={dispatch("doSignIn")} />
+      <li class="nav-item">
+        <Link class="nav-link clickable"
+          action={Dispatch.Command(state.signIn)}>
+          <Icon name="bookmarklet" class="small lower mr-1 restrained" />
+          Anmelden
+        </Link>
+      </li>
     );
   }
   else {
     return (
       <>
-        {state.user.name}
-        <SignOut.C doSignOut={dispatch("doSignOut")} />
+      <li class="nav-text">
+        <Icon name="astronaut-helmet" class="small higher mr-1 restrained" />
+        {state.name}
+      </li>
+      <li class="nav-item">
+        <Link class="nav-link clickable"
+          action={Dispatch.Command(state.signOut)}>
+          <Icon name="crypt-entrance" class="small higher mr-1 restrained" />
+          Abmelden
+        </Link>
+      </li>
       </>
     );
   }
 }
-
-
-// // type SignInMessage = {
-// //   kind: "SignInMessage";
-// //   user: UserData;
-// // }
-
-// // let f: never = createElement("div", {}, "okay");
-
-
-// export const User = {
-//   instance: {
-//     // service: UserService.get(),
-//     // userLoaded: false,
-//     user: null
-//   },
-
-
-//   // ofUrl: (pathname: string, matches: Array<string>): JSX.VNode<any> => {
-
-//   //   return (<Loading />);
-//   // },
-
-
-//   C: (state: User) => {
-//     const dispatch = PreactHooks.useContext(DispatchContext);
-
-//     if (!state.userLoaded) {
-//       // dispatch(
-
-//       // useAsyncEffect(async() => {
-//       //   let user = await state.service.getUser();
-//       //   console.log("user", user);
-//       // });
-//     }
-
-//     let doSignIn = () => {
-//       state.service.startSignIn();
-//       // dispatch({kind: "SignInMessage" as const});
-//     };
-
-//     let doSignOut = () => {
-//       state.service.startSignOut();
-//     }
-
-
-//     if (state.user != null) {
-//       return <>{state.user.name}<SignOut.C doSignOut={doSignOut} /></>;
-//     }
-//     else {
-//       return <SignIn.C doSignIn={doSignIn} />;
-//     }
-//   }
-// }
-

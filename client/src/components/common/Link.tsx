@@ -22,7 +22,7 @@ export default function Link(state: Preact.RenderableProps<Link>) {
 
   let dispatchLink = (action: DispatchAction) => (event: MouseEvent) => {
     event.preventDefault();
-    console.log("should execute", action);
+    // console.log("should execute", action);
     dispatch(action);
   }
 

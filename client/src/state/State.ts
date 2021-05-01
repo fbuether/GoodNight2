@@ -1,20 +1,31 @@
-import * as P from "./ProtoLens";
+// import * as P from "./ProtoLens";
 
-import {Dispatch, DispatchAction} from "./Dispatch";
+// import {Dispatch, DispatchAction} from "./Dispatch";
 
 import {PageState} from "./model/PageState";
+
 import {User} from "./User";
 
-import {Page} from "./Page";
+// import {User} from "./User";
+
+// import {Page} from "./Page";
+
+// export interface State {
+//   page: PageState;
+//   user: null;
+// }
+
+// export interface WithState {
+//   state: Readonly<State>;
+// }
+
+
 
 export interface State {
   page: PageState;
-  user: null;
+  user: User;
 }
 
-export interface WithState {
-  state: Readonly<State>;
-}
 
 /*
 export const State = {
@@ -76,30 +87,30 @@ export function applyUpdate(r: { dispatch: Dispatch | null }) {
 }
 */
 
-// treating the window.history object.
+// // treating the window.history object.
 
-export function goTo(url: string, title: string = "GoodNight") {
-  let lastUrl = history.state;
-  if (lastUrl != url) {
-    history.pushState(url, title, url);
-  }
-}
+// export function goTo(url: string, title: string = "GoodNight") {
+//   let lastUrl = history.state;
+//   if (lastUrl != url) {
+//     history.pushState(url, title, url);
+//   }
+// }
 
 
-let registered = false;
+// let registered = false;
 
-export function registerHistoryListener(dispatch: Dispatch) {
-  if (registered) {
-    return;
-  }
+// export function registerHistoryListener(dispatch: Dispatch) {
+//   if (registered) {
+//     return;
+//   }
 
-  registered = true;
+//   registered = true;
 
-  window.addEventListener("popstate", (event: PopStateEvent) => {
-    // console.log("hostiry");
-    // console.log(event.state, Page.ofUrl(event.state));
-    let restoredUrl = event.state;
-    let restoredPage = Page.ofUrl(restoredUrl);
-    dispatch(Dispatch.Page(restoredPage));
-  });
-}
+//   window.addEventListener("popstate", (event: PopStateEvent) => {
+//     // console.log("hostiry");
+//     // console.log(event.state, Page.ofUrl(event.state));
+//     let restoredUrl = event.state;
+//     let restoredPage = Page.ofUrl(restoredUrl);
+//     dispatch(Dispatch.Page(restoredPage));
+//   });
+// }

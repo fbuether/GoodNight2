@@ -1,12 +1,14 @@
-import {Dispatch} from "../../state/Dispatch";
+// import {Dispatch} from "../../state/Dispatch";
 
 import {PageDescriptor} from "../../state/model/PageDescriptor";
+
 import {Home} from "../../state/page/Home";
 import {StoryOverview} from "../../state/page/read/StoryOverview";
 
+import {User} from "../user/User";
 import {NavItem} from "./NavItem";
 
-import Link from "../common/Link";
+// import Link from "../common/Link";
 
 
 
@@ -20,7 +22,7 @@ let menuItems: Array<MenuItem> = [
 
 
 export interface Navigation {
-  user: string | null;
+  user: User;
   page: string;
 }
 
@@ -48,13 +50,10 @@ export function Navigation(state: Navigation) {
             {buttons}
           </ul>
           <ul class="navbar-nav">
-            <li class="nav-item">
-              User!
-            </li>
+            <User {...state.user} />
           </ul>
         </div>
       </div>
     </nav>
   );
 }
-              // <User {...state.user} />

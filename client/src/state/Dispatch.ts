@@ -1,17 +1,24 @@
 
 // import type {Page} from "./Page";
+import type {State} from "./State";
 import type {PageState} from "./model/PageState";
 import type {PageDescriptor} from "./model/PageDescriptor";
 
-// type CommandAction = {
-//   kind: "Command";
-//   name: string;
-// }
+type CommandAction = {
+  kind: "Command";
+  action: () => void;
+}
 
 // type AsyncAction = {
 //   kind: "Async";
 //   action: () => Promise<void>;
 // }
+
+type StateAction = {
+  kind: "State";
+  action: (state: State) => State;
+}
+
 
 type PageAction = {
   kind: "Page";
@@ -25,8 +32,9 @@ type UpdateAction = {
 }
 
 export type DispatchAction =
-    // | CommandAction
-    // | AsyncAction
+    | CommandAction
+    | StateAction
+   // | AsyncAction
     | PageAction
     | UpdateAction;
 
@@ -35,10 +43,15 @@ export type Dispatch = (action: DispatchAction) => void;
 
 
 export const Dispatch = {
-  // Command: (name: string) => ({
-  //   kind: "Command" as const,
-  //   name: name
-  // }),
+  Command: (action: () => void) => ({
+    kind: "Command" as const,
+    action: action
+  }),
+
+  State: (action: (state: State) => State) => ({
+    kind: "State" as const,
+    action: action
+  }),
 
   // Async: (action: () => Promise<void>) => ({
   //   kind: "Async" as const,
