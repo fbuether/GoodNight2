@@ -52,4 +52,3 @@ History.register(gotoUrl);
 
 let initialUrl = new URL(window.location.href).pathname;
 gotoUrl(initialUrl);
-

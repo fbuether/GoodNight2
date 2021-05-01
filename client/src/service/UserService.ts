@@ -26,7 +26,7 @@ export class UserService {
       throw new Error("Created second instance of UserService!");
     }
 
-    Oidc.Log.logger = console;
+    // Oidc.Log.logger = console;
     this.oidc = new Oidc.UserManager(userManagerConfig);
   }
 
@@ -45,51 +45,35 @@ export class UserService {
       return null;
     }
 
-    console.log("user", user);
-
     return {
       email: user.profile.email,
       name: user.profile.sub
     };
   }
 
-
-  // public async quietSignIn() {
-  //   // return await this.oidc.signinSilent();
-  // }
-
-
   public async startSignIn() {
-    console.log("userservice", this);
-
     await this.oidc.signinRedirect();
   }
 
   public async finishSignIn() {
-    // console.log("window location hash", window.location, decodeURIComponent(window.location));
-
-    // if (window.location.hash) {
-    //   window.location.hash = decodeURIComponent(window.location.hash);
-    //   // authorizedCallback returns wrong result when hash is URI encoded
-    //   this.oidcSecurityService.authorizedCallback();
-    // } else {
-    //   this.oidcSecurityService.authorize();
-    // }
-
     try {
-      console.log("finish login with: ", window.location.href);
-      let user = await this.oidc.signinRedirectCallback(window.location.href);
-      console.log("got user:", user);
+      await this.oidc.signinRedirectCallback(window.location.href);
     }
     catch (err) {
-      console.log("got error", err);
+      console.log("Error while finishing sign in:", err);
+      throw err;
     }
   }
 
-  public async startSignOut() {
-    // await this.oidc.signoutRedirect();
+
+  public async removeUser() {
     await this.oidc.removeUser();
   }
+
+
+  // public async startSignOut() {
+  //   await this.oidc.signoutRedirect();
+  // }
 
   // public async finishSignOut() {
   //   await this.oidc.signoutRedirectCallback();

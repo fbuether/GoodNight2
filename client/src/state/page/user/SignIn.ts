@@ -15,20 +15,8 @@ export type SignIn = SignInComponent;
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  console.log("finishing sign-in.");
-
-  var res = await UserService.get().finishSignIn();
-  console.log("finished sign in", res);
-
+  await UserService.get().finishSignIn();
   User.loadUser();
-
-  // var user = await UserService.get().getUser();
-  // console.log("user:", user);
-
-  // dispatch(Dispatch.State(state => ({
-  //   ...state,
-  //   user: User.signedInUser()
-  // })));
 
   Dispatch.send(Dispatch.Page(Home.page));
 }

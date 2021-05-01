@@ -6,6 +6,7 @@ import type {PageDescriptor} from "./PageDescriptor";
 import {StateStore} from "./StateStore";
 import {History} from "./History";
 
+
 type CommandAction = {
   kind: "Command";
   action: () => void;
@@ -16,12 +17,10 @@ type StateAction = {
   action: (state: State) => State;
 }
 
-
 type PageAction = {
   kind: "Page";
   descriptor: PageDescriptor;
 }
-
 
 type UpdateAction = {
   kind: "Update";
@@ -38,23 +37,12 @@ export type DispatchAction =
 export type Dispatch = (action: DispatchAction) => void;
 
 
-
+// the store of messages that need to be processed.
 const messages = new Array<DispatchAction>();
-
-
-
-function dispatch(dispatch: DispatchAction) {
-  messages.push(dispatch);
-  setTimeout(() => update());
-}
-
-
-
 
 
 export function update() {
   if (messages.length == 0) {
-    // console.log("no further messages.");
     return;
   }
 
@@ -105,6 +93,7 @@ export function update() {
 }
 
 
+// will be filled with the rendering function in index.tsx.
 var onFinish = () => {};
 
 
@@ -131,7 +120,10 @@ export const Dispatch = {
 
 
   // messages: messages,
-  send: dispatch,
+  send: (dispatch: DispatchAction) => {
+    messages.push(dispatch);
+    setTimeout(() => update());
+  },
 
   update: update,
 

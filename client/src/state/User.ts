@@ -11,8 +11,6 @@ export type User = UserState;
 async function loadUser() {
   let user = await UserService.get().getUser();
 
-  console.log("user:", user);
-
   if (user != null) {
     var userState = signedInUser(user.email ?? user.name);
 
@@ -24,7 +22,7 @@ async function loadUser() {
 }
 
 async function removeUser() {
-  await UserService.get().startSignOut();
+  await UserService.get().removeUser();
   Dispatch.send(Dispatch.State(state => ({
     ...state,
     user: defaultUser
