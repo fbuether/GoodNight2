@@ -1,11 +1,9 @@
-import {Dispatch} from "../../Dispatch";
-import type {State} from "../../State";
-// import type {PageState} from "../../model/PageState";
-// import type {PageDescriptor} from "../../model/PageDescriptor";
-// import {Lens} from "../../model/PageState";
+import {Dispatch} from "../../../core/Dispatch";
+import type {PageDescriptor} from "../../../core/PageDescriptor";
 
-import type {PageDescriptor} from "../../model/PageDescriptor";
-import {SignIn as SignInComponent} from "../../../components/page/user/SignIn";
+import type {State} from "../../State";
+
+import {SignIn as SignInComponent} from "../../../pages/user/SignIn";
 import {Home} from "../Home";
 
 import {User} from "../../User";
@@ -32,7 +30,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
   //   user: User.signedInUser()
   // })));
 
-  dispatch(Dispatch.Page(Home.page));
+  Dispatch.send(Dispatch.Page(Home.page));
 }
 
 

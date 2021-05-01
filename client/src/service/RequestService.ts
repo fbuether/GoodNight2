@@ -56,7 +56,7 @@ function makeError(status: number, body: any): ErrorResponse {
 
 
 
-export default async function request<T>(method: Method, url: string,
+export async function request<T>(method: Method, url: string,
   body: any = {}) : Promise<Response<T>> {
 
   let fetchInit: FetchInit = {

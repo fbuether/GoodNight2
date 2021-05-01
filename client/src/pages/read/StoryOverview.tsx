@@ -1,7 +1,6 @@
+import type {Story} from "../../model/read/Story";
 
-import type {Story} from "../../../model/read/Story";
-
-import Loading from "../../common/Loading";
+import Loading from "../../components/common/Loading";
 
 
 export type Unloaded = { state: "unloaded"; }

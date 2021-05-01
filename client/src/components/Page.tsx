@@ -1,49 +1,22 @@
-// import type {State} from "../state/State";
 
-// import {Page as State, Pages} from "../state/Page";
-
-// import {Page as PageModel} from "../state/PageModel";
-
-import {Home} from "./page/Home";
-import {SignIn} from "./page/user/SignIn";
-import {StoryOverview} from "./page/read/StoryOverview";
+import {Home} from "../pages/Home";
+import {SignIn} from "../pages/user/SignIn";
+import {StoryOverview} from "../pages/read/StoryOverview";
 
 import {Navigation} from "./navigation/Navigation";
 
 
-import {PageState} from "../state/model/PageState";
+import type {Pages} from "../state/Pages";
 import {User} from "../state/User";
-
-// import type {Page as PageState} from "../state/Page";
-
-// import HomePage from "./HomePage";
-// import ReadPage from "../components/read/ReadPage";
-// import WritePage from "../components/write/WritePage";
-
-
-
-
-// function assertNever(param: never): never {
-//   throw new Error(`"Page" received invalid page: "${param}"`);
-// }
-
-// function getPage(page: PageState) {
-//   switch (page.kind) {
-//     case "HomePage": return <HomePage {...page} />;
-//     case "ReadPage": return <ReadPage {...page} />;
-//     case "WritePage": return <WritePage {...page} />;
-//     default: return assertNever(page);
-//   }
-// }
 
 
 export interface Page {
-  page: PageState;
+  page: Pages;
   user: User;
 }
 
 
-function renderPage(page: PageState) {
+function renderPage(page: Pages) {
   switch (page.page) {
     case "Home": return Home(page);
     case "SignIn": return SignIn(page);

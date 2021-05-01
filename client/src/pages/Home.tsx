@@ -1,8 +1,12 @@
+import {Dispatch} from "../core/Dispatch";
 
-import type {HomePage as State} from "../state/HomePage";
+
+export interface Home {
+  page: "Home"
+}
 
 
-export default function HomePage(state: State) {
+export function Home(state: Home) {
   return (
     <div id="centre" class="row">
       <div class="col-8">

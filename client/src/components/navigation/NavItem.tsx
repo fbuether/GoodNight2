@@ -1,5 +1,5 @@
-import {Dispatch} from "../../state/Dispatch";
-import {PageDescriptor} from "../../state/model/PageDescriptor";
+import {Dispatch} from "../../core/Dispatch";
+import {PageDescriptor} from "../../core/PageDescriptor";
 
 import Link from "../common/Link";
 

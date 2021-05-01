@@ -1,11 +1,11 @@
 import {VNode} from "preact";
 
-import type {PageState} from "./PageState";
-import type {State} from "../State";
-import type {Dispatch, DispatchAction} from "../Dispatch";
+import type {Pages} from "../state/Pages";
+import type {State} from "../state/State";
+import type {Dispatch} from "./Dispatch";
 
 export interface PageDescriptor {
-  state: PageState,
+  state: Pages,
   url: string,
   title: string,
 

@@ -1,29 +1,18 @@
 import * as Preact from "preact";
-// import * as PreactHooks from "preact/hooks";
 
-// import DispatchContext from "../../DispatchContext";
-
-// import {Page} from "../../state/Page";
-import {dispatch, DispatchAction} from "../../state/Dispatch";
-
-// import {State, WithState, Update} from "../../state/State";
-// import {Page} from "../../state/Page";
-
+import {Dispatch, DispatchAction} from "../../core/Dispatch";
 
 
 interface Link {
   readonly class?: string;
-  readonly action: DispatchAction | string;
+  readonly action: DispatchAction | string; // string == regular link
   readonly current?: boolean;
 }
 
 export default function Link(state: Preact.RenderableProps<Link>) {
-  // const dispatch = PreactHooks.useContext(DispatchContext);
-
   let dispatchLink = (action: DispatchAction) => (event: MouseEvent) => {
     event.preventDefault();
-    // console.log("should execute", action);
-    dispatch(action);
+    Dispatch.send(action);
   }
 
   if (typeof state.action === "string") {

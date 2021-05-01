@@ -1,5 +1,5 @@
-import {PageDescriptor} from "../model/PageDescriptor";
-import {Home as Component} from "../../components/page/Home";
+import {PageDescriptor} from "../../core/PageDescriptor";
+import {Home as Component} from "../../pages/Home";
 
 export type Home = Component;
 

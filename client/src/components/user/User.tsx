@@ -1,4 +1,4 @@
-import {dispatch, Dispatch} from "../../state/Dispatch";
+import {Dispatch} from "../../core/Dispatch";
 
 import Link from "../common/Link";
 import Icon from "../common/Icon";

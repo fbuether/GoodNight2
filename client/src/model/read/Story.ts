@@ -1,4 +1,4 @@
-import {requireString} from "../Deserialise";
+// import {requireString} from "../Deserialise";
 
 
 export interface Story {
@@ -9,10 +9,10 @@ export interface Story {
 };
 
 
-export function asStory(obj: any): Story {
-  return {
-    name: requireString(obj["name"]),
-    urlname: requireString(obj["urlname"]),
-    description: requireString(obj["description"])
-  };
-}
+// export function asStory(obj: any): Story {
+//   return {
+//     name: requireString(obj["name"]),
+//     urlname: requireString(obj["urlname"]),
+//     description: requireString(obj["description"])
+//   };
+// }

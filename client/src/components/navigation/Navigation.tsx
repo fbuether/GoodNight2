@@ -1,15 +1,10 @@
-// import {Dispatch} from "../../state/Dispatch";
+import {PageDescriptor} from "../../core/PageDescriptor";
 
-import {PageDescriptor} from "../../state/model/PageDescriptor";
-
-import {Home} from "../../state/page/Home";
-import {StoryOverview} from "../../state/page/read/StoryOverview";
+import {Home} from "../../pages/Home";
+import {StoryOverview} from "../../pages/read/StoryOverview";
 
 import {User} from "../user/User";
 import {NavItem} from "./NavItem";
-
-// import Link from "../common/Link";
-
 
 
 type MenuItem = [string, PageDescriptor];
