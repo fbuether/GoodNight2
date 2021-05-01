@@ -1,50 +1,80 @@
 import * as P from "./ProtoLens";
 
+import {Dispatch, DispatchAction} from "./Dispatch";
+
+import {PageState} from "./model/PageState";
+import {User} from "./User";
+
 import {Page} from "./Page";
 
-
 export interface State {
-  page: Page;
-  user: string;
+  page: PageState;
+  user: null;
 }
 
 export interface WithState {
   state: Readonly<State>;
 }
 
-
+/*
 export const State = {
-  lens: P.id<State>()
-    .path("page", Page.lens)
-    .prop("user"),
-
-  toTitle: (state: State): string => "GoodNight" + Page.toTitle(state.page),
-
-  toUrl: (state: State): string => Page.toUrl(state.page),
-
-  ofUrl: (pathname: string): State => {
-    // todo: load current user.
-    return {
-      page: Page.ofUrl(pathname),
-      user: "Mrs. Hollywookle"
+  initial: (pathname: string) => {
+    let descriptor = Page.ofUrl(pathname);
+    let startState = {
+      user: null,
+      page: descriptor.state
     };
-  },
-}
 
+    return applyUpdate({dispatch:null})(startState, Dispatch.Page(descriptor));
+  }
+}
+*/
 
 // performing updates to the state.
 
-export type Update = (state: State) => State;
-export type Dispatch = (action: Update) => void;
+/*
+export function applyUpdate(r: { dispatch: Dispatch | null }) {
+  return (state: State, update: DispatchAction): State => {
+    console.log("applying update", update);
 
-export function applyUpdate(state: State, update: Update): State {
-  let nextState = update(state);
-  let nextUrl = State.toUrl(nextState);
-  goTo(nextUrl);
-  document.title = State.toTitle(nextState);
-  return nextState;
+    switch (update.kind) {
+      case "Update":
+
+        var updatePage = update.update(state.page);
+        var newstate = updatePage == null
+            ? state
+            : { ...state, page: updatePage };
+
+        console.log("update: ", newstate);
+
+        return newstate;
+        // case "Command":
+        //   return state;
+      case "Page":
+        let page = update.descriptor;
+        let newState = { ...state, page: page.state };
+        goTo(page.url, page.title);
+        document.title = page.title;
+
+        // setTimeout(() => r.dispatch( update.descriptor.onLoad(r.dispatch
+
+        if (r.dispatch != null) {
+          update.descriptor.onLoad(r.dispatch, newState);
+        }
+        else {
+          console.warn("could not execute onLoad, as dispatch is null.");
+        }
+
+        return newState;
+
+      // case "Async":
+      //   return state;
+    }
+
+    throw new Error();
+  }
 }
-
+*/
 
 // treating the window.history object.
 
@@ -58,7 +88,7 @@ export function goTo(url: string, title: string = "GoodNight") {
 
 let registered = false;
 
-export function registerHistoryListener(dispatch: (action: Update) => void) {
+export function registerHistoryListener(dispatch: Dispatch) {
   if (registered) {
     return;
   }
@@ -66,9 +96,10 @@ export function registerHistoryListener(dispatch: (action: Update) => void) {
   registered = true;
 
   window.addEventListener("popstate", (event: PopStateEvent) => {
+    // console.log("hostiry");
+    // console.log(event.state, Page.ofUrl(event.state));
     let restoredUrl = event.state;
-    let restoredState = State.ofUrl(restoredUrl);
-    let upd = (_: State) => restoredState;
-    dispatch(upd);
+    let restoredPage = Page.ofUrl(restoredUrl);
+    dispatch(Dispatch.Page(restoredPage));
   });
 }

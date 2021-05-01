@@ -1,14 +1,14 @@
 
-
 const icons = {
+  "astronaut-helmet": require("../../../assets/icons/astronaut-helmet.svg"),
+  "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
   "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
+  "horizon-road": require("../../../assets/icons/horizon-road.svg"),
   "save": require("../../../assets/icons/save.svg"),
   "shamrock": require("../../../assets/icons/shamrock.svg"),
   "sundial": require("../../../assets/icons/sundial.svg"),
   "swap-bag": require("../../../assets/icons/swap-bag.svg"),
   "two-coins": require("../../../assets/icons/two-coins.svg"),
-  "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
-  "horizon-road": require("../../../assets/icons/horizon-road.svg"),
 } as const;
 
 

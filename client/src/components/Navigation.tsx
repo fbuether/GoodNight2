@@ -5,50 +5,53 @@ import {HomePage} from "../state/HomePage";
 import {ReadPage} from "../state/read/ReadPage";
 import {WritePage} from "../state/write/WritePage";
 
+import {User} from "./user/User";
+
+// import UserControl from "./UserControl";
 import Link from "../components/common/Link";
 
 
-export default interface Navigation {
-  readonly state: Readonly<State>;
-  readonly currentPage: Page;
-  readonly user: string;
-}
+type MenuItem = [string, { instance: Page }];
 
-interface NavItem {
+let menuItems: Array<MenuItem> = [
+  ["Willkommen", HomePage],
+  ["Geschichten lesen", ReadPage],
+  ["Geschichten schreiben", WritePage]
+];
+
+
+interface NavButton {
   title: string;
-  page: Page;
+  target: Update;
+  state: State;
+  current: boolean;
 }
 
 
-export default function Navigation(state: Navigation) {
-  let navItems: Array<NavItem> = [
-    {
-      title: "Willkommen",
-      page: HomePage.instance
-    },
-    {
-      title: "Geschichten lesen",
-      page: ReadPage.instance
-    },
-    {
-      title: "Geschichten schreiben",
-      page: WritePage.instance
-    },
-  ];
+function NavItem(state: NavButton) {
+  return (
+    <li class={"nav-item" + (state.current ? " active" : "")}>
+      <Link class="nav-link" current={state.current} state={state.state}
+        target={state.target}>
+        {state.title}
+      </Link>
+    </li>
+  );
+}
+
+
+export default function Navigation(state: State) {
 
   let activePage = { "aria-current": "page" };
 
-  let currentKind = state.currentPage.kind;
+  let currentKind = state.page.kind;
 
-  let navButtons = navItems
-    .map(item => ({...item, current: currentKind == item.page.kind}))
-    .map(item => (
-      <li class={"nav-item" + (item.current ? " active" : "")}>
-        <Link class="nav-link" current={item.current} state={state.state}
-          target={State.lens.page.set(item.page)}>
-          {item.title}
-        </Link>
-      </li>));
+  let buttons = menuItems.map(item =>
+      <NavItem
+        title={item[0]}
+        target={State.lens.page.set(item[1].instance)}
+        state={state}
+        current={state.page.kind == item[1].instance.kind} />);
 
   return (
     <nav class="navbar navbar-expand-sm navbar-light">
@@ -64,7 +67,12 @@ export default function Navigation(state: Navigation) {
 
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto">
-            {navButtons}
+            {buttons}
+          </ul>
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <User.C {...User.instance} />
+            </li>
           </ul>
         </div>
       </div>
