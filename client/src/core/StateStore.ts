@@ -1,14 +1,9 @@
-
 import type {State} from "../state/State";
-import {User} from "../state/User";
-import {Home} from "../state/page/Home";
 
 
 let stateRef: {state: State} = {
-  state: {
-    user: User.default,
-    page: Home.page.state
-  }
+  state: ({
+  } as State)
 };
 
 

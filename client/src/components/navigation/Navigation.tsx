@@ -1,7 +1,7 @@
 import {PageDescriptor} from "../../core/PageDescriptor";
 
-import {Home} from "../../pages/Home";
-import {StoryOverview} from "../../pages/read/StoryOverview";
+import {Home} from "../../state/page/Home";
+import {StoryOverview} from "../../state/page/read/StoryOverview";
 
 import {User} from "../user/User";
 import {NavItem} from "./NavItem";
