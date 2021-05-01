@@ -1,6 +1,8 @@
 
 import type {Story} from "../../../model/read/Story";
 
+import Loading from "../../common/Loading";
+
 
 export type Unloaded = { state: "unloaded"; }
 export type Loading = { state: "loading"; }
@@ -8,6 +10,9 @@ export type Loaded<T> = { state: "loaded"; result: T; }
 export type Failed = { state: "failed"; error: string; }
 
 export type Loadable<T> = Unloaded | Loading | Loaded<T> | Failed;
+
+
+
 
 
 export interface StoryOverview {
@@ -18,8 +23,14 @@ export interface StoryOverview {
 
 export function StoryOverview(state: StoryOverview) {
   let stories = state.stories;
-  let count = stories.state == "loaded" ? stories.result.length : stories.state;
 
-  return (<div>Story Overview! {count}</div>);
+  switch (state.stories.state) {
+    case "loaded":
+      return (<div>Story Overview! {state.stories.result.length}</div>);
+    case "failed":
+      return <div>Could not load stories: {state.stories.error}</div>;
+    default:
+      return <Loading />;
+  }
 }
 

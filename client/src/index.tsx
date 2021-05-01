@@ -19,7 +19,7 @@ import "./ui/style.scss";
 
 import {State, // applyUpdate,
         registerHistoryListener} from "./state/State";
-import {Dispatch, DispatchAction} from "./state/Dispatch";
+import {messages, dispatch, setExecutor, Dispatch, DispatchAction} from "./state/Dispatch";
 import DispatchContext from "./DispatchContext";
 
 import type {PageDescriptor} from "./state/model/PageDescriptor";
@@ -86,7 +86,6 @@ let reRender = () => {
 }
 
 
-let messages = new Array<DispatchAction>();
 
 
 function executeNext() {
@@ -124,7 +123,9 @@ function executeNext() {
         history.pushState(desc.url, desc.title, desc.url);
       }
 
-      setTimeout(() => desc.onLoad(dispatch, newState));
+      // setTimeout(() => 
+          desc.onLoad(dispatch, newState)// )
+  ;
       // break;
   }
 
@@ -139,10 +140,6 @@ function executeNext() {
 }
 
 
-function dispatch(dispatch: DispatchAction) {
-  messages.push(dispatch);
-  setTimeout(() => executeNext());
-}
 
 
 function ofUrl(pathname: string): PageDescriptor {
@@ -156,6 +153,7 @@ function ofUrl(pathname: string): PageDescriptor {
 }
 
 
+setExecutor(executeNext);
 
 
 let pathname = new URL(window.location.href).pathname;

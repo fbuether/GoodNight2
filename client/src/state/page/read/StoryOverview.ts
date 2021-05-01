@@ -27,12 +27,14 @@ async function onLoad(dispatch: Dispatch, state: State) {
 
     var storiesResponse = await request<Array<Story>>(
       "GET", "api/v1/read/stories");
+    console.log("onLoad 5");
 
     if (storiesResponse.isResult) {
       dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "loaded", result: storiesResponse.message })));
 
     }
     else {
+      console.log("got error.");
       dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "failed", error: storiesResponse.message })));
     }
 

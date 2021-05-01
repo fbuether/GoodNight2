@@ -55,3 +55,20 @@ export const Dispatch = {
     update: update
   })
 }
+
+
+
+export const messages = new Array<DispatchAction>();
+
+
+var localExecutor = () => {};
+
+export function setExecutor(executor: () => void) {
+  localExecutor = executor;
+}
+
+
+export function dispatch(dispatch: DispatchAction) {
+  messages.push(dispatch);
+  setTimeout(() => localExecutor());
+}
