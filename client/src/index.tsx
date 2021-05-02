@@ -27,7 +27,7 @@ import {User} from "./state/User";
 import PageComponent from "./components/Page";
 
 
-User.loadUser();
+User.setInitialUser();
 
 
 // always render when updates finish.
@@ -43,9 +43,7 @@ Dispatch.onFinishUpdate(() => {
 
 // whenever we go to a url (by opening the page, or via history), dispatch it
 let gotoUrl = (url: string) => {
-  let initialDescriptor = Page.ofUrl(url);
-  let initialDispatch = Dispatch.Page(initialDescriptor);
-  Dispatch.send(initialDispatch);
+  Dispatch.send(Dispatch.Page(Page.ofUrl(url)));
 }
 
 History.register(gotoUrl);

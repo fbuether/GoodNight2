@@ -2,33 +2,20 @@ import {request} from "../../../service/RequestService";
 import {Dispatch} from "../../../core/Dispatch";
 import type {PageDescriptor} from "../../../core/PageDescriptor";
 import type {State} from "../../State";
-import type {Page} from "../../Page";
-import {Pages, Lens} from "../../Pages";
+import {Lens} from "../../Pages";
 
 import type {Story} from "../../../model/read/Story";
+import {Loadable} from "../../Loadable";
 
-import {Loadable, StoryOverview as Component} from "../../../pages/read/StoryOverview";
+import {StoryOverview as Component} from "../../../pages/read/StoryOverview";
 export type StoryOverview = Component;
 
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-
-  var loadingState = Lens.StoryOverview.stories.state.get(state.page);
-
-  if (loadingState == "unloaded") {
-    dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "loading" })));
-
-    var storiesResponse = await request<Array<Story>>(
-      "GET", "api/v1/read/stories");
-
-    if (storiesResponse.isResult) {
-      dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "loaded", result: storiesResponse.message })));
-    }
-    else {
-      dispatch(Dispatch.Update(Lens.StoryOverview.stories.set({ state: "failed", error: storiesResponse.message })));
-    }
-  }
+  await Loadable.forRequest<Array<Story>>(
+    dispatch, state, "GET", "api/v1/read/stories",
+    Lens.StoryOverview.stories);
 }
 
 
@@ -51,6 +38,6 @@ function page(stories: Loadable<Array<Story>>): PageDescriptor {
 
 export const StoryOverview = {
   path: /^\/read$/,
-  page: page({ state: "unloaded" }),
-  ofUrl: (pathname: string, matches: Array<string>) => page({ state: "unloaded" })
+  page: page(Loadable.Unloaded),
+  ofUrl: (pathname: string, matches: Array<string>) => page(Loadable.Unloaded)
 };

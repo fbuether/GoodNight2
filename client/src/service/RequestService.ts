@@ -4,7 +4,7 @@
 declare var serviceBase: string;
 
 
-type Method = "GET" | "POST" | "PUT";
+export type Method = "GET" | "POST" | "PUT";
 
 interface FetchInit {
   method: string;

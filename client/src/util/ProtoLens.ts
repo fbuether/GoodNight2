@@ -1,10 +1,10 @@
 
-interface PrismAccess<TObject, TValue> {
+export interface PrismAccess<TObject, TValue> {
   get: (obj: TObject) => TValue | null;
   set: (value: TValue) => (obj: TObject) => TObject;
 }
 
-interface LensAccess<TObject, TValue> extends PrismAccess<TObject, TValue> {
+export interface LensAccess<TObject, TValue> extends PrismAccess<TObject, TValue> {
   get: (obj: TObject) => TValue;
 }
 

@@ -1,10 +1,10 @@
 import * as Preact from "preact";
 
-export interface LoadingState {
+export interface Loading {
   class?: string;
 }
 
-export default function Loading(state: Preact.RenderableProps<LoadingState>) {
+export default function Loading(state: Preact.RenderableProps<Loading>) {
   return (
     <div class={"loading " + state.class ?? ""}>
       <div class="lined"></div>

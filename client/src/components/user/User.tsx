@@ -20,18 +20,7 @@ export type User = SignedIn | SignedOut;
 
 
 export function User(state: User) {
-  if (state.kind == "SignedOut") {
-    return (
-      <li class="nav-item">
-        <Link class="nav-link clickable"
-          action={Dispatch.Command(state.signIn)}>
-          <Icon name="bookmarklet" class="small lower mr-1 restrained" />
-          Anmelden
-        </Link>
-      </li>
-    );
-  }
-  else {
+  if (state.kind == "SignedIn") {
     return (
       <>
       <li class="nav-text">
@@ -46,6 +35,17 @@ export function User(state: User) {
         </Link>
       </li>
       </>
+    );
+  }
+  else {
+    return (
+      <li class="nav-item">
+        <Link class="nav-link clickable"
+          action={Dispatch.Command(state.signIn)}>
+          <Icon name="bookmarklet" class="small lower mr-1 restrained" />
+          Anmelden
+        </Link>
+      </li>
     );
   }
 }
