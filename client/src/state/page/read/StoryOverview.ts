@@ -37,7 +37,7 @@ function page(stories: Loadable<Array<Story>>): PageDescriptor {
 }
 
 export const StoryOverview = {
-  path: /^\/read$/,
+  path: /^\/read\/?$/,
   page: page(Loadable.Unloaded),
   ofUrl: (pathname: string, matches: Array<string>) => page(Loadable.Unloaded)
 };

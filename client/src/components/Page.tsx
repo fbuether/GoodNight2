@@ -3,6 +3,7 @@ import {Home} from "../pages/Home";
 import {SignIn} from "../pages/user/SignIn";
 import {StoryOverview} from "../pages/read/StoryOverview";
 import {ReadStory} from "../pages/read/ReadStory";
+import {SelectStory} from "../pages/write/SelectStory";
 
 import {Navigation} from "./navigation/Navigation";
 
@@ -17,20 +18,15 @@ export interface Page {
 }
 
 
-function assertNever(param: never): never {
-  throw new Error(`Invalid page kind in Page.renderPage: "${param}"`);
-}
-
 function renderPage(page: Pages) {
   switch (page.page) {
     case "Home": return Home(page);
     case "SignIn": return SignIn(page);
     case "StoryOverview": return StoryOverview(page);
     case "ReadStory": return ReadStory(page);
-    // default: assertNever(page.page);
+    case "SelectStory": return SelectStory(page);
   }
 }
-
 
 
 export default function Page(state: Page) {

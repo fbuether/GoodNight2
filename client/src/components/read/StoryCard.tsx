@@ -1,18 +1,23 @@
 import {Dispatch} from "../../core/Dispatch";
-import type {Story} from "../../model/read/Story";
-
-import {ReadStory} from "../../state/page/read/ReadStory";
+import type {PageDescriptor} from "../../core/PageDescriptor";
 
 import Link from "../common/Link";
 
 
+export interface ShowableStory {
+  name: string;
+  description: string;
+  urlname: string;
+}
+
 export interface StoryCard {
-  story: Story;
+  story: ShowableStory;
+  page: (urlname: string) => PageDescriptor;
 }
 
 
 export default function StoryCard(state: StoryCard) {
-  let action = Dispatch.Page(ReadStory.page(state.story.urlname));
+  let action = Dispatch.Page(state.page(state.story.urlname));
 
   return (
     <div class="col">
