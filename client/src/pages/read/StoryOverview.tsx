@@ -1,17 +1,7 @@
 import type {Story} from "../../model/read/Story";
+import type {Loadable} from "../../state/Loadable";
 
-import Loading from "../../components/common/Loading";
-
-
-export type Unloaded = { state: "unloaded"; }
-export type Loading = { state: "loading"; }
-export type Loaded<T> = { state: "loaded"; result: T; }
-export type Failed = { state: "failed"; error: string; }
-
-export type Loadable<T> = Unloaded | Loading | Loaded<T> | Failed;
-
-
-
+import ShowStories from "../../components/read/ShowStories";
 
 
 export interface StoryOverview {
@@ -21,15 +11,12 @@ export interface StoryOverview {
 
 
 export function StoryOverview(state: StoryOverview) {
-  let stories = state.stories;
-
-  switch (state.stories.state) {
-    case "loaded":
-      return (<div>Story Overview! {state.stories.result.length}</div>);
-    case "failed":
-      return <div>Could not load stories: {state.stories.error}</div>;
-    default:
-      return <Loading />;
-  }
+  return (
+    <div id="centre" class="row px-0 g-0">
+      <h1>Geschichten bei GoodNight</h1>
+      <p>Wähle eine Geschichte aus, die du lesen möchtest.</p>
+      <ShowStories {...state.stories} />
+    </div>
+  );
 }
 

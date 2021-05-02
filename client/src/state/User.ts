@@ -21,6 +21,16 @@ async function loadUser() {
   }
 }
 
+
+async function setInitialUser() {
+  Dispatch.send(Dispatch.State(state => ({
+    ...state,
+    user: defaultUser
+  })));
+
+  await loadUser();
+}
+
 async function removeUser() {
   await UserService.get().removeUser();
   Dispatch.send(Dispatch.State(state => ({
@@ -47,5 +57,6 @@ const defaultUser: User = {
 export const User = {
   default: defaultUser,
   loadUser: loadUser,
+  setInitialUser: setInitialUser,
   signedInUser: signedInUser
 }
