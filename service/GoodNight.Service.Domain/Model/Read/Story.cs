@@ -4,6 +4,10 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
+  /// <summary>
+  /// A short summary of a story. This is mostly used for serialisation and
+  /// transfer to the client, as the client never sees the whole story.
+  /// </summary>
   public record StoryHeader(
     string Name,
     string Urlname,
