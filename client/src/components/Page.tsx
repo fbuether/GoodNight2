@@ -1,35 +1,39 @@
 
-import type {State} from "../state/State";
-import type {Page as PageState} from "../state/Page";
-import DispatchContext from "../DispatchContext";
+import {Home} from "../pages/Home";
+import {SignIn} from "../pages/user/SignIn";
+import {StoryOverview} from "../pages/read/StoryOverview";
 
-import HomePage from "./HomePage";
-import ReadPage from "../components/read/ReadPage";
-import WritePage from "../components/write/WritePage";
-import Navigation from "../components/Navigation";
+import {Navigation} from "./navigation/Navigation";
 
 
-function assertNever(param: never): never {
-  throw new Error(`"Page" received invalid state: "${param}"`);
+import type {Pages} from "../state/Pages";
+import {User} from "../state/User";
+
+
+export interface Page {
+  page: Pages;
+  user: User;
 }
 
-function getPage(page: PageState) {
-  switch (page.kind) {
-    case "HomePage": return <HomePage {...page} />;
-    case "ReadPage": return <ReadPage {...page} />;
-    case "WritePage": return <WritePage {...page} />;
-    default: return assertNever(page);
+
+function renderPage(page: Pages) {
+  switch (page.page) {
+    case "Home": return Home(page);
+    case "SignIn": return SignIn(page);
+    case "StoryOverview": return StoryOverview(page);
+    // default: assertNever(page.page);
   }
 }
 
 
-export default function Page(state: State) {
+
+export default function Page(state: Page) {
   return (
     <div id="page"
       class="container-lg shadow-around mt-lg-4 px-2 px-sm-3 px-md-4 pt-lg-1">
-      <Navigation currentPage={state.page} user={state.user} state={state} />
+        <Navigation page={state.page.page} user={state.user} />
       <hr class="mt-0" />
-      {getPage(state.page)}
+      {renderPage(state.page)}
     </div>
   );
 }

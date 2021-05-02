@@ -1,5 +1,4 @@
 import * as Preact from "preact";
-import * as PreactHooks from "preact/hooks";
 
 // Bootstrap imports, filtered.
 
@@ -15,33 +14,41 @@ import "bootstrap/js/dist/collapse";
 // Toast
 // Tooltip
 
-import "./ui/style.scss";
-
-import {State, Update, applyUpdate,
-  registerHistoryListener} from "./state/State";
-import DispatchContext from "./DispatchContext";
-
-import Page from "./components/Page";
+import "./style.scss";
 
 
-let Root = () => {
-  const [state, dispatch] = PreactHooks.useReducer<State, Update>(
-    applyUpdate, State.ofUrl(new URL(window.location.href).pathname));
+import {Dispatch} from "./core/Dispatch";
+import {History} from "./core/History";
+import {StateStore} from "./core/StateStore";
 
-  registerHistoryListener(dispatch);
+import {Page} from "./state/Page";
+import {User} from "./state/User";
 
-  console.log("current state", state);
+import PageComponent from "./components/Page";
 
-  return (
-    <DispatchContext.Provider value={dispatch}>
-      <Page {...state}></Page>
-    </DispatchContext.Provider>
-  );
-};
 
-let rootElement = document.getElementById("goodnight-client");
-if (rootElement == null) {
-  throw "HTML does not contain the root element \"goodnight-client\".";
+User.loadUser();
+
+
+// always render when updates finish.
+Dispatch.onFinishUpdate(() => {
+  let rootElement = document.getElementById("goodnight-client");
+  if (rootElement == null) {
+    throw "HTML does not contain the root element \"goodnight-client\".";
+  }
+
+  Preact.render(<PageComponent {...StateStore.get()} />, rootElement);
+});
+
+
+// whenever we go to a url (by opening the page, or via history), dispatch it
+let gotoUrl = (url: string) => {
+  let initialDescriptor = Page.ofUrl(url);
+  let initialDispatch = Dispatch.Page(initialDescriptor);
+  Dispatch.send(initialDispatch);
 }
 
-Preact.render(<Root />, rootElement);
+History.register(gotoUrl);
+
+let initialUrl = new URL(window.location.href).pathname;
+gotoUrl(initialUrl);

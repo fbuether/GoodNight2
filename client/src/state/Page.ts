@@ -1,53 +1,35 @@
-import * as P from "./ProtoLens";
+import * as P from "../util/ProtoLens";
 
-import {OfUrl} from "../util/UrlMapper";
+import {Home} from "./page/Home";
+import {SignIn} from "./page/user/SignIn";
+import {StoryOverview} from "./page/read/StoryOverview";
 
-import {HomePage} from "./HomePage";
-import {ReadPage} from "./read/ReadPage";
-import {WritePage} from "./write/WritePage";
+import type {Page as PageState} from "../components/Page";
+import type {Pages} from "./Pages";
 
-
-export type Page =
-    | HomePage
-    | ReadPage
-    // | LoginPage
-    | WritePage;
+import {PageDescriptor} from "../core/PageDescriptor";
 
 
-function assertNever(param: never): never {
-  throw new Error(`Invalid Page kind in state Page: "${param}"`);
-}
+export type Page = PageState;
 
-let guardHomePage = (a: Page): a is HomePage => (a.kind == "HomePage");
-let guardReadPage = (a: Page): a is ReadPage => (a.kind == "ReadPage");
-let guardWritePage = (a: Page): a is WritePage => (a.kind == "WritePage");
 
 export const Page = {
-  lens: <T>(id: P.Lens<T, Page>) => id
-    .union("home", guardHomePage, HomePage.lens)
-    .union("read", guardReadPage, ReadPage.lens)
-    .union("write", guardWritePage, WritePage.lens),
 
-  toUrl: (page: Page): string => {
-    switch (page.kind) {
-      case "HomePage": return HomePage.toUrl(page);
-      case "ReadPage": return ReadPage.toUrl(page);
-      case "WritePage": return WritePage.toUrl(page);
-      default: return assertNever(page);
+  Pages: [
+    Home,
+    SignIn,
+    StoryOverview],
+
+  default: Home.page,
+
+
+  ofUrl: (pathname: string): PageDescriptor => {
+    let page = Page.Pages.find(p => p.path.test(pathname));
+    if (page !== undefined) {
+      let matches = pathname.match(page.path);
+      return page.ofUrl(pathname, matches != null ? matches : []);
     }
-  },
 
-  ofUrl: (pathname: string): Page => {
-    return OfUrl.union(pathname, [HomePage, ReadPage, WritePage],
-      HomePage.instance);
-  },
-
-  toTitle: (page: Page): string => {
-    switch (page.kind) {
-      case "HomePage": return "";
-      case "ReadPage": return ": " + ReadPage.toTitle(page);
-      case "WritePage": return ": " + WritePage.toTitle(page);
-      default: return assertNever(page);
-    }
+    return Home.page;
   }
 }

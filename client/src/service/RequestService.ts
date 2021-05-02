@@ -56,7 +56,7 @@ function makeError(status: number, body: any): ErrorResponse {
 
 
 
-export default async function request<T>(method: Method, url: string,
+export async function request<T>(method: Method, url: string,
   body: any = {}) : Promise<Response<T>> {
 
   let fetchInit: FetchInit = {
@@ -72,15 +72,21 @@ export default async function request<T>(method: Method, url: string,
     fetchInit.body = JSON.stringify(body);
   }
 
-  let fullUrl = serviceBase + (url.startsWith("/") ? url : "/" + url);
-  let response = await fetch(fullUrl, fetchInit);
-  let json = await response.json();
+  try {
+    let fullUrl = serviceBase + (url.startsWith("/") ? url : "/" + url);
+    let response = await fetch(fullUrl, fetchInit);
+    let json = await response.json();
 
-  if (response.ok) {
-    return makeResult<T>(json);
+    if (response.ok) {
+      return makeResult<T>(json);
+    }
+    else {
+      console.warn("Returned invalid result", response.status, json);
+      return makeError(response.status, json);
+    }
   }
-  else {
-    console.warn("Returned invalid result", response.status, json);
-    return makeError(response.status, json);
+  catch (err) {
+    console.warn("Exception during request", err);
+    return makeError(0, { type: "Exception", message: String(err) });
   }
 }

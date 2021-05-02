@@ -1,39 +1,31 @@
 import * as Preact from "preact";
-import * as PreactHooks from "preact/hooks";
 
-import {State, WithState, Update} from "../../state/State";
-import {Page} from "../../state/Page";
-
-import DispatchContext from "../../DispatchContext";
+import {Dispatch, DispatchAction} from "../../core/Dispatch";
 
 
 interface Link {
   readonly class?: string;
-
-  readonly target: string | Update;
-
+  readonly action: DispatchAction | string; // string == regular link
   readonly current?: boolean;
 }
 
-export default function Link(state: Preact.RenderableProps<Link & Partial<WithState>>) {
-  const dispatch = PreactHooks.useContext(DispatchContext);
-
-  let dispatchLink = (target: Update) => (event: MouseEvent) => {
+export default function Link(state: Preact.RenderableProps<Link>) {
+  let dispatchLink = (action: DispatchAction) => (event: MouseEvent) => {
     event.preventDefault();
-    dispatch(target);
+    Dispatch.send(action);
   }
 
-  if (typeof state.target === "string") {
-    return <a class={state.class} href={state.target}>{state.children}</a>;
+  if (typeof state.action === "string") {
+    return <a class={state.class} href={state.action}>{state.children}</a>;
   }
   else {
-    let href = state.state
-        ? State.toUrl(state.target(state.state))
+    let href = state.action.kind == "Page"
+        ? state.action.descriptor.url
         : "";
 
     return <a class={state.class}
       aria-current={state.current ? "page" : undefined}
-      onClick={dispatchLink(state.target)}
+      onClick={dispatchLink(state.action)}
       href={href}>{state.children}</a>;
   }
 }
