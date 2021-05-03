@@ -7,8 +7,12 @@ import type {Story, Category} from "../../../model/write/Story";
 import {Loadable} from "../../Loadable";
 
 
-import {WriteStory as Component} from "../../../pages/write/WriteStory";
-export type WriteStory = Component;
+export interface WriteStory {
+  page: "WriteStory";
+  urlname: string;
+  story: Loadable<Story>;
+  categories: Loadable<Array<Category>>;
+}
 
 
 
@@ -32,22 +36,23 @@ async function onLoad(dispatch: Dispatch, state: State) {
 }
 
 
-function instance(urlname: string): WriteStory {
+function instance(urlname: string, story?: Story)
+: WriteStory {
   return {
     page: "WriteStory" as const,
     urlname: urlname,
-    story: Loadable.Unloaded,
+    story: story ? Loadable.Loaded(story) : Loadable.Unloaded,
     categories: Loadable.Unloaded
   };
 }
 
-function page(urlname: string): PageDescriptor {
+function page(urlname: string, story?: Story)
+: PageDescriptor {
   return {
-    state: instance(urlname),
+    state: instance(urlname, story),
     url: "/write/" + urlname,
-    title: "GoodNight: Schreibe",
-    onLoad: onLoad,
-    render: () => Component(instance(urlname))
+    title: "GoodNight: Schreibe" + (story ? " "+ story.name : ""),
+    onLoad: onLoad
   };
 }
 

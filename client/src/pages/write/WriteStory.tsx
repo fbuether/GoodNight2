@@ -2,18 +2,14 @@ import {Dispatch} from "../../core/Dispatch";
 import type {Story, Category} from "../../model/write/Story";
 import type {Loadable} from "../../state/Loadable";
 
+import {WriteStory as State} from "../../state/page/write/WriteStory";
+
 import Link from "../../components/common/Link";
 import Icon from "../../components/common/Icon";
 import Error from "../../components/common/Error";
 import Loading from "../../components/common/Loading";
 
 
-export interface WriteStory {
-  page: "WriteStory";
-  urlname: string;
-  story: Loadable<Story>;
-  categories: Loadable<Array<Category>>;
-}
 
 /*
 
@@ -101,10 +97,11 @@ function renderCategories(categories: Loadable<Array<Category>>) {
     return <Error message={categories.error} />;
   }
 
-  return <>{categories.result.length}</>;
+  return <>ooo: {categories.result.length}</>;
 }
 
-export function WriteStory(state: WriteStory) {
+
+export function WriteStory(state: State) {
   let story = state.story;
   if (story.state == "unloaded" || story.state == "loading") {
     return <Loading />;
@@ -125,7 +122,7 @@ export function WriteStory(state: WriteStory) {
 
   let toNewScene = "http://localhost:32015";
   let toNewQuality = "http://localhost:32015";
-  let toBase = Dispatch.Page(WriteStory.page(state.urlname));
+  let toBase = Dispatch.Page(State.page(state.urlname, story.result));
 
   let categories = renderCategories(state.categories);
 
