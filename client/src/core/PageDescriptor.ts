@@ -11,6 +11,4 @@ export interface PageDescriptor {
 
   // lifecycle
   onLoad: (dispatch: Dispatch, state: State) => Promise<void>;
-
-  render: () => VNode<any>
 }

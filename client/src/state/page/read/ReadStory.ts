@@ -40,8 +40,7 @@ function page(urlname: string): PageDescriptor {
     state: instance(urlname),
     url: "/read/" + urlname,
     title: "GoodNight: Lesen",
-    onLoad: onLoad,
-    render: () => Component(instance(urlname))
+    onLoad: onLoad
   };
 }
 

@@ -30,8 +30,7 @@ const page: PageDescriptor = {
   state: instance,
   url: "/finish-sign-in",
   title: "GoodNight: Anmelden…",
-  onLoad: onLoad,
-  render: () => SignInComponent(instance)
+  onLoad: onLoad
 };
 
 export const SignIn = {

@@ -29,8 +29,7 @@ const page: PageDescriptor = ({
   state: instance,
   url: "/write",
   title: "GoodNight: Geschichten schreiben",
-  onLoad: onLoad,
-  render: () => Component(instance)
+  onLoad: onLoad
 });
 
 

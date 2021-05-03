@@ -31,8 +31,7 @@ function page(stories: Loadable<Array<Story>>): PageDescriptor {
     state: instance(stories),
     url: "/read",
     title: "GoodNight: Übersicht der Geschichten",
-    onLoad: onLoad,
-    render: () => Component(instance(stories))
+    onLoad: onLoad
   };
 }
 
