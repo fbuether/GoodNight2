@@ -2,6 +2,7 @@ import {PageDescriptor} from "../../core/PageDescriptor";
 
 import {Home} from "../../state/page/Home";
 import {StoryOverview} from "../../state/page/read/StoryOverview";
+import {SelectStory} from "../../state/page/write/SelectStory";
 
 import {User} from "../user/User";
 import {NavItem} from "./NavItem";
@@ -12,7 +13,7 @@ type MenuItem = [string, PageDescriptor];
 let menuItems: Array<MenuItem> = [
   ["Willkommen", Home.page],
   ["Geschichten lesen", StoryOverview.page],
-  // ["Geschichten schreiben", WritePage]
+  ["Geschichten schreiben", SelectStory.page]
 ];
 
 

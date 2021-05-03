@@ -20,25 +20,22 @@ async function onLoad(dispatch: Dispatch, state: State) {
 }
 
 
-function instance(stories: Loadable<Array<Story>>) {
-  return {
-    page: "SelectStory" as const,
-    stories: stories
-  };
-}
+const instance = ({
+  page: "SelectStory" as const,
+  stories: Loadable.Unloaded
+});
 
-function page(stories: Loadable<Array<Story>>): PageDescriptor {
-  return {
-    state: instance(stories),
-    url: "/write",
-    title: "GoodNight: Geschichten schreiben",
-    onLoad: onLoad,
-    render: () => Component(instance(stories))
-  };
-}
+const page: PageDescriptor = ({
+  state: instance,
+  url: "/write",
+  title: "GoodNight: Geschichten schreiben",
+  onLoad: onLoad,
+  render: () => Component(instance)
+});
+
 
 export const SelectStory = {
   path: /^\/write\/?$/,
-  page: page(Loadable.Unloaded),
+  page: page,
   ofUrl: (pathname: string, matches: Array<string>) => SelectStory.page
 }

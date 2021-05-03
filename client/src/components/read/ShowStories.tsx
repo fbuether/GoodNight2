@@ -7,7 +7,7 @@ import Error from "../../components/common/Error";
 import Loading from "../../components/common/Loading";
 
 import {ShowableStory} from "./StoryCard";
-import StoryCard from "./StoryCard";
+ import StoryCard from "./StoryCard";
 
 
 export interface ShowStories {

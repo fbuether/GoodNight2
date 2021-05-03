@@ -4,6 +4,7 @@ import {SignIn} from "../pages/user/SignIn";
 import {StoryOverview} from "../pages/read/StoryOverview";
 import {ReadStory} from "../pages/read/ReadStory";
 import {SelectStory} from "../pages/write/SelectStory";
+import {WriteStory} from "../pages/write/WriteStory";
 
 import {Navigation} from "./navigation/Navigation";
 
@@ -25,6 +26,7 @@ function renderPage(page: Pages) {
     case "StoryOverview": return StoryOverview(page);
     case "ReadStory": return ReadStory(page);
     case "SelectStory": return SelectStory(page);
+    case "WriteStory": return WriteStory(page);
   }
 }
 
