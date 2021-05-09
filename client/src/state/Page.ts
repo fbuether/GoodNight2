@@ -6,6 +6,8 @@ import {StoryOverview} from "./page/read/StoryOverview";
 import {ReadStory} from "./page/read/ReadStory";
 import {SelectStory} from "./page/write/SelectStory";
 import {WriteStory} from "./page/write/WriteStory";
+import {WriteScene} from "./page/write/WriteScene";
+import {WriteQuality} from "./page/write/WriteQuality";
 
 
 import type {Page as PageState} from "../components/Page";
@@ -18,7 +20,9 @@ export type Page = PageState;
 
 
 const AllPages = [
-  Home, SignIn, StoryOverview, ReadStory, SelectStory, WriteStory];
+  Home, SignIn, StoryOverview, ReadStory, SelectStory, WriteStory,
+  WriteScene, WriteQuality
+];
 
 
 

@@ -1,5 +1,7 @@
 import * as P from "../util/ProtoLens";
 
+import {Loadable} from "./Loadable";
+
 import type {Home} from "./page/Home";
 import type {SignIn} from "./page/user/SignIn";
 import type {StoryOverview} from "./page/read/StoryOverview";
@@ -45,5 +47,10 @@ export const Lens = P.id<Pages>()
     .prop("urlname")
     .prop("story")
     .prop("category"))
-  .union("WriteScene", guardWriteScene, lens => lens)
+  .union("WriteScene", guardWriteScene, lens => lens
+    .prop("story")
+    .path("scene", Loadable.lensP)
+    .prop("raw")
+    .prop("isNew")
+    .prop("isSaving"))
   .union("WriteQuality", guardWriteQuality, lens => lens);
