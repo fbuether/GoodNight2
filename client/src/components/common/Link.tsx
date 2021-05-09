@@ -4,9 +4,9 @@ import {Dispatch, DispatchAction} from "../../core/Dispatch";
 
 
 interface Link {
-  readonly class?: string;
-  readonly action: DispatchAction | string; // string == regular link
-  readonly current?: boolean;
+  class?: string;
+  action: DispatchAction | string; // string == regular link
+  current?: boolean;
 }
 
 export default function Link(state: Preact.RenderableProps<Link>) {
