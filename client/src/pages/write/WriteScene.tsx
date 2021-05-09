@@ -39,7 +39,7 @@ function SaveButton(state: { isSaving: boolean }) {
 }
 
 
-export function WriteSceneLoaded(state: State, story: Story, scene: Scene) {
+export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null) {
   let returnLink = Dispatch.Page(WriteStory.page(story.urlname, story));
   let submit = (event: Event) => {
     event.preventDefault();
@@ -52,7 +52,7 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene) {
 
       <div class="row">
         <form class="col-8" onSubmit={submit}>
-          <h2>{state.isNew ? "Neue Szene" : scene.name}</h2>
+          <h2>{scene === null ? "Neue Szene" : scene.name}</h2>
 
           <ScalingTextarea class="form-control larger"
             onChange={setText}
@@ -74,7 +74,13 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene) {
 
 
 export function WriteScene(state: State) {
-  return LoadableLoader(state.story, story =>
-      LoadableLoader(state.scene, scene =>
-          WriteSceneLoaded(state, story, scene)));
+  return LoadableLoader(state.story, story => {
+    if (state.scene !== null) {
+      return LoadableLoader(state.scene, scene =>
+          WriteSceneLoaded(state, story, scene));
+    }
+    else {
+      return WriteSceneLoaded(state, story, null);
+    }
+  });
 }

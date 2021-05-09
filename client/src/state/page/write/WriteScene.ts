@@ -14,10 +14,11 @@ import {Loadable, LoadableP} from "../../Loadable";
 export interface WriteScene {
   page: "WriteScene";
   story: LoadableP<string, Story>;
-  scene: LoadableP<[string, string], Scene>;
+  scene: LoadableP<[string, string],Scene> | null;
   raw: string;
 
   isNew: boolean;
+
   isSaving: boolean;
   saveError: string | null;
   save: (state: WriteScene) => Promise<void>;
@@ -25,21 +26,30 @@ export interface WriteScene {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  let storyFetcher = Loadable.forRequestP<string,Story>(
+  let storyFetcher = Loadable.forRequestP<string, Story>(
     dispatch, state,
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteScene.story);
 
-  let sceneFetcher = Loadable.forRequestP<[string,string],Scene>(
-    dispatch, state,
-    "GET", (scene: [string,string]) =>
-        `api/v1/write/stories/${scene[0]}/scenes/${scene[1]}`,
-    Lens.WriteScene.scene);
+  let sceneFetcher = Promise.resolve();
+  if (Lens.WriteScene.scene.value.get(state.page) !== null) {
+    let getUrl = (scene: [string,string] | null) => {
+      if (scene === null) {
+        throw "Got no scene names in request in WriteScene:onLoad.";
+      }
+
+      return `api/v1/write/stories/${scene[0]}/scenes/${scene[1]}`;
+    };
+
+    sceneFetcher = Loadable.forRequestP<[string,string],Scene>(
+      dispatch, state, "GET", getUrl, Lens.WriteScene.scene.value);
+  }
+
 
   await Promise.all([storyFetcher, sceneFetcher]);
 
   Dispatch.send(Dispatch.Update(pages => {
-    let scene = Lens.WriteScene.scene.loaded.result.get(pages);
+    let scene = Lens.WriteScene.scene.value.loaded.result.get(pages);
     if (scene == null) {
       return null;
     }
@@ -62,7 +72,7 @@ async function onSave(state: WriteScene) {
   let story = state.story.result;
   let url = `/api/v1/write/stories/${story.urlname}/scenes`;
 
-  if (!state.isNew) {
+  if (state.scene !== null) {
     if (state.scene.state != "loaded") {
       throw `Scene in WriteScene has invalid state: ${state.scene.state}.`;
     }
@@ -93,34 +103,40 @@ async function onSave(state: WriteScene) {
 }
 
 
-function instance(storyUrlname: string, sceneUrlname: string): WriteScene {
+function instance(storyUrlname: string, sceneUrlname: string | null)
+: WriteScene {
   return {
     page: "WriteScene" as const,
     story: Loadable.UnloadedP(storyUrlname),
-    scene: Loadable.UnloadedP([storyUrlname, sceneUrlname]),
+    scene: sceneUrlname === null
+        ? null
+        : Loadable.UnloadedP([storyUrlname, sceneUrlname]),
     raw: "",
-    isNew: sceneUrlname === undefined,
+    isNew: sceneUrlname === null,
     isSaving: false,
     saveError: null,
     save: onSave
   };
 }
 
-function page(storyUrlname: string, sceneUrlname: string): PageDescriptor {
+
+function page(storyUrlname: string, sceneUrlname: string | null)
+: PageDescriptor {
   return {
     state: instance(storyUrlname, sceneUrlname),
     url: "/write/" + storyUrlname
-        + (sceneUrlname ? "/scene/" + sceneUrlname : "/new-scene"),
-    title: "GoodNight: Neue Szene",
+        + (sceneUrlname !== null ? "/scene/" + sceneUrlname : "/new-scene"),
+    title: "GoodNight: "
+        + (sceneUrlname !== null ? "Szene bearbeiten" : "Neue Szene"),
     onLoad: onLoad
   };
 }
 
 
-
 export const WriteScene = {
   path: /^\/write\/([^\/]+)\/(scene\/([^\/]+)|new-scene)$/,
   page: page,
+  pageNew: (storyUrlname: string) => page(storyUrlname, null),
   ofUrl: (pathname: string, matches: Array<string>) =>
-      page(matches[1], matches[3])
+      page(matches[1], matches[3] === undefined ? null : matches[3])
 }

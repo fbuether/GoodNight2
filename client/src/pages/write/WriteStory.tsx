@@ -3,137 +3,24 @@ import type {Story, Category} from "../../model/write/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory as State} from "../../state/page/write/WriteStory";
+import {WriteScene} from "../../state/page/write/WriteScene";
 
 import {Category as CategoryC} from "../../components/write/Category";
 
 import Link from "../../components/common/Link";
 import Icon from "../../components/common/Icon";
-import Error from "../../components/common/Error";
-import Loading from "../../components/common/Loading";
+import LoadableLoader from "../../components/common/LoadableLoader";
 
 
 
-/*
-
-
-function loadScenes(dispatch: Dispatch, story: string) {
-  return async () => {
-    let response = await request<Category>(
-      "GET", `api/v1/write/stories/${story}/content-by-category`);
-    if (response.isError) {
-      return;
-    }
-
-    dispatch(State.lens.page.write.part.writeStory.part.storyOverview
-      .categories.set(response.message));
-  };
-}
-
-
-function renderCategory(storyUrlname: string, category: Category, withHeader: boolean): JSX.Element {
-  let editScene = (s: Scene) =>
-      State.lens.page.write.part.writeStory.part.set({
-        ...WriteScene.instance(storyUrlname),
-        scene: s,
-        raw: s.raw,
-        urlname: s.urlname
-      });
-
-  let editQuality = (q: Quality) =>
-      State.lens.page.write.part.writeStory.part.set({
-        ...WriteQuality.instance(storyUrlname),
-        quality: q,
-        raw: q.raw,
-        urlname: q.urlname
-      });
-
-  let name = category.name != ""
-      ? <li>{category.name}</li>
-      : <></>;
-
-  let scenes = category.scenes.map(s => (
-    <li class="link s">
-      <Link target={editScene(s)}>
-        <Icon class="restrained color-primary mr-1" name="horizon-road" />
-        {s.name}
-      </Link>
-    </li>));
-
-  let qualities = category.qualities.map(q => (
-    <li class="link q">
-      <Link target={editQuality(q)}>
-        <Icon class="restrained color-secondary mr-1" name="swap-bag" />
-        {q.name}
-      </Link>
-    </li>));
-
-  let categories = category.categories.map(c =>
-      renderCategory(storyUrlname, c, true));
-
-  if (withHeader) {
-    return (
-      <ul class="category">
-        <li class="group">
-          <div>{category.name}</div>
-          <ul>{scenes}{qualities}</ul>
-          {categories}
-        </li>
-      </ul>
-    );
-  }
-  else {
-    return (<>
-        <ul class="category">{scenes}{qualities}</ul>
-        {categories}
-      </>);
-  }
-}
-*/
-
-
-function renderCategory(storyUrlname: string,
-  category: Loadable<Category>) {
-
-  if (category.state == "unloaded" || category.state == "loading") {
-    return <Loading />;
-  }
-  else if (category.state == "failed") {
-    return <Error message={category.error} />;
-  }
-
-  return <CategoryC story={storyUrlname} category={category.result}
-      withHeader={false} />;
-}
-
-
-export function WriteStory(state: State) {
-  let story = state.story;
-  if (story.state == "unloaded" || story.state == "loading") {
-    return <Loading />;
-  }
-  else if (story.state == "failed") {
-    return <Error message={story.error} />;
-  }
-
-
-  // let scenes = state.categories == null
-  //     ? <Loading />
-  //     : renderCategory(state.story, state.categories, false);
-
-  // let toNewScene = State.lens.page.write.part.writeStory.part.set(
-  //   WriteScene.instance(state.story));
-  // let toNewQuality = State.lens.page.write.part.writeStory.part
-  //   .set(WriteQuality.instance(state.story));
-
-  let toNewScene = "http://localhost:32015";
+function WriteStoryInner(state: State, story: Story, category: Category) {
+  let toNewScene = Dispatch.Page(WriteScene.pageNew(story.urlname));
   let toNewQuality = "http://localhost:32015";
-  let toBase = Dispatch.Page(State.page(state.urlname, story.result));
-
-  let content = renderCategory(story.result.urlname, state.category);
+  let toBase = Dispatch.Page(State.page(state.urlname, story));
 
   return (
     <div id="centre" class="px-0">
-      <h1><Link action={toBase}>Schreibe: {story.result.name}</Link></h1>
+      <h1><Link action={toBase}>Schreibe: {story.name}</Link></h1>
       <div class="d-flex justify-content-around mt-2 mb-3">
         <Link action={toNewScene} class="boxed">
           <Icon class="restrained color-primary mr-1" name="horizon-road" />
@@ -148,7 +35,8 @@ export function WriteStory(state: State) {
       <div class="row">
         <div class="col-8">
           <h2>Inhalt</h2>
-          {content}
+          <CategoryC story={story.urlname} category={category}
+            withHeader={false} />
         </div>
         <div class="col-4">
           <h2>Tags</h2>
@@ -160,4 +48,10 @@ export function WriteStory(state: State) {
       </div>
     </div>
   );
+}
+
+export function WriteStory(state: State) {
+  return LoadableLoader(state.story, story =>
+      LoadableLoader(state.category, category =>
+          WriteStoryInner(state, story, category)));
 }

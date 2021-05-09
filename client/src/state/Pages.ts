@@ -31,6 +31,8 @@ let guardWriteStory = (a: Pages): a is WriteStory => (a.page == "WriteStory");
 let guardWriteScene = (a: Pages): a is WriteScene => (a.page == "WriteScene");
 let guardWriteQuality = (a: Pages): a is WriteQuality => (a.page == "WriteQuality");
 
+const guardNotNull = <T>(a: T | null): a is T => (a !== null);
+
 export const Lens = P.id<Pages>()
   .prop("page")
   .union("Home", guardHome, lens => lens)
@@ -48,8 +50,9 @@ export const Lens = P.id<Pages>()
     .prop("story")
     .prop("category"))
   .union("WriteScene", guardWriteScene, lens => lens
-    .prop("story")
-    .path("scene", Loadable.lensP)
+    .path("story", Loadable.lensP)
+    .path("scene", lens => lens
+      .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
     .prop("isNew")
     .prop("isSaving"))
