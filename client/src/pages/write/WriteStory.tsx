@@ -4,6 +4,8 @@ import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory as State} from "../../state/page/write/WriteStory";
 
+import {Category as CategoryC} from "../../components/write/Category";
+
 import Link from "../../components/common/Link";
 import Icon from "../../components/common/Icon";
 import Error from "../../components/common/Error";
@@ -89,15 +91,18 @@ function renderCategory(storyUrlname: string, category: Category, withHeader: bo
 */
 
 
-function renderCategories(categories: Loadable<Array<Category>>) {
-  if (categories.state == "unloaded" || categories.state == "loading") {
+function renderCategory(storyUrlname: string,
+  category: Loadable<Category>) {
+
+  if (category.state == "unloaded" || category.state == "loading") {
     return <Loading />;
   }
-  else if (categories.state == "failed") {
-    return <Error message={categories.error} />;
+  else if (category.state == "failed") {
+    return <Error message={category.error} />;
   }
 
-  return <>ooo: {categories.result.length}</>;
+  return <CategoryC story={storyUrlname} category={category.result}
+      withHeader={false} />;
 }
 
 
@@ -124,7 +129,7 @@ export function WriteStory(state: State) {
   let toNewQuality = "http://localhost:32015";
   let toBase = Dispatch.Page(State.page(state.urlname, story.result));
 
-  let categories = renderCategories(state.categories);
+  let content = renderCategory(story.result.urlname, state.category);
 
   return (
     <div id="centre" class="px-0">
@@ -143,7 +148,7 @@ export function WriteStory(state: State) {
       <div class="row">
         <div class="col-8">
           <h2>Inhalt</h2>
-          {categories}
+          {content}
         </div>
         <div class="col-4">
           <h2>Tags</h2>

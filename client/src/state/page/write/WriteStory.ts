@@ -11,7 +11,7 @@ export interface WriteStory {
   page: "WriteStory";
   urlname: string;
   story: Loadable<Story>;
-  categories: Loadable<Array<Category>>;
+  category: Loadable<Category>;
 }
 
 
@@ -27,12 +27,12 @@ async function onLoad(dispatch: Dispatch, state: State) {
     "GET", `api/v1/write/stories/${storyUrlname}`,
     Lens.WriteStory.story);
 
-  let categories = Loadable.forRequest<Array<Category>>(
+  let category = Loadable.forRequest<Category>(
     dispatch, state,
     "GET", `api/v1/write/stories/${storyUrlname}/content-by-category`,
-    Lens.WriteStory.categories);
+    Lens.WriteStory.category);
 
-  await Promise.all([story, categories]);
+  await Promise.all([story, category]);
 }
 
 
@@ -41,7 +41,7 @@ function instance(urlname: string, story?: Story): WriteStory {
     page: "WriteStory" as const,
     urlname: urlname,
     story: story ? Loadable.Loaded(story) : Loadable.Unloaded,
-    categories: Loadable.Unloaded
+    category: Loadable.Unloaded
   };
 }
 

@@ -42,7 +42,7 @@ namespace GoodNight.Service.Api.Controller.Write
 
 
     [HttpGet("{urlname}/content-by-category")]
-    public ActionResult<IEnumerable<Category>> GetContentByCategory(
+    public ActionResult<Category> GetContentByCategory(
       string urlname)
     {
       var story = stories.Get(urlname);
