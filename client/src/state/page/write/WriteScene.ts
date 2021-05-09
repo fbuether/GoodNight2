@@ -17,8 +17,6 @@ export interface WriteScene {
   scene: LoadableP<[string, string],Scene> | null;
   raw: string;
 
-  isNew: boolean;
-
   isSaving: boolean;
   saveError: string | null;
   save: (state: WriteScene) => Promise<void>;
@@ -31,18 +29,14 @@ async function onLoad(dispatch: Dispatch, state: State) {
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteScene.story);
 
+  // only try to fetch the scene if we have a scene.
   let sceneFetcher = Promise.resolve();
   if (Lens.WriteScene.scene.value.get(state.page) !== null) {
-    let getUrl = (scene: [string,string] | null) => {
-      if (scene === null) {
-        throw "Got no scene names in request in WriteScene:onLoad.";
-      }
-
-      return `api/v1/write/stories/${scene[0]}/scenes/${scene[1]}`;
-    };
-
     sceneFetcher = Loadable.forRequestP<[string,string],Scene>(
-      dispatch, state, "GET", getUrl, Lens.WriteScene.scene.value);
+      dispatch, state,
+      "GET", (ss: [string,string]) =>
+          `api/v1/write/stories/${ss[0]}/scenes/${ss[1]}`,
+      Lens.WriteScene.scene.value);
   }
 
 
@@ -63,7 +57,7 @@ async function onSave(state: WriteScene) {
   Dispatch.send(Dispatch.Update(Lens.WriteScene.isSaving.set(true)));
 
   let param = { text: state.raw };
-  let method = state.isNew ? "POST" as const : "PUT" as const;
+  let method = state.scene === null ? "POST" as const : "PUT" as const;
 
   if (state.story.state != "loaded") {
     throw `Story in WriteScene state has invalid state: ${state.story.state}.`;
@@ -89,8 +83,7 @@ async function onSave(state: WriteScene) {
       scene: Loadable.Loaded(response.message),
       raw: response.message.raw,
       isSaving: false,
-      saveError: null,
-      isNew: false
+      saveError: null
     })));
   }
   else {
@@ -112,7 +105,6 @@ function instance(storyUrlname: string, sceneUrlname: string | null)
         ? null
         : Loadable.UnloadedP([storyUrlname, sceneUrlname]),
     raw: "",
-    isNew: sceneUrlname === null,
     isSaving: false,
     saveError: null,
     save: onSave

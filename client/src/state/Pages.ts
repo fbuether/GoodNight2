@@ -54,6 +54,5 @@ export const Lens = P.id<Pages>()
     .path("scene", lens => lens
       .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
-    .prop("isNew")
     .prop("isSaving"))
   .union("WriteQuality", guardWriteQuality, lens => lens);
