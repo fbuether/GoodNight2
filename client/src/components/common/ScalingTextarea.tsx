@@ -1,12 +1,13 @@
 import {JSX} from "preact";
 import * as PreactHooks from "preact/hooks";
+import {Dispatch, DispatchAction} from "../../core/Dispatch";
 
 type TextAreaEvent = JSX.TargetedEvent<HTMLTextAreaElement, Event>;
 
 
 interface TextareaState {
-  class: string;
-  onChange: (event: TextAreaEvent) => void;
+  class?: string;
+  onChange: (content: string) => DispatchAction;
   content: string | null;
 }
 
@@ -22,10 +23,10 @@ function refitTextarea(textarea: HTMLTextAreaElement) {
       : initialStyle;
 }
 
-function updateDataWithCallback(callback: (event: TextAreaEvent) => void) {
+function updateDataWithCallback(callback: (content: string) => DispatchAction) {
   return (event: TextAreaEvent) => {
     refitTextarea(event.currentTarget);
-    callback(event);
+    Dispatch.send(callback(event.currentTarget.value));
   };
 }
 
