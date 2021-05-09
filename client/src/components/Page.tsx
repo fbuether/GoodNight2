@@ -5,6 +5,8 @@ import {StoryOverview} from "../pages/read/StoryOverview";
 import {ReadStory} from "../pages/read/ReadStory";
 import {SelectStory} from "../pages/write/SelectStory";
 import {WriteStory} from "../pages/write/WriteStory";
+import {WriteScene} from "../pages/write/WriteScene";
+import {WriteQuality} from "../pages/write/WriteQuality";
 
 import {Navigation} from "./navigation/Navigation";
 
@@ -27,6 +29,8 @@ function renderPage(page: Pages) {
     case "ReadStory": return ReadStory(page);
     case "SelectStory": return SelectStory(page);
     case "WriteStory": return WriteStory(page);
+    case "WriteScene": return WriteScene(page);
+    case "WriteQuality": return WriteQuality(page);
   }
 }
 

@@ -36,8 +36,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
 }
 
 
-function instance(urlname: string, story?: Story)
-: WriteStory {
+function instance(urlname: string, story?: Story): WriteStory {
   return {
     page: "WriteStory" as const,
     urlname: urlname,
@@ -46,8 +45,7 @@ function instance(urlname: string, story?: Story)
   };
 }
 
-function page(urlname: string, story?: Story)
-: PageDescriptor {
+function page(urlname: string, story?: Story): PageDescriptor {
   return {
     state: instance(urlname, story),
     url: "/write/" + urlname,
