@@ -79,7 +79,9 @@ export function update() {
 
       // must be prior to history push, as UserService must read a first url
       // that we have been redirected to.
-      desc.onLoad(Dispatch.send, newState);
+      if (desc.onLoad) {
+        desc.onLoad(Dispatch.send, newState);
+      }
 
       History.push(desc);
   }

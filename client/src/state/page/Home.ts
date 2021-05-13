@@ -11,8 +11,7 @@ const instance = {
 const page: PageDescriptor = {
   state: instance,
   url: "/",
-  title: "GoodNight",
-  onLoad: () => Promise.resolve()
+  title: "GoodNight"
 };
 
 export const Home = {

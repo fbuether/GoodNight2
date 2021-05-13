@@ -10,5 +10,5 @@ export interface PageDescriptor {
   title: string,
 
   // lifecycle
-  onLoad: (dispatch: Dispatch, state: State) => Promise<void>;
+  onLoad?: (dispatch: Dispatch, state: State) => Promise<void>;
 }
