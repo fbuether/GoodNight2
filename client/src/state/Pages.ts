@@ -44,8 +44,8 @@ export const Lens = P.id<Pages>()
     .prop("page")
     .prop("stories"))
   .union("ReadStory", guardReadStory, lens => lens
-    .prop("urlname")
-    .prop("story"))
+    .prop("story")
+    .prop("adventure"))
   .union("SelectStory", guardSelectStory, lens => lens
     .prop("stories"))
   .union("CreateStory", guardCreateStory, lens => lens

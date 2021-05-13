@@ -8,20 +8,23 @@ import {Lens} from "../../Pages";
 
 import {Loadable} from "../../Loadable";
 
-import type {Story} from "../../../model/read/Story";
+import type {Adventure} from "../../../model/read/Adventure";
 
 
-import {ReadStory as Component} from "../../../pages/read/ReadStory";
-export type ReadStory = Component;
+export interface ReadStory {
+  page: "ReadStory";
+  story: string; // urlname
+  adventure: Loadable<Adventure>;
+}
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  var urlname = Lens.ReadStory.urlname.get(state.page);
+  var storyUrlname = Lens.ReadStory.story.get(state.page);
 
-  await Loadable.forRequest<Story>(
+  await Loadable.forRequest<Adventure>(
     dispatch, state,
-    "GET", `api/v1/read/stories/${urlname}`,
-    Lens.ReadStory.story);
+    "GET", `api/v1/read/stories/${storyUrlname}/continue`,
+    Lens.ReadStory.adventure);
 }
 
 
@@ -30,8 +33,8 @@ async function onLoad(dispatch: Dispatch, state: State) {
 function instance(urlname: string): ReadStory {
   return {
     page: "ReadStory" as const,
-    urlname: urlname,
-    story: Loadable.Unloaded
+    story: urlname,
+    adventure: Loadable.Unloaded
   };
 }
 
