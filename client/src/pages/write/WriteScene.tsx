@@ -10,32 +10,14 @@ import SceneHelp from "../../components/write/SceneHelp";
 
 import Icon from "../../components/common/Icon";
 import Link from "../../components/common/Link";
+import Error from "../../components/common/Error";
+import SaveButton from "../../components/common/SaveButton";
 import LoadableLoader from "../../components/common/LoadableLoader";
 import ScalingTextarea from "../../components/common/ScalingTextarea";
 
 
 function setText(newText: string) {
   return Dispatch.Update(Lens.WriteScene.raw.set(newText));
-}
-
-
-function ErrorDisplay(state: { saveError: string | null }) {
-  return state.saveError !== null
-      ? <div class="alert alert-danger alert-raw my-3">{state.saveError}</div>
-      : <></>;
-}
-
-
-function SaveButton(state: { isSaving: boolean }) {
-  return state.isSaving
-      ? <div type="submit" class="btn btn-primary disabled loading">
-          <Icon name="empty-hourglass" class="mr-2" />
-          Speichere…
-        </div>
-      : <button type="submit" class="btn btn-primary">
-          <Icon name="save" class="mr-2" />
-          Speichern
-        </button>;
 }
 
 
@@ -58,7 +40,7 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null
             onChange={setText}
             content={state.raw} />
 
-          <ErrorDisplay saveError={state.saveError} />
+          <Error message={state.saveError} />
           <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
             <Link action={returnLink}>Zurück</Link>
             <SaveButton isSaving={state.isSaving} />
