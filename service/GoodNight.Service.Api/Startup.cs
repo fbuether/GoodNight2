@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using GoodNight.Service.Api.Converter;
+using GoodNight.Service.Domain.Serialisation.Expressions;
+using GoodNight.Service.Domain.Serialisation.Read;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
-using GoodNight.Service.Domain.Serialisation.Read;
 
 namespace GoodNight.Service.Api
 {
@@ -16,15 +17,6 @@ namespace GoodNight.Service.Api
     public void ConfigureServices(IServiceCollection services)
     {
       var mvcBuilder = services.AddControllers();
-
-      services.Configure<JsonOptions>(options =>
-      {
-        var converters = options.JsonSerializerOptions.Converters;
-        converters.Add(new ActionChoiceConverter());
-        converters.Add(new ExpressionValueConverter());
-        converters.Add(new WriteQualityConverter());
-        converters.Add(new SceneContentConverter());
-      });
 
       services.AddCors(corsOptions => {
         corsOptions.AddDefaultPolicy(builder => {
@@ -37,6 +29,16 @@ namespace GoodNight.Service.Api
             .WithMethods("GET", "PUT", "POST", "DELETE");
         });
       });
+
+      services.Configure<JsonOptions>(options =>
+      {
+        var converters = options.JsonSerializerOptions.Converters;
+        converters.Add(new ExpressionValueConverter());
+        converters.Add(new ActionChoiceConverter());
+        converters.Add(new QualityConverter());
+        converters.Add(new SceneContentConverter());
+      });
+
 
       services.AddSingleton<IStore, Store>((IServiceProvider services) =>
       {

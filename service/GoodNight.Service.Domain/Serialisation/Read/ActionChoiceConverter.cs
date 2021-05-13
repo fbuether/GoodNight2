@@ -5,7 +5,7 @@ using GoodNight.Service.Domain.Model.Read;
 
 namespace GoodNight.Service.Api.Converter
 {
-  internal class ActionChoiceConverter : JsonConverter<Choice>
+  public class ActionChoiceConverter : JsonConverter<Choice>
   {
     public override Choice? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
     {

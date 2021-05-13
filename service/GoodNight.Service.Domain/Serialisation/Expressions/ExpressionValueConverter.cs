@@ -1,13 +1,13 @@
-using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Domain.Model.Expressions;
 
-namespace GoodNight.Service.Api.Converter
+namespace GoodNight.Service.Domain.Serialisation.Expressions
 {
-  internal class ExpressionValueConverter : JsonConverter<Value>
+  public class ExpressionValueConverter : JsonConverter<Value>
   {
-    public override Value? Read(ref Utf8JsonReader reader, System.Type typeToConvert, JsonSerializerOptions options)
+    public override Value? Read(ref Utf8JsonReader reader,
+      System.Type typeToConvert, JsonSerializerOptions options)
     {
       Value? val = null;
 
@@ -45,7 +45,8 @@ namespace GoodNight.Service.Api.Converter
       return val;
     }
 
-    public override void Write(Utf8JsonWriter writer, Value value, JsonSerializerOptions options)
+    public override void Write(Utf8JsonWriter writer, Value value,
+      JsonSerializerOptions options)
     {
       writer.WriteStartObject();
 

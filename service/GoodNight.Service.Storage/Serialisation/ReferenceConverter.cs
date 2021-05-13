@@ -53,8 +53,7 @@ namespace GoodNight.Service.Storage.Serialisation
       }
 
       var serialised = new SerialisedReference(typeName, value.Key);
-      JsonSerializer.Serialize<SerialisedReference>(
-        writer, serialised, options);
+      JsonSerializer.Serialize(writer, serialised, options);
     }
   }
 }
