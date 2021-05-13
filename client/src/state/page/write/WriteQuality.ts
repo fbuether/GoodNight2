@@ -77,13 +77,7 @@ async function onSave(state: WriteQuality) {
   let response = await request<Quality>(method, url, param);
 
   if (response.isResult) {
-    Dispatch.send(Dispatch.Update(Lens.set({
-      ...state,
-      quality: Loadable.Loaded(response.message),
-      raw: response.message.raw,
-      isSaving: false,
-      saveError: null
-    })));
+    Dispatch.send(Dispatch.Page(loadedPage(story, response.message)));
   }
   else {
     Dispatch.send(Dispatch.Update(Lens.set({
@@ -107,6 +101,23 @@ function instance(storyUrlname: string, qualityUrlname: string | null)
     isSaving: false,
     saveError: null,
     save: onSave
+  };
+}
+
+function loadedPage(story: Story, quality: Quality): PageDescriptor {
+  return {
+    state: {
+      page: "WriteQuality" as const,
+      story: Loadable.Loaded(story),
+      quality: Loadable.Loaded(quality),
+      raw: quality.raw,
+      isSaving: false,
+      saveError: null,
+      save: onSave
+    },
+    url: "/write/stories/" + story.urlname + "/quality/" + quality.urlname,
+    title: "GoodNight: Szene bearbeiten",
+    onLoad: onLoad
   };
 }
 

@@ -78,13 +78,7 @@ async function onSave(state: WriteScene) {
   let response = await request<Scene>(method, url, param);
 
   if (response.isResult) {
-    Dispatch.send(Dispatch.Update(Lens.set({
-      ...state,
-      scene: Loadable.Loaded(response.message),
-      raw: response.message.raw,
-      isSaving: false,
-      saveError: null
-    })));
+    Dispatch.send(Dispatch.Page(loadedPage(story, response.message)));
   }
   else {
     Dispatch.send(Dispatch.Update(Lens.set({
@@ -111,6 +105,23 @@ function instance(storyUrlname: string, sceneUrlname: string | null)
   };
 }
 
+
+function loadedPage(story: Story, scene: Scene): PageDescriptor {
+  return {
+    state: {
+      page: "WriteScene" as const,
+      story: Loadable.Loaded(story),
+      scene: Loadable.Loaded(scene),
+      raw: scene.raw,
+      isSaving: false,
+      saveError: null,
+      save: onSave
+    },
+    url: "/write/stories/" + story.urlname + "/scene/" + scene.urlname,
+    title: "GoodNight: Szene bearbeiten",
+    onLoad: onLoad
+  };
+}
 
 function page(storyUrlname: string, sceneUrlname: string | null)
 : PageDescriptor {
