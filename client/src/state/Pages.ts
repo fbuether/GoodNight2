@@ -7,6 +7,7 @@ import type {SignIn} from "./page/user/SignIn";
 import type {StoryOverview} from "./page/read/StoryOverview";
 import type {ReadStory} from "./page/read/ReadStory";
 import type {SelectStory} from "./page/write/SelectStory";
+import type {CreateStory} from "./page/write/CreateStory";
 import type {WriteStory} from "./page/write/WriteStory";
 import type {WriteScene} from "./page/write/WriteScene";
 import type {WriteQuality} from "./page/write/WriteQuality";
@@ -17,6 +18,7 @@ export type Pages =
     | StoryOverview
     | ReadStory
     | SelectStory
+    | CreateStory
     | WriteStory
     | WriteScene
     | WriteQuality;
@@ -27,6 +29,7 @@ let guardSignIn = (a: Pages): a is SignIn => (a.page == "SignIn");
 let guardStoryOverview = (a: Pages): a is StoryOverview => (a.page == "StoryOverview");
 let guardReadStory = (a: Pages): a is ReadStory => (a.page == "ReadStory");
 let guardSelectStory = (a: Pages): a is SelectStory => (a.page == "SelectStory");
+let guardCreateStory = (a: Pages): a is CreateStory => (a.page == "CreateStory");
 let guardWriteStory = (a: Pages): a is WriteStory => (a.page == "WriteStory");
 let guardWriteScene = (a: Pages): a is WriteScene => (a.page == "WriteScene");
 let guardWriteQuality = (a: Pages): a is WriteQuality => (a.page == "WriteQuality");
@@ -45,6 +48,9 @@ export const Lens = P.id<Pages>()
     .prop("story"))
   .union("SelectStory", guardSelectStory, lens => lens
     .prop("stories"))
+  .union("CreateStory", guardCreateStory, lens => lens
+    .prop("name")
+    .prop("isSaving"))
   .union("WriteStory", guardWriteStory, lens => lens
     .prop("urlname")
     .prop("story")

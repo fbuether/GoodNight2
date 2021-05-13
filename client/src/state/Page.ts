@@ -5,6 +5,7 @@ import {SignIn} from "./page/user/SignIn";
 import {StoryOverview} from "./page/read/StoryOverview";
 import {ReadStory} from "./page/read/ReadStory";
 import {SelectStory} from "./page/write/SelectStory";
+import {CreateStory} from "./page/write/CreateStory";
 import {WriteStory} from "./page/write/WriteStory";
 import {WriteScene} from "./page/write/WriteScene";
 import {WriteQuality} from "./page/write/WriteQuality";
@@ -20,7 +21,7 @@ export type Page = PageState;
 
 
 const AllPages = [
-  Home, SignIn, StoryOverview, ReadStory, SelectStory, WriteStory,
+  Home, SignIn, StoryOverview, ReadStory, SelectStory, CreateStory, WriteStory,
   WriteScene, WriteQuality
 ];
 

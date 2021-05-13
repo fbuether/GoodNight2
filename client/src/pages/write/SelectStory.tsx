@@ -3,6 +3,7 @@ import type {Story} from "../../model/write/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory} from "../../state/page/write/WriteStory";
+import {CreateStory} from "../../state/page/write/CreateStory";
 
 import ShowStories from "../../components/read/ShowStories";
 import Icon from "../../components/common/Icon";
@@ -16,7 +17,7 @@ export interface SelectStory {
 
 export function SelectStory(state: SelectStory) {
   var page = (urlname: string) => WriteStory.page(urlname);
-  var newStory = "http://localhost:32015";
+  var newStory = Dispatch.Page(CreateStory.page);
 
   return (
     <div id="centre" class="row px-0 g-0">
