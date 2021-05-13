@@ -14,14 +14,14 @@ namespace GoodNight.Service.Domain.Model
   /// This type is a group root and can be stored directly.
   /// </remarks>
   public record User(
-    string Guid,
+    Guid Guid,
     string Name,
     string EMail,
 
     IImmutableSet<IReference<Adventure>> Adventures)
     : IStorable<User>
   {
-    public string Key => Guid;
+    public string Key => Guid.ToString();
 
     public (User, Consequence)? ContinueAdventure(Story story,
       string optionname)

@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Immutable;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Domain;
@@ -26,8 +27,8 @@ namespace GoodNight.Service.Api.Controller.Read
 
 
     [HttpGet("continue")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Adventure> GetAdventure(string storyUrlname)
     {
@@ -35,14 +36,17 @@ namespace GoodNight.Service.Api.Controller.Read
 
       var user = users.Get(username);
       if (user is null)
-        return Unauthorized();
+        // return Unauthorized();
+        // todo: replace with commented code above.
+        user = new User(Guid.Empty, "current-user-name", "e@mail",
+          ImmutableHashSet.Create<IReference<Adventure>>());
 
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
       var advKey = NameConverter.Concat(user.Key, story.Key);
-      var adventure = user.Adventures.First(a => a.Key == advKey);
+      var adventure = user.Adventures.FirstOrDefault(a => a.Key == advKey);
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
 
