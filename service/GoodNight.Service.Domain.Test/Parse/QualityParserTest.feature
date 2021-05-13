@@ -42,6 +42,18 @@ Feature: Parsing of Qualities
     Then parsing succeeds
     Then content 1 is a name with value "Water under the bridge"
 
+  Scenario: A quality name may not start with 'not' if it is not quoted.
+    Given the quality input
+      """
+      huh.
+      $name: not so cold thing
+      $cat: toasty things
+      $type: bool
+      interesting!
+      """
+    When the parser parses the input
+    Then parsing fails
+
   Scenario: A quality may have a quoted name
     Given the quality input
       """
