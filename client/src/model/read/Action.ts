@@ -1,67 +1,29 @@
-import {requireString, deserialiseArray} from "../Deserialise";
-
-import {Property, asProperty} from "./Property";
-import {Quality, asQuality} from "./Quality";
-import {Value, asValue} from "./Value";
+import type {Property} from "./Property";
 
 
 interface ChoiceOption {
-  readonly kind: "option";
-  readonly scene: string;
-  readonly text: string;
-  readonly effects: Array<Property>;
+  kind: "option";
+  scene: string;
+  text: string;
+  effects: Array<Property>;
 }
 
 interface ChoiceReturn {
-  readonly kind: "return";
-  readonly scene: string;
+  kind: "return";
+  scene: string;
 }
 
 interface ChoiceContinue {
-  readonly kind: "continue";
-  readonly scene: string;
+  kind: "continue";
+  scene: string;
 }
 
 export type Choice = ChoiceOption | ChoiceReturn | ChoiceContinue;
 
 
 export interface Action {
-  readonly urlname: string;
-  readonly text: string;
-  readonly effects: Array<Property>;
-  readonly chosen: Choice;
-}
-
-
-
-function asChoice(obj: any): Choice {
-  let kind = requireString(obj["kind"]);
-  switch (kind) {
-    case "option":
-      return {
-        kind: kind,
-        scene: requireString(obj["scene"]),
-        text: requireString(obj["text"]),
-        effects: deserialiseArray(obj, "effects", asProperty)
-      };
-    case "return":
-    case "continue":
-      return {
-        kind: kind,
-        scene: requireString(obj["scene"])
-      };
-    default:
-      console.error("Invalid choice kind", kind);
-      throw new Error("Invalid choice kind");
-  }
-}
-
-
-export function asAction(obj: any): Action {
-  return {
-    urlname: requireString(obj["urlname"]),
-    text: requireString(obj["text"]),
-    effects: deserialiseArray(obj, "effects", asProperty),
-    chosen: asChoice(obj["chosen"])
-  };
+  urlname: string;
+  text: string;
+  effects: Array<Property>;
+  chosen: Choice;
 }
