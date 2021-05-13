@@ -5,6 +5,8 @@ import type {Loadable} from "../../state/Loadable";
 import {WriteStory} from "../../state/page/write/WriteStory";
 
 import ShowStories from "../../components/read/ShowStories";
+import Icon from "../../components/common/Icon";
+import Link from "../../components/common/Link";
 
 
 export interface SelectStory {
@@ -14,6 +16,7 @@ export interface SelectStory {
 
 export function SelectStory(state: SelectStory) {
   var page = (urlname: string) => WriteStory.page(urlname);
+  var newStory = "http://localhost:32015";
 
   return (
     <div id="centre" class="row px-0 g-0">
@@ -22,22 +25,21 @@ export function SelectStory(state: SelectStory) {
         Wähle eine Geschichte, die du schreiben willst, oder erstelle eine
         neue Geschichte.
       </p>
-      <ShowStories stories={state.stories} page={page} />
+      <ShowStories stories={state.stories} page={page}>
+        <div class="col">
+          <div class="card new">
+            <div class="card-body">
+              <h5>
+                <Icon name="sundial" class="top mr-2" />
+                <Link class="stretched-link" action={newStory}>
+                  Neue Geschichte…
+                </Link>
+              </h5>
+              <p>Beginne eine neue Geschichte, ein neues Abenteuer.</p>
+            </div>
+          </div>
+        </div>
+      </ShowStories>
     </div>
   );
 }
-
-      // <div class="row cards row-cols-1 row-cols-sm-2 row-cols-md-3 g-3 mt-0">
-      //   <div class="col">
-      //     <div class="card new">
-      //       <div class="card-body">
-      //         <h5>
-      //           <Icon name="sundial" class="top mr-2" />
-      //           <Link class="stretched-link" target={newLink}>
-      //             Neue Geschichte…
-      //           </Link>
-      //         </h5>
-      //         <p>Beginne eine neue Geschichte, ein neues Abenteuer.</p>
-      //       </div>
-      //     </div>
-      //   </div>

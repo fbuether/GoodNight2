@@ -114,7 +114,7 @@ function page(storyUrlname: string, qualityUrlname: string | null)
 : PageDescriptor {
   return {
     state: instance(storyUrlname, qualityUrlname),
-    url: "/write/" + storyUrlname
+    url: "/write/stories/" + storyUrlname
         + (qualityUrlname !== null
             ? "/quality/" + qualityUrlname
             : "/new-quality"),
@@ -129,9 +129,9 @@ function page(storyUrlname: string, qualityUrlname: string | null)
 
 
 export const WriteQuality = {
-  path: /^\/write\/([^\/]+)\/(quality\/([^\/]+)|new-quality)$/,
+  path: /^\/write\/stories\/([^\/]+)\/(quality\/([^\/]+)|new-quality)$/,
   page: page,
   pageNew: (storyUrlname: string) => page(storyUrlname, null),
   ofUrl: (pathname: string, matches: Array<string>) =>
       page(matches[1], matches[3] === undefined ? null : matches[3])
-}
+};

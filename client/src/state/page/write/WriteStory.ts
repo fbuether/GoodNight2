@@ -48,14 +48,14 @@ function instance(urlname: string, story?: Story): WriteStory {
 function page(urlname: string, story?: Story): PageDescriptor {
   return {
     state: instance(urlname, story),
-    url: "/write/" + urlname,
+    url: "/write/stories/" + urlname,
     title: "GoodNight: Schreibe" + (story ? " "+ story.name : ""),
     onLoad: onLoad
   };
 }
 
 export const WriteStory = {
-  path: /^\/write\/([^\/]+)$/,
+  path: /^\/write\/stories\/([^\/]+)$/,
   page: page,
   ofUrl: (pathname: string, matches: Array<string>) => WriteStory.page(matches[1])
-}
+};

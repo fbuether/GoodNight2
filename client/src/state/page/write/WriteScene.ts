@@ -116,7 +116,7 @@ function page(storyUrlname: string, sceneUrlname: string | null)
 : PageDescriptor {
   return {
     state: instance(storyUrlname, sceneUrlname),
-    url: "/write/" + storyUrlname
+    url: "/write/stories/" + storyUrlname
         + (sceneUrlname !== null ? "/scene/" + sceneUrlname : "/new-scene"),
     title: "GoodNight: "
         + (sceneUrlname !== null ? "Szene bearbeiten" : "Neue Szene"),
@@ -126,7 +126,7 @@ function page(storyUrlname: string, sceneUrlname: string | null)
 
 
 export const WriteScene = {
-  path: /^\/write\/([^\/]+)\/(scene\/([^\/]+)|new-scene)$/,
+  path: /^\/write\/stories\/([^\/]+)\/(scene\/([^\/]+)|new-scene)$/,
   page: page,
   pageNew: (storyUrlname: string) => page(storyUrlname, null),
   ofUrl: (pathname: string, matches: Array<string>) =>
