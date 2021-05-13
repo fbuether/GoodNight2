@@ -1,62 +1,137 @@
 import {Dispatch} from "../../../core/Dispatch";
+import {Lens} from "../../Pages";
 import type {State} from "../../State";
 import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {request} from "../../../service/RequestService";
 
 import type {Quality} from "../../../model/write/Quality";
 import type {Story} from "../../../model/write/Story";
 
-import {Loadable} from "../../Loadable";
+import {Loadable, LoadableP} from "../../Loadable";
 
 
 
 export interface WriteQuality {
   page: "WriteQuality";
-  story: Loadable<Story>;
-  quality: Loadable<Quality>;
+  story: LoadableP<string,Story>;
+  quality: LoadableP<[string,string],Quality> | null;
+  raw: string;
 
-  isNew: boolean;
   isSaving: boolean;
+  saveError: string | null;
   save: (state: WriteQuality) => Promise<void>;
 }
 
 
-function onLoad(storyUrlname: string, qualityUrlname?: string) {
-  return async (dispatch: Dispatch, state: State) => {
-    return;
-  };
+async function onLoad(dispatch: Dispatch, state: State) {
+  let storyFetcher = Loadable.forRequestP<string, Story>(
+    dispatch, state,
+    "GET", (story: string) => `api/v1/write/stories/${story}`,
+    Lens.WriteQuality.story);
+
+  // only try to fetch the quality if we have a quality.
+  let qualityFetcher = Promise.resolve();
+  if (Lens.WriteQuality.quality.value.get(state.page) !== null) {
+    qualityFetcher = Loadable.forRequestP<[string,string],Quality>(
+      dispatch, state,
+      "GET", (sq: [string,string]) =>
+          `api/v1/write/stories/${sq[0]}/qualities/${sq[1]}`,
+      Lens.WriteQuality.quality.value);
+  }
+
+
+  await Promise.all([storyFetcher, qualityFetcher]);
+
+  Dispatch.send(Dispatch.Update(pages => {
+    let quality = Lens.WriteQuality.quality.value.loaded.result.get(pages);
+    if (quality == null) {
+      return null;
+    }
+
+    return Lens.WriteQuality.raw.set(quality.raw)(pages);
+  }));
 }
 
 async function onSave(state: WriteQuality) {
-  
+  Dispatch.send(Dispatch.Update(Lens.WriteQuality.isSaving.set(true)));
+
+  let param = { text: state.raw };
+  let method = state.quality === null ? "POST" as const : "PUT" as const;
+
+  if (state.story.state != "loaded") {
+    throw `Story in WriteQuality has invalid state: ${state.story.state}.`;
+  }
+
+  let story = state.story.result;
+  let url = `/api/v1/write/stories/${story.urlname}/qualities`;
+
+  if (state.quality !== null) {
+    if (state.quality.state != "loaded") {
+      throw `Quality state in WriteQuality is invalid: ${state.quality.state}.`;
+    }
+
+    let quality = state.quality.result;
+    url = url + "/" + quality.urlname;
+  }
+
+  let response = await request<Quality>(method, url, param);
+
+  if (response.isResult) {
+    Dispatch.send(Dispatch.Update(Lens.set({
+      ...state,
+      quality: Loadable.Loaded(response.message),
+      raw: response.message.raw,
+      isSaving: false,
+      saveError: null
+    })));
+  }
+  else {
+    Dispatch.send(Dispatch.Update(Lens.set({
+      ...state,
+      saveError: response.message,
+      isSaving: false
+    })));
+  }
 }
 
 
-function instance(storyUrlname: string, qualityUrlname: string): WriteQuality {
+function instance(storyUrlname: string, qualityUrlname: string | null)
+: WriteQuality {
   return {
     page: "WriteQuality" as const,
-    story: Loadable.Unloaded,
-    quality: Loadable.Unloaded,
-    isNew: qualityUrlname === undefined,
+    story: Loadable.UnloadedP(storyUrlname),
+    quality: qualityUrlname === null
+        ? null
+        : Loadable.UnloadedP([storyUrlname, qualityUrlname]),
+    raw: "",
     isSaving: false,
+    saveError: null,
     save: onSave
   };
 }
 
-function page(storyUrlname: string, qualityUrlname: string): PageDescriptor {
+function page(storyUrlname: string, qualityUrlname: string | null)
+: PageDescriptor {
   return {
     state: instance(storyUrlname, qualityUrlname),
-    url: "/write/" + storyUrlname + "/"
-        + (qualityUrlname ? "/quality/" + qualityUrlname : "/new-quality"),
-    title: "GoodNight: Neue Szene",
-    onLoad: onLoad(storyUrlname, qualityUrlname)
+    url: "/write/" + storyUrlname
+        + (qualityUrlname !== null
+            ? "/quality/" + qualityUrlname
+            : "/new-quality"),
+    title: "GoodNight: "
+        + (qualityUrlname !== null
+           ? "Qualität bearbeiten"
+           : "Neue Qualität"),
+    onLoad: onLoad
   };
 }
 
 
 
 export const WriteQuality = {
-  path: /^\/write\/([^\/]+)\/(quality\/(^\/+)|new-quality)$/,
+  path: /^\/write\/([^\/]+)\/(quality\/([^\/]+)|new-quality)$/,
   page: page,
+  pageNew: (storyUrlname: string) => page(storyUrlname, null),
   ofUrl: (pathname: string, matches: Array<string>) =>
-      page(matches[1], matches[2])
+      page(matches[1], matches[3] === undefined ? null : matches[3])
 }

@@ -55,4 +55,9 @@ export const Lens = P.id<Pages>()
       .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
     .prop("isSaving"))
-  .union("WriteQuality", guardWriteQuality, lens => lens);
+  .union("WriteQuality", guardWriteQuality, lens => lens
+    .path("story", Loadable.lensP)
+    .path("quality", lens => lens
+      .union("value", guardNotNull, Loadable.lensP))
+    .prop("raw")
+    .prop("isSaving"));

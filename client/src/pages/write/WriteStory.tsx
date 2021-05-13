@@ -4,6 +4,7 @@ import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory as State} from "../../state/page/write/WriteStory";
 import {WriteScene} from "../../state/page/write/WriteScene";
+import {WriteQuality} from "../../state/page/write/WriteQuality";
 
 import {Category as CategoryC} from "../../components/write/Category";
 
@@ -15,7 +16,7 @@ import LoadableLoader from "../../components/common/LoadableLoader";
 
 function WriteStoryInner(state: State, story: Story, category: Category) {
   let toNewScene = Dispatch.Page(WriteScene.pageNew(story.urlname));
-  let toNewQuality = "http://localhost:32015";
+  let toNewQuality = Dispatch.Page(WriteQuality.pageNew(story.urlname));
   let toBase = Dispatch.Page(State.page(state.urlname, story));
 
   return (
