@@ -26,27 +26,59 @@ namespace GoodNight.Service.Api.Controller.Read
     }
 
 
+    private User? GetCurrentUser()
+    {
+      var key = Guid.Empty;
+
+      var user = users.Get(key.ToString());
+      if (user is null)
+        // return Unauthorized();
+        // todo: replace with commented code above.
+        user = new User(key, "current-user-name", "e@mail",
+          ImmutableHashSet.Create<IReference<Adventure>>());
+
+      return user;
+    }
+
+
+    public record AdventureStart(string name);
+
+    [HttpPost("start")]
+    public ActionResult<Adventure> StartAdventure(string storyUrlname,
+      [FromBody] AdventureStart start)
+    {
+      var user = GetCurrentUser();
+      if (user is null)
+        return Unauthorized();
+
+      var story = stories.Get(storyUrlname);
+      if (story is null)
+        return NotFound();
+
+      return user.StartAdventure(story, start.name)
+        .Do(ua => users.Save(ua.Item1))
+        .Do(ua => adventures.Save(ua.Item2))
+        .Map<ActionResult<Adventure>>(
+          ua => Ok(ua.Item2),
+          err => BadRequest(new ErrorResult(err)));
+    }
+
+
     [HttpGet("continue")]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Adventure> GetAdventure(string storyUrlname)
     {
-      var username = "current-user-name";
-
-      var user = users.Get(username);
+      var user = GetCurrentUser();
       if (user is null)
-        // return Unauthorized();
-        // todo: replace with commented code above.
-        user = new User(Guid.Empty, "current-user-name", "e@mail",
-          ImmutableHashSet.Create<IReference<Adventure>>());
+        return Unauthorized();
 
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
-      var advKey = NameConverter.Concat(user.Key, story.Key);
-      var adventure = user.Adventures.FirstOrDefault(a => a.Key == advKey);
+      var adventure = user.GetAdventure(storyUrlname);
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
 

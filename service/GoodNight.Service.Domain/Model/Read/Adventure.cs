@@ -11,7 +11,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// have experienced yet, and the materialised they currently are at.
   /// </summary>
   /// <remarks>
-  /// Adventures are only persisted as part of a user.
+  /// Adventures are referenced from the user, but persist seperately.
   /// </remarks>
   public record Adventure(
     Player Player,

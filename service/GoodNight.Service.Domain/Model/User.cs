@@ -3,6 +3,8 @@ using System.Collections.Immutable;
 using System.Linq;
 using System;
 using GoodNight.Service.Domain.Model.Read;
+using GoodNight.Service.Domain.Util;
+using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Model
 {
@@ -46,6 +48,36 @@ namespace GoodNight.Service.Domain.Model
         .Where(a => a.Key != adventure.Key));
 
       return this with {Adventures = filteredAdventures.Add(adventure)};
+    }
+
+    public Adventure? GetAdventure(string storyUrlname)
+    {
+      var advKey = NameConverter.Concat(Key, storyUrlname);
+      return Adventures.FirstOrDefault(adv => adv.Key == advKey)?.Get();
+    }
+
+    public Result<(User,Adventure),string> StartAdventure(
+      IReference<Story> story, string playerName)
+    {
+      var existingAdventure = GetAdventure(story.Key);
+      if (existingAdventure is not null)
+        return new Result.Failure<(User,Adventure),string>(
+          "User has already started an adventure in this story.");
+
+      Scene? firstScene = story.Get()?.Scenes.Select(s => s.Get())
+        .FirstOrDefault(s => s is not null && s.IsStart);
+      if (firstScene is null)
+        return new Result.Failure<(User,Adventure),string>(
+          "The story has no first scene to start at.");
+
+      var player = new Player(playerName,
+        ImmutableDictionary<string,Value>.Empty);
+      var adventure = new Adventure(player, Key, story,
+        ImmutableList<IReference<Log>>.Empty,
+        firstScene.Play(player));
+      var user = AddAdventure(adventure);
+
+      return new Result.Success<(User,Adventure),string>((user, adventure));
     }
   }
 }
