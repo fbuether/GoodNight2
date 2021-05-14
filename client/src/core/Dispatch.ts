@@ -70,6 +70,8 @@ export function update() {
             ? { ...state, page: updated }
             : null;
       });
+
+      // todo: history push?
       break;
 
     case "Page":

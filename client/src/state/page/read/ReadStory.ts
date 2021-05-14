@@ -1,5 +1,3 @@
-import * as P from "../../../util/ProtoLens";
-
 import {request} from "../../../service/RequestService";
 import {Dispatch} from "../../../core/Dispatch";
 import type {PageDescriptor} from "../../../core/PageDescriptor";
@@ -20,7 +18,6 @@ export interface ReadStory {
 
 async function onLoad(dispatch: Dispatch, state: State) {
   var storyUrlname = Lens.ReadStory.story.get(state.page);
-
   await Loadable.forRequest<Adventure>(
     dispatch, state,
     "GET", `api/v1/read/stories/${storyUrlname}/continue`,
@@ -30,7 +27,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
 
 
 
-function instance(urlname: string): ReadStory {
+function instance(urlname: string, adventure?: Adventure): ReadStory {
   return {
     page: "ReadStory" as const,
     story: urlname,
@@ -38,7 +35,7 @@ function instance(urlname: string): ReadStory {
   };
 }
 
-function page(urlname: string): PageDescriptor {
+function page(urlname: string, adventure?: Adventure): PageDescriptor {
   return {
     state: instance(urlname),
     url: "/read/" + urlname,
@@ -54,4 +51,4 @@ export const ReadStory = {
   page: page,
 
   ofUrl: (pathname: string, matches: Array<string>) => page(matches[1])
-}
+};

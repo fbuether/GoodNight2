@@ -11,6 +11,7 @@ import type {CreateStory} from "./page/write/CreateStory";
 import type {WriteStory} from "./page/write/WriteStory";
 import type {WriteScene} from "./page/write/WriteScene";
 import type {WriteQuality} from "./page/write/WriteQuality";
+import type {StartAdventure} from "./page/read/StartAdventure";
 
 export type Pages =
     | Home
@@ -21,7 +22,8 @@ export type Pages =
     | CreateStory
     | WriteStory
     | WriteScene
-    | WriteQuality;
+    | WriteQuality
+    | StartAdventure;
 
 
 let guardHome = (a: Pages): a is Home => (a.page == "Home");
@@ -33,6 +35,7 @@ let guardCreateStory = (a: Pages): a is CreateStory => (a.page == "CreateStory")
 let guardWriteStory = (a: Pages): a is WriteStory => (a.page == "WriteStory");
 let guardWriteScene = (a: Pages): a is WriteScene => (a.page == "WriteScene");
 let guardWriteQuality = (a: Pages): a is WriteQuality => (a.page == "WriteQuality");
+let guardStartAdventure = (a: Pages): a is StartAdventure => (a.page == "StartAdventure");
 
 const guardNotNull = <T>(a: T | null): a is T => (a !== null);
 
@@ -45,7 +48,7 @@ export const Lens = P.id<Pages>()
     .prop("stories"))
   .union("ReadStory", guardReadStory, lens => lens
     .prop("story")
-    .prop("adventure"))
+    .path("adventure", Loadable.lens))
   .union("SelectStory", guardSelectStory, lens => lens
     .prop("stories"))
   .union("CreateStory", guardCreateStory, lens => lens
@@ -66,4 +69,9 @@ export const Lens = P.id<Pages>()
     .path("quality", lens => lens
       .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
-    .prop("isSaving"));
+    .prop("isSaving"))
+  .union("StartAdventure", guardStartAdventure, lens => lens
+    .path("story", Loadable.lensP)
+    .prop("error")
+    .prop("isStarting")
+    .prop("name"));

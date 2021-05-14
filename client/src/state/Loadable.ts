@@ -51,12 +51,14 @@ export const Loadable = {
 
 
   lens: <S,T>(id: P.Prism<S, Loadable<T>>) => id
+    .prop("state")
     .union("unloaded", guardUnloaded, lens => lens)
     .union("loading", guardLoading, lens => lens)
     .union("loaded", guardLoaded, lens => lens.prop("result"))
     .union("failed", guardFailed, lens => lens.prop("error")),
 
   lensP: <S,P,T>(id: P.Prism<S, LoadableP<P,T>>) => id
+    .prop("state")
     .union("unloaded", guardUnloadedP, lens => lens.prop("value"))
     .union("loading", guardLoadingP, lens => lens)
     .union("loaded", guardLoadedP, lens => lens.prop("result"))

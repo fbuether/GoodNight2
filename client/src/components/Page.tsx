@@ -8,6 +8,7 @@ import {CreateStory} from "../pages/write/CreateStory";
 import {WriteStory} from "../pages/write/WriteStory";
 import {WriteScene} from "../pages/write/WriteScene";
 import {WriteQuality} from "../pages/write/WriteQuality";
+import {StartAdventure} from "../pages/read/StartAdventure";
 
 import {Navigation} from "./navigation/Navigation";
 
@@ -33,6 +34,7 @@ function renderPage(page: Pages) {
     case "WriteStory": return WriteStory(page);
     case "WriteScene": return WriteScene(page);
     case "WriteQuality": return WriteQuality(page);
+    case "StartAdventure": return StartAdventure(page);
   }
 }
 
