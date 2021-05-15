@@ -33,7 +33,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
   if (Lens.WriteQuality.quality.value.get(state.page) !== null) {
     qualityFetcher = Loadable.forRequestP<[string,string],Quality>(state,
       "GET", (sq: [string,string]) =>
-          `api/v1/write/stories/${sq[0]}/qualities/${sq[1]}`,
+        `api/v1/write/stories/${sq[0]}/qualities/${sq[1]}`,
       Lens.WriteQuality.quality.value);
   }
 
