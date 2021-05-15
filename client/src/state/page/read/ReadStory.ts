@@ -3,26 +3,30 @@ import {Dispatch} from "../../../core/Dispatch";
 import type {PageDescriptor} from "../../../core/PageDescriptor";
 import type {State} from "../../State";
 import {Lens} from "../../Pages";
-
-import {Loadable} from "../../Loadable";
+import {Loadable, LoadableP} from "../../Loadable";
 
 import type {Adventure} from "../../../model/read/Adventure";
-
+import type {Story} from "../../../model/read/Story";
 import {StartAdventure} from "./StartAdventure";
 
 
 export interface ReadStory {
   page: "ReadStory";
-  story: string; // urlname
+  story: LoadableP<string, Story>;
   adventure: Loadable<Adventure>;
 }
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  var storyUrlname = Lens.ReadStory.story.get(state.page);
-  await Loadable.forRequest<Adventure>(state,
+  var storyUrlname = Lens.ReadStory.story.unloaded.value.get(state.page);
+
+  var storyLoader = Loadable.forRequestP<string,Story>(state,
+    "GET", (key: string) => `api/v1/read/stories/${key}`,
+    Lens.ReadStory.story);
+  var advLoader = Loadable.forRequest<Adventure>(state,
     "GET", `api/v1/read/stories/${storyUrlname}/continue`,
     Lens.ReadStory.adventure);
+  await Promise.all([storyLoader, advLoader]);
 
   Dispatch.send(Dispatch.Continue(state => {
     var advState = Lens.ReadStory.adventure.state.get(state.page);
@@ -36,8 +40,8 @@ async function onLoad(dispatch: Dispatch, state: State) {
 function instance(urlname: string, adventure?: Adventure): ReadStory {
   return {
     page: "ReadStory" as const,
-    story: urlname,
-    adventure: Loadable.Unloaded
+    story: Loadable.UnloadedP(urlname),
+    adventure: adventure ? Loadable.Loaded(adventure) : Loadable.Unloaded
   };
 }
 
