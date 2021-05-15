@@ -1,34 +1,32 @@
 import type {Adventure} from "../../model/read/Adventure";
-import type {Loadable} from "../../state/Loadable";
-
+import type {Story} from "../../model/read/Story";
 import type {ReadStory as State} from "../../state/page/read/ReadStory";
 
-import Error from "../../components/common/Error";
-import Loading from "../../components/common/Loading";
 import LoadableLoader from "../../components/common/LoadableLoader";
 
+import Log from "../../components/read/Log";
+import Action from "../../components/read/Action";
+import Player from "../../components/read/Player";
 
-function ReadStoryLoaded(state: State, adventure: Adventure) {
+
+function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
   return (
     <div id="centre" class="row px-0 g-0">
       <div id="text" class="col-sm-8">
-        <h1>{adventure.story.name}</h1>
-
-        <p>{adventure.story.description}</p>
+        <h1 id="banner">{story.name}</h1>
+        <Log entries={adventure.history}></Log>
+        <Action {...adventure.current} />
+      </div>
+      <div id="side" class="col-sm-4">
+        <hr class="w-75 mx-auto mt-4 mb-5" />
+        <Player {...adventure.player} />
       </div>
     </div>
   );
-      //   <h1 id="banner">{adventure.story.name}</h1>
-      //   <Log entries={adventure.history}></Log>
-      //   <Scene {...adventure.current}></Scene>
-      // </div>
-      // <div id="side" class="col-sm-4">
-      //   <hr class="w-75 mx-auto mt-4 mb-5" />
-      //   <State {...adventure.player}></State>
-
 }
 
 export function ReadStory(state: State) {
   return LoadableLoader(state.adventure, adventure =>
-      ReadStoryLoaded(state, adventure));
+      LoadableLoader(state.story, story =>
+          ReadStoryLoaded(state, story, adventure)));
 }

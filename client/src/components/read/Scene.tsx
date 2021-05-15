@@ -1,11 +1,11 @@
+import type {Scene as State} from "../../model/read/Scene";
+
 import Markdown from "../../components/common/Markdown";
-import Effect from "../../components/play/Effect";
-import Option from "../../components/play/Option";
-
-import type {Scene} from "../../model/read/Scene";
+import Effect from "../../components/read/Effect";
+import Option from "../../components/read/Option";
 
 
-export default function Scene(scene: Scene) {
+export default function Scene(scene: State) {
   // todo: return, continue.
 
   return (
@@ -18,4 +18,5 @@ export default function Scene(scene: Scene) {
       </div>
     </>
   );
+
 }
