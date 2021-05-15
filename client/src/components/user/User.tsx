@@ -1,25 +1,10 @@
-import {Dispatch} from "../../core/Dispatch";
+import {User as State} from "../../state/User";
 
 import Link from "../common/Link";
 import Icon from "../common/Icon";
 
 
-type SignedIn = {
-  kind: "SignedIn";
-  name: string;
-  signOut: () => Promise<void>;
-}
-
-
-type SignedOut = {
-  kind: "SignedOut";
-  signIn: () => Promise<void>;
-}
-
-export type User = SignedIn | SignedOut;
-
-
-export function User(state: User) {
+export function User(state: State) {
   if (state.kind == "SignedIn") {
     return (
       <>
@@ -29,7 +14,7 @@ export function User(state: User) {
       </li>
       <li class="nav-item">
         <Link class="nav-link clickable"
-          action={Dispatch.Command(state.signOut)}>
+          action={state.signOut}>
           <Icon name="crypt-entrance" class="small higher mr-1 restrained" />
           Abmelden
         </Link>
@@ -41,7 +26,7 @@ export function User(state: User) {
     return (
       <li class="nav-item">
         <Link class="nav-link clickable"
-          action={Dispatch.Command(state.signIn)}>
+          action={state.signIn}>
           <Icon name="bookmarklet" class="small lower mr-1 restrained" />
           Anmelden
         </Link>

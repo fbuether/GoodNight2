@@ -1,11 +1,21 @@
-import {Dispatch} from "../core/Dispatch";
+import {Dispatch, DispatchAction} from "../core/Dispatch";
 
-import {User as UserState} from "../components/user/User";
 import {UserService} from "../service/UserService";
 
 
+type SignedIn = {
+  kind: "SignedIn";
+  name: string;
+  signOut: DispatchAction;
+}
 
-export type User = UserState;
+
+type SignedOut = {
+  kind: "SignedOut";
+  signIn: DispatchAction;
+}
+
+export type User = SignedIn | SignedOut;
 
 
 async function loadUser() {
@@ -45,13 +55,13 @@ function signedInUser(name: string): User {
   return {
     kind: "SignedIn" as const,
     name: name,
-    signOut: () => removeUser()
+    signOut: Dispatch.Command(removeUser)
   };
 }
 
 const defaultUser: User = {
   kind: "SignedOut" as const,
-  signIn: () => UserService.get().startSignIn()
+  signIn: Dispatch.Command(UserService.get().startSignIn)
 };
 
 export const User = {
