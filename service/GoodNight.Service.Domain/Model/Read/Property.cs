@@ -23,7 +23,7 @@ namespace GoodNight.Service.Domain.Model.Read
         throw new InvalidQualityException(
           $"Quality \"{Quality.Key}\" does not exist.");
 
-      return new Transfer.Property(quality.ToHeader(), Value);
+      return new Transfer.Property(quality.ToHeader(), quality.Render(Value));
     }
   }
 }

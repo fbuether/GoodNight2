@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Read.Error;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
@@ -100,7 +101,26 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public abstract Value GetDefault();
 
+
     public QualityHeader ToHeader() => new QualityHeader(
       Name, Type, Icon, Description, Hidden);
+
+    public string Render(Value value)
+    {
+      switch (this, value)
+      {
+        case (Quality.Bool q, Value.Bool v):
+          return v.Value ? "true" : "false";
+
+        case (Quality.Int q, Value.Int v):
+          return v.Value.ToString();
+
+        case (Quality.Enum q, Value.Enum v):
+          return q.Values[v.Value];
+      }
+
+      throw new InvalidQualityException(
+        $"Quality of type {Type} rendered with value {value}.");
+    }
   }
 }

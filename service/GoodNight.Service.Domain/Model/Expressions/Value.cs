@@ -5,14 +5,14 @@ namespace GoodNight.Service.Domain.Model.Expressions
   {
     public record Bool(
       bool Value)
-      : Value() {}
+      : Value;
 
     public record Int(
       int Value)
-      : Value() {}
+      : Value;
 
     public record Enum(
       int Value)
-      : Value() {}
+      : Value;
   }
 }

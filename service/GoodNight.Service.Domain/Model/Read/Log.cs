@@ -19,7 +19,7 @@ namespace GoodNight.Service.Domain.Model.Read
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice.Action(Text, Icon,
+        new Transfer.Choice("action", Text, Icon,
           ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())));
     }
 
@@ -27,14 +27,14 @@ namespace GoodNight.Service.Domain.Model.Read
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice.Return();
+        new Transfer.Choice("return", null, null, null);
     }
 
     public record Continue
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice.Continue();
+        new Transfer.Choice("continue", null, null, null);
     }
 
     internal abstract Transfer.Choice ToTransfer();

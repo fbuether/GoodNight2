@@ -3,6 +3,7 @@ using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Read.Error;
+using System;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -39,9 +40,8 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       var quality = qualityRef.Get();
       if (quality is null)
-        // Best guess: It may be bool.
-        // todo: This is a rather weak fallback.
-        return new Value.Bool(false);
+        throw new InvalidQualityException($"Requested player state for "
+          + "invalid Quality \"{qualityRef.Key}\".");
 
       return GetValueOf(quality);
     }
@@ -52,6 +52,25 @@ namespace GoodNight.Service.Domain.Model.Read
         ?? quality.GetDefault()
         ?? throw new InvalidQualityException($"Materialising Scene found " +
           $"invalid Quality {quality.Key}.");
+    }
+
+
+    internal Transfer.Player ToTransfer()
+    {
+      // todo: fixme: fix this.
+
+      // var state = State.Select(qv => {
+      //   var (qualityRef, value) = qv;
+      //   var quality = qualityRef.Get();
+      //   if (quality is null)
+      //     throw new InvalidQualityException($"Player State contains invalid "
+      //       + "Quality \"{qualityRef.Key}\".");
+
+      //   return new Property(quality, valueString);
+      // });
+
+      return new Transfer.Player(Name,
+        ImmutableList<Transfer.Property>.Empty);
     }
   }
 }

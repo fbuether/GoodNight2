@@ -66,7 +66,7 @@ namespace GoodNight.Service.Domain.Model.Read
         .OfType<Log>()
         .Select(h => h.ToTransfer());
 
-      return new Transfer.Adventure(Player,
+      return new Transfer.Adventure(Player.ToTransfer(),
         ImmutableList.CreateRange(history),
         Current.ToTransfer());
     }
