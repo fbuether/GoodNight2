@@ -42,7 +42,7 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var (log, nextScene) = Current.ContinueWith(Player.Name, lastNumber,
+      var (log, nextScene) = Current.ContinueWith(User, lastNumber,
         optionname);
       if (log is null || nextScene is null)
         return null;

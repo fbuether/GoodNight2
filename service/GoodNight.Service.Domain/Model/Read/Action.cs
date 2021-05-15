@@ -66,11 +66,11 @@ namespace GoodNight.Service.Domain.Model.Read
     IReference<Scene>? Return,
     IReference<Scene>? Continue)
   {
-    public (Log?, Scene?) ContinueWith(string player, uint lastLogNumber,
+    public (Log?, Scene?) ContinueWith(string user, uint lastLogNumber,
       string optionname)
     {
       Func<Choice,Log> buildLog = (Choice choice) =>
-        new Log(player, lastLogNumber + 1, Scene, Text, Effects, choice);
+        new Log(user, lastLogNumber + 1, Scene, Text, Effects, choice);
 
       if (optionname == "return" && Return != null)
       {

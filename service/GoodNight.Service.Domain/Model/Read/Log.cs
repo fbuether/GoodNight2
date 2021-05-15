@@ -49,7 +49,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// Logs are only persisted as part of an Adventure, which is part of a User.
   /// </remarks>
   public record Log(
-    string Player, // used for the key
+    string User, // used for the key
     uint Number, // sequential number for all Logs of this player.
     IReference<Scene> Scene,
     string Text,
@@ -57,7 +57,7 @@ namespace GoodNight.Service.Domain.Model.Read
     Choice Chosen)
     : IStorable<Log>
   {
-    public string Key => NameConverter.Concat(Player, Scene.Key,
+    public string Key => NameConverter.Concat(User, Scene.Key,
       Number.ToString());
 
     internal Transfer.Log ToTransfer() =>

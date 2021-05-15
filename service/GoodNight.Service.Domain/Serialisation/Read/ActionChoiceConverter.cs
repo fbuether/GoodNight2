@@ -28,9 +28,10 @@ namespace GoodNight.Service.Api.Converter
           switch (type) {
             case "continue": return new Choice.Continue();
             case "return": return new Choice.Return();
-            case "option": return new Choice.Action(
+            case "action": return new Choice.Action(
               urlname, text, icon, effects);
-            default: return null;
+            default:
+              throw new JsonException();
           }
         }
         else if (reader.TokenType == JsonTokenType.PropertyName)
