@@ -1,8 +1,8 @@
 import type {Action} from "./Action";
-import type {Scene} from "./Scene";
+import type {Log} from "./Log";
 
 
 export interface Consequence {
+  log: Log;
   action: Action;
-  scene: Scene;
 }

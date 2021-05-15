@@ -1,29 +1,26 @@
 import type {Property} from "./Property";
 
 
-interface ChoiceOption {
-  kind: "option";
-  scene: string;
+export interface Requirement {
+  expression: object;
+  passed: boolean;
+}
+
+
+export interface Option {
   text: string;
+  icon: string | null;
+  isAvailable: boolean;
+  requirements: Array<Requirement>;
   effects: Array<Property>;
-}
-
-interface ChoiceReturn {
-  kind: "return";
   scene: string;
 }
-
-interface ChoiceContinue {
-  kind: "continue";
-  scene: string;
-}
-
-export type Choice = ChoiceOption | ChoiceReturn | ChoiceContinue;
 
 
 export interface Action {
-  urlname: string;
   text: string;
   effects: Array<Property>;
-  chosen: Choice;
+  options: Array<Option>;
+  return: string | null;
+  continue: string | null;
 }

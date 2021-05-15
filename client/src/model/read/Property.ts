@@ -4,5 +4,5 @@ import type {Quality} from "./Quality";
 
 export interface Property {
   quality: Quality;
-  value: Value;
+  value: string;
 }

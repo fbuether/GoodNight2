@@ -1,14 +1,17 @@
 
 export enum QualityType {
-  Int = 1,
-  Bool = 2,
+  Bool = 1,
+  Int = 2,
   Enum = 3
 }
 
+
+// in the backend, this is QualityHeader, as full qualities do not transfer
+// to the front end.
 export interface Quality {
   name: string;
   type: QualityType;
-  icon?: string;
+  icon: string | null;
   description: string;
-  scene?: string;
+  hidden: boolean;
 }
