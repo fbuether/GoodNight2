@@ -43,6 +43,11 @@ namespace GoodNight.Service.Domain.Model
       return (AddAdventure(newAdventure), consequence);
     }
 
+    public User RemoveAdventure(IReference<Adventure> adventure)
+    {
+      return this with {Adventures = Adventures.Remove(adventure)};
+    }
+
     public User AddAdventure(Adventure adventure)
     {
       var filteredAdventures = ImmutableHashSet.CreateRange(

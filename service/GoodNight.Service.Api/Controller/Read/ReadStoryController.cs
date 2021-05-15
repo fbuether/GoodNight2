@@ -118,5 +118,28 @@ namespace GoodNight.Service.Api.Controller.Read
 
       return Ok(consequence);
     }
+
+
+    [HttpDelete]
+    public ActionResult DeleteAdventure(string storyUrlname)
+    {
+      var user = GetCurrentUser();
+      if (user is null)
+        return Unauthorized();
+
+      var story = stories.Get(storyUrlname);
+      if (story is null)
+        return NotFound();
+
+      var adventure = user.GetAdventure(storyUrlname);
+      if (adventure is null)
+        return BadRequest(new ErrorResult("User has not started Adventure."));
+
+      adventures.Remove(adventure.Key);
+      user = user.RemoveAdventure(adventure);
+      users.Save(user);
+
+      return NoContent();
+    }
   }
 }

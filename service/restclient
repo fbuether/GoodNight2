@@ -3,37 +3,30 @@
 GET http://localhost:32016/api/v1/status
 
 #
-
 GET http://localhost:32016/api/v1/write/stories
 
 #
-
 POST http://localhost:32016/api/v1/write/stories
 Content-Type: application/json
 {"name": "Eine neue Geschichte!"}
 
 #
-
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
 
 #
-
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes
 Content-Type: application/json
 {"text":"$ name: an actual scene\nthis is a first scene\nit's just a string."}
 
 #
-
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/it--as-a-name--though-
 
 #
-
 PUT http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/an-actual-scene
 Content-Type: application/json
 {"text":"$ name: an actual scene\nthis is a first scene\nit's just a string.\nRight?"}
 
 #
-
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities
 Content-Type: application/json
 {"text":"$name: toasty\nthis is toasty.\n$type: int\nokay!"}
@@ -48,6 +41,9 @@ GET http://localhost:32016/api/v1/read/stories
 GET http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-
 
 #
+DELETE http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-
+
+#
 POST http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/start
 Content-Type: application/json
 {"name":"Mrs. Hollywookle"}
@@ -59,5 +55,3 @@ GET http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/continue
 POST http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/do
 Content-Type: application/json
 {"choice":"chocolate"}
-
-
