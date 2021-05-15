@@ -64,11 +64,12 @@ namespace GoodNight.Service.Domain.Model.Read
       {
         public Action AddTo(Player player, Action action)
         {
-          var isAvailable = false;
+          var isAvailable = true;
           var requirements = Requirements.Select(expression => {
             var value = expression.Evaluate(player.GetValueOf);
             if (value is Value.Bool bValue)
             {
+              isAvailable = isAvailable && bValue.Value;
               return new Requirement(expression, bValue.Value);
             }
             else
