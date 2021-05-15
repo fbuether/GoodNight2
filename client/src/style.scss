@@ -564,11 +564,11 @@ textarea.larger {
 
     padding-top: 0.3rem;
     padding-bottom: 0.3rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.6rem;
 
     &:hover, &:focus {
       background-color: hsb($base-color, 6%, 94%);
-      outline: 0.1rem dashed hsla($base-color, 84%, 20%, 0.7);
+      outline: 0.05rem solid hsla($base-color, 84%, 20%, 0.2);
     }
 
     &:disabled {
