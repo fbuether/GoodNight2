@@ -552,7 +552,7 @@ textarea.larger {
 // options.
 
 
-.options {
+.options, #text .options {
   .list-group-item {
     background-color: inherit;
     border: none;
@@ -573,6 +573,14 @@ textarea.larger {
 
     &:disabled {
       border-left-color: hsb($base-color, 0%, 90%);
+    }
+
+    .markdowned {
+      margin-bottom: 0;
+
+      .markup :last-child {
+        margin-bottom: 0;
+      }
     }
   }
 
