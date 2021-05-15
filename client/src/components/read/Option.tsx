@@ -1,6 +1,7 @@
 import type {OptionState} from "../../state/page/read/ReadStory";
 
 import Link from "../common/Link";
+import Markdown from "../common/Markdown";
 import Requirement from "./Requirement";
 
 
@@ -28,14 +29,16 @@ export default function Option(state: OptionState) {
   if (option.isAvailable) {
     return (
       <button class="list-group-item list-group-item-action" onClick={doOption}>
-        {option.text} {requirements}
+        <Markdown>{option.text}</Markdown>
+        {requirements}
       </button>
     );
   }
   else {
     return (
       <button class="list-group-item list-group-item-action" disabled>
-        {option.text} {requirements} 
+        <Markdown>{option.text}</Markdown>
+        {requirements}
       </button>
     );
   }
