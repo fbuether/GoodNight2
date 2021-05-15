@@ -9,12 +9,26 @@ namespace GoodNight.Service.Domain.Model.Read
 {
   public static class SceneFactory
   {
+    private static Func<string,IReference<Quality>> MakeQuality(
+      IRepository<Quality> qualities, string story) =>
+      (string qualityUrlname) => qualities.GetReference(
+        NameConverter.Concat(story, qualityUrlname));
+
+    private static Func<string,IReference<Scene>> MakeScene(
+      IRepository<Scene> scenes, string story) =>
+      (string sceneUrlname) => scenes.GetReference(
+        NameConverter.Concat(story, sceneUrlname));
+
     private static IEnumerable<Scene.Content> ToReadContent(
       IRepository<Scene> scenes,
       IRepository<Quality> qualities,
+      string story,
       Parse.Scene.Content parsed,
       int index)
     {
+      var makeScene = MakeScene(scenes, story);
+      var makeQuality = MakeQuality(qualities, story);
+
       switch (parsed)
       {
         case Parse.Scene.Content.Text c:
@@ -22,9 +36,8 @@ namespace GoodNight.Service.Domain.Model.Read
           break;
 
         case Parse.Scene.Content.Set c:
-          yield return new Scene.Content.Effect(
-            qualities.GetReference(c.Quality),
-            c.Expression.Map(qualities.GetReference));
+          yield return new Scene.Content.Effect(makeQuality(c.Quality),
+            c.Expression.Map(makeQuality));
           break;
 
         case Parse.Scene.Content.Option c:
@@ -33,12 +46,12 @@ namespace GoodNight.Service.Domain.Model.Read
 
           var requirements = ImmutableList.CreateRange(
             c.Content.OfType<Parse.Scene.Content.Require>()
-            .Select(r => r.Expression.Map(qualities.GetReference)));
+            .Select(r => r.Expression.Map(makeQuality)));
 
           var effects = ImmutableList.CreateRange(
             c.Content.OfType<Parse.Scene.Content.Set>()
-            .Select(s => (qualities.GetReference(s.Quality),
-                s.Expression.Map(qualities.GetReference))));
+            .Select(s => (makeQuality(s.Quality),
+                s.Expression.Map(makeQuality))));
 
           yield return new Scene.Content.Option(
             NameConverter.Concat(c.Scene, index.ToString()),
@@ -46,27 +59,27 @@ namespace GoodNight.Service.Domain.Model.Read
             "", // todo: icon
             requirements,
             effects,
-            scenes.GetReference(c.Scene));
+            makeScene(c.Scene));
           break;
 
         case Parse.Scene.Content.Return c:
-          yield return new Scene.Content.Return(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Return(makeScene(c.Scene));
           break;
 
         case Parse.Scene.Content.Continue c:
-          yield return new Scene.Content.Continue(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Continue(makeScene(c.Scene));
           break;
 
         case Parse.Scene.Content.Condition c:
           yield return new Scene.Content.Condition(
-            c.If.Map(qualities.GetReference),
-            ToReadContentList(scenes, qualities, c.Then),
-            ToReadContentList(scenes, qualities, c.Else)
+            c.If.Map(makeQuality),
+            ToReadContentList(scenes, qualities, story, c.Then),
+            ToReadContentList(scenes, qualities, story, c.Else)
           );
           break;
 
         case Parse.Scene.Content.Include c:
-          yield return new Scene.Content.Include(scenes.GetReference(c.Scene));
+          yield return new Scene.Content.Include(makeScene(c.Scene));
           break;
       }
     }
@@ -74,12 +87,11 @@ namespace GoodNight.Service.Domain.Model.Read
     private static ImmutableList<Scene.Content> ToReadContentList(
       IRepository<Scene> scenes,
       IRepository<Quality> qualities,
-      IEnumerable<Parse.Scene.Content> parsedContent)
-    {
-      return ImmutableList.CreateRange(
+      string story,
+      IEnumerable<Parse.Scene.Content> parsedContent) =>
+      ImmutableList.CreateRange(
         parsedContent.SelectMany((c,i) =>
-          ToReadContent(scenes, qualities, c, i)));
-    }
+          ToReadContent(scenes, qualities, story, c, i)));
 
     public static Result<Scene,string> Build(
       IRepository<Scene> scenes,
@@ -101,7 +113,8 @@ namespace GoodNight.Service.Domain.Model.Read
       var forceShow = parsedContents.OfType<Parse.Scene.Content.ForceShow>()
         .Any();
 
-      var contents = ToReadContentList(scenes, qualities, parsedContents);
+      var contents = ToReadContentList(scenes, qualities, story,
+        parsedContents);
 
       return new Result.Success<Scene, string>(new Scene(
           name, story, isStart, showAlways, forceShow, contents));
