@@ -5,7 +5,6 @@ using System;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Domain.Model.Expressions;
-using Consequence = GoodNight.Service.Domain.Model.Read.Transfer.Consequence;
 
 namespace GoodNight.Service.Domain.Model
 {
@@ -26,7 +25,7 @@ namespace GoodNight.Service.Domain.Model
   {
     public string Key => Guid.ToString();
 
-    public (User, Consequence)? ContinueAdventure(Story story,
+    public (User, Adventure)? ContinueAdventure(Story story,
       string optionname)
     {
       var adventure = this.Adventures
@@ -35,12 +34,11 @@ namespace GoodNight.Service.Domain.Model
       if (adventure is null)
         return null;
 
-      var continuation = adventure.ContinueWith(optionname);
-      if (continuation is null)
+      var newAdventure = adventure.ContinueWith(optionname);
+      if (newAdventure is null)
         return null;
 
-      var (newAdventure, consequence) = continuation.Value;
-      return (AddAdventure(newAdventure), consequence);
+      return (AddAdventure(newAdventure), newAdventure);
     }
 
     public User RemoveAdventure(IReference<Adventure> adventure)

@@ -7,7 +7,6 @@ using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 using TransferAdventure = GoodNight.Service.Domain.Model.Read.Transfer.Adventure;
-using TransferConsequence = GoodNight.Service.Domain.Model.Read.Transfer.Consequence;
 
 namespace GoodNight.Service.Api.Controller.Read
 {
@@ -98,7 +97,7 @@ namespace GoodNight.Service.Api.Controller.Read
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<TransferConsequence> DoOption(string storyUrlname,
+    public ActionResult<TransferAdventure> DoOption(string storyUrlname,
       [FromBody] Choice choice)
     {
       var username = "current-user-name";
@@ -115,12 +114,12 @@ namespace GoodNight.Service.Api.Controller.Read
       if (String.IsNullOrEmpty(optionname))
         return BadRequest(new ErrorResult("No Option given."));
 
-      var consequence = users.Update(username, user =>
+      var adventure = users.Update(username, user =>
         user.ContinueAdventure(story, optionname));
-      if (consequence is null)
+      if (adventure is null)
         return BadRequest("Option not found or not valid now.");
 
-      return Ok(consequence);
+      return Ok(adventure.ToTransfer());
     }
 
 

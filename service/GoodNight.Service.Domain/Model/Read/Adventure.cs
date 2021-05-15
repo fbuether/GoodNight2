@@ -38,7 +38,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// One of the options in Current.Options, or Current.Return or
     /// Current.Continue.
     /// <param>
-    public (Adventure, Consequence)? ContinueWith(string optionname)
+    public Adventure? ContinueWith(string optionname)
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
@@ -51,14 +51,11 @@ namespace GoodNight.Service.Domain.Model.Read
       var action = nextScene.Play(playerAfterChoice);
       var playerAfterScene = playerAfterChoice.Apply(action.Effects);
 
-      var adventure = this with
+      return this with
         {
           History = History.Add(log),
           Current = action
         };
-
-      return (adventure, new Consequence(log.ToTransfer(),
-          action.ToTransfer()));
     }
 
     public Transfer.Adventure ToTransfer()
