@@ -34,7 +34,7 @@ namespace GoodNight.Service.Api
       {
         var converters = options.JsonSerializerOptions.Converters;
         converters.Add(new ExpressionValueConverter());
-        converters.Add(new ActionChoiceConverter());
+        converters.Add(new LogChoiceConverter());
         converters.Add(new QualityConverter());
         converters.Add(new SceneContentConverter());
       });
