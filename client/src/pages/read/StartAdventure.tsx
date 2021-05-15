@@ -35,7 +35,7 @@ function StartAdventureInner(state: State, story: Story) {
           Wähle einen Namen für Deinen Charakter:
         </label>
         <input id="playerName" type="text" class="form-control"
-          onChange={setName} />
+          onInput={setName} />
 
         <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
           <Link action={returnLink}>Zurück</Link>

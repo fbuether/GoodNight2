@@ -34,7 +34,7 @@ export function CreateStory(state: State) {
           Der Name der neuen Geschichte
         </label>
         <input id="nameOfStory" type="text" class="form-control"
-          onChange={setName} />
+          onInput={setName} />
 
         <Error message={state.saveError} />
         <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
