@@ -81,7 +81,7 @@ namespace GoodNight.Service.Domain.Model.Read
         return (buildLog(new Choice.Continue()), Continue.Get());
       }
 
-      var option = Options.First(o => o.Urlname == optionname);
+      var option = Options.FirstOrDefault(o => o.Urlname == optionname);
       if (option != null)
       {
         return (buildLog(new Choice.Action(
