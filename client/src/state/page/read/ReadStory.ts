@@ -8,6 +8,8 @@ import {Loadable} from "../../Loadable";
 
 import type {Adventure} from "../../../model/read/Adventure";
 
+import {StartAdventure} from "./StartAdventure";
+
 
 export interface ReadStory {
   page: "ReadStory";
@@ -21,9 +23,14 @@ async function onLoad(dispatch: Dispatch, state: State) {
   await Loadable.forRequest<Adventure>(state,
     "GET", `api/v1/read/stories/${storyUrlname}/continue`,
     Lens.ReadStory.adventure);
+
+  Dispatch.send(Dispatch.Continue(state => {
+    var advState = Lens.ReadStory.adventure.state.get(state.page);
+    return advState !== "loaded" && storyUrlname !== null
+        ? Dispatch.Page(StartAdventure.page(storyUrlname))
+        : null;
+  }));
 }
-
-
 
 
 function instance(urlname: string, adventure?: Adventure): ReadStory {
