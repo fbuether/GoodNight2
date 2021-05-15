@@ -42,8 +42,6 @@ namespace GoodNight.Service.Domain.Serialisation.Read
         default:
           throw new JsonException();
       }
-
-      throw new NotImplementedException();
     }
 
     public override void Write(Utf8JsonWriter writer, Quality value,
