@@ -7,13 +7,31 @@ import {Loadable, LoadableP} from "../../Loadable";
 
 import type {Adventure} from "../../../model/read/Adventure";
 import type {Story} from "../../../model/read/Story";
+import type {Action, Option} from "../../../model/read/Action";
 import {StartAdventure} from "./StartAdventure";
+
+
+export interface ActionState {
+  action: Action;
+  onOption: (optionUrlname: string) => Promise<void>;
+}
+
+export interface OptionState {
+  option: Option;
+  onOption: (optionUrlname: string) => Promise<void>;
+}
 
 
 export interface ReadStory {
   page: "ReadStory";
   story: LoadableP<string, Story>;
   adventure: Loadable<Adventure>;
+  onOption: (state: ReadStory, optionUrlname: string) => Promise<void>;
+}
+
+
+async function onOption(state: ReadStory, optionUrlname: string) {
+  console.log("option", optionUrlname);
 }
 
 
@@ -41,7 +59,8 @@ function instance(urlname: string, adventure?: Adventure): ReadStory {
   return {
     page: "ReadStory" as const,
     story: Loadable.UnloadedP(urlname),
-    adventure: adventure ? Loadable.Loaded(adventure) : Loadable.Unloaded
+    adventure: adventure ? Loadable.Loaded(adventure) : Loadable.Unloaded,
+    onOption: onOption
   };
 }
 

@@ -1,14 +1,19 @@
-import type {Option} from "../../model/read/Action";
+import type {OptionState} from "../../state/page/read/ReadStory";
 
 import Link from "../common/Link";
 import Requirement from "./Requirement";
 
 
-export default function Option(option: Option) {
-  // const dispatch = PreactHooks.useContext(DispatchContext);
 
-  let requirements: JSX.Element | string = "";
+export default function Option(state: OptionState) {
+  var doOption = (event: MouseEvent) => {
+    event.preventDefault();
+    state.onOption(state.option.urlname);
+  }
 
+  let option = state.option;
+
+  let requirements;
   if (option.requirements.length > 0) {
     let requirementList = <>{option.requirements.map(Requirement)}</>;
     let available = option.isAvailable ? "" : "nicht verfügbar. ";
@@ -21,9 +26,8 @@ export default function Option(option: Option) {
   }
 
   if (option.isAvailable) {
-    // todo: onClick={dispatchOption(dispatch, option)}
     return (
-      <button class="list-group-item list-group-item-action">
+      <button class="list-group-item list-group-item-action" onClick={doOption}>
         {option.text} {requirements}
       </button>
     );
