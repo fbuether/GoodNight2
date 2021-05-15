@@ -1,29 +1,14 @@
 import {PageDescriptor} from "../../core/PageDescriptor";
 
-import {Home} from "../../state/page/Home";
-import {StoryOverview} from "../../state/page/read/StoryOverview";
-import {SelectStory} from "../../state/page/write/SelectStory";
+import {Navigation as State} from "../../state/Navigation";
 
-import {User} from "../user/User";
 import {NavItem} from "./NavItem";
+import {User} from "../user/User";
 
 
-type MenuItem = [string, PageDescriptor];
 
-let menuItems: Array<MenuItem> = [
-  ["Willkommen", Home.page],
-  ["Geschichten lesen", StoryOverview.page],
-  ["Geschichten schreiben", SelectStory.page]
-];
-
-
-export interface Navigation {
-  user: User;
-  page: string;
-}
-
-export function Navigation(state: Navigation) {
-  let buttons = menuItems.map(item =>
+export function Navigation(state: State) {
+  let buttons = State.menuItems.map(item =>
     <NavItem
       title={item[0]}
       page={item[1]}
