@@ -13,12 +13,12 @@ import {StartAdventure} from "./StartAdventure";
 
 export interface ActionState {
   action: Action;
-  onOption: (optionUrlname: string) => Promise<void>;
+  onOption: (option: Option) => Promise<void>;
 }
 
 export interface OptionState {
   option: Option;
-  onOption: (optionUrlname: string) => Promise<void>;
+  onOption: (option: Option) => Promise<void>;
 }
 
 
@@ -26,28 +26,55 @@ export interface ReadStory {
   page: "ReadStory";
   story: LoadableP<string, Story>;
   adventure: Loadable<Adventure>;
-  onOption: (state: ReadStory, optionUrlname: string) => Promise<void>;
+  onOption: (state: ReadStory, option: Option) => Promise<void>;
+
+  choice: Option | null;
+  error: string | null;
 }
 
 
-async function onOption(state: ReadStory, optionUrlname: string) {
-  console.log("option", optionUrlname);
+async function onOption(state: ReadStory, option: Option) {
+  Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(null)));
+  Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(option)));
+
+  let storyLoader = state.story;
+  if (storyLoader.state != "loaded") {
+    throw "StartAdventure.onStart without loaded story.";
+  }
+
+  let param = { choice: option.urlname };
+  let response = await request<Adventure>(
+    "POST", `api/v1/read/stories/${storyLoader.result.urlname}/do`, param);
+
+  if (response.isResult) {
+    Dispatch.send(Dispatch.Update(Lens.ReadStory.adventure.set(
+      Loadable.Loaded(response.message))));
+    Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(null)));
+    Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(null)));
+  }
+  else {
+    Dispatch.send(Dispatch.Update(Lens.set({
+      ...state,
+      error: response.message,
+      choice: null
+    })));
+  }
 }
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  var storyUrlname = Lens.ReadStory.story.unloaded.value.get(state.page);
+  let storyUrlname = Lens.ReadStory.story.unloaded.value.get(state.page);
 
-  var storyLoader = Loadable.forRequestP<string,Story>(state,
+  let storyLoader = Loadable.forRequestP<string,Story>(state,
     "GET", (key: string) => `api/v1/read/stories/${key}`,
     Lens.ReadStory.story);
-  var advLoader = Loadable.forRequest<Adventure>(state,
+  let advLoader = Loadable.forRequest<Adventure>(state,
     "GET", `api/v1/read/stories/${storyUrlname}/continue`,
     Lens.ReadStory.adventure);
   await Promise.all([storyLoader, advLoader]);
 
   Dispatch.send(Dispatch.Continue(state => {
-    var advState = Lens.ReadStory.adventure.state.get(state.page);
+    let advState = Lens.ReadStory.adventure.state.get(state.page);
     return advState !== "loaded" && storyUrlname !== null
         ? Dispatch.Page(StartAdventure.page(storyUrlname))
         : null;
@@ -60,7 +87,9 @@ function instance(urlname: string, adventure?: Adventure): ReadStory {
     page: "ReadStory" as const,
     story: Loadable.UnloadedP(urlname),
     adventure: adventure ? Loadable.Loaded(adventure) : Loadable.Unloaded,
-    onOption: onOption
+    onOption: onOption,
+    error: null,
+    choice: null
   };
 }
 

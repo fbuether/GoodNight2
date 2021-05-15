@@ -48,7 +48,9 @@ export const Lens = P.id<Pages>()
     .prop("stories"))
   .union("ReadStory", guardReadStory, lens => lens
     .path("story", Loadable.lensP)
-    .path("adventure", Loadable.lens))
+    .path("adventure", Loadable.lens)
+    .prop("error")
+    .prop("choice"))
   .union("SelectStory", guardSelectStory, lens => lens
     .prop("stories"))
   .union("CreateStory", guardCreateStory, lens => lens

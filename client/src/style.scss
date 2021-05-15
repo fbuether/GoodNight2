@@ -575,6 +575,10 @@ textarea.larger {
       border-left-color: hsb($base-color, 0%, 90%);
     }
   }
+
+  .choice {
+    background-color: hsb($base-color, 5%, 96%);
+  }
 }
 
 
