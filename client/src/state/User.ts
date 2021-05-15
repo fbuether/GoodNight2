@@ -18,35 +18,31 @@ type SignedOut = {
 export type User = SignedIn | SignedOut;
 
 
+function setUser(user: User) {
+    Dispatch.send(Dispatch.State(state => ({
+      ...state,
+      user: user
+    })));
+}
+
 async function loadUser() {
   let user = await UserService.get().getUser();
 
   if (user != null) {
     var userState = signedInUser(user.email ?? user.name);
-
-    Dispatch.send(Dispatch.State(state => ({
-      ...state,
-      user: userState
-    })));
+    setUser(userState);
   }
 }
 
 
 async function setInitialUser() {
-  Dispatch.send(Dispatch.State(state => ({
-    ...state,
-    user: defaultUser
-  })));
-
+  setUser(defaultUser);
   await loadUser();
 }
 
 async function removeUser() {
   await UserService.get().removeUser();
-  Dispatch.send(Dispatch.State(state => ({
-    ...state,
-    user: defaultUser
-  })));
+  setUser(defaultUser);
 }
 
 
