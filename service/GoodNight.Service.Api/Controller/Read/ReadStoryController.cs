@@ -100,9 +100,7 @@ namespace GoodNight.Service.Api.Controller.Read
     public ActionResult<TransferAdventure> DoOption(string storyUrlname,
       [FromBody] Choice choice)
     {
-      var username = "current-user-name";
-
-      var user = users.Get(username);
+      var user = GetCurrentUser();
       if (user is null)
         return Unauthorized();
 
@@ -114,7 +112,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (String.IsNullOrEmpty(optionname))
         return BadRequest(new ErrorResult("No Option given."));
 
-      var adventure = users.Update(username, user =>
+      var adventure = users.Update(user.Key, user =>
         user.ContinueAdventure(story, optionname));
       if (adventure is null)
         return BadRequest("Option not found or not valid now.");
