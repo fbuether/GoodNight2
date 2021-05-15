@@ -575,10 +575,10 @@ textarea.larger {
       border-left-color: hsb($base-color, 0%, 90%);
     }
 
-    .markdowned {
+    .markup {
       margin-bottom: 0;
 
-      .markup :last-child {
+      :last-child {
         margin-bottom: 0;
       }
     }
