@@ -1,4 +1,3 @@
-
 import type {State} from "../state/State";
 import type {Page} from "../state/Page";
 import type {Pages} from "../state/Pages";
@@ -27,11 +26,17 @@ type UpdateAction = {
   update: (state: Pages) => Pages | null;
 }
 
+type ContinueAction = {
+  kind: "Continue";
+  action: (state: State) => DispatchAction | null;
+}
+
 export type DispatchAction =
     | CommandAction
     | StateAction
     | PageAction
-    | UpdateAction;
+    | UpdateAction
+    | ContinueAction;
 
 
 export type Dispatch = (action: DispatchAction) => void;
@@ -60,6 +65,13 @@ export function update() {
 
     case "State":
       StateStore.update(msg.action);
+      break;
+
+    case "Continue":
+      let nextAction = msg.action(StateStore.get());
+      if (nextAction !== null) {
+        Dispatch.send(nextAction);
+      }
       break;
 
     case "Update":
@@ -120,6 +132,11 @@ export const Dispatch = {
   Update: (update: (state: Pages) => Pages | null) => ({
     kind: "Update" as const,
     update: update
+  }),
+
+  Continue: (action: (state: State) => DispatchAction | null) => ({
+    kind: "Continue" as const,
+    action: action
   }),
 
 
