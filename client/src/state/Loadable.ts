@@ -65,7 +65,7 @@ export const Loadable = {
     .union("failed", guardFailedP, lens => lens.prop("error")),
 
 
-  forRequest: async <T>(dispatch: Dispatch, state: State, method: Method,
+  forRequest: async <T>(state: State, method: Method,
     url: string, lens: P.PrismAccess<Pages,Loadable<T>>) => {
 
     var loadable = lens.get(state.page);
@@ -74,18 +74,18 @@ export const Loadable = {
     }
 
     if (loadable.state == "unloaded") {
-      dispatch(Dispatch.Update(lens.set(Loadable.Loading)));
+      Dispatch.send(Dispatch.Update(lens.set(Loadable.Loading)));
 
       var response = await request<T>(method, url);
 
-      dispatch(Dispatch.Update(lens.set(
+      Dispatch.send(Dispatch.Update(lens.set(
         response.isResult
             ? Loadable.Loaded(response.message)
             : Loadable.Failed(response.message))));
     }
   },
 
-  forRequestP: async <P,T>(dispatch: Dispatch, state: State, method: Method,
+  forRequestP: async <P,T>(state: State, method: Method,
     url: (value: P) => string, lens: P.PrismAccess<Pages, LoadableP<P,T>>) => {
 
     var loadable = lens.get(state.page);
@@ -94,10 +94,11 @@ export const Loadable = {
     }
 
     if (loadable.state == "unloadedP") {
-      dispatch(Dispatch.Update(lens.set(Loadable.Loading)));
+      Dispatch.send(Dispatch.Update(lens.set(Loadable.Loading)));
 
       var response = await request<T>(method, url(loadable.value));
-      dispatch(Dispatch.Update(lens.set(
+
+      Dispatch.send(Dispatch.Update(lens.set(
         response.isResult
             ? Loadable.Loaded(response.message)
             : Loadable.Failed(response.message))));

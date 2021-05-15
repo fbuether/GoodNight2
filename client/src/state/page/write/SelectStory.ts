@@ -13,8 +13,7 @@ export type SelectStory = Component;
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  await Loadable.forRequest<Array<Story>>(
-    dispatch, state,
+  await Loadable.forRequest<Array<Story>>(state,
     "GET", "api/v1/write/stories",
     Lens.SelectStory.stories);
 }

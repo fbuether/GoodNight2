@@ -22,13 +22,11 @@ async function onLoad(dispatch: Dispatch, state: State) {
     throw "Invalid state: OnLoad for wrong page.";
   }
 
-  let story = Loadable.forRequest<Story>(
-    dispatch, state,
+  let story = Loadable.forRequest<Story>(state,
     "GET", `api/v1/write/stories/${storyUrlname}`,
     Lens.WriteStory.story);
 
-  let category = Loadable.forRequest<Category>(
-    dispatch, state,
+  let category = Loadable.forRequest<Category>(state,
     "GET", `api/v1/write/stories/${storyUrlname}/content-by-category`,
     Lens.WriteStory.category);
 

@@ -24,16 +24,14 @@ export interface WriteScene {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  let storyFetcher = Loadable.forRequestP<string, Story>(
-    dispatch, state,
+  let storyFetcher = Loadable.forRequestP<string, Story>(state,
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteScene.story);
 
   // only try to fetch the scene if we have a scene.
   let sceneFetcher = Promise.resolve();
   if (Lens.WriteScene.scene.value.get(state.page) !== null) {
-    sceneFetcher = Loadable.forRequestP<[string,string],Scene>(
-      dispatch, state,
+    sceneFetcher = Loadable.forRequestP<[string,string],Scene>(state,
       "GET", (ss: [string,string]) =>
           `api/v1/write/stories/${ss[0]}/scenes/${ss[1]}`,
       Lens.WriteScene.scene.value);

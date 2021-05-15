@@ -49,8 +49,7 @@ async function onStart(state: StartAdventure) {
 
 async function onLoad(dispatch: Dispatch, state: State) {
   var storyUrlname = Lens.StartAdventure.story.get(state.page);
-  await Loadable.forRequestP<string,Story>(
-    dispatch, state,
+  await Loadable.forRequestP<string,Story>(state,
     "GET", (story: string) => `api/v1/read/stories/${story}`,
     Lens.StartAdventure.story);
 }

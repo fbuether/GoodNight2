@@ -13,8 +13,8 @@ export type StoryOverview = Component;
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  await Loadable.forRequest<Array<Story>>(
-    dispatch, state, "GET", "api/v1/read/stories",
+  await Loadable.forRequest<Array<Story>>(state,
+    "GET", "api/v1/read/stories",
     Lens.StoryOverview.stories);
 }
 

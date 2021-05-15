@@ -24,16 +24,14 @@ export interface WriteQuality {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  let storyFetcher = Loadable.forRequestP<string, Story>(
-    dispatch, state,
+  let storyFetcher = Loadable.forRequestP<string, Story>(state,
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteQuality.story);
 
   // only try to fetch the quality if we have a quality.
   let qualityFetcher = Promise.resolve();
   if (Lens.WriteQuality.quality.value.get(state.page) !== null) {
-    qualityFetcher = Loadable.forRequestP<[string,string],Quality>(
-      dispatch, state,
+    qualityFetcher = Loadable.forRequestP<[string,string],Quality>(state,
       "GET", (sq: [string,string]) =>
           `api/v1/write/stories/${sq[0]}/qualities/${sq[1]}`,
       Lens.WriteQuality.quality.value);

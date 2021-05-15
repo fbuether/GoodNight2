@@ -18,8 +18,7 @@ export interface ReadStory {
 
 async function onLoad(dispatch: Dispatch, state: State) {
   var storyUrlname = Lens.ReadStory.story.get(state.page);
-  await Loadable.forRequest<Adventure>(
-    dispatch, state,
+  await Loadable.forRequest<Adventure>(state,
     "GET", `api/v1/read/stories/${storyUrlname}/continue`,
     Lens.ReadStory.adventure);
 }
