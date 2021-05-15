@@ -12,6 +12,7 @@ namespace GoodNight.Service.Domain.Model.Read
     string Name,
     Type Type,
     string? Icon,
+    string Description,
     bool Hidden);
 
   /// <summary>
@@ -100,6 +101,6 @@ namespace GoodNight.Service.Domain.Model.Read
     public abstract Value GetDefault();
 
     public QualityHeader ToHeader() => new QualityHeader(
-      Name, Type, Icon, Hidden);
+      Name, Type, Icon, Description, Hidden);
   }
 }
