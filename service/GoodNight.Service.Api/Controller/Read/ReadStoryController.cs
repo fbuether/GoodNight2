@@ -56,7 +56,11 @@ namespace GoodNight.Service.Api.Controller.Read
       if (story is null)
         return NotFound();
 
-      return user.StartAdventure(story, start.name)
+      if (start.name.Trim() == "")
+        return BadRequest(new ErrorResult(
+            "The player name must not be empty."));
+
+      return user.StartAdventure(story, start.name.Trim())
         .Do(ua => users.Save(ua.Item1))
         .Do(ua => adventures.Save(ua.Item2))
         .Map<ActionResult<TransferAdventure>>(
