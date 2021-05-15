@@ -68,7 +68,6 @@ function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
       <div id="text" class="col-sm-8">
         <h1 id="banner">{story.name}</h1>
         <Log entries={adventure.history}></Log>
-        <hr class="w-75 mx-auto mt-4 mb-5" />
         <Markdown>{action.text}</Markdown>
         {action.effects.map(Effect)}
         <Error message={state.error} />
