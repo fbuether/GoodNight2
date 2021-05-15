@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
@@ -14,13 +16,28 @@ namespace GoodNight.Service.Domain.Model.Read
       string Text,
       string? Icon,
       IImmutableList<Property> Effects)
-      : Choice;
+      : Choice
+    {
+      internal override Transfer.Choice ToTransfer() =>
+        new Transfer.Choice.Action(Text, Icon,
+          ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())));
+    }
 
     public record Return
-      : Choice;
+      : Choice
+    {
+      internal override Transfer.Choice ToTransfer() =>
+        new Transfer.Choice.Return();
+    }
 
     public record Continue
-      : Choice;
+      : Choice
+    {
+      internal override Transfer.Choice ToTransfer() =>
+        new Transfer.Choice.Continue();
+    }
+
+    internal abstract Transfer.Choice ToTransfer();
   }
 
   /// <summary>
@@ -42,5 +59,10 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public string Key => NameConverter.Concat(Player, Scene.Key,
       Number.ToString());
+
+    internal Transfer.Log ToTransfer() =>
+      new Transfer.Log(Number, Text,
+        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
+        Chosen.ToTransfer());
   }
 }

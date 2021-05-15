@@ -1,4 +1,6 @@
+using System;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Read.Error;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Read
@@ -13,5 +15,15 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Property(
     IReference<Quality> Quality,
     Value Value)
-  {}
+  {
+    internal Transfer.Property ToTransfer()
+    {
+      var quality = Quality.Get();
+      if (quality is null)
+        throw new InvalidQualityException(
+          $"Quality \"{Quality.Key}\" does not exist.");
+
+      return new Transfer.Property(quality.ToHeader(), Value);
+    }
+  }
 }

@@ -17,6 +17,11 @@ namespace GoodNight.Service.Domain.Model.Read
     Player Player,
     string User,
     IReference<Story> Story,
+
+    /// <summary>
+    /// A list of history items, which describe the path that a player has
+    /// taken. Newest steps are at the end of the list.
+    /// </summary>
     IImmutableList<IReference<Log>> History,
     Action Current)
     : IStorable<Adventure>
@@ -52,6 +57,18 @@ namespace GoodNight.Service.Domain.Model.Read
         };
 
       return (adventure, new Consequence(log, action));
+    }
+
+    public Transfer.Adventure ToTransfer()
+    {
+      var history = History.Skip(History.Count - 5)
+        .Select(h => h.Get())
+        .OfType<Log>()
+        .Select(h => h.ToTransfer());
+
+      return new Transfer.Adventure(Player,
+        ImmutableList.CreateRange(history),
+        Current.ToTransfer());
     }
   }
 }

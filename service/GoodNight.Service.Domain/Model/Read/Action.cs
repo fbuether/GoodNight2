@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Model.Read.Error;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -14,7 +15,20 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Requirement(
     Expression<IReference<Quality>> Expression,
     bool Passed)
-  {}
+  {
+    internal Transfer.Requirement ToTransfer()
+    {
+      return new Transfer.Requirement(Expression.Map(qualityRef => {
+        var quality = qualityRef.Get();
+        if (quality is null)
+          throw new InvalidQualityException(
+            $"Quality \"{qualityRef.Key}\" does not exist.");
+
+        return quality.ToHeader();
+      }),
+        Passed);
+    }
+  }
 
   /// <summary>
   /// An Option the player can take as they are at this Action.
@@ -31,7 +45,13 @@ namespace GoodNight.Service.Domain.Model.Read
     IImmutableList<Requirement> Requirements,
     IImmutableList<Property> Effects,
     IReference<Scene> Scene)
-  {}
+  {
+    internal Transfer.Option ToTransfer() =>
+      new Transfer.Option(Text, Icon, IsAvailable,
+        ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())),
+        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
+        Scene.Key);
+  }
 
   /// <summary>
   /// An Action is one scene that a player is currently playing.
@@ -74,5 +94,11 @@ namespace GoodNight.Service.Domain.Model.Read
 
       return (null, null);
     }
+
+    internal Transfer.Action ToTransfer() =>
+      new Transfer.Action(Text,
+        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
+        ImmutableList.CreateRange(Options.Select(o => o.ToTransfer())),
+        Return?.Key, Continue?.Key);
   }
 }

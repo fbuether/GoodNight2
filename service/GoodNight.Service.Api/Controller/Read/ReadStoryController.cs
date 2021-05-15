@@ -3,10 +3,10 @@ using System.Linq;
 using System.Collections.Immutable;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using GoodNight.Service.Domain;
 using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
+using TransferAdventure = GoodNight.Service.Domain.Model.Read.Transfer.Adventure;
 
 namespace GoodNight.Service.Api.Controller.Read
 {
@@ -44,7 +44,7 @@ namespace GoodNight.Service.Api.Controller.Read
     public record AdventureStart(string name);
 
     [HttpPost("start")]
-    public ActionResult<Adventure> StartAdventure(string storyUrlname,
+    public ActionResult<TransferAdventure> StartAdventure(string storyUrlname,
       [FromBody] AdventureStart start)
     {
       var user = GetCurrentUser();
@@ -58,8 +58,8 @@ namespace GoodNight.Service.Api.Controller.Read
       return user.StartAdventure(story, start.name)
         .Do(ua => users.Save(ua.Item1))
         .Do(ua => adventures.Save(ua.Item2))
-        .Map<ActionResult<Adventure>>(
-          ua => Ok(ua.Item2),
+        .Map<ActionResult<TransferAdventure>>(
+          ua => Ok(ua.Item2.ToTransfer()),
           err => BadRequest(new ErrorResult(err)));
     }
 
@@ -68,7 +68,7 @@ namespace GoodNight.Service.Api.Controller.Read
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<Adventure> GetAdventure(string storyUrlname)
+    public ActionResult<TransferAdventure> GetAdventure(string storyUrlname)
     {
       var user = GetCurrentUser();
       if (user is null)
@@ -82,7 +82,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
 
-      return Ok(adventure);
+      return Ok(adventure.ToTransfer());
     }
 
 

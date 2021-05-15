@@ -5,6 +5,16 @@ using GoodNight.Service.Storage.Interface;
 namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
+  /// A QualityHeader is a short summary of a quality. It provides the
+  /// most important information in a format suitable for serialisation.
+  /// </summary>
+  public record QualityHeader(
+    string Name,
+    Type Type,
+    string? Icon,
+    bool Hidden);
+
+  /// <summary>
   /// A Quality describes any kind of state that a Player may have.
   /// It has a name, icon and type, may be visible to the Player or not, and
   /// optionally has a Scene that it can trigger.
@@ -88,5 +98,8 @@ namespace GoodNight.Service.Domain.Model.Read
     public string Key => NameConverter.Concat(Story, Urlname);
 
     public abstract Value GetDefault();
+
+    public QualityHeader ToHeader() => new QualityHeader(
+      Name, Type, Icon, Hidden);
   }
 }

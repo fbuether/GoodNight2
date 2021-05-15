@@ -24,13 +24,13 @@ namespace GoodNight.Service.Api.Controller.Read
     }
 
     [HttpGet("{storyUrlname}")]
-    public ActionResult<Story> Get(string storyUrlname)
+    public ActionResult<StoryHeader> Get(string storyUrlname)
     {
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
-      return Ok(story);
+      return Ok(story.ToHeader());
     }
   }
 }
