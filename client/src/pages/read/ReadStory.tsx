@@ -16,7 +16,7 @@ import Option from "../../components/read/Option";
 
 
 function Options(options: Array<OptionState>,
-  onOption: (option: OptionState) => Promise<void>) {
+  onOption: (urlname: string, choice: string) => Promise<void>) {
   let optionArgs = options.map(opt => ({
     option: opt,
     onOption: onOption
@@ -30,12 +30,12 @@ function Options(options: Array<OptionState>,
 }
 
 
-function LoadingChoice(choice: OptionState) {
+function LoadingChoice(choice: string) {
   return (
     <div class="options list-group">
       <div class="list-group-item choice">
         <Icon name="empty-hourglass" class="mr-2 float-end" />
-        {choice.text}
+        <Markdown>{choice}</Markdown>
       </div>
     </div>
   );
@@ -43,12 +43,25 @@ function LoadingChoice(choice: OptionState) {
 
 
 function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
-  let onOption = (option: OptionState) => state.onOption(state, option);
-  let action = adventure.current;
+  let onOption = (urlname: string, choice: string) =>
+      state.onOption(state, urlname, choice);
+  let doOption = (target: string) => (event: MouseEvent) => {
+    event.preventDefault();
+    onOption(target, target == "return" ? "Zurück…" : "Weiter…");
+  };
 
+
+  let action = adventure.current;
   let options = state.choice === null
       ? Options(action.options, onOption)
       : LoadingChoice(state.choice);
+
+  let returnLink = action.return !== null
+      ? <a class="boxed clickable" onClick={doOption("return")}>← Zurück</a>
+      : <div />;
+  let continueLink = action.continue !== null
+      ? <a class="boxed clickable" onClick={doOption("continue")}>Weiter →</a>
+      : <div />;
 
   return (
     <div id="centre" class="row px-0 g-0">
@@ -60,6 +73,10 @@ function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
         {action.effects.map(Effect)}
         <Error message={state.error} />
         {options}
+        <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
+          {returnLink}
+          {continueLink}
+        </div>
       </div>
       <div id="side" class="col-sm-4">
         <hr class="w-75 mx-auto mt-4 mb-5" />

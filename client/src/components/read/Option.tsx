@@ -9,7 +9,7 @@ import Requirement from "./Requirement";
 export default function Option(state: OptionState) {
   var doOption = (event: MouseEvent) => {
     event.preventDefault();
-    state.onOption(state.option);
+    state.onOption(state.option.urlname, state.option.text);
   }
 
   let option = state.option;

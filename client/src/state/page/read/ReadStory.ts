@@ -13,12 +13,12 @@ import {StartAdventure} from "./StartAdventure";
 
 export interface ActionState {
   action: Action;
-  onOption: (option: Option) => Promise<void>;
+  onOption: (urlname: string, choice: string) => Promise<void>;
 }
 
 export interface OptionState {
   option: Option;
-  onOption: (option: Option) => Promise<void>;
+  onOption: (urlname: string, choice: string) => Promise<void>;
 }
 
 
@@ -26,23 +26,23 @@ export interface ReadStory {
   page: "ReadStory";
   story: LoadableP<string, Story>;
   adventure: Loadable<Adventure>;
-  onOption: (state: ReadStory, option: Option) => Promise<void>;
+  onOption: (state: ReadStory, urlname: string, choice: string) => Promise<void>;
 
-  choice: Option | null;
+  choice: string | null;
   error: string | null;
 }
 
 
-async function onOption(state: ReadStory, option: Option) {
+async function onOption(state: ReadStory, urlname: string, choice: string) {
   Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(null)));
-  Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(option)));
+  Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(choice)));
 
   let storyLoader = state.story;
   if (storyLoader.state != "loaded") {
     throw "StartAdventure.onStart without loaded story.";
   }
 
-  let param = { choice: option.urlname };
+  let param = { choice: urlname };
   let response = await request<Adventure>(
     "POST", `api/v1/read/stories/${storyLoader.result.urlname}/do`, param);
 
