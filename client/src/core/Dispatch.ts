@@ -9,7 +9,7 @@ import {History} from "./History";
 
 type CommandAction = {
   kind: "Command";
-  action: () => void;
+  action: () => Promise<void>;
 }
 
 type StateAction = {
@@ -102,7 +102,7 @@ var onFinish = () => {};
 
 
 export const Dispatch = {
-  Command: (action: () => void) => ({
+  Command: (action: () => Promise<void>) => ({
     kind: "Command" as const,
     action: action
   }),
