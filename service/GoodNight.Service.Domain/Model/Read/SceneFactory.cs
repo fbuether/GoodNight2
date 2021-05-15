@@ -12,12 +12,12 @@ namespace GoodNight.Service.Domain.Model.Read
     private static Func<string,IReference<Quality>> MakeQuality(
       IRepository<Quality> qualities, string story) =>
       (string qualityUrlname) => qualities.GetReference(
-        NameConverter.Concat(story, qualityUrlname));
+        NameConverter.Concat(story, NameConverter.OfString(qualityUrlname)));
 
     private static Func<string,IReference<Scene>> MakeScene(
       IRepository<Scene> scenes, string story) =>
       (string sceneUrlname) => scenes.GetReference(
-        NameConverter.Concat(story, sceneUrlname));
+        NameConverter.Concat(story, NameConverter.OfString(sceneUrlname)));
 
     private static IEnumerable<Scene.Content> ToReadContent(
       IRepository<Scene> scenes,
