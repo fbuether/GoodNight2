@@ -5,6 +5,7 @@ using System;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Domain.Model.Expressions;
+using Consequence = GoodNight.Service.Domain.Model.Read.Transfer.Consequence;
 
 namespace GoodNight.Service.Domain.Model
 {
@@ -34,10 +35,11 @@ namespace GoodNight.Service.Domain.Model
       if (adventure is null)
         return null;
 
-      var (newAdventure, consequence) = adventure.ContinueWith(optionname);
-      if (newAdventure is null || consequence is null)
+      var continuation = adventure.ContinueWith(optionname);
+      if (continuation is null)
         return null;
 
+      var (newAdventure, consequence) = continuation.Value;
       return (AddAdventure(newAdventure), consequence);
     }
 

@@ -1,5 +1,5 @@
 
-namespace GoodNight.Service.Domain.Model.Read
+namespace GoodNight.Service.Domain.Model.Read.Transfer
 {
   /// <summary>
   /// A Consequence is the result of executing a choice. It describes the
@@ -14,6 +14,5 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </remarks>
   public record Consequence(
     Log Log,
-    Action Action)
-  {}
+    Action Action);
 }

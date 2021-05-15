@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
+using GoodNight.Service.Domain.Model.Read.Transfer;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -37,14 +38,14 @@ namespace GoodNight.Service.Domain.Model.Read
     /// One of the options in Current.Options, or Current.Return or
     /// Current.Continue.
     /// <param>
-    public (Adventure?, Consequence?) ContinueWith(string optionname)
+    public (Adventure, Consequence)? ContinueWith(string optionname)
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
       var (log, nextScene) = Current.ContinueWith(Player.Name, lastNumber,
         optionname);
       if (log is null || nextScene is null)
-        return (null, null);
+        return null;
 
       var playerAfterChoice = Player.Apply(log.Effects);
       var action = nextScene.Play(playerAfterChoice);
@@ -56,7 +57,8 @@ namespace GoodNight.Service.Domain.Model.Read
           Current = action
         };
 
-      return (adventure, new Consequence(log, action));
+      return (adventure, new Consequence(log.ToTransfer(),
+          action.ToTransfer()));
     }
 
     public Transfer.Adventure ToTransfer()
