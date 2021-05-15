@@ -54,4 +54,4 @@ GET http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/continue
 #
 POST http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/do
 Content-Type: application/json
-{"choice":"chocolate"}
+{"choice":"pfad1/7"}

@@ -16,8 +16,11 @@ function Choice(choice: Choice) {
         );
       }
       else {
-        // <Markdown>{choice.text}</Markdown>
-        return <p class="action-log py-1">{choice.text}</p>;
+        return (
+          <div class="action-log py-1">
+            <Markdown>{choice.text}</Markdown>
+          </div>
+        );
       }
     case "return":
       return <p class="action-log py-1">Du kehrst zurück.</p>;
