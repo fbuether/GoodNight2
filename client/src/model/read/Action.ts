@@ -8,6 +8,7 @@ export interface Requirement {
 
 
 export interface Option {
+  urlname: string;
   text: string;
   icon: string | null;
   isAvailable: boolean;

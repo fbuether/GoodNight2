@@ -8,6 +8,7 @@ namespace GoodNight.Service.Domain.Model.Read.Transfer
     bool Passed);
 
   public record Option(
+    string Urlname,
     string Text,
     string? Icon,
     bool IsAvailable,
