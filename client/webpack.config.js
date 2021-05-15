@@ -131,6 +131,7 @@ module.exports = env => { return {
     new CircularDependencyPlugin({
       // // exclude detection of files based on a RegExp
       // exclude: /a\.js|node_modules/,
+      exclude: /ReadStory\.ts|StartAdventure\.ts/,
       // include specific files based on a RegExp
       // include: /dir/,
       // add errors to webpack instead of warnings
