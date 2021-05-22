@@ -74,6 +74,11 @@ namespace GoodNight.Service.Domain.Util
       {
         return new Result.Success<T, TError>(onSuccess(this.Result));
       }
+
+      public override string ToString()
+      {
+        return $"Result.Success=({Result})";
+      }
     }
 
     public sealed record Failure<TResult, TError>(TError Error)
@@ -116,6 +121,11 @@ namespace GoodNight.Service.Domain.Util
       public override Result<T, TError> Map<T>(Func<TResult, T> onSuccess)
       {
         return new Result.Failure<T, TError>(Error);
+      }
+
+      public override string ToString()
+      {
+        return $"Result.Failure=({Error})";
       }
     }
 
