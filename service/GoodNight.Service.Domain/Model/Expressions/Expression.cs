@@ -48,7 +48,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return (Expression<R>)this;
+        return new Bool<R>(Value);
       }
     }
 
@@ -66,7 +66,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return (Expression<R>)this;
+        return new Number<R>(Value);
       }
     }
 
