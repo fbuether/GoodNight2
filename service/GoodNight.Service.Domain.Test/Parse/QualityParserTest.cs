@@ -85,7 +85,7 @@ namespace GoodNight.Service.Domain.Test.Parse
     }
 
     private T GetAs<T>(int number)
-      where T : Content
+      where T : class, Content
     {
       Assert.True(contents!.Count >= number);
       Assert.IsType<T>(contents[number-1]);
