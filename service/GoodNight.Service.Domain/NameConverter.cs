@@ -13,7 +13,7 @@ namespace GoodNight.Service.Domain
 
     public static string Concat(params string[] parts)
     {
-      return string.Join("/", parts);
+      return string.Join("/", parts.Select(OfString));
     }
   }
 }
