@@ -46,6 +46,9 @@ namespace GoodNight.Service.Storage
 
       repositories = new List<BaseRepository>();
 
+      // do not write null values, to save space.
+      JsonSerializerOptions.DefaultIgnoreCondition =
+        JsonIgnoreCondition.WhenWritingNull;
 
       JsonSerializerOptions.Converters.Add(new ReferenceConverterFactory(this));
       foreach (var converter in converters)
