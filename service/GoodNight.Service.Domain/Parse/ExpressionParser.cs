@@ -1,42 +1,38 @@
 using System;
-using System.Linq;
 using GoodNight.Service.Domain.Model.Expressions;
 using Pidgin;
 
-
 namespace GoodNight.Service.Domain.Parse
 {
-  using Expr = Expression<string>;
-
   using UnaryExprFun = Func<Expression<string>, Expression<string>>;
   using BinaryExprFun = Func<Expression<string>, Expression<string>,
     Expression<string>>;
 
   public static class ExpressionParser
   {
-    private readonly static Parser<char, Expr> boolExpr =
+    private readonly static Parser<char, Expression<string>> boolExpr =
       Parser.String("true")
-      .WithResult<Expr>(new Expr.Bool<string>(true))
+      .WithResult<Expression<string>>(new Expression.Bool<string>(true))
       .Or(Parser.String("false")
-        .WithResult<Expr>(new Expr.Bool<string>(false)));
+        .WithResult<Expression<string>>(new Expression.Bool<string>(false)));
 
-    private readonly static Parser<char, Expr> numberExpr =
+    private readonly static Parser<char, Expression<string>> numberExpr =
       Parser.DecimalNum
-      .Select<Expr>(num => new Expr.Number<string>(num));
+      .Select<Expression<string>>(num => new Expression.Number<string>(num));
 
-    private readonly static Parser<char, Expr> qualityExpr =
+    private readonly static Parser<char, Expression<string>> qualityExpr =
       NameParser.QualityName
-      .Select<Expr>(name => new Expr.Quality<string>(name));
+      .Select<Expression<string>>(name => new Expression.Quality<string>(name));
 
 
     private static Parser<char, UnaryExprFun> unaryOp(
-      Parser<char, Expr.UnaryOperator> op) =>
+      Parser<char, Expression.UnaryOperator> op) =>
       op.Select<UnaryExprFun>(op => (expr) =>
-        new Expr.UnaryApplication<string>(op, expr));
+        new Expression.UnaryApplication<string>(op, expr));
 
     private static Parser<char, UnaryExprFun> buildUnary<T>(
       string rep, bool excludePostLetters)
-      where T : Expr.UnaryOperator, new()
+      where T : Expression.UnaryOperator, new()
       {
         var parseName = Parser.String(rep);
         // if this operator is a possible quality name, we must make sure that
@@ -49,43 +45,43 @@ namespace GoodNight.Service.Domain.Parse
         return NameParser.InlineWhitespace
         .Then(unaryOp(
             Parser.Try(parseName)
-            .WithResult<Expr.UnaryOperator>(new T()))
+            .WithResult<Expression.UnaryOperator>(new T()))
           .Before(NameParser.InlineWhitespace));
       }
 
 
     private static Parser<char, BinaryExprFun> binaryOp(
-      Parser<char, Expr.BinaryOperator> op) =>
+      Parser<char, Expression.BinaryOperator> op) =>
       op.Select<BinaryExprFun>(op => (exprLeft, exprRight) =>
-        new Expr.BinaryApplication<string>(op, exprLeft, exprRight));
+        new Expression.BinaryApplication<string>(op, exprLeft, exprRight));
 
     private static Parser<char, BinaryExprFun> buildBinary<T>(
       string rep)
-      where T : Expr.BinaryOperator, new() =>
+      where T : Expression.BinaryOperator, new() =>
       buildBinaryParser<T, string>(Parser.String(rep));
 
 
     private static Parser<char, BinaryExprFun> buildBinaryParser<T, U>(
       Parser<char, U> op)
-      where T : Expr.BinaryOperator, new() =>
+      where T : Expression.BinaryOperator, new() =>
       binaryOp(Parser.Try(op)
-        .WithResult<Expr.BinaryOperator>(new T())
+        .WithResult<Expression.BinaryOperator>(new T())
         .Before(NameParser.InlineWhitespace));
 
     private static Parser<char, BinaryExprFun> LessButNotUnequal =
-      buildBinaryParser<Expr.BinaryOperator.Less, Unit>(
+      buildBinaryParser<Expression.BinaryOperator.Less, Unit>(
         Parser.String("<")
         .Then(Parser.Try(Parser.Not(Parser.String(">")))));
 
-    private static Parser<char, Expr> bracedExpr(
-      Parser<char, Expr> body) =>
+    private static Parser<char, Expression<string>> bracedExpr(
+      Parser<char, Expression<string>> body) =>
       body
       .Between(Parser.String("(").Before(NameParser.InlineWhitespace),
         Parser.String(")"));
 
 
-    internal readonly static Parser<char, Expr> Expression =
-      Pidgin.Expression.ExpressionParser.Build<char, Expr>(expr =>
+    internal readonly static Parser<char, Expression<string>> Expression =
+      Pidgin.Expression.ExpressionParser.Build<char, Expression<string>>(expr =>
         Parser.OneOf(
           numberExpr,
           qualityExpr.Labelled("Quality"),
@@ -95,41 +91,40 @@ namespace GoodNight.Service.Domain.Parse
         .Before(NameParser.InlineWhitespace),
         new[] {
           Pidgin.Expression.Operator.PrefixChainable(
-            buildUnary<Expr.UnaryOperator.Not>("not", true),
-            buildUnary<Expr.UnaryOperator.Not>("!", false)),
+            buildUnary<Expression.UnaryOperator.Not>("not", true),
+            buildUnary<Expression.UnaryOperator.Not>("!", false)),
 
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.Mult>("*")),
+            buildBinary<Expression.BinaryOperator.Mult>("*")),
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.Div>("/")),
+            buildBinary<Expression.BinaryOperator.Div>("/")),
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.Sub>("-")),
+            buildBinary<Expression.BinaryOperator.Sub>("-")),
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.Add>("+")),
+            buildBinary<Expression.BinaryOperator.Add>("+")),
 
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.GreaterOrEqual>(">=")),
+            buildBinary<Expression.BinaryOperator.GreaterOrEqual>(">=")),
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.Greater>(">")),
+            buildBinary<Expression.BinaryOperator.Greater>(">")),
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.LessOrEqual>("<=")),
+            buildBinary<Expression.BinaryOperator.LessOrEqual>("<=")),
           Pidgin.Expression.Operator.InfixN(LessButNotUnequal),
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.Equal>("=")),
+            buildBinary<Expression.BinaryOperator.Equal>("=")),
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.NotEqual>("!=")),
+            buildBinary<Expression.BinaryOperator.NotEqual>("!=")),
           Pidgin.Expression.Operator.InfixN(
-            buildBinary<Expr.BinaryOperator.NotEqual>("<>")),
+            buildBinary<Expression.BinaryOperator.NotEqual>("<>")),
 
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.And>("and")),
+            buildBinary<Expression.BinaryOperator.And>("and")),
           Pidgin.Expression.Operator.InfixL(
-            buildBinary<Expr.BinaryOperator.Or>("or")),
+            buildBinary<Expression.BinaryOperator.Or>("or")),
         });
 
 
-
-    public static ParseResult<Expr> Parse(string input)
+    public static ParseResult<Expression<string>> Parse(string input)
     {
       var res =
         NameParser.InlineWhitespace // leading whitespace
@@ -138,8 +133,8 @@ namespace GoodNight.Service.Domain.Parse
         .Parse(input);
 
       return res.Success
-        ? new ParseResult.Success<Expr>(res.Value)
-        : ParseResult.Failure<Expr>.OfError(res.Error);
+        ? new ParseResult.Success<Expression<string>>(res.Value)
+        : ParseResult.Failure<Expression<string>>.OfError(res.Error);
     }
   }
 }
