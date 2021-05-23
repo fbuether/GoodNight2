@@ -53,6 +53,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
       return this with
         {
+          Player = playerAfterScene,
           History = History.Add(log),
           Current = action
         };
