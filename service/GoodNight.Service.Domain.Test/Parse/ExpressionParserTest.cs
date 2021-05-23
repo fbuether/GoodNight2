@@ -8,12 +8,11 @@ using Xunit.Gherkin.Quick;
 
 namespace GoodNight.Service.Domain.Test.Parse
 {
-  using Expression = Expression<string>;
-  using UnaryApplication = Expression<string>.UnaryApplication<string>;
-  using BinaryApplication = Expression<string>.BinaryApplication<string>;
-  using Bool = Expression<string>.Bool<string>;
-  using Number = Expression<string>.Number<string>;
-  using Quality = Expression<string>.Quality<string>;
+  using UnaryApplication = Expression.UnaryApplication<string>;
+  using BinaryApplication = Expression.BinaryApplication<string>;
+  using Bool = Expression.Bool<string>;
+  using Number = Expression.Number<string>;
+  using Quality = Expression.Quality<string>;
 
   [FeatureFile("Parse/ExpressionParserTest.feature")]
   public class ExpressionParserTest : Xunit.Gherkin.Quick.Feature
@@ -25,7 +24,8 @@ namespace GoodNight.Service.Domain.Test.Parse
       this.output = output;
     }
 
-    private IEnumerable<Expression> FindAllNodes(Expression node)
+    private IEnumerable<Expression<string>> FindAllNodes(
+      Expression<string> node)
     {
       yield return node;
 
@@ -54,7 +54,7 @@ namespace GoodNight.Service.Domain.Test.Parse
 
     private string? input;
 
-    private ParseResult<Expression>? result;
+    private ParseResult<Expression<string>>? result;
 
     [Given(@"the input (.*)")]
     public void TheExpression(string input)
@@ -73,7 +73,7 @@ namespace GoodNight.Service.Domain.Test.Parse
 
       // to debug failing tests.
       switch (result) {
-        case ParseResult.Success<Expression> r:
+        case ParseResult.Success<Expression<string>> r:
           output.WriteLine($"Result is sucess.");
           output.WriteLine($"Value: {r.Result}.");
           output.WriteLine("Result:");
@@ -83,7 +83,7 @@ namespace GoodNight.Service.Domain.Test.Parse
           }
 
           break;
-        case ParseResult.Failure<Expression> r:
+        case ParseResult.Failure<Expression<string>> r:
           output.WriteLine($"Result is failure.");
           output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
           output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
@@ -97,24 +97,25 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void ParsingFails()
     {
       Assert.NotNull(result);
-      Assert.IsType<ParseResult.Failure<Expression>>(result);
+      Assert.IsType<ParseResult.Failure<Expression<string>>>(result);
     }
 
     [Then("parsing succeeds")]
     public void ParsingSucceeds()
     {
       Assert.NotNull(result);
-      Assert.IsType<ParseResult.Success<Expression>>(result);
-      Assert.NotNull((result as ParseResult.Success<Expression>)!.Result);
+      Assert.IsType<ParseResult.Success<Expression<string>>>(result);
+      Assert.NotNull((result as ParseResult.Success<Expression<string>>)!
+        .Result);
     }
 
-    private Expression Get(ParseResult<Expression>? result)
+    private Expression<string> Get(ParseResult<Expression<string>>? result)
     {
       Assert.NotNull(result);
-      Assert.IsType<ParseResult.Success<Expression>>(result!);
+      Assert.IsType<ParseResult.Success<Expression<string>>>(result!);
  
       switch (result!) {
-        case ParseResult.Success<Expression> r:
+        case ParseResult.Success<Expression<string>> r:
           return r.Result;
       }
 
@@ -122,24 +123,26 @@ namespace GoodNight.Service.Domain.Test.Parse
     }
 
     // helper tools to build reference expressions.
-    private static Expression expT = new Bool(true);
-    private static Expression expF = new Bool(false);
-    private static Expression exp7 = new Number(7);
-    private static Expression exp9 = new Number(9);
+    private static Expression<string> expT = new Bool(true);
+    private static Expression<string> expF = new Bool(false);
+    private static Expression<string> exp7 = new Number(7);
+    private static Expression<string> exp9 = new Number(9);
 
-    private static Expression mkNot(Expression op) =>
+    private static Expression<string> mkNot(Expression<string> op) =>
       new UnaryApplication(new Expression.UnaryOperator.Not(), op);
-    private static Expression mkBin(Expression.BinaryOperator op, Expression l,
-      Expression r) =>
+    private static Expression<string> mkBin(Expression.BinaryOperator op,
+      Expression<string> l, Expression<string> r) =>
       new BinaryApplication(op, l, r);
 
-    private static Expression mkAnd(Expression l, Expression r) =>
+    private static Expression<string> mkAnd(Expression<string> l,
+      Expression<string> r) =>
       mkBin(new Expression.BinaryOperator.And(), l, r);
-    private static Expression mkOr(Expression l, Expression r) =>
+    private static Expression<string> mkOr(Expression<string> l,
+      Expression<string> r) =>
       mkBin(new Expression.BinaryOperator.Or(), l, r);
 
-    private static Dictionary<string, Expression> results =
-      new Dictionary<string, Expression>() {
+    private static Dictionary<string, Expression<string>> results =
+      new Dictionary<string, Expression<string>>() {
       { "true", expT },
       { "false", expF },
       { "-14", new Number(-14) },
