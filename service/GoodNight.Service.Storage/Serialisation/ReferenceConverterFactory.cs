@@ -6,11 +6,11 @@ using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Storage.Serialisation
 {
-  internal class ReferenceConverterFactory : JsonConverterFactory
+  public class ReferenceConverterFactory : JsonConverterFactory
   {
     private Store store;
 
-    internal ReferenceConverterFactory(Store store)
+    public ReferenceConverterFactory(Store store)
     {
       this.store = store;
     }

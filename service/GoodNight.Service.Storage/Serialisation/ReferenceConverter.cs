@@ -31,7 +31,7 @@ namespace GoodNight.Service.Storage.Serialisation
 
       if (typeName != serialised.typeName)
         throw new JsonException($"Serialized reference for {typeName}, "
-          + $"but read {serialised.typeName}.");
+          + $"but read {serialised.typeName} ({serialised.key}).");
 
       return new Reference<T>(
         store.GetRepository<T>(typeName),
