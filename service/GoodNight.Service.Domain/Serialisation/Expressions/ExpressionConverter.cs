@@ -31,17 +31,17 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
         case "quality":
           if (c.Quality is null)
             throw new JsonException();
-          return new Expression<T>.Quality<T>(c.Quality);
+          return new Expression.Quality<T>(c.Quality);
 
         case "bool":
           if (c.Bool is null)
             throw new JsonException();
-          return new Expression<T>.Bool<T>(c.Bool.Value);
+          return new Expression.Bool<T>(c.Bool.Value);
 
         case "number":
           if (c.Number is null)
             throw new JsonException();
-          return new Expression<T>.Number<T>(c.Number.Value);
+          return new Expression.Number<T>(c.Number.Value);
 
         case "unary":
           if (c.UnaryOperator is null || c.ArgumentOne is null)
@@ -50,8 +50,8 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
           if (c.UnaryOperator != "not")
             throw new JsonException();
 
-          return new Expression<T>.UnaryApplication<T>(
-            new Expression<T>.UnaryOperator.Not(),
+          return new Expression.UnaryApplication<T>(
+            new Expression.UnaryOperator.Not(),
             c.ArgumentOne);
 
         case "binary":
@@ -61,7 +61,7 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
 
           var op = StringToBinaryOperator(c.BinaryOperator);
 
-          return new Expression<T>.BinaryApplication<T>(
+          return new Expression.BinaryApplication<T>(
             op, c.ArgumentOne, c.ArgumentTwo);
 
         default:
@@ -74,26 +74,26 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
     {
       switch (value)
       {
-        case Expression<T>.Quality<T> e:
+        case Expression.Quality<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
               "quality", e.Value, null, null, null, null, null, null),
             options);
           return;
 
-        case Expression<T>.Bool<T> e:
+        case Expression.Bool<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
               "bool", null, e.Value, null, null, null, null, null),
             options);
           return;
 
-        case Expression<T>.Number<T> e:
+        case Expression.Number<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
               "number", null, null, e.Value,  null, null, null, null),
             options);
           return;
 
-        case Expression<T>.UnaryApplication<T> e:
-          if (e.Operator is not Expression<T>.UnaryOperator.Not)
+        case Expression.UnaryApplication<T> e:
+          if (e.Operator is not Expression.UnaryOperator.Not)
             throw new JsonException();
 
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
@@ -101,7 +101,7 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
             options);
           return;
 
-        case Expression<T>.BinaryApplication<T> e:
+        case Expression.BinaryApplication<T> e:
           var op = BinaryOperatorToString(e.Operator);
 
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
@@ -111,43 +111,42 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
       }
     }
 
-    private Expression<T>.BinaryOperator StringToBinaryOperator(
+    private Expression.BinaryOperator StringToBinaryOperator(
       string name)
     {
-      if (name == "add") return new Expression<T>.BinaryOperator.Add();
-      if (name == "sub") return new Expression<T>.BinaryOperator.Sub();
-      if (name == "mult") return new Expression<T>.BinaryOperator.Mult();
-      if (name == "div") return new Expression<T>.BinaryOperator.Div();
+      if (name == "add") return new Expression.BinaryOperator.Add();
+      if (name == "sub") return new Expression.BinaryOperator.Sub();
+      if (name == "mult") return new Expression.BinaryOperator.Mult();
+      if (name == "div") return new Expression.BinaryOperator.Div();
 
-      if (name == "and") return new Expression<T>.BinaryOperator.And();
-      if (name == "or") return new Expression<T>.BinaryOperator.Or();
+      if (name == "and") return new Expression.BinaryOperator.And();
+      if (name == "or") return new Expression.BinaryOperator.Or();
 
-      if (name == ">") return new Expression<T>.BinaryOperator.Greater();
-      if (name == ">=")
-        return new Expression<T>.BinaryOperator.GreaterOrEqual();
-      if (name == "<") return new Expression<T>.BinaryOperator.Less();
-      if (name == "<=") return new Expression<T>.BinaryOperator.LessOrEqual();
-      if (name == "=") return new Expression<T>.BinaryOperator.Equal();
-      if (name == "!=") return new Expression<T>.BinaryOperator.NotEqual();
+      if (name == ">") return new Expression.BinaryOperator.Greater();
+      if (name == ">=") return new Expression.BinaryOperator.GreaterOrEqual();
+      if (name == "<") return new Expression.BinaryOperator.Less();
+      if (name == "<=") return new Expression.BinaryOperator.LessOrEqual();
+      if (name == "=") return new Expression.BinaryOperator.Equal();
+      if (name == "!=") return new Expression.BinaryOperator.NotEqual();
 
       throw new JsonException();
     }
 
-    private string BinaryOperatorToString(Expression<T>.BinaryOperator op)
+    private string BinaryOperatorToString(Expression.BinaryOperator op)
     {
       switch (op)
       {
-        case Expression<T>.BinaryOperator.Add: return "add";
-        case Expression<T>.BinaryOperator.Sub: return "sub";
-        case Expression<T>.BinaryOperator.Mult: return "mult";
-        case Expression<T>.BinaryOperator.Div: return "div";
+        case Expression.BinaryOperator.Add: return "add";
+        case Expression.BinaryOperator.Sub: return "sub";
+        case Expression.BinaryOperator.Mult: return "mult";
+        case Expression.BinaryOperator.Div: return "div";
 
-        case Expression<T>.BinaryOperator.Greater: return ">";
-        case Expression<T>.BinaryOperator.GreaterOrEqual: return ">=";
-        case Expression<T>.BinaryOperator.Less: return "<";
-        case Expression<T>.BinaryOperator.LessOrEqual: return "<=";
-        case Expression<T>.BinaryOperator.Equal: return "=";
-        case Expression<T>.BinaryOperator.NotEqual: return "!=";
+        case Expression.BinaryOperator.Greater: return ">";
+        case Expression.BinaryOperator.GreaterOrEqual: return ">=";
+        case Expression.BinaryOperator.Less: return "<";
+        case Expression.BinaryOperator.LessOrEqual: return "<=";
+        case Expression.BinaryOperator.Equal: return "=";
+        case Expression.BinaryOperator.NotEqual: return "!=";
         default:
           throw new JsonException();
       }
