@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Storage.Journal;
 using GoodNight.Service.Storage.Serialisation;
@@ -19,18 +16,12 @@ namespace GoodNight.Service.Storage
 
     private bool ownsBackingStore = false;
 
-    private BlockingCollection<string> writeCache;
-
-    private static readonly int WriteCacheSize = 64;
-
-    private Task? writeCacheTask = null;
-
-    private CancellationTokenSource writeCacheCanceler;
-
     private List<BaseRepository> repositories;
 
     internal JsonSerializerOptions JsonSerializerOptions { get; } =
       new JsonSerializerOptions();
+
+    private JournalWriter writer;
 
     /// <param name="backingStore">
     /// A stream onto the backing store. The stream must be able to seek to
@@ -55,27 +46,19 @@ namespace GoodNight.Service.Storage
 
       repositories = new List<BaseRepository>();
 
-      // uses a ConcurrentQueue by default.
-      writeCache = new BlockingCollection<string>(Store.WriteCacheSize);
-      writeCacheCanceler = new CancellationTokenSource();
 
       JsonSerializerOptions.Converters.Add(new ReferenceConverterFactory(this));
       foreach (var converter in converters)
       {
         JsonSerializerOptions.Converters.Add(converter);
       }
+
+      writer = new JournalWriter(JsonSerializerOptions, this.backingStore);
     }
 
     public void Dispose()
     {
-      if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
-      {
-        writeCacheCanceler.Cancel();
-        writeCache.CompleteAdding();
-        writeCacheTask.Wait();
-      }
-
-      ((IDisposable)writeCache).Dispose();
+      ((IDisposable)writer).Dispose();
 
       backingStore.Flush();
 
@@ -93,49 +76,7 @@ namespace GoodNight.Service.Storage
     public void StartJournal()
     {
       JournalReader.ReadAll(backingStore, this, JsonSerializerOptions);
-
-      var writer = new StreamWriter(backingStore);
-      writeCacheTask = Task.Run(() =>
-        this.DoWriteFromCache(writer, writeCacheCanceler.Token));
-    }
-
-    private void DoWriteFromCache(StreamWriter writer,
-      CancellationToken writeCanceler)
-    {
-      while (!writeCanceler.IsCancellationRequested || writeCache.Count > 0)
-      {
-        string? nextItem = null;
-        bool success = false;
-
-        if (writeCache.Count > 0)
-        {
-          nextItem = writeCache.Take();
-          success = true;
-        }
-        else
-        {
-          try
-          {
-            // wait for it...
-            success = writeCache.TryTake(out nextItem, Timeout.Infinite,
-              writeCanceler);
-          }
-          catch (OperationCanceledException)
-          {
-            // don't do anything here. The while loop will quit automatically,
-            // as the cancellation token is cancelled.
-          }
-        }
-
-        if (!success || nextItem is null)
-          continue;
-
-
-        writer.WriteLine(nextItem);
-      }
-
-      // write out everything as we finished.
-      writer.Flush();
+      writer.StartWriting(backingStore);
     }
 
     private Repository<T> CreateRepository<T>(string typeName)
@@ -145,8 +86,7 @@ namespace GoodNight.Service.Storage
       if (existing is Repository<T> existingRepos)
         return existingRepos;
 
-      var repos = new Repository<T>(new JournalWriter(writeCache,
-          JsonSerializerOptions), typeName);
+      var repos = new Repository<T>(writer, typeName);
       repositories.Add(repos);
       return repos;
     }

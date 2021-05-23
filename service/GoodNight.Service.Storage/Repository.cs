@@ -54,7 +54,7 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Add(TypeName, element));
+        writer.Queue(this, new Entry.Add(TypeName, element));
       }
 
       return new Reference<T>(this, key);
@@ -99,7 +99,7 @@ namespace GoodNight.Service.Storage
       dict[key] = newElement;
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(TypeName, key, newElement));
+        writer.Queue(this, new Entry.Update(TypeName, key, newElement));
       }
 
       return new Reference<T>(this, key);
@@ -121,7 +121,7 @@ namespace GoodNight.Service.Storage
 
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(TypeName, key, element));
+        writer.Queue(this, new Entry.Update(TypeName, key, element));
       }
 
       return new Reference<T>(this, key);
@@ -146,7 +146,7 @@ namespace GoodNight.Service.Storage
       dict[key] = result.Value.Item1;
       if (writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Update(TypeName,
+        writer.Queue(this, new Entry.Update(TypeName,
             key, result.Value.Item1));
       }
 
@@ -158,7 +158,7 @@ namespace GoodNight.Service.Storage
       var contains = dict.Remove(key);
       if (contains && writeUpdates)
       {
-        writer.QueueWrite(this, new Entry.Delete(TypeName, key));
+        writer.Queue(this, new Entry.Delete(TypeName, key));
       }
 
       return contains;

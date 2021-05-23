@@ -1,31 +1,114 @@
 using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.IO;
-using System.Threading.Tasks;
-using System.Text;
 using System.Collections.Concurrent;
+using System.IO;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace GoodNight.Service.Storage.Journal
 {
-  internal class JournalWriter
+  internal class JournalWriter : IDisposable
   {
-    private BlockingCollection<string> writeCache;
+    private readonly BlockingCollection<Tuple<BaseRepository,Entry>> writeCache;
 
-    private JsonSerializerOptions options;
+    private static readonly int WriteCacheSize = 64;
 
-    internal JournalWriter(BlockingCollection<string> writeCache,
-      JsonSerializerOptions options)
+    private Task? writeCacheTask = null;
+
+    private readonly CancellationTokenSource writeCacheCanceler;
+
+    private Stream backingStore;
+
+
+    private readonly JsonSerializerOptions options;
+
+    internal JournalWriter(JsonSerializerOptions options, Stream backingStore)
     {
-      this.writeCache = writeCache;
-      this.options = options;
+      // uses a ConcurrentQueue by default.
+      writeCache = new BlockingCollection<Tuple<BaseRepository,Entry>>(
+        JournalWriter.WriteCacheSize);
+      writeCacheCanceler = new CancellationTokenSource();
+      this.backingStore = backingStore;
+
+      // make a copy, just to be safe about multi-threading.
+      this.options = new JsonSerializerOptions(options);
     }
 
-    internal void QueueWrite(BaseRepository repos, Entry entry)
+    public void Dispose()
     {
-      var stream = new MemoryStream();
-      var writer = new Utf8JsonWriter(stream);
+      // if there is a stale exception from a previous run, throw it now.
+      if (writeCacheTask is not null && writeCacheTask.Exception is not null)
+      {
+        throw writeCacheTask.Exception;
+      }
 
+      if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
+      {
+        writeCacheCanceler.Cancel();
+        writeCache.CompleteAdding();
+        writeCacheTask.Wait();
+      }
+
+      ((IDisposable)writeCache).Dispose();
+    }
+
+
+    internal void StartWriting(Stream backingStore)
+    {
+      writeCacheTask = Task.Run(() =>
+        this.DoWriteFromCache(writeCacheCanceler.Token));
+    }
+
+    /// <remarks>
+    /// This runs on a separate thread, as started by StartWriting.
+    /// </remarks>
+    private void DoWriteFromCache(
+      CancellationToken writeCanceler)
+    {
+      while (!writeCanceler.IsCancellationRequested || writeCache.Count > 0)
+      {
+        if (writeCache.Count > 0)
+        {
+          Write(writeCache.Take());
+        }
+        else
+        {
+          try
+          {
+            // wait for it...
+            Write(writeCache.Take(writeCanceler));
+          }
+          catch (OperationCanceledException e)
+          {
+            // don't do anything here. The while loop will quit automatically,
+            // as the cancellation token is cancelled.
+          }
+          catch (Exception e)
+          {
+            Console.WriteLine(
+              $"Exception occurred on JournalWriter write thread: {e}");
+          }
+        }
+      }
+    }
+
+
+    internal void Queue(BaseRepository repos, Entry entry)
+    {
+      // if there is a stale exception from a previous run, throw it now.
+      if (writeCacheTask is not null && writeCacheTask.Exception is not null)
+      {
+        throw writeCacheTask.Exception;
+      }
+
+      writeCache.Add(Tuple.Create(repos, entry));
+    }
+
+    private void Write(Tuple<BaseRepository, Entry> item)
+    {
+      var (repos,entry) = item;
+
+      var writer = new Utf8JsonWriter(backingStore);
       writer.WriteStartObject();
       writer.WriteString("repos", repos.TypeName);
 
@@ -53,12 +136,12 @@ namespace GoodNight.Service.Storage.Journal
       writer.WriteEndObject();
       writer.Flush();
 
-      stream.Flush();
-      stream.Seek(0, SeekOrigin.Begin);
-      var reader = new StreamReader(stream, Encoding.UTF8);
-      var asString = reader.ReadToEnd();
+      // write a newline.
+      var breakWriter = new StreamWriter(backingStore);
+      breakWriter.WriteLine();
+      breakWriter.Flush();
 
-      writeCache.Add(asString);
+      backingStore.Flush();
     }
   }
 }
