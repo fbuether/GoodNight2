@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Domain.Model.Expressions;
@@ -6,70 +7,55 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
 {
   public class ExpressionValueConverter : JsonConverter<Value>
   {
+    private record SerialisedValue(string type, bool? bValue, int? iValue);
+
     public override Value? Read(ref Utf8JsonReader reader,
       System.Type typeToConvert, JsonSerializerOptions options)
     {
-      Value? val = null;
-
-      if (reader.TokenType != JsonTokenType.StartObject)
-      {
+      var serialised = JsonSerializer.Deserialize<SerialisedValue>(ref reader,
+        options);
+      if (serialised is null)
         throw new JsonException();
-      }
 
-      reader.Read();
-      if (reader.TokenType != JsonTokenType.PropertyName)
+      switch (serialised.type)
       {
-        throw new JsonException();
+        case "bool":
+          if (serialised.bValue is null)
+            throw new JsonException();
+          return new Value.Bool(serialised.bValue.Value);
+        case "int":
+          if (serialised.iValue is null)
+            throw new JsonException();
+          return new Value.Int(serialised.iValue.Value);
+        case "enum":
+          if (serialised.iValue is null)
+            throw new JsonException();
+          return new Value.Enum(serialised.iValue.Value);
+        default:
+          throw new JsonException();
       }
-
-      var property = reader.GetString();
-      reader.Read();
-      if (property == "Bool")
-      {
-        val = new Value.Bool(reader.GetBoolean());
-      }
-      else if (property == "Int")
-      {
-        val = new Value.Int(reader.GetInt32());
-      }
-      else if (property == "Enum")
-      {
-        val = new Value.Enum(reader.GetInt32());
-      }
-
-      while (reader.TokenType != JsonTokenType.EndObject)
-      {
-        reader.Read();
-      }
-
-      return val;
     }
 
     public override void Write(Utf8JsonWriter writer, Value value,
       JsonSerializerOptions options)
     {
-      writer.WriteStartObject();
-
       switch (value)
       {
-        case Value.Bool b:
-          writer.WriteString("kind", "Bool");
-          writer.WriteBoolean("value", b.Value);
+        case Value.Bool v:
+          JsonSerializer.Serialize(writer, new SerialisedValue("bool", v.Value,
+              null), options);
           break;
 
-        // must come before value.Int so it's not used up there.
-        case Value.Enum e:
-          writer.WriteString("kind", "Enum");
-          writer.WriteNumber("value", e.Value);
+        case Value.Int v:
+          JsonSerializer.Serialize(writer, new SerialisedValue("int", null,
+              v.Value), options);
           break;
 
-        case Value.Int i:
-          writer.WriteString("kind", "Int");
-          writer.WriteNumber("value", i.Value);
+        case Value.Enum v:
+          JsonSerializer.Serialize(writer, new SerialisedValue("enum", null,
+              v.Value), options);
           break;
       }
-
-      writer.WriteEndObject();
     }
   }
 }
