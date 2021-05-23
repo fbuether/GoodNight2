@@ -1,9 +1,10 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Read.Error;
-using System;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -23,17 +24,21 @@ namespace GoodNight.Service.Domain.Model.Read
     /// The state of this player. Associates each quality key with a state of
     /// the type of the quality.
     /// </summary>
-    IImmutableDictionary<string, Value> State)
+    IImmutableList<(IReference<Quality>, Value)> State)
   {
     public Player Apply(IImmutableList<Property> effects)
     {
       if (effects.Count == 0)
         return this;
 
-      var newState = effects.Aggregate(State, (state, effect) =>
-        state.SetItem(effect.Quality.Key, effect.Value));
+      var state = State as IEnumerable<(IReference<Quality>,Value)>;
+      foreach (var effect in effects) {
+        state = state
+          .Where(s => s.Item1.Key != effect.Quality.Key)
+          .Append((effect.Quality, effect.Value));
+      }
 
-      return this with { State = newState };
+      return this with { State = ImmutableList.CreateRange(state) };
     }
 
     public Value GetValueOf(IReference<Quality> qualityRef)
@@ -48,7 +53,9 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public Value GetValueOf(Quality quality)
     {
-      return State.GetValueOrDefault(quality.Key)
+      var binding = State.First(qv => quality.Key == qv.Item1.Key);
+
+      return binding.Item2
         ?? quality.GetDefault()
         ?? throw new InvalidQualityException($"Materialising Scene found " +
           $"invalid Quality {quality.Key}.");

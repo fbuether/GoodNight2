@@ -76,7 +76,7 @@ namespace GoodNight.Service.Domain.Model
           "The story has no first scene to start at.");
 
       var player = new Player(playerName,
-        ImmutableDictionary<string,Value>.Empty);
+        ImmutableList<(IReference<Quality>,Value)>.Empty);
       var adventure = new Adventure(player, Key, story,
         ImmutableList<IReference<Log>>.Empty,
         firstScene.Play(player));
