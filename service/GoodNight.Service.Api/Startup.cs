@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using GoodNight.Service.Api.Converter;
 using GoodNight.Service.Domain.Serialisation.Expressions;
 using GoodNight.Service.Domain.Serialisation.Read;
 using GoodNight.Service.Storage;
