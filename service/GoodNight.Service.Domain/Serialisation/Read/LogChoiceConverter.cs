@@ -4,7 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Domain.Model.Read;
 
-namespace GoodNight.Service.Api.Converter
+namespace GoodNight.Service.Domain.Serialisation.Read
 {
   public class LogChoiceConverter : JsonConverter<Choice>
   {
