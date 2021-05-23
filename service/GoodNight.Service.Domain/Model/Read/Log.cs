@@ -71,5 +71,12 @@ namespace GoodNight.Service.Domain.Model.Read
       new Transfer.Log(Number, Text,
         ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
         Chosen.ToTransfer());
+
+    public override string ToString()
+    {
+      return $"Log {{User:{User}, Number:{Number}, Scene:{Scene}, Text:{Text}, "
+        + "Effects:[" + string.Join(", ", Effects.Select(e => e.ToString()))
+        + "], Chosen:{Chosen}}}";
+    }
   }
 }
