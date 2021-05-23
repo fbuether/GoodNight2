@@ -51,6 +51,15 @@ namespace GoodNight.Service.Domain.Model.Read
         ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())),
         ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
         Scene.Key);
+
+    public override string ToString()
+    {
+      return $"Option {{Urlname:{Urlname}, Text:{Text}, Icon:{Icon}, "
+        + $"IsAvailable:{IsAvailable}, Requirements: ["
+        + string.Join(", ", Requirements.Select(r => r.ToString()))
+        + "], Effects: [" + string.Join(", ", Effects.Select(e => e.ToString()))
+        + $"], Scene:{Scene}}}";
+    }
   }
 
   /// <summary>
@@ -100,5 +109,13 @@ namespace GoodNight.Service.Domain.Model.Read
         ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
         ImmutableList.CreateRange(Options.Select(o => o.ToTransfer())),
         Return?.Key, Continue?.Key);
+
+    public override string ToString()
+    {
+      return $"Action {{Scene:{Scene}, Text:{Text}, Effects: ["
+        + string.Join(", ", Effects.Select(e => e.ToString()))
+        + "], Options: [" + string.Join(", ", Options.Select(o => o.ToString()))
+        + $"], Return:{Return}, Continue:{Continue}}}";
+    }
   }
 }

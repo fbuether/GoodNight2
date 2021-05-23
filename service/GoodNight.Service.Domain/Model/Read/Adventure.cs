@@ -69,5 +69,12 @@ namespace GoodNight.Service.Domain.Model.Read
         ImmutableList.CreateRange(history),
         Current.ToTransfer());
     }
+
+    public override string ToString()
+    {
+      return $"Adventure {{Player:{Player}, User:{User}, Story:{Story}, "
+        + "History: [" + string.Join(", ", History.Select(h => h.ToString()))
+        + $"], Current:{Current}}}";
+    }
   }
 }

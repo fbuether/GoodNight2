@@ -84,5 +84,12 @@ namespace GoodNight.Service.Domain.Model
 
       return new Result.Success<(User,Adventure),string>((user, adventure));
     }
+
+    public override string ToString()
+    {
+      return $"User {{Guid:{Guid.ToString()}, Name:{Name}, EMail:{EMail}, "
+        + "Adventures:[" +
+        string.Join(", ", Adventures.Select(a => a.ToString())) + "]}";
+    }
   }
 }

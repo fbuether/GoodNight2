@@ -28,7 +28,7 @@ namespace GoodNight.Service.Storage
 
     public override string ToString()
     {
-      return $"IReference{{repos: \"{typeof(T).Name}\",key: \"{Key}\"}}";
+      return $"IReference{{repos:\"{typeof(T).Name}\", key:\"{Key}\"}}";
     }
   }
 }
