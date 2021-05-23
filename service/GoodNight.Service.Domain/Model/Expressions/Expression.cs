@@ -13,6 +13,22 @@ namespace GoodNight.Service.Domain.Model.Expressions
   public interface Expression<TQuality>
   {
     /// <summary>
+    /// Evaluate this expression to a Value, given a specific context.
+    /// The context must be able to provide a value for every kind of Quality
+    /// or Quality reference, depending on what this Expression contains.
+    /// </summary>
+    /// <remarks>
+    /// This may throw TypeError exceptions if the expression is not properly
+    /// typed in the given context.
+    /// </remarks>
+    public Value Evaluate(Func<TQuality, Value> context);
+
+    public Expression<R> Map<R>(Func<TQuality, R> fun);
+  }
+
+  public static class Expression
+  {
+    /// <summary>
     /// A Quality or a reference to a Quality.
     ///
     /// Depending on the processing step, this may be a string giving the
@@ -201,19 +217,5 @@ namespace GoodNight.Service.Domain.Model.Expressions
           Left.Map(fun), Right.Map(fun));
       }
     }
-
-
-    /// <summary>
-    /// Evaluate this expression to a Value, given a specific context.
-    /// The context must be able to provide a value for every kind of Quality
-    /// or Quality reference, depending on what this Expression contains.
-    /// </summary>
-    /// <remarks>
-    /// This may throw TypeError exceptions if the expression is not properly
-    /// typed in the given context.
-    /// </remarks>
-    public Value Evaluate(Func<TQuality, Value> context);
-
-    public Expression<R> Map<R>(Func<TQuality, R> fun);
   }
 }
