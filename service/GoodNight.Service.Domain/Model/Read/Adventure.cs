@@ -58,9 +58,13 @@ namespace GoodNight.Service.Domain.Model.Read
         };
     }
 
-    public Transfer.Adventure ToTransfer()
+    public Transfer.Adventure ToTransfer(bool fullHistory)
     {
-      var history = History.Skip(History.Count - 5)
+      var histTrail = fullHistory
+        ? History.Skip(History.Count - 5)
+        : ImmutableList.Create(History.Last());
+
+      var history = histTrail
         .Select(h => h.Get())
         .OfType<Log>()
         .Select(h => h.ToTransfer());

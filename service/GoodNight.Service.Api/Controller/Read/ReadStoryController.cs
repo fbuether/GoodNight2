@@ -63,7 +63,7 @@ namespace GoodNight.Service.Api.Controller.Read
         .Do(ua => users.Save(ua.Item1))
         .Do(ua => adventures.Save(ua.Item2))
         .Map<ActionResult<TransferAdventure>>(
-          ua => Ok(ua.Item2.ToTransfer()),
+          ua => Ok(ua.Item2.ToTransfer(true)),
           err => BadRequest(new ErrorResult(err)));
     }
 
@@ -86,7 +86,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
 
-      return Ok(adventure.ToTransfer());
+      return Ok(adventure.ToTransfer(true));
     }
 
 
@@ -117,7 +117,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (adventure is null)
         return BadRequest("Option not found or not valid now.");
 
-      return Ok(adventure.ToTransfer());
+      return Ok(adventure.ToTransfer(false));
     }
 
 
