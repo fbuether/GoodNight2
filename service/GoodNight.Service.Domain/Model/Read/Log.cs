@@ -21,6 +21,13 @@ namespace GoodNight.Service.Domain.Model.Read
       internal override Transfer.Choice ToTransfer() =>
         new Transfer.Choice("action", Text, Icon,
           ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())));
+
+      public override string ToString()
+      {
+        return $"Action {{Urlname:{Urlname}, Text:{Text}, Icon:{Icon}, "
+          + "Effects: [" + string.Join(", ", Effects.Select(e => e.ToString()))
+          + "]}}";
+      }
     }
 
     public record Return
