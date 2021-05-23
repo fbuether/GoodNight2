@@ -13,6 +13,8 @@ using GoodNight.Service.Domain.Serialisation.Read;
 using System.Text.Json.Serialization;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Serialisation;
+using System.Collections.Immutable;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Test.Serialisation
 {
@@ -31,6 +33,7 @@ namespace GoodNight.Service.Domain.Test.Serialisation
       options.Converters.Add(new LogChoiceConverter());
       options.Converters.Add(new QualityConverter());
       options.Converters.Add(new SceneContentConverter());
+      options.Converters.Add(new PlayerConverter());
 
       var store = new Store(new JsonConverter[] {}, new MemoryStream());
       options.Converters.Add(new ReferenceConverterFactory(store));
@@ -60,6 +63,34 @@ namespace GoodNight.Service.Domain.Test.Serialisation
     [When(@"deserialising and serialising")]
     public void WhenDeserialisingAndSerialising()
     {
+//       {
+//       var journal = new MemoryStream();
+//       var newStore = new Store(new JsonConverter[] {}, journal);
+//       var store = newStore;
+
+//       var objP = new Domain.Model.Read.Player("playerayer",
+//         ImmutableList.Create(
+//             (
+//               (store as IStore).Create<Domain.Model.Read.Quality>().GetReference("qualrefef"),
+//               new Domain.Model.Expressions.Value.Int(10) as Domain.Model.Expressions.Value
+//             )
+// ));
+
+//       var typee = objP.GetType();
+
+//       Console.WriteLine($"------4----------- rendering {objP}/{typee}");
+
+//       var stream2 = new MemoryStream();
+//       var writer2 = new Utf8JsonWriter(stream2);
+//       JsonSerializer.Serialize(writer2, objP, typee, options);
+//       writer2.Flush();
+//       stream2.Flush();
+//       stream2.Seek(0, SeekOrigin.Begin);
+//       var reader22 = new StreamReader(stream2, Encoding.UTF8);
+//       Console.WriteLine($"------yields: {reader22.ReadToEnd()}");
+//       }
+
+
       var bytes = Encoding.UTF8.GetBytes(input);
       var reader = new Utf8JsonReader(bytes);
       var obj = JsonSerializer.Deserialize(ref reader, type, options);

@@ -37,6 +37,7 @@ namespace GoodNight.Service.Api
         converters.Add(new QualityConverter());
         converters.Add(new SceneContentConverter());
         converters.Add(new ExpressionConverterFactory());
+        converters.Add(new PlayerConverter());
       });
 
 
