@@ -130,12 +130,21 @@ namespace GoodNight.Service.Storage.Journal
           break;
 
         var bytes = Encoding.UTF8.GetBytes(line);
-        var readCount = ReadEntry(bytes, store, options);
 
-        if (readCount < bytes.Length)
+        try
         {
-          var rem = Encoding.UTF8.GetString(bytes.AsSpan((int)readCount));
-          Console.WriteLine($"-- ignoring remaining string: {rem} ({bytes.Length - readCount})");
+          var readCount = ReadEntry(bytes, store, options);
+
+          if (readCount < bytes.Length)
+          {
+            var rem = Encoding.UTF8.GetString(bytes.AsSpan((int)readCount));
+            Console.WriteLine($"-- ignoring remaining string: {rem} ({bytes.Length - readCount})");
+          }
+        }
+        catch (JsonException e)
+        {
+          Console.WriteLine($"JournalReader: Error wile reading entry: {e.Message}");
+          Console.WriteLine($"Line: {line}");
         }
       }
     }
