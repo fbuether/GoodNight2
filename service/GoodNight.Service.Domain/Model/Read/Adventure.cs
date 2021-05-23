@@ -47,7 +47,9 @@ namespace GoodNight.Service.Domain.Model.Read
       if (log is null || nextScene is null)
         return null;
 
-      var playerAfterChoice = Player.Apply(log.Effects);
+      var playerAfterChoice = log.Chosen is Choice.Action ca
+        ? Player.Apply(ca.Effects)
+        : Player;
       var action = nextScene.Play(playerAfterChoice);
       var playerAfterScene = playerAfterChoice.Apply(action.Effects);
 
