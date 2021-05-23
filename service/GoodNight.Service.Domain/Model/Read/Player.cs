@@ -53,7 +53,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public Value GetValueOf(Quality quality)
     {
-      var binding = State.First(qv => quality.Key == qv.Item1.Key);
+      var binding = State.FirstOrDefault(qv => quality.Key == qv.Item1.Key);
 
       return binding.Item2
         ?? quality.GetDefault()
@@ -64,20 +64,17 @@ namespace GoodNight.Service.Domain.Model.Read
 
     internal Transfer.Player ToTransfer()
     {
-      // todo: fixme: fix this.
+      var state = State.Select(qv => {
+        var (qualityRef, value) = qv;
+        var quality = qualityRef.Get();
+        if (quality is null)
+          throw new InvalidQualityException($"Player State contains invalid "
+            + "Quality \"{qualityRef.Key}\".");
 
-      // var state = State.Select(qv => {
-      //   var (qualityRef, value) = qv;
-      //   var quality = qualityRef.Get();
-      //   if (quality is null)
-      //     throw new InvalidQualityException($"Player State contains invalid "
-      //       + "Quality \"{qualityRef.Key}\".");
+        return new Transfer.Property(quality.ToHeader(), quality.Render(value));
+      });
 
-      //   return new Property(quality, valueString);
-      // });
-
-      return new Transfer.Player(Name,
-        ImmutableList<Transfer.Property>.Empty);
+      return new Transfer.Player(Name, ImmutableList.CreateRange(state));
     }
 
     public override string ToString()
