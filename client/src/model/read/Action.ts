@@ -13,8 +13,6 @@ export interface Option {
   icon: string | null;
   isAvailable: boolean;
   requirements: Array<Requirement>;
-  effects: Array<Property>;
-  scene: string;
 }
 
 
@@ -22,6 +20,6 @@ export interface Action {
   text: string;
   effects: Array<Property>;
   options: Array<Option>;
-  return: string | null;
-  continue: string | null;
+  hasReturn: boolean;
+  hasContinue: boolean;
 }

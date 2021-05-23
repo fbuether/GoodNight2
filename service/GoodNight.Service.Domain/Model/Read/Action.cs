@@ -48,9 +48,7 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     internal Transfer.Option ToTransfer() =>
       new Transfer.Option(Urlname, Text, Icon, IsAvailable,
-        ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())),
-        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
-        Scene.Key);
+        ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())));
 
     public override string ToString()
     {
@@ -108,7 +106,7 @@ namespace GoodNight.Service.Domain.Model.Read
       new Transfer.Action(Text,
         ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
         ImmutableList.CreateRange(Options.Select(o => o.ToTransfer())),
-        Return?.Key, Continue?.Key);
+        Return is not null, Continue is not null);
 
     public override string ToString()
     {

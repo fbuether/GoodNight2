@@ -12,14 +12,12 @@ namespace GoodNight.Service.Domain.Model.Read.Transfer
     string Text,
     string? Icon,
     bool IsAvailable,
-    IImmutableList<Requirement> Requirements,
-    IImmutableList<Property> Effects,
-    string Scene);
+    IImmutableList<Requirement> Requirements);
 
   public record Action(
     string Text,
     IImmutableList<Property> Effects,
     IImmutableList<Option> Options,
-    string? Return,
-    string? Continue);
+    bool HasReturn,
+    bool HasContinue);
 }

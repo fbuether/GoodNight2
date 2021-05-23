@@ -56,10 +56,10 @@ function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
       ? Options(action.options, onOption)
       : LoadingChoice(state.choice);
 
-  let returnLink = action.return !== null
+  let returnLink = action.hasReturn
       ? <a class="boxed clickable" onClick={doOption("return")}>← Zurück</a>
       : <div />;
-  let continueLink = action.continue !== null
+  let continueLink = action.hasContinue
       ? <a class="boxed clickable" onClick={doOption("continue")}>Weiter →</a>
       : <div />;
 
