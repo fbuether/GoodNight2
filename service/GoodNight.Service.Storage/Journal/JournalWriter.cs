@@ -78,7 +78,7 @@ namespace GoodNight.Service.Storage.Journal
             // wait for it...
             Write(writeCache.Take(writeCanceler));
           }
-          catch (OperationCanceledException e)
+          catch (OperationCanceledException)
           {
             // don't do anything here. The while loop will quit automatically,
             // as the cancellation token is cancelled.
