@@ -72,5 +72,11 @@ namespace GoodNight.Service.Domain.Model.Read
       return new Transfer.Player(Name,
         ImmutableList<Transfer.Property>.Empty);
     }
+
+    public override string ToString()
+    {
+      var state = string.Join(", ", State.Select(s => s.ToString()));
+      return $"Player {{Name:{Name}, State:[{state}]}}";
+    }
   }
 }

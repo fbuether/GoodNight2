@@ -43,6 +43,11 @@ namespace GoodNight.Service.Domain.Model.Read
           Effects = action.Effects.Add(new Property(Quality,
               Expression.Evaluate(player.GetValueOf)))
         };
+
+        public override string ToString()
+        {
+          return $"Effect {{Quality:{Quality}, Expression:{Expression}}}";
+        }
       }
 
 
@@ -91,6 +96,18 @@ namespace GoodNight.Service.Domain.Model.Read
                 ImmutableList.CreateRange(requirements),
                 ImmutableList.CreateRange(effects), Scene))
               };
+        }
+
+        public override string ToString()
+        {
+          string reqs = string.Join(", ", Requirements.Select(r => r.ToString()));
+          var effs = string.Join(", ", Effects.Select(r => r.ToString()));
+
+          return $"Option {{Urlname:{Urlname}, Description:{Description},"
+            + $"Icon:{Icon}, "
+            + "Requirements:[" + reqs + "], "
+            + "Effects:[" + effs + "], "
+            + $"Scene:{Scene}}}";
         }
       }
 
