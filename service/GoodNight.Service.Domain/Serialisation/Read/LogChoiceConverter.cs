@@ -46,15 +46,15 @@ namespace GoodNight.Service.Domain.Serialisation.Read
       {
         case Choice.Action c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Action",
-              c.Urlname, c.Text, c.Icon, c.Effects));
+              c.Urlname, c.Text, c.Icon, c.Effects), options);
           break;
         case Choice.Return c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Return",
-              null, null, null, null));
+              null, null, null, null), options);
           break;
         case Choice.Continue c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Continue",
-              null, null, null, null));
+              null, null, null, null), options);
           break;
       }
     }
