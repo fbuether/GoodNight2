@@ -23,5 +23,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GoodNight.Service.Domain\GoodNight.Service.Domain.csproj" />
+    <ProjectReference Include="..\GoodNight.Service.Storage\GoodNight.Service.Storage.csproj" />
   </ItemGroup>
 </Project>
