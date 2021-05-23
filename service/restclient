@@ -16,7 +16,7 @@ GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by
 #
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes
 Content-Type: application/json
-{"text":"$ name: an actual scene\nthis is a first scene\nit's just a string."}
+{"text":"$ name: an actual scene 4\nthis is a first scene\nit's just a string."}
 
 #
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/it--as-a-name--though-
@@ -55,3 +55,9 @@ GET http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/continue
 POST http://localhost:32016/api/v1/read/stories/eine-neue-geschichte-/do
 Content-Type: application/json
 {"choice":"pfad1/7"}
+
+#
+PUT http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/start
+Content-Type: application/json
+{"text":"$name: Start\n$start\n$cat: Start\nThis is where the story starts.\n$option: pfad1\nhier ist option fuer Pfad 1.\n$set:Woah=false\nmal sehen, ob der Absätze kann.\n$end\n$option: boarzba\nOder sonst auch Barboza. Was auch immer.\n$end\n"}
+
