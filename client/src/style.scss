@@ -244,6 +244,31 @@ div.d-flex a.boxed {
 }
 
 
+//--------------------------------------
+// decorated horizontal rows
+
+
+hr.decorated {
+  text-align: center;
+
+  &:after {
+    content: '🙢🙡'; // 🙚🙙🙛🙘
+    position: relative;
+    top: -0.75rem;
+    font-size: 0.8rem;
+    padding: 0 0.5rem;
+    background: hsb($base-color, 2%, 98%);
+  }
+}
+
+hr.decorated2 {
+  &:after {
+    content: '☙❧';
+  }
+}
+
+
+
 
 //--------------------------------------
 // page frame styles.

@@ -23,9 +23,8 @@ function Choice(choice: Choice) {
         );
       }
     case "return":
-      return <p class="action-log py-1">Du kehrst zurück.</p>;
     case "continue":
-      return <hr class="w-75 mx-auto mt-2 mb-3" />;
+      return <hr class="w-75 mx-auto mt-2 mb-3 decorated" />;
   }
 }
 
