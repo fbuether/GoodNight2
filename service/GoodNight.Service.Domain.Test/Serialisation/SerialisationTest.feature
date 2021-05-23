@@ -41,3 +41,9 @@ Feature: Domain.Serialisation
     Given the type "GoodNight.Service.Domain.Model.Expressions.Expression`1[[GoodNight.Service.Storage.Interface.IReference`1[[GoodNight.Service.Domain.Model.Read.Quality, GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], GoodNight.Service.Storage.Interface, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]], GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
     When deserialising and serialising
     Then the new serialisation equals given input
+
+  Scenario: Serialising a Model.Read.Choice.Action
+    Given the serialisation {"User":"00000000-0000-0000-0000-000000000000","Number":2,"Scene":{"typeName":"GoodNight.Service.Domain.Model.Read.Scene, GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","key":"eine-neue-geschichte-/start"},"Text":"This is where the story starts.","Effects":[{"Quality":{"typeName":"GoodNight.Service.Domain.Model.Read.Quality, GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","key":"eine-neue-geschichte-/woah"},"Value":{"type":"int","iValue":61}}],"Chosen":{"Kind":"Action","Urlname":"pfad1/4","Text":"hier ist option fuer Pfad 1.\n\n\nmal sehen,ob der Absaetze kann.","Icon":"","Effects":[{"Quality":{"typeName":"GoodNight.Service.Domain.Model.Read.Quality, GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null","key":"eine-neue-geschichte-/woah"},"Value":{"type":"int","iValue":16}}]},"Key":"00000000-0000-0000-0000-000000000000/eine-neue-geschichte--start/2"}
+    Given the type "GoodNight.Service.Domain.Model.Read.Log, GoodNight.Service.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null"
+    When deserialising and serialising
+    Then the new serialisation equals given input
