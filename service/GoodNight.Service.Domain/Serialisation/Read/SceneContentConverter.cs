@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -6,6 +7,7 @@ using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 using SysType = System.Type;
+using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Serialisation.Read
 {
@@ -21,13 +23,12 @@ namespace GoodNight.Service.Domain.Serialisation.Read
       string? urlname,
       string? description,
       string? icon,
-      ImmutableList<QExpr>? requirements,
-      ImmutableList<(IReference<Quality>, QExpr)>?
-        effects,
+      List<QExpr>? requirements,
+      List<Tuple<IReference<Quality>,QExpr>>? effects,
       IReference<Scene>? scene,
       QExpr? ifExpression,
-      ImmutableList<Scene.Content>? thenExpression,
-      ImmutableList<Scene.Content>? elseExpression);
+      List<Scene.Content>? thenExpression,
+      List<Scene.Content>? elseExpression);
 
     public override Scene.Content? Read(ref Utf8JsonReader reader,
       SysType typeToConvert, JsonSerializerOptions options)
@@ -56,8 +57,13 @@ namespace GoodNight.Service.Domain.Serialisation.Read
           return new Scene.Content.Option(c.urlname,
             c.description ?? "",
             c.icon,
-            c.requirements ?? ImmutableList<QExpr>.Empty,
-            c.effects ?? ImmutableList<(IReference<Quality>, QExpr)>.Empty,
+            c.requirements is not null
+            ? ImmutableList.CreateRange(c.requirements)
+            : ImmutableList<QExpr>.Empty,
+            c.effects is not null
+            ? ImmutableList.CreateRange(c.effects
+              .Select(e => (e.Item1,e.Item2)))
+            : ImmutableList<(IReference<Quality>,QExpr)>.Empty,
             c.scene);
 
         case "return":
@@ -74,8 +80,12 @@ namespace GoodNight.Service.Domain.Serialisation.Read
           if (c.ifExpression is null)
             throw new JsonException();
           return new Scene.Content.Condition(c.ifExpression,
-            c.thenExpression ?? ImmutableList<Scene.Content>.Empty,
-            c.elseExpression ?? ImmutableList<Scene.Content>.Empty);
+            c.thenExpression is not null
+            ? ImmutableList.CreateRange(c.thenExpression)
+            : ImmutableList<Scene.Content>.Empty,
+            c.elseExpression is not null
+            ? ImmutableList.CreateRange(c.elseExpression)
+            : ImmutableList<Scene.Content>.Empty);
 
         case "include":
           if (c.scene is null)
@@ -90,66 +100,52 @@ namespace GoodNight.Service.Domain.Serialisation.Read
     public override void Write(Utf8JsonWriter writer,
       Scene.Content value, JsonSerializerOptions options)
     {
-      writer.WriteStartObject();
-
       switch (value) {
         case Scene.Content.Text c:
-          writer.WriteString("type", "text");
-          writer.WriteString("value", c.Value);
+          JsonSerializer.Serialize(writer, new SerialisedContent("text",
+              c.Value, null, null, null, null, null, null, null, null, null,
+              null, null), options);
           break;
 
         case Scene.Content.Effect c:
-          writer.WriteString("type", "effect");
-          writer.WritePropertyName("quality");
-          JsonSerializer.Serialize(writer, c.Quality, options);
-          writer.WritePropertyName("expression");
-          JsonSerializer.Serialize(writer, c.Expression, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+              null, c.Quality, c.Expression, null, null, null, null, null, null,
+              null, null, null), options);
           break;
 
         case Scene.Content.Option c:
-          writer.WriteString("type", "option");
-          writer.WriteString("urlname", c.Urlname);
-          writer.WriteString("description", c.Description);
-          if (c.Icon is not null)
-            writer.WriteString("icon", c.Icon);
-          writer.WritePropertyName("requirements");
-          JsonSerializer.Serialize(writer, c.Requirements, options);
-          writer.WritePropertyName("effects");
-          JsonSerializer.Serialize(writer, c.Effects, options);
-          writer.WritePropertyName("scene");
-          JsonSerializer.Serialize(writer, c.Scene, options);
+          var effects = c.Effects.Select(e => Tuple.Create(e.Item1,e.Item2))
+            .ToList();
+          var option = new SerialisedContent("option",
+              null, null, null, c.Urlname, c.Description, c.Icon,
+              c.Requirements.ToList(), effects, c.Scene, null, null, null);
+          JsonSerializer.Serialize<SerialisedContent>(writer, option, options);
           break;
 
         case Scene.Content.Return c:
-          writer.WriteString("type", "return");
-          writer.WritePropertyName("scene");
-          JsonSerializer.Serialize(writer, c.Scene, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("return",
+              null, null, null, null, null, null, null, null, c.Scene, null,
+              null, null), options);
           break;
 
         case Scene.Content.Continue c:
-          writer.WriteString("type", "continue");
-          writer.WritePropertyName("scene");
-          JsonSerializer.Serialize(writer, c.Scene, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("continue",
+              null, null, null, null, null, null, null, null, c.Scene, null,
+              null, null), options);
           break;
 
         case Scene.Content.Condition c:
-          writer.WriteString("type", "condition");
-          writer.WritePropertyName("if");
-          JsonSerializer.Serialize(writer, c.If, options);
-          writer.WritePropertyName("then");
-          JsonSerializer.Serialize(writer, c.Then, options);
-          writer.WritePropertyName("else");
-          JsonSerializer.Serialize(writer, c.Else, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("condition",
+              null, null, null, null, null, null, null, null, null,
+              c.If, c.Then.ToList(), c.Else.ToList()), options);
           break;
 
         case Scene.Content.Include c:
-          writer.WriteString("type", "include");
-          writer.WritePropertyName("scene");
-          JsonSerializer.Serialize(writer, c.Scene, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("include",
+              null, null, null, null, null, null, null, null, c.Scene, null,
+              null, null), options);
           break;
       }
-
-      writer.WriteEndObject();
     }
   }
 }
