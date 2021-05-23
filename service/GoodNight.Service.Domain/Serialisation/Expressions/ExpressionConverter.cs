@@ -28,22 +28,22 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
 
       switch (c.type)
       {
-        case "Quality":
+        case "quality":
           if (c.Quality is null)
             throw new JsonException();
           return new Expression<T>.Quality<T>(c.Quality);
 
-        case "Bool":
+        case "bool":
           if (c.Bool is null)
             throw new JsonException();
           return new Expression<T>.Bool<T>(c.Bool.Value);
 
-        case "Number":
+        case "number":
           if (c.Number is null)
             throw new JsonException();
           return new Expression<T>.Number<T>(c.Number.Value);
 
-        case "Unary":
+        case "unary":
           if (c.UnaryOperator is null || c.ArgumentOne is null)
             throw new JsonException();
 
@@ -54,7 +54,7 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
             new Expression<T>.UnaryOperator.Not(),
             c.ArgumentOne);
 
-        case "Binary":
+        case "binary":
           if (c.BinaryOperator is null || c.ArgumentOne is null
             || c.ArgumentTwo is null)
             throw new JsonException();
@@ -76,19 +76,19 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
       {
         case Expression<T>.Quality<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
-              "Quality", e.Value, null, null, null, null, null, null),
+              "quality", e.Value, null, null, null, null, null, null),
             options);
           return;
 
         case Expression<T>.Bool<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
-              "Bool", null, e.Value, null, null, null, null, null),
+              "bool", null, e.Value, null, null, null, null, null),
             options);
           return;
 
         case Expression<T>.Number<T> e:
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
-              "Number", null, null, e.Value,  null, null, null, null),
+              "number", null, null, e.Value,  null, null, null, null),
             options);
           return;
 
@@ -97,7 +97,7 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
             throw new JsonException();
 
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
-              "Unary", null, null, null, "not", null, e.Argument, null),
+              "unary", null, null, null, "not", null, e.Argument, null),
             options);
           return;
 
@@ -105,7 +105,7 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
           var op = BinaryOperatorToString(e.Operator);
 
           JsonSerializer.Serialize(writer, new SerialisedExpression<T>(
-              "Binary", null, null, null, null, op, e.Left, e.Right),
+              "binary", null, null, null, null, op, e.Left, e.Right),
             options);
           return;
       }
