@@ -47,8 +47,21 @@ async function onOption(state: ReadStory, urlname: string, choice: string) {
     "POST", `api/v1/read/stories/${storyLoader.result.urlname}/do`, param);
 
   if (response.isResult) {
-    Dispatch.send(Dispatch.Update(Lens.ReadStory.adventure.set(
-      Loadable.Loaded(response.message))));
+    Dispatch.send(Dispatch.Update(pages => {
+      let newAdventure = response.message;
+      let prevAdventure = Lens.ReadStory.adventure.loaded.result.get(pages);
+
+      if (prevAdventure === null || typeof newAdventure != "object") {
+        return pages;
+      }
+
+      let final = {
+        ...newAdventure,
+        history: prevAdventure.history.concat(newAdventure.history)
+      };
+
+      return Lens.ReadStory.adventure.set(Loadable.Loaded(final))(pages);
+    }));
     Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(null)));
     Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(null)));
   }

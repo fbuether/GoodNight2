@@ -102,6 +102,7 @@ export function update() {
 
   if (messages.length == 0) {
     onFinish();
+    console.log("Final state:", StateStore.get());
   }
   else {
     update();
