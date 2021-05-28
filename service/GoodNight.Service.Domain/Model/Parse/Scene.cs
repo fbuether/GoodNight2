@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Domain.Model.Expressions;
+using System.Collections.Generic;
 
 namespace GoodNight.Service.Domain.Model.Parse
 {
@@ -99,7 +100,66 @@ namespace GoodNight.Service.Domain.Model.Parse
         : Content;
     }
 
-
     public static Scene Empty => new Scene("", ImmutableList.Create<Content>());
+
+
+    public IEnumerable<Content> GetFlatContents()
+    {
+      return GetFlatContents(Contents);
+    }
+
+    private IEnumerable<Content> GetFlatContents(IEnumerable<Content> contents)
+    {
+      foreach (var content in contents)
+      {
+        yield return content;
+
+        switch (content)
+        {
+          case Content.Option o:
+            foreach (var subContent in GetFlatContents(o.Content))
+            {
+              yield return subContent;
+            }
+            break;
+
+          case Content.Condition c:
+            foreach (var subContent in GetFlatContents(c.Then))
+            {
+              yield return subContent;
+            }
+            foreach (var subContent in GetFlatContents(c.Else))
+            {
+              yield return subContent;
+            }
+            break;
+        }
+      }
+    }
+
+    public IEnumerable<string> GetOutLinks()
+    {
+      foreach (var content in GetFlatContents())
+      {
+        switch (content)
+        {
+          case Content.Option c:
+            yield return c.Scene;
+            break;
+
+          case Content.Return c:
+            yield return c.Scene;
+            break;
+
+          case Content.Continue c:
+            yield return c.Scene;
+            break;
+
+          case Content.Include c:
+            yield return c.Scene;
+            break;
+        }
+      }
+    }
   }
 }

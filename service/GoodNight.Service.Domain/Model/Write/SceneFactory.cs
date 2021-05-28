@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using GoodNight.Service.Domain.Util;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -29,8 +31,13 @@ namespace GoodNight.Service.Domain.Model.Write
         ? categoryElement.Last()
         : ImmutableList<string>.Empty;
 
+      var outLinks = ImmutableList.CreateRange(parsed.GetOutLinks()
+        .OrderBy(a => a));
+      // todo: find possible in-links.
+      var inLinks = ImmutableList<string>.Empty;
+
       return new Result.Success<Scene, string>(new Scene(
-          name, story, parsed.Raw, tags, category));
+          name, story, parsed.Raw, tags, category, outLinks, inLinks));
     }
   }
 }
