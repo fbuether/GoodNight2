@@ -37,8 +37,9 @@ namespace GoodNight.Service.Storage
       if (backingStore is null)
       {
         var cwd = Directory.GetCurrentDirectory();
-        Console.WriteLine($"Store: Using {cwd}/store.json");
-        this.backingStore = File.Open("store.json", FileMode.OpenOrCreate);
+        Console.WriteLine($"Store: Using {cwd}/storage/store.json");
+        this.backingStore = File.Open("storage/store.json",
+          FileMode.OpenOrCreate);
       }
       else {
         this.backingStore = backingStore;
