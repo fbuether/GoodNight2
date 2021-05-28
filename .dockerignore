@@ -1,0 +1,9 @@
+/client/node_modules/
+/client/dist/
+/client/.gitignore
+/.git
+/Makefile
+/readme.md
+/service/**/[bB]in/
+/service/**/[oO]bj/
+/service/GoodNight.Service.Api/store.json
