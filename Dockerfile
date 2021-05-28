@@ -3,17 +3,16 @@
 FROM node:16-alpine as build-client
 WORKDIR /build/
 
-# install dependencies
 COPY /client/package*.json /build/
 RUN npm ci
 
 COPY /client/. /build/
 # no param automatically selects production
 RUN node_modules/.bin/webpack
+RUN gzip -k /build/dist/*
 
 
-
-# build server
+# build service
 FROM mcr.microsoft.com/dotnet/sdk:5.0 as build-service
 WORKDIR /build/
 
