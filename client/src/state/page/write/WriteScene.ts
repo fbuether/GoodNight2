@@ -2,13 +2,13 @@ import {Dispatch} from "../../../core/Dispatch";
 import {Lens} from "../../Pages";
 import type {State} from "../../State";
 import type {PageDescriptor} from "../../../core/PageDescriptor";
-import {request} from "../../../service/RequestService";
+import {request, isResult, ResultResponse} from "../../../service/RequestService";
+import {Loadable, LoadableP} from "../../Loadable";
 
 import type {Scene} from "../../../model/write/Scene";
 import type {Story} from "../../../model/write/Story";
-
-import {Loadable, LoadableP} from "../../Loadable";
-
+import {WriteStory} from "./WriteStory";
+import {SelectStory} from "./SelectStory";
 
 
 export interface WriteScene {
@@ -24,21 +24,26 @@ export interface WriteScene {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  let storyFetcher = Loadable.forRequestP<string, Story>(state,
+  let storyReq = Loadable.forRequestP<string, Story>(state,
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteScene.story);
 
   // only try to fetch the scene if we have a scene.
-  let sceneFetcher = Promise.resolve();
-  if (Lens.WriteScene.scene.value.get(state.page) !== null) {
-    sceneFetcher = Loadable.forRequestP<[string,string],Scene>(state,
-      "GET", (ss: [string,string]) =>
-          `api/v1/write/stories/${ss[0]}/scenes/${ss[1]}`,
-      Lens.WriteScene.scene.value);
+  let sceneReq = Loadable.forRequestP<[string,string],Scene>(
+    state, "GET",
+    (ss: [string,string]) => `api/v1/write/stories/${ss[0]}/scenes/${ss[1]}`,
+    Lens.WriteScene.scene.value);
+
+  let sceneRes = await sceneReq;
+  let storyRes = await storyReq;
+
+  if (storyRes.isError) {
+    Dispatch.send(Dispatch.Page(SelectStory.page));
   }
-
-
-  await Promise.all([storyFetcher, sceneFetcher]);
+  else if (sceneRes.isError) {
+    Dispatch.send(Dispatch.Page(WriteStory.page(
+      storyRes.message.urlname, storyRes.message)));
+  }
 
   Dispatch.send(Dispatch.Update(pages => {
     let scene = Lens.WriteScene.scene.value.loaded.result.get(pages);
