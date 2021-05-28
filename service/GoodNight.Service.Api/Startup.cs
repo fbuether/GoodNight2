@@ -71,7 +71,7 @@ namespace GoodNight.Service.Api
       });
 
       // everything not found is treated like index.html.
-      // app.UseStatusCodePagesWithReExecute("/index.html");
+      app.UseStatusCodePagesWithReExecute("/index.html");
 
       // Serve static content, and serve index.html on / requests.
       app.UseDefaultFiles();
