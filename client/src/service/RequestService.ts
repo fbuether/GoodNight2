@@ -1,9 +1,5 @@
 
 
-// serviceBase is defined in index.html
-declare var serviceBase: string;
-
-
 export type Method = "GET" | "POST" | "PUT";
 
 interface FetchInit {
@@ -60,6 +56,15 @@ export function makeError(status: number, body: any): ErrorResponse {
   };
 }
 
+
+// define url to service, which resides at the same domain as us.
+const port = window.location.port == "32015"
+    ? ":32016"
+    : window.location.port != ""
+    ? ":" + window.location.port
+    : "";
+const serviceBase = window.location.protocol + "//" + window.location.hostname +
+    port;
 
 
 export async function request<T>(method: Method, url: string,
