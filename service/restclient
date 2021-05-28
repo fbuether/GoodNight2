@@ -35,6 +35,9 @@ Content-Type: application/json
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
 
 #
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/pfad1.22
+
+#
 GET http://localhost:32016/api/v1/read/stories
 
 #
