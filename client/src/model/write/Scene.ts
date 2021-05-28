@@ -7,4 +7,7 @@ export interface Scene {
   raw: string;
   tags: Array<string>;
   category: Array<string>;
+
+  outLinks: Array<string>;
+  inLinks: Array<string>;
 }

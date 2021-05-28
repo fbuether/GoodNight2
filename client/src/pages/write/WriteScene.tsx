@@ -1,6 +1,6 @@
 import {Dispatch} from "../../core/Dispatch";
 import {Lens} from "../../state/Pages";
-import type {WriteScene as State} from "../../state/page/write/WriteScene";
+import {WriteScene as State} from "../../state/page/write/WriteScene";
 import {WriteStory} from "../../state/page/write/WriteStory";
 
 import type {Scene} from "../../model/write/Scene";
@@ -21,12 +21,40 @@ function setText(newText: string) {
 }
 
 
+function mkLinkGroup(story: string, title: string, links: Array<string>) {
+  if (links.length == 0) {
+    return <></>;
+  }
+
+  let sceneLink = (link: string) => Dispatch.Page(State.page(story, link));
+
+  let linkItems = links.map(link => (<li>
+      <Link action={sceneLink(link)}>
+        <Icon class="restrained color-primary mr-1" name="horizon-road" />
+        {link}
+      </Link>
+    </li>));
+  return <>
+    <h5>{title}:</h5>
+    <ul>{linkItems}</ul>
+  </>;
+}
+
+
 export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null) {
   let returnLink = Dispatch.Page(WriteStory.page(story.urlname, story));
   let submit = (event: Event) => {
     event.preventDefault();
     state.save(state);
   };
+
+  let links = <></>;
+  if (scene !== null && scene.outLinks !== null && scene.inLinks !== null) {
+    links = <>
+      {mkLinkGroup(story.urlname, "Ausgehende Links", scene.outLinks)}
+      {mkLinkGroup(story.urlname, "Eingehende Links", scene.inLinks)}
+    </>;
+  }
 
   return (
     <div id="centre" class="px-0">
@@ -41,9 +69,14 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null
             content={state.raw} />
 
           <Error message={state.saveError} />
-          <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
-            <Link action={returnLink}>Zurück</Link>
-            <SaveButton isSaving={state.isSaving} />
+          <div class="d-flex mt-3 align-items-start">
+            <div class="flex-grow-1">
+              {links}
+            </div>
+            <div class="flex-grow-1 d-flex px-4 justify-content-between align-items-center">
+              <Link action={returnLink}>Zurück</Link>
+              <SaveButton isSaving={state.isSaving} />
+            </div>
           </div>
         </form>
         <div class="col-4">
