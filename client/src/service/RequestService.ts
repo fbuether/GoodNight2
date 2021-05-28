@@ -30,8 +30,14 @@ export interface ResultResponse<T> {
 
 export type Response<T> = ErrorResponse | ResultResponse<T>;
 
+export function isResult<T>(a: undefined | null | Response<T>)
+: a is ResultResponse<T> {
+  return a !== undefined && a !== null && typeof a == "object" && a.isResult;
+}
 
-function makeResult<T>(body: unknown): ResultResponse<T> {
+
+
+export function makeResult<T>(body: unknown): ResultResponse<T> {
   return {
     kind: "result",
     isError: false,
@@ -40,7 +46,7 @@ function makeResult<T>(body: unknown): ResultResponse<T> {
   };
 }
 
-function makeError(status: number, body: any): ErrorResponse {
+export function makeError(status: number, body: any): ErrorResponse {
   let errorType = "type" in body ? body.type : "no error type on response.";
   let message = "message" in body ? body.message : "no message on response.";
 
