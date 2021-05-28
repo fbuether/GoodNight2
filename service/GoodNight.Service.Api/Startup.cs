@@ -1,4 +1,5 @@
 using System;
+using CompressedStaticFiles;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -49,6 +50,8 @@ namespace GoodNight.Service.Api
 
         return new Store(options.Value.JsonSerializerOptions.Converters);
       });
+
+      services.AddCompressedStaticFiles();
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -66,6 +69,13 @@ namespace GoodNight.Service.Api
       {
         endpoints.MapControllers();
       });
+
+      // everything not found is treated like index.html.
+      // app.UseStatusCodePagesWithReExecute("/index.html");
+
+      // Serve static content, and serve index.html on / requests.
+      app.UseDefaultFiles();
+      app.UseCompressedStaticFiles();
     }
   }
 }

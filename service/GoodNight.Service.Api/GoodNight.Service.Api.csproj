@@ -6,6 +6,8 @@
     <RootNamespace>GoodNight.Service.Api</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="CompressedStaticFiles" Version="2.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.6" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
