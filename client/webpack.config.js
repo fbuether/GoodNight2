@@ -52,7 +52,9 @@ module.exports = env => { return {
       return chunk.chunk.name == "main"
         ? "goodnight-[contenthash].js"
         : "[name]-[contenthash].js";
-    }
+    },
+
+    assetModuleFilename: '[name]-[hash][ext][query]'
   },
 
   module: {
@@ -73,6 +75,10 @@ module.exports = env => { return {
       {
         test: /icons\/.*\.svg$/,
         type: "asset/source"
+      },
+      {
+        test: /\.(gif)$/,
+        type: "asset/resource"
       },
       // {
       //   test: /\.(png|svg)$/,

@@ -245,6 +245,44 @@ div.d-flex a.boxed {
 
 
 //--------------------------------------
+// schlussvermerk.
+
+footer#schlussvermerk {
+  margin: 1.6rem auto 0 auto;
+  text-align: center;
+  font-size: 0.8rem;
+  color: hsb($base-color, 4%, 76%);
+  clear: both;
+  font-style: italic;
+  padding-top: 2.6rem;
+  padding-bottom: 2.6rem;
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+
+    &:hover {
+      color: hsb($secondary-color, 79%, 62%);
+    }
+  }
+
+  img {
+    opacity: 0.3;
+  }
+
+  hr {
+    margin: 0 auto 1.4rem;
+    color: inherit;
+
+    &:after {
+      top: -0.6rem;
+      color: hsb($base-color, 4%, 40%);
+    }
+  }
+}
+
+
+//--------------------------------------
 // decorated horizontal rows
 
 
@@ -278,6 +316,7 @@ hr.decorated2 {
 
 html body {
   background: hsb($base-color, 4%, 94%);
+  color: hsb($base-color, 4%, 22%);
   overflow-y: scroll;
   line-height: initial;
 }

@@ -17,6 +17,9 @@ import type {Pages} from "../state/Pages";
 import {User} from "../state/User";
 
 
+const othftwy = require("../../assets/othftwy.gif");
+
+
 export interface Page {
   page: Pages;
   user: User;
@@ -46,6 +49,14 @@ export default function Page(state: Page) {
         <Navigation page={state.page.page} user={state.user} />
       <hr class="mt-0" />
       {renderPage(state.page)}
+      <footer id="schlussvermerk">
+        <hr class="decorated w-75" />
+        GoodNight 2 ~{" "}
+        <a href="https://jasminefields.net/" title="jasminefields.net">jasminefields.net</a> ~{" "}
+        <a href="https://discord.gg/qwrzStrDwA" target="_blank">discord</a> ~{" "}
+        <a href="https://github.com/fbuether/GoodNight2">github</a> ~{" "}
+        <img src={othftwy} title="on the hunt for the white yonder" alt="hunt" />
+      </footer>
     </div>
   );
 }
