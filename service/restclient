@@ -3,6 +3,13 @@
 GET http://localhost:32016/api/v1/status
 
 #
+GET http://goodnight.jasminefields.net/api/v1/status
+
+#
+OPTIONS http://goodnight.jasminefields.net/api/v1/status
+
+
+#
 GET http://localhost:32016/api/v1/write/stories
 
 #
