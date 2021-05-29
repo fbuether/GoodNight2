@@ -9,6 +9,9 @@ using GoodNight.Service.Domain.Serialisation.Expressions;
 using GoodNight.Service.Domain.Serialisation.Read;
 using GoodNight.Service.Storage;
 using GoodNight.Service.Storage.Interface;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using GoodNight.Service.Api.Authentication;
 
 namespace GoodNight.Service.Api
 {
@@ -52,6 +55,28 @@ namespace GoodNight.Service.Api
       });
 
       services.AddCompressedStaticFiles();
+
+      // authentication either via JWT, or via TemporaryUserAuthentication.
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+        .AddJwtBearer(options =>
+        {
+            options.Audience = "d8ee60f3-f059-4169-93b4-8faf1c32a9d8";
+            options.Authority = "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0";
+        })
+        .AddScheme<TemporaryUserAuthenticationHandler.NoOptions,
+        TemporaryUserAuthenticationHandler>(
+          TemporaryUserAuthenticationHandler.AuthenticationScheme,
+          options => {});
+
+      services.AddAuthorization(options =>
+      {
+        var defaultAuthorizationPolicyBuilder = new AuthorizationPolicyBuilder(
+          JwtBearerDefaults.AuthenticationScheme,
+          TemporaryUserAuthenticationHandler.AuthenticationScheme);
+        defaultAuthorizationPolicyBuilder =
+          defaultAuthorizationPolicyBuilder.RequireAuthenticatedUser();
+        options.DefaultPolicy = defaultAuthorizationPolicyBuilder.Build();
+      });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -62,6 +87,9 @@ namespace GoodNight.Service.Api
       }
 
       app.UseRouting();
+
+      app.UseAuthentication();
+      app.UseAuthorization();
 
       app.UseCors();
 
