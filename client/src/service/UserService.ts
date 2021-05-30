@@ -19,7 +19,8 @@ export interface User {
 export class UserService {
   private oidc: Oidc.UserManager;
 
-  private guest: null | string;
+  private guest: string | null;
+  private user: User | null = null;
 
   private static instance: UserService | null = null;
 
@@ -31,6 +32,7 @@ export class UserService {
     this.oidc = new Oidc.UserManager(userManagerConfig);
 
     this.guest = this.loadGuestName();
+    this.getUser();
   }
 
   public static get(): UserService {
@@ -42,33 +44,37 @@ export class UserService {
   }
 
 
-  getUser = async() => {
+  getUser = async () => {
     var user = await this.oidc.getUser();
     if (user !== null) {
-      return {
+      this.user = {
         level: "bearer" as const,
         email: user.profile.email,
         name: user.profile.sub,
         authorisation: "Bearer " + user.id_token
       };
     }
-
-    if (this.guest !== null) {
-      return {
+    else if (this.guest !== null) {
+      this.user = {
         level: "guest" as const,
         name: "Gast",
         authorisation: "Guest " + this.guest
       };
     }
+    else {
+      this.user = null;
+    }
 
-    return null;
+    return this.user;
   }
 
-  startSignIn = async() => {
+  getUserQuick = () => this.user;
+
+  startSignIn = async () => {
     await this.oidc.signinRedirect();
   }
 
-  finishSignIn = async() => {
+  finishSignIn = async () => {
     try {
       await this.oidc.signinRedirectCallback(window.location.href);
     }
@@ -79,13 +85,13 @@ export class UserService {
   }
 
 
-  removeUser = async() => {
+  removeUser = async () => {
     await this.oidc.removeUser();
     window.localStorage.removeItem("guest-id");
   }
 
 
-  public createNewGuest() {
+  createNewGuest = async () => {
     var newGuid = this.uuidv4();
     window.localStorage.setItem("guest-id", newGuid);
   }
