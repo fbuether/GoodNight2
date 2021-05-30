@@ -4,6 +4,7 @@ import {Loadable} from "./Loadable";
 
 import type {Home} from "./page/Home";
 import type {FinishSignIn} from "./page/user/FinishSignIn";
+import type {RequireSignIn} from "./page/user/RequireSignIn";
 import type {StoryOverview} from "./page/read/StoryOverview";
 import type {ReadStory} from "./page/read/ReadStory";
 import type {SelectStory} from "./page/write/SelectStory";
@@ -19,6 +20,7 @@ export type Pages =
     | StoryOverview
 
     | FinishSignIn
+    | RequireSignIn
 
     | CreateStory
     | SelectStory
@@ -31,6 +33,7 @@ export type Pages =
 
 let guardHome = (a: Pages): a is Home => (a.page == "Home");
 let guardFinishSignIn = (a: Pages): a is FinishSignIn => (a.page == "FinishSignIn");
+let guardRequireSignIn = (a: Pages): a is RequireSignIn => (a.page == "RequireSignIn");
 let guardStoryOverview = (a: Pages): a is StoryOverview => (a.page == "StoryOverview");
 let guardReadStory = (a: Pages): a is ReadStory => (a.page == "ReadStory");
 let guardSelectStory = (a: Pages): a is SelectStory => (a.page == "SelectStory");
@@ -46,6 +49,7 @@ export const Lens = P.id<Pages>()
   .prop("page")
   .union("Home", guardHome, lens => lens)
   .union("FinishSignIn", guardFinishSignIn, lens => lens)
+  .union("RequireSignIn", guardRequireSignIn, lens => lens)
   .union("StoryOverview", guardStoryOverview, lens => lens
     .prop("page")
     .prop("stories"))

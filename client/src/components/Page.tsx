@@ -1,5 +1,6 @@
 import {Home} from "../pages/Home";
 import {FinishSignIn} from "../pages/user/FinishSignIn";
+import {RequireSignIn} from "../pages/user/RequireSignIn";
 import {StoryOverview} from "../pages/read/StoryOverview";
 import {ReadStory} from "../pages/read/ReadStory";
 import {SelectStory} from "../pages/write/SelectStory";
@@ -31,6 +32,7 @@ function renderPage(page: Pages) {
     case "StoryOverview": return StoryOverview(page);
 
     case "FinishSignIn": return FinishSignIn(page);
+    case "RequireSignIn": return RequireSignIn(page);
 
     case "CreateStory": return CreateStory(page);
     case "SelectStory": return SelectStory(page);
