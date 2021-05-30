@@ -20,10 +20,10 @@ export type User = SignedIn | SignedOut;
 
 
 function setUser(user: User) {
-    Dispatch.send(Dispatch.State(state => ({
-      ...state,
-      user: user
-    })));
+  Dispatch.send(Dispatch.State(state => ({
+    ...state,
+    user: user
+  })));
 }
 
 async function loadUser() {
