@@ -1,9 +1,9 @@
 
 import Loading from "../../components/common/Loading";
 
-import type {FinishSignIn} from "../../pages/user/FinishSignIn";
+import type {FinishSignIn as State} from "../../state/page/user/FinishSignIn";
 
 
-export function FinishSignIn(state: FinishSignIn) {
+export function FinishSignIn(state: State) {
   return <Loading />;
 }
