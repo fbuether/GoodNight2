@@ -15,7 +15,7 @@ Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImtpZCI6ImJXOFpjTWpCQ2
 
 #
 GET http://localhost:32016/api/v1/write/stories
-Authorization: Temporary cfa5d7cc-979c-4a9d-9c0f-423d4580f674
+Authorization: Guest cfa5d7cc-979c-4a9d-9c0f-423d4580f674
 
 #
 POST http://localhost:32016/api/v1/write/stories

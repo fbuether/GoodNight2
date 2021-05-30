@@ -9,7 +9,8 @@ var userManagerConfig = {
 
 
 export interface User {
-  email: string | undefined;
+  level: "guest" | "bearer";
+  email?: string;
   name: string;
   authorisation: string;
 }
@@ -18,6 +19,8 @@ export interface User {
 export class UserService {
   private oidc: Oidc.UserManager;
 
+  private guest: null | string;
+
   private static instance: UserService | null = null;
 
   private constructor() {
@@ -25,8 +28,9 @@ export class UserService {
       throw new Error("Created second instance of UserService!");
     }
 
-    // Oidc.Log.logger = console;
     this.oidc = new Oidc.UserManager(userManagerConfig);
+
+    this.guest = this.loadGuestName();
   }
 
   public static get(): UserService {
@@ -40,15 +44,24 @@ export class UserService {
 
   getUser = async() => {
     var user = await this.oidc.getUser();
-    if (user == null) {
-      return null;
+    if (user !== null) {
+      return {
+        level: "bearer" as const,
+        email: user.profile.email,
+        name: user.profile.sub,
+        authorisation: "Bearer " + user.id_token
+      };
     }
 
-    return {
-      email: user.profile.email,
-      name: user.profile.sub,
-      authorisation: "Bearer " + user.id_token
-    };
+    if (this.guest !== null) {
+      return {
+        level: "guest" as const,
+        name: "Gast",
+        authorisation: "Guest " + this.guest
+      };
+    }
+
+    return null;
   }
 
   startSignIn = async() => {
@@ -71,11 +84,22 @@ export class UserService {
   }
 
 
-  // public async startSignOut() {
-  //   await this.oidc.signoutRedirect();
-  // }
+  public createNewGuest() {
+    var newGuid = this.uuidv4();
+    window.localStorage.setItem("guest-id", newGuid);
+  }
 
-  // public async finishSignOut() {
-  //   await this.oidc.signoutRedirectCallback();
-  // }
+
+  private uuidv4() {
+    return "10000000-1000-4000-8000-100000000000".replace(/[018]/g,
+      (s: string) => {
+        let c = parseInt(s);
+        let rnd = crypto.getRandomValues(new Uint8Array(1));
+        return (c ^ rnd[0] & 15 >> c / 4).toString(16);
+      });
+  }
+
+  private loadGuestName(): string | null {
+    return window.localStorage.getItem("guest-id");
+  }
 }

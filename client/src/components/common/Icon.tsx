@@ -6,6 +6,7 @@ const icons = {
   "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
   "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
   "horizon-road": require("../../../assets/icons/horizon-road.svg"),
+  "ninja-head": require("../../../assets/icons/ninja-head.svg"),
   "saloon-doors": require("../../../assets/icons/saloon-doors.svg"),
   "save": require("../../../assets/icons/save.svg"),
   "secret-door": require("../../../assets/icons/secret-door.svg"),
