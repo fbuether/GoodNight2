@@ -32,11 +32,11 @@ namespace GoodNight.Service.Api.Authentication
             "No Authorization header found."));
 
       var auth = Request.Headers["Authorization"].ToString();
-      if (!auth.StartsWith("Temporary "))
+      if (!auth.StartsWith("Guest "))
         return Task.FromResult(AuthenticateResult.Fail(
             "No Temporary value in Authorization header."));
 
-      var name = auth.Substring(10);
+      var name = auth.Substring("Guest ".Count());
 
       Guid temporary;
       if (!Guid.TryParse(name, out temporary))
