@@ -1,5 +1,4 @@
 import type {State} from "../state/State";
-import type {Page} from "../state/Page";
 import type {Pages} from "../state/Pages";
 import type {PageDescriptor} from "./PageDescriptor";
 import {StateStore} from "./StateStore";
@@ -87,7 +86,10 @@ export function update() {
       break;
 
     case "Page":
-      let desc = msg.descriptor;
+      let desc = pageValidators.reduce(
+        (desc, val) => val(desc),
+        msg.descriptor);
+
       let newState = StateStore.update(state => ({ ...state, page: desc.state }));
       document.title = desc.title;
 
@@ -112,6 +114,12 @@ export function update() {
 
 // will be filled with the rendering function in index.tsx.
 var onFinish = () => {};
+
+
+// validators will be run in each new PageDescriptor, in order to manipulate
+// it prior to setting it.
+type PageValidator = (desc: PageDescriptor) => PageDescriptor;
+const pageValidators: Array<PageValidator> = [];
 
 
 export const Dispatch = {
@@ -151,5 +159,9 @@ export const Dispatch = {
 
   onFinishUpdate: (action: () => void) => {
     onFinish = action;
+  },
+
+  addPageValidator: (validator: PageValidator) => {
+    pageValidators.push(validator);
   }
 }
