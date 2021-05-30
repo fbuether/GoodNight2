@@ -1,29 +1,12 @@
-import * as P from "../util/ProtoLens";
+import {UserService} from "../service/UserService";
+import {PageDescriptor, getPageMappers} from "../core/PageDescriptor";
 
-import {Home} from "./page/Home";
-import {FinishSignIn} from "./page/user/FinishSignIn";
-import {StoryOverview} from "./page/read/StoryOverview";
-import {ReadStory} from "./page/read/ReadStory";
-import {SelectStory} from "./page/write/SelectStory";
-import {CreateStory} from "./page/write/CreateStory";
-import {WriteStory} from "./page/write/WriteStory";
-import {WriteScene} from "./page/write/WriteScene";
-import {WriteQuality} from "./page/write/WriteQuality";
-import {StartAdventure} from "./page/read/StartAdventure";
-
-
+import type {User} from "./User";
 import type {Pages} from "./Pages";
 
-import {PageDescriptor} from "../core/PageDescriptor";
+import {Home} from "./page/Home";
+import {RequireSignIn} from "./page/user/RequireSignIn";
 
-
-
-const AllPages = [
-  ReadStory, StartAdventure, StoryOverview,
-  FinishSignIn,
-  CreateStory, SelectStory, WriteQuality, WriteScene, WriteStory,
-  Home
-];
 
 export interface Page {
   page: Pages;
@@ -35,12 +18,21 @@ export const Page = {
   default: Home.page,
 
   ofUrl: (pathname: string): PageDescriptor => {
-    let page = AllPages.find(p => p.path.test(pathname));
-    if (page !== undefined) {
-      let matches = pathname.match(page.path);
-      return page.ofUrl(pathname, matches != null ? matches : []);
+    let page = getPageMappers().find(p => p.path.test(pathname));
+    if (page === undefined) {
+      return Home.page;
     }
 
-    return Home.page;
+    let matches = pathname.match(page.path);
+    let pageDesc = page.ofUrl(matches != null ? matches : []);
+
+    if (pageDesc.requiresAuth && UserService.get().getUserQuick() === null) {
+      return RequireSignIn.forUrl(pathname);
+    }
+
+    return pageDesc;
+    }
+
+    return desc;
   }
 }
