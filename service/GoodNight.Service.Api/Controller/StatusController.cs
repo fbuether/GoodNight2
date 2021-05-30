@@ -1,7 +1,6 @@
-
 using Microsoft.AspNetCore.Mvc;
 
-namespace GoodNight.Service.Api
+namespace GoodNight.Service.Api.Controller
 {
   [ApiController]
   [Route("api/v1/status")]
