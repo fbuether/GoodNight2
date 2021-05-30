@@ -44,8 +44,6 @@ function StartAdventureInner(state: State, story: Story) {
       </form>
     </div>
   );
-
-  return <>startin</>;
 }
 
 
