@@ -1,4 +1,3 @@
-
 import {Home} from "../pages/Home";
 import {SignIn} from "../pages/user/SignIn";
 import {StoryOverview} from "../pages/read/StoryOverview";
@@ -11,7 +10,6 @@ import {WriteQuality} from "../pages/write/WriteQuality";
 import {StartAdventure} from "../pages/read/StartAdventure";
 
 import {Navigation} from "./navigation/Navigation";
-
 
 import type {Pages} from "../state/Pages";
 import {User} from "../state/User";
@@ -28,16 +26,19 @@ export interface Page {
 
 function renderPage(page: Pages) {
   switch (page.page) {
-    case "Home": return Home(page);
-    case "SignIn": return SignIn(page);
-    case "StoryOverview": return StoryOverview(page);
     case "ReadStory": return ReadStory(page);
-    case "SelectStory": return SelectStory(page);
-    case "CreateStory": return CreateStory(page);
-    case "WriteStory": return WriteStory(page);
-    case "WriteScene": return WriteScene(page);
-    case "WriteQuality": return WriteQuality(page);
     case "StartAdventure": return StartAdventure(page);
+    case "StoryOverview": return StoryOverview(page);
+
+    case "SignIn": return SignIn(page);
+
+    case "CreateStory": return CreateStory(page);
+    case "SelectStory": return SelectStory(page);
+    case "WriteQuality": return WriteQuality(page);
+    case "WriteScene": return WriteScene(page);
+    case "WriteStory": return WriteStory(page);
+
+    case "Home": return Home(page);
   }
 }
 

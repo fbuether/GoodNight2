@@ -22,8 +22,10 @@ export type Page = PageState;
 
 
 const AllPages = [
-  Home, SignIn, StoryOverview, ReadStory, SelectStory, CreateStory, WriteStory,
-  WriteScene, WriteQuality, StartAdventure
+  ReadStory, StartAdventure, StoryOverview,
+  SignIn,
+  CreateStory, SelectStory, WriteQuality, WriteScene, WriteStory,
+  Home
 ];
 
 
