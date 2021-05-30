@@ -1,3 +1,4 @@
+import {UserService} from "./UserService";
 
 
 export type Method = "GET" | "POST" | "PUT";
@@ -74,9 +75,14 @@ export async function request<T>(method: Method, url: string,
     method: method
   };
 
+  fetchInit.headers = new Headers();
   if (body != {}) {
-    fetchInit.headers = new Headers();
     fetchInit.headers.append("Content-Type", "application/json");
+  }
+
+  let user = await UserService.get().getUser();
+  if (user !== null) {
+    fetchInit.headers.append("Authorization", user.authorisation);
   }
 
   if (method != "GET" && Object.keys(body).length > 0) {

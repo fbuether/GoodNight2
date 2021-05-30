@@ -11,7 +11,7 @@ var userManagerConfig = {
 export interface User {
   email: string | undefined;
   name: string;
-  idToken: string;
+  authorisation: string;
 }
 
 
@@ -47,7 +47,7 @@ export class UserService {
     return {
       email: user.profile.email,
       name: user.profile.sub,
-      idToken: user.id_token
+      authorisation: "Bearer " + user.id_token
     };
   }
 
@@ -57,7 +57,6 @@ export class UserService {
 
   finishSignIn = async() => {
     try {
-      console.log("finishin sign in for ", window.location.href);
       await this.oidc.signinRedirectCallback(window.location.href);
     }
     catch (err) {
