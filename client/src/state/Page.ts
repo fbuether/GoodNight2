@@ -31,6 +31,14 @@ export const Page = {
     }
 
     return pageDesc;
+  },
+
+
+  authCheck: (desc: PageDescriptor) => {
+    if (desc.requiresAuth) {
+      if (UserService.get().getUserQuick() === null) {
+        return RequireSignIn.forUrl(desc.url);
+      }
     }
 
     return desc;

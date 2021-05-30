@@ -40,6 +40,7 @@ Dispatch.onFinishUpdate(() => {
   Preact.render(<PageComponent {...StateStore.get()} />, rootElement);
 });
 
+Dispatch.addPageValidator(Page.authCheck);
 
 // whenever we go to a url (by opening the page, or via history), dispatch it
 let gotoUrl = (url: string) => {
