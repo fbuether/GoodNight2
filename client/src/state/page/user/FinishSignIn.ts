@@ -9,9 +9,8 @@ import {User} from "../../User";
 import {UserService} from "../../../service/UserService";
 
 
-
 export interface FinishSignIn {
-  page: "FinishSignIn"
+  page: "FinishSignIn";
 }
 
 
