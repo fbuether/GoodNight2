@@ -14,17 +14,20 @@ import type {WriteQuality} from "./page/write/WriteQuality";
 import type {StartAdventure} from "./page/read/StartAdventure";
 
 export type Pages =
-    | Home
-    | FinishSignIn
-    | StoryOverview
     | ReadStory
-    | SelectStory
-    | CreateStory
-    | WriteStory
-    | WriteScene
-    | WriteQuality
-    | StartAdventure;
+    | StartAdventure
+    | StoryOverview
 
+    | FinishSignIn
+
+    | CreateStory
+    | SelectStory
+    | WriteQuality
+    | WriteScene
+    | WriteStory
+
+    | Home
+;
 
 let guardHome = (a: Pages): a is Home => (a.page == "Home");
 let guardFinishSignIn = (a: Pages): a is FinishSignIn => (a.page == "FinishSignIn");
