@@ -12,13 +12,10 @@ import {WriteQuality} from "./page/write/WriteQuality";
 import {StartAdventure} from "./page/read/StartAdventure";
 
 
-import type {Page as PageState} from "../components/Page";
 import type {Pages} from "./Pages";
 
 import {PageDescriptor} from "../core/PageDescriptor";
 
-
-export type Page = PageState;
 
 
 const AllPages = [
@@ -28,6 +25,10 @@ const AllPages = [
   Home
 ];
 
+export interface Page {
+  page: Pages;
+  user: User;
+}
 
 
 export const Page = {

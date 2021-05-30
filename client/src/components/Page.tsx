@@ -13,16 +13,12 @@ import {StartAdventure} from "../pages/read/StartAdventure";
 import {Navigation} from "./navigation/Navigation";
 
 import type {Pages} from "../state/Pages";
-import {User} from "../state/User";
+import type {Page as State} from "../state/Page";
 
 
 const othftwy = require("../../assets/othftwy.gif");
 
 
-export interface Page {
-  page: Pages;
-  user: User;
-}
 
 
 function renderPage(page: Pages) {
@@ -45,7 +41,7 @@ function renderPage(page: Pages) {
 }
 
 
-export default function Page(state: Page) {
+export default function Page(state: State) {
   return (
     <div id="page"
       class="container-lg shadow-around mt-lg-4 px-2 px-sm-3 px-md-4 pt-lg-1">
