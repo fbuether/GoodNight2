@@ -17,12 +17,22 @@ type MenuItem = [string, PageDescriptor];
 
 let menuItems: Array<MenuItem> = [
   ["Willkommen", Home.page],
-  ["Geschichten lesen", StoryOverview.page],
+  ["Geschichten lesen", StoryOverview.page]
+];
+
+let signedInItems: Array<MenuItem> = [
   ["Geschichten schreiben", SelectStory.page]
 ];
 
 
-
 export const Navigation = {
-  menuItems: menuItems
+  getMenuItems: (user: User) => {
+    let items = menuItems;
+
+    if (user.kind == "SignedIn") {
+      items = items.concat(signedInItems);
+    }
+
+    return items;
+  }
 };

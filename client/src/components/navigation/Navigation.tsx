@@ -8,7 +8,7 @@ import {User} from "../user/User";
 
 
 export function Navigation(state: State) {
-  let buttons = State.menuItems.map(item =>
+  let buttons = State.getMenuItems(state.user).map(item =>
     <NavItem
       title={item[0]}
       page={item[1]}
