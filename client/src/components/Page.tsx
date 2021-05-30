@@ -1,5 +1,5 @@
 import {Home} from "../pages/Home";
-import {SignIn} from "../pages/user/SignIn";
+import {FinishSignIn} from "../pages/user/FinishSignIn";
 import {StoryOverview} from "../pages/read/StoryOverview";
 import {ReadStory} from "../pages/read/ReadStory";
 import {SelectStory} from "../pages/write/SelectStory";
@@ -30,7 +30,7 @@ function renderPage(page: Pages) {
     case "StartAdventure": return StartAdventure(page);
     case "StoryOverview": return StoryOverview(page);
 
-    case "SignIn": return SignIn(page);
+    case "FinishSignIn": return FinishSignIn(page);
 
     case "CreateStory": return CreateStory(page);
     case "SelectStory": return SelectStory(page);

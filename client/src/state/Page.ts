@@ -1,7 +1,7 @@
 import * as P from "../util/ProtoLens";
 
 import {Home} from "./page/Home";
-import {SignIn} from "./page/user/SignIn";
+import {FinishSignIn} from "./page/user/FinishSignIn";
 import {StoryOverview} from "./page/read/StoryOverview";
 import {ReadStory} from "./page/read/ReadStory";
 import {SelectStory} from "./page/write/SelectStory";
@@ -23,7 +23,7 @@ export type Page = PageState;
 
 const AllPages = [
   ReadStory, StartAdventure, StoryOverview,
-  SignIn,
+  FinishSignIn,
   CreateStory, SelectStory, WriteQuality, WriteScene, WriteStory,
   Home
 ];

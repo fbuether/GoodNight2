@@ -3,7 +3,6 @@ import type {PageDescriptor} from "../../../core/PageDescriptor";
 
 import type {State} from "../../State";
 
-import {SignIn as SignInComponent} from "../../../pages/user/SignIn";
 import {Home} from "../Home";
 
 import {User} from "../../User";
@@ -11,7 +10,9 @@ import {UserService} from "../../../service/UserService";
 
 
 
-export type SignIn = SignInComponent;
+export interface FinishSignIn {
+  page: "FinishSignIn"
+}
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
@@ -23,7 +24,7 @@ async function onLoad(dispatch: Dispatch, state: State) {
 
 
 const instance = {
-  page: "SignIn" as const
+  page: "FinishSignIn" as const
 };
 
 const page: PageDescriptor = {
@@ -33,7 +34,7 @@ const page: PageDescriptor = {
   onLoad: onLoad
 };
 
-export const SignIn = {
+export const FinishSignIn = {
   path: /^\/finish-sign-in$/,
   // page: page,
   // instance: instance,
