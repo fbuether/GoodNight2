@@ -1,6 +1,6 @@
 import {request} from "../../../service/RequestService";
 import {Dispatch} from "../../../core/Dispatch";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, PageMapper, registerPageMapper} from "../../../core/PageDescriptor";
 import type {State} from "../../State";
 import {Lens} from "../../Pages";
 
@@ -36,7 +36,7 @@ function page(stories: Loadable<Array<Story>>): PageDescriptor {
 }
 
 export const StoryOverview = {
-  path: /^\/read\/?$/,
   page: page(Loadable.Unloaded),
-  ofUrl: (pathname: string, matches: Array<string>) => page(Loadable.Unloaded)
 };
+
+registerPageMapper(/^\/read\/?$/, page(Loadable.Unloaded));

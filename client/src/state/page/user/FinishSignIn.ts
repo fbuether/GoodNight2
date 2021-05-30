@@ -1,5 +1,5 @@
 import {Dispatch} from "../../../core/Dispatch";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 
 import type {State} from "../../State";
 
@@ -34,10 +34,5 @@ const page: PageDescriptor = {
   onLoad: onLoad
 };
 
-export const FinishSignIn = {
-  path: /^\/finish-sign-in$/,
-  // page: page,
-  // instance: instance,
-  ofUrl: (pathname: string, matches: Array<string>) => page// ,
-  // render: SignInComponent
-};
+
+registerPageMapper(/^\/finish-sign-in$/, page);

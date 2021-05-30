@@ -1,7 +1,7 @@
 import {Dispatch} from "../../../core/Dispatch";
 import {Lens} from "../../Pages";
 import type {State} from "../../State";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request, isResult, ResultResponse} from "../../../service/RequestService";
 import {Loadable, LoadableP} from "../../Loadable";
 
@@ -140,9 +140,11 @@ function page(storyUrlname: string, sceneUrlname: string | null)
 
 
 export const WriteScene = {
-  path: /^\/write\/stories\/([^\/]+)\/(scene\/([^\/]+)|new-scene)$/,
   page: page,
-  pageNew: (storyUrlname: string) => page(storyUrlname, null),
-  ofUrl: (pathname: string, matches: Array<string>) =>
-      page(matches[1], matches[3] === undefined ? null : matches[3])
+  pageNew: (storyUrlname: string) => page(storyUrlname, null)
 }
+
+registerPageMapper(
+  /^\/write\/stories\/([^\/]+)\/(scene\/([^\/]+)|new-scene)$/,
+  (matches: ReadonlyArray<string>) =>
+      page(matches[1], matches[3] === undefined ? null : matches[3]));

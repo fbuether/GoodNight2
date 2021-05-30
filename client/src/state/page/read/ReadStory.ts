@@ -1,6 +1,6 @@
 import {request} from "../../../service/RequestService";
 import {Dispatch} from "../../../core/Dispatch";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import type {State} from "../../State";
 import {Lens} from "../../Pages";
 import {Loadable, LoadableP} from "../../Loadable";
@@ -117,9 +117,8 @@ function page(urlname: string, adventure?: Adventure): PageDescriptor {
 
 
 export const ReadStory = {
-  path: /^\/read\/([^\/]+)$/,
-
-  page: page,
-
-  ofUrl: (pathname: string, matches: Array<string>) => page(matches[1])
+  page: page
 };
+
+registerPageMapper(/^\/read\/([^\/]+)$/,
+  (matches: ReadonlyArray<string>) => ReadStory.page(matches[1]));

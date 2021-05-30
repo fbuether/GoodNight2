@@ -1,7 +1,7 @@
 import type {State} from "../../State";
 import {Lens} from "../../Pages";
 import {Dispatch} from "../../../core/Dispatch";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 
 import type {Story} from "../../../model/write/Story";
 import {Loadable} from "../../Loadable";
@@ -33,7 +33,7 @@ const page: PageDescriptor = ({
 
 
 export const SelectStory = {
-  path: /^\/write\/?$/,
-  page: page,
-  ofUrl: (pathname: string, matches: Array<string>) => SelectStory.page
+  page: page
 }
+
+registerPageMapper(/^\/write\/?$/, page);

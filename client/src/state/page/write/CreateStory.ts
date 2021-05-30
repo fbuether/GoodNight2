@@ -1,6 +1,6 @@
 import {Lens} from "../../Pages";
 import {Dispatch} from "../../../core/Dispatch";
-import type {PageDescriptor} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request} from "../../../service/RequestService";
 
 import type {Story} from "../../../model/write/Story";
@@ -51,7 +51,7 @@ const page: PageDescriptor = {
 };
 
 export const CreateStory = {
-  path: /^\/write\/new-story$/,
-  page: page,
-  ofUrl: (pathname: string, matches: Array<string>) => page
+  page: page
 };
+
+registerPageMapper(/^\/write\/new-story$/, page);
