@@ -23,11 +23,11 @@ function WriteStoryInner(state: State, story: Story, category: Category) {
     <div id="centre" class="px-0">
       <h1><Link action={toBase}>Schreibe: {story.name}</Link></h1>
       <div class="d-flex justify-content-around mt-2 mb-3">
-        <Link action={toNewScene} class="boxed grow">
+        <Link action={toNewScene} class="boxed flex-grow-1">
           <Icon class="restrained color-primary mr-1" name="horizon-road" />
           Neue Szene
         </Link>
-        <Link action={toNewQuality} class="boxed grow">
+        <Link action={toNewQuality} class="boxed flex-grow-1">
           <Icon class="restrained color-secondary mr-1" name="swap-bag" />
           Neue Qualität
         </Link>
