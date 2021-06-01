@@ -70,13 +70,26 @@ export class UserService {
 
   getUserQuick = () => this.user;
 
-  startSignIn = async () => {
+
+  private readonly redirectTargetKey: string = "redirect-target";
+
+  startSignIn = async (target?: string) => {
+    if (target) {
+      window.localStorage.setItem(this.redirectTargetKey, target);
+    }
+    else {
+      window.localStorage.removeItem(this.redirectTargetKey);
+    }
+
     await this.oidc.signinRedirect();
   }
 
-  finishSignIn = async () => {
+  finishSignIn: () => Promise<string | null> = async () => {
     try {
       await this.oidc.signinRedirectCallback(window.location.href);
+      var target = window.localStorage.getItem(this.redirectTargetKey);
+      window.localStorage.removeItem(this.redirectTargetKey);
+      return target;
     }
     catch (err) {
       console.log("Error while finishing sign in:", err);
