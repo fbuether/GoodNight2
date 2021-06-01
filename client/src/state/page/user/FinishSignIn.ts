@@ -2,12 +2,11 @@ import {Dispatch} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {Page} from "../../Page";
 
+import {User} from "../../User";
+import {UserService} from "../../../service/UserService";
 import type {State} from "../../State";
 
 import {Home} from "../Home";
-
-import {User} from "../../User";
-import {UserService} from "../../../service/UserService";
 
 
 export interface FinishSignIn {

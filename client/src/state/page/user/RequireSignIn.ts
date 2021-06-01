@@ -1,27 +1,37 @@
-import {Dispatch} from "../../../core/Dispatch";
+import {Dispatch, DispatchAction} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
+import {Page} from "../../Page";
 
 import {User} from "../../User";
 import {UserService} from "../../../service/UserService";
+
+import {Home} from "../Home";
 
 
 export interface RequireSignIn {
   page: "RequireSignIn";
   target: string;
-  signInGuest: () => Promise<void>;
-  signInUser: () => Promise<void>;
+  signInGuest: DispatchAction;
+  signInUser: DispatchAction;
 }
 
 
-async function signInGuest() {
-  UserService.get().createNewGuest();
-  // Dispatch.send(Dispatch.Page(
+function signInGuest(target: string) {
+  return async () => {
+    UserService.get().createNewGuest();
+    User.loadUser();
 
-  console.log("siginin in as guest");
+    console.log("now:", await UserService.get().getUser());
+
+    let nextPage = target ? Page.ofUrl(target) : Home.page;
+    Dispatch.send(Dispatch.Page(nextPage));
+  }
 }
 
-async function signInUser() {
-  console.log("siginin in as user");
+function signInUser(target: string): (() => Promise<void>) {
+  return async () => {
+    return UserService.get().startSignIn(target);
+  }
 }
 
 
@@ -29,8 +39,8 @@ function instance(target: string): RequireSignIn {
   return {
     page: "RequireSignIn" as const,
     target: target,
-    signInGuest: signInGuest,
-    signInUser: signInUser
+    signInGuest: Dispatch.Command(signInGuest(target)),
+    signInUser: Dispatch.Command(signInUser(target))
   };
 }
 
