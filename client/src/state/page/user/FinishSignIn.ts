@@ -1,5 +1,6 @@
 import {Dispatch} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
+import {Page} from "../../Page";
 
 import type {State} from "../../State";
 
@@ -15,10 +16,11 @@ export interface FinishSignIn {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
-  await UserService.get().finishSignIn();
+  var target = await UserService.get().finishSignIn();
   User.loadUser();
 
-  Dispatch.send(Dispatch.Page(Home.page));
+  let nextPage = target ? Page.ofUrl(target) : Home.page;
+  Dispatch.send(Dispatch.Page(nextPage));
 }
 
 
