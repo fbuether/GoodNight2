@@ -34,5 +34,7 @@ const page: PageDescriptor = {
   onLoad: onLoad
 };
 
+export const FinishSignIn = {};
+
 
 registerPageMapper(/^\/finish-sign-in$/, page);

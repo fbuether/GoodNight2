@@ -27,6 +27,10 @@ import {User} from "./state/User";
 import PageComponent from "./components/Page";
 
 
+// explicit import required to have FinishSignIn not be pruned.
+import {FinishSignIn} from "./state/page/user/FinishSignIn";
+FinishSignIn;
+
 User.setInitialUser();
 
 
