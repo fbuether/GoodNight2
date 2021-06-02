@@ -107,6 +107,7 @@ export class UserService {
   createNewGuest = async () => {
     var newGuid = this.uuidv4();
     window.localStorage.setItem("guest-id", newGuid);
+    this.guest = newGuid;
   }
 
 
