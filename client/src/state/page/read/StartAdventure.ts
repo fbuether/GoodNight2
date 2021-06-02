@@ -67,7 +67,8 @@ function page(storyUrlname: string): PageDescriptor {
     },
     url: "/read/" + storyUrlname + "/start",
     title: "GoodNight: Lesen",
-    onLoad: onLoad
+    onLoad: onLoad,
+    requiresAuth: true
   };
 }
 

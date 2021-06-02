@@ -134,7 +134,8 @@ function page(storyUrlname: string, sceneUrlname: string | null)
         + (sceneUrlname !== null ? "/scene/" + sceneUrlname : "/new-scene"),
     title: "GoodNight: "
         + (sceneUrlname !== null ? "Szene bearbeiten" : "Neue Szene"),
-    onLoad: onLoad
+    onLoad: onLoad,
+    requiresAuth: true
   };
 }
 

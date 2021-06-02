@@ -48,7 +48,8 @@ function page(urlname: string, story?: Story): PageDescriptor {
     state: instance(urlname, story),
     url: "/write/stories/" + urlname,
     title: "GoodNight: Schreibe" + (story ? " "+ story.name : ""),
-    onLoad: onLoad
+    onLoad: onLoad,
+    requiresAuth: true
   };
 }
 

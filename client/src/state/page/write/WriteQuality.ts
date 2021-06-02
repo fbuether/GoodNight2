@@ -128,7 +128,8 @@ function page(storyUrlname: string, qualityUrlname: string | null)
         + (qualityUrlname !== null
            ? "Qualität bearbeiten"
            : "Neue Qualität"),
-    onLoad: onLoad
+    onLoad: onLoad,
+    requiresAuth: true
   };
 }
 

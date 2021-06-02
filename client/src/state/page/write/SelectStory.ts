@@ -28,7 +28,8 @@ const page: PageDescriptor = ({
   state: instance,
   url: "/write",
   title: "GoodNight: Geschichten schreiben",
-  onLoad: onLoad
+  onLoad: onLoad,
+  requiresAuth: true
 });
 
 

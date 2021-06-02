@@ -47,7 +47,8 @@ const instance = {
 const page: PageDescriptor = {
   state: instance,
   url: "/write/new-story",
-  title: "GoodNight: Eine neue Geschichte"
+  title: "GoodNight: Eine neue Geschichte",
+  requiresAuth: true
 };
 
 export const CreateStory = {
