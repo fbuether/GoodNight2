@@ -101,6 +101,7 @@ export class UserService {
   removeUser = async () => {
     await this.oidc.removeUser();
     window.localStorage.removeItem("guest-id");
+    this.guest = null;
   }
 
 
