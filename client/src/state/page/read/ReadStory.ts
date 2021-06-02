@@ -111,7 +111,8 @@ function page(urlname: string, adventure?: Adventure): PageDescriptor {
     state: instance(urlname),
     url: "/read/" + urlname,
     title: "GoodNight: Lesen",
-    onLoad: onLoad
+    onLoad: onLoad,
+    requiresAuth: true
   };
 }
 

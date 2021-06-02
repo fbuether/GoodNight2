@@ -1,6 +1,5 @@
 import {Dispatch, DispatchAction} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
-import {Page} from "../../Page";
 
 import {User} from "../../User";
 import {UserService} from "../../../service/UserService";
@@ -15,15 +14,17 @@ export interface RequireSignIn {
   signInUser: DispatchAction;
 }
 
+type Resolver = (path: string) => PageDescriptor;
 
-function signInGuest(target: string) {
+
+function signInGuest(target: string, resolver: Resolver) {
   return async () => {
     UserService.get().createNewGuest();
     User.loadUser();
 
     console.log("now:", await UserService.get().getUser());
 
-    let nextPage = target ? Page.ofUrl(target) : Home.page;
+    let nextPage = target ? resolver(target) : Home.page;
     Dispatch.send(Dispatch.Page(nextPage));
   }
 }
@@ -35,28 +36,29 @@ function signInUser(target: string): (() => Promise<void>) {
 }
 
 
-function instance(target: string): RequireSignIn {
+function instance(target: string, resolver: Resolver): RequireSignIn {
   return {
     page: "RequireSignIn" as const,
     target: target,
-    signInGuest: Dispatch.Command(signInGuest(target)),
+    signInGuest: Dispatch.Command(signInGuest(target, resolver)),
     signInUser: Dispatch.Command(signInUser(target))
   };
 }
 
 
-function page(target: string): PageDescriptor {
+function page(target: string, resolver: Resolver): PageDescriptor {
   return {
-    state: instance(target),
+    state: instance(target, resolver),
     url: "/sign-in/to" + target,
     title: "GoodNight: Anmelden…"
   };
 }
 
 
+
 export const RequireSignIn = {
-  forUrl: (target: string) => page(target)
+  forUrl: (target: string, resolver: Resolver) => page(target, resolver)
 }
 
 registerPageMapper(/^\/sign-in\/to(\/.+)$/,
-  (matches: ReadonlyArray<string>) => page(matches[1]));
+  (matches: ReadonlyArray<string>) => page(matches[1], () => Home.page));

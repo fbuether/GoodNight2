@@ -25,20 +25,13 @@ export const Page = {
 
     let matches = pathname.match(page.path);
     let pageDesc = page.ofUrl(matches != null ? matches : []);
-
-    if (pageDesc.requiresAuth && UserService.get().getUserQuick() === null) {
-      return RequireSignIn.forUrl(pathname);
-    }
-
-    return pageDesc;
+    return Page.authCheck(pageDesc);
   },
 
 
   authCheck: (desc: PageDescriptor) => {
-    if (desc.requiresAuth) {
-      if (UserService.get().getUserQuick() === null) {
-        return RequireSignIn.forUrl(desc.url);
-      }
+    if (desc.requiresAuth && UserService.get().getUserQuick() === null) {
+      return RequireSignIn.forUrl(desc.url, Page.ofUrl);
     }
 
     return desc;
