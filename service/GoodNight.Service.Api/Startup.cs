@@ -57,17 +57,21 @@ namespace GoodNight.Service.Api
       services.AddCompressedStaticFiles();
 
       // authentication either via JWT, or via TemporaryUserAuthentication.
-      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+      services
+        .AddAuthentication(TemporaryUserAuthenticationHandler.AuthenticationScheme)
+        .AddScheme<TemporaryUserAuthenticationHandler.NoOptions,
+        TemporaryUserAuthenticationHandler>(
+          TemporaryUserAuthenticationHandler.AuthenticationScheme,
+          options => {});
+
+      services
+        .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         .AddJwtBearer(options =>
         {
             options.Audience = "d8ee60f3-f059-4169-93b4-8faf1c32a9d8";
             options.Authority = "https://login.microsoftonline.com/"
               + "9188040d-6c67-4c5b-b112-36a304b66dad/v2.0";
-        })
-        .AddScheme<TemporaryUserAuthenticationHandler.NoOptions,
-        TemporaryUserAuthenticationHandler>(
-          TemporaryUserAuthenticationHandler.AuthenticationScheme,
-          options => {});
+        });
 
       services.AddAuthorization(options =>
       {
