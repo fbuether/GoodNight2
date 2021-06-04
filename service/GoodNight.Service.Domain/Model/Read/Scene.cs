@@ -30,7 +30,10 @@ namespace GoodNight.Service.Domain.Model.Read
         : Content
       {
         public Action AddTo(Player player, Action action) =>
-          action with { Text = action.Text + Value };
+          action with { Text =
+          action.Text == ""
+          ? Value
+          : action.Text + "\n" + Value };
       }
 
       public record Effect(

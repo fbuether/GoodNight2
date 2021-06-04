@@ -16,14 +16,17 @@ namespace GoodNight.Service.Domain.Model
   /// This type is a group root and can be stored directly.
   /// </remarks>
   public record User(
-    Guid Guid,
+    string Id,
     string Name,
     string EMail,
 
     IImmutableSet<IReference<Adventure>> Adventures)
     : IStorable<User>
   {
-    public string Key => Guid.ToString();
+    public string Key => Id;
+
+    public static User Create(string id) => new User(id, "", "",
+      ImmutableHashSet<IReference<Adventure>>.Empty);
 
     public (User, Adventure)? ContinueAdventure(Story story,
       string optionname)
@@ -87,7 +90,7 @@ namespace GoodNight.Service.Domain.Model
 
     public override string ToString()
     {
-      return $"User {{Guid:{Guid.ToString()}, Name:{Name}, EMail:{EMail}, "
+      return $"User {{Id:{Id}, Name:{Name}, EMail:{EMail}, "
         + "Adventures:[" +
         string.Join(", ", Adventures.Select(a => a.ToString())) + "]}";
     }
