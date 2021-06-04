@@ -7,9 +7,12 @@ using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 using TransferAdventure = GoodNight.Service.Domain.Model.Read.Transfer.Adventure;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace GoodNight.Service.Api.Controller.Read
 {
+  [Authorize]
   [ApiController]
   [Route("api/v1/read/stories/{storyUrlname}/")]
   public class ReadStoryController : ControllerBase
@@ -28,14 +31,18 @@ namespace GoodNight.Service.Api.Controller.Read
 
     private User? GetCurrentUser()
     {
-      var key = Guid.Empty;
+      var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+      if (userIdClaim is null)
+        return null;
 
-      var user = users.Get(key.ToString());
+      var userId = userIdClaim.Value;
+      var user = users.Get(userId);
+
       if (user is null)
-        // return Unauthorized();
-        // todo: replace with commented code above.
-        user = new User(key, "current-user-name", "e@mail",
-          ImmutableHashSet.Create<IReference<Adventure>>());
+      {
+        user = Domain.Model.User.Create(userId);
+        users.Add(user);
+      }
 
       return user;
     }
