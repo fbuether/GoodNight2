@@ -25,7 +25,7 @@ namespace GoodNight.Service.Domain.Parse
       Parser.Try(Parser.String("icon"))
       .Then(NameParser.Colon)
       .Then(NameParser.IconName)
-      .Map<Quality.Content>(name => new Quality.Content.Name(name));
+      .Map<Quality.Content>(name => new Quality.Content.Icon(name));
 
     private readonly static ContentListParser tagsContent =
       Parser.Try(Parser.String("tag"))
