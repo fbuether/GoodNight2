@@ -34,6 +34,7 @@ Content-Type: application/json
 
 #
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 
 #
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes
