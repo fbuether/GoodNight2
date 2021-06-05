@@ -15,7 +15,7 @@ namespace GoodNight.Service.Domain.Test.Write
     [Given(@"a scenario named ""(.*)""")]
     public void CreateScenarioNamed(string name)
     {
-      story = Story.Create(name);
+      story = Story.Create(name, User.Create("test-user"));
     }
 
     [When(@"I generate the urlname")]
