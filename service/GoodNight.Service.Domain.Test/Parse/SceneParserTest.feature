@@ -291,6 +291,7 @@ Feature: SceneParser
     When the parser parses the input
     Then parsing succeeds
     Then the result has only "Set" nodes
+    Then "Set" node 1 sets quality "Hildas Hammer"
 
   Scenario: Several set settings
     Given the scene input

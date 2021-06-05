@@ -181,6 +181,17 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.Equal(count, CountNodesOfType(Get(result).Contents, type));
     }
 
+    [Then(@"""Set"" node (\d) sets quality ""(.*)""")]
+    public void ThenSetNodeIntSetsQualityString(int position, string quality)
+    {
+      Assert.True(position <= Get(result).Contents.Count());
+      var node = Get(result).Contents[position-1];
+      Assert.IsType<Scene.Content.Set>(node);
+      var setNode = node as Scene.Content.Set;
+      Assert.Equal(quality, setNode!.Quality);
+    }
+
+
     [Then(@"the node (\d+) has text ""(.*)""")]
     public void TheNodeNHasTextContent(int position, string content)
     {
