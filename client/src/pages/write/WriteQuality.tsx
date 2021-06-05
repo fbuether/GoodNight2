@@ -34,7 +34,7 @@ export function WriteQualityLoaded(state: State, story: Story, quality: Quality 
 
       <div class="row">
         <form class="col-8" onSubmit={submit}>
-          <h2>{quality === null ? "Neue Szene" : quality.name}</h2>
+          <h2>{quality === null ? "Neue Qualität" : quality.name}</h2>
 
           <ScalingTextarea class="form-control larger"
             onChange={setText}
