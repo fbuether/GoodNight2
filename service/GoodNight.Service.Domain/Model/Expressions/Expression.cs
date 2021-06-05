@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Immutable;
+using GoodNight.Service.Domain.Model.Read.Transfer;
 
 namespace GoodNight.Service.Domain.Model.Expressions
 {
@@ -24,6 +26,8 @@ namespace GoodNight.Service.Domain.Model.Expressions
     public Value Evaluate(Func<TQuality, Value> context);
 
     public Expression<R> Map<R>(Func<TQuality, R> fun);
+
+    public string Format(Func<TQuality, string> qualityToString);
   }
 
   public static class Expression
@@ -48,6 +52,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return new Quality<R>(fun(Value));
       }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return qualityToString(Value);
+      }
     }
 
     /// <summary>
@@ -65,6 +74,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
         return new Bool<R>(Value);
+      }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return Value ? "wahr" : "falsch";
       }
     }
 
@@ -84,6 +98,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return new Number<R>(Value);
       }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return Value.ToString();
+      }
     }
 
     /// <summary>
@@ -92,7 +111,13 @@ namespace GoodNight.Service.Domain.Model.Expressions
     public interface UnaryOperator
     {
       public record Not
-        : UnaryOperator {}
+        : UnaryOperator
+      {
+        public override string ToString()
+        {
+          return "nicht";
+        }
+      }
     }
 
     /// <summary>
@@ -124,6 +149,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
         return new UnaryApplication<R>(Operator, Argument.Map(fun));
+      }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return Operator.ToString() + " " + Argument.Format(qualityToString);
       }
     }
 
@@ -215,6 +245,13 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return new BinaryApplication<R>(Operator,
           Left.Map(fun), Right.Map(fun));
+      }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return Left.Format(qualityToString) + " " +
+          Operator.ToString() + " " +
+          Right.Format(qualityToString);
       }
     }
   }

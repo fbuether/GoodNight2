@@ -4,7 +4,7 @@ using GoodNight.Service.Domain.Model.Expressions;
 namespace GoodNight.Service.Domain.Model.Read.Transfer
 {
   public record Requirement(
-    Expression<QualityHeader> Expression,
+    string Display,
     bool Passed);
 
   public record Option(

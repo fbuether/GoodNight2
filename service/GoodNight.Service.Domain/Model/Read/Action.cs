@@ -18,14 +18,16 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     internal Transfer.Requirement ToTransfer()
     {
-      return new Transfer.Requirement(Expression.Map(qualityRef => {
+      var transferExpr = Expression.Map(qualityRef => {
         var quality = qualityRef.Get();
         if (quality is null)
           throw new InvalidQualityException(
             $"Quality \"{qualityRef.Key}\" does not exist.");
 
-        return quality.ToHeader();
-      }),
+        return quality.Name;
+      });
+
+      return new Transfer.Requirement(transferExpr.Format(q => q),
         Passed);
     }
   }
