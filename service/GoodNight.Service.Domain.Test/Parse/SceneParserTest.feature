@@ -30,6 +30,28 @@ Feature: SceneParser
     Then parsing succeeds
 
 
+  Scenario: Another complex scene with nested ifs
+    Given the scene input
+      """
+      $name: Einfaches Ereignis: Verteiler
+      $category: Ereignisse/Einfach
+
+      $set: Der Wald = rand 1 3
+
+      $if: "Der Wald" = 1 and !"Spuren gefunden"
+      $include: Spuren Start
+      $else
+      $if: "Der Wald" = 2 and !"Hasen getroffen"
+      $include: Hase Start
+      $else
+      $include: Blutbuche
+      $end
+      $end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+
+
   Scenario: A scene with just text
     Given the scene input
       """
