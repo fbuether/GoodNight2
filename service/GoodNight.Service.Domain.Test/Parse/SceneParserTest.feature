@@ -315,6 +315,16 @@ Feature: SceneParser
     Then the result has only "Set" nodes
     Then "Set" node 1 sets quality "Hildas Hammer"
 
+  Scenario: A set setting with quotes
+    Given the scene input
+      """
+      $ set: "Hildas Hammer" = true
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has only "Set" nodes
+    Then "Set" node 1 sets quality "Hildas Hammer"
+
   Scenario: Several set settings
     Given the scene input
       """
@@ -353,6 +363,7 @@ Feature: SceneParser
     When the parser parses the input
     Then parsing succeeds
     Then the result has only "Continue" nodes
+    Then the node 1 continues to "At the top of the mountain"
 
   Scenario: A scene with an include
     Given the scene input

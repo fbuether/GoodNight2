@@ -226,5 +226,15 @@ namespace GoodNight.Service.Domain.Test.Parse
 
       Assert.Equal(expected, category!.Path);
     }
+
+    [Then(@"the node (\d) continues to ""(.*)""")]
+    public void ThenTheNodeIntContinuesToString(int position, string target)
+    {
+      Assert.True(position <= Get(result).Contents.Count());
+      var node = Get(result).Contents[position-1];
+      Assert.IsType<Scene.Content.Continue>(node);
+      var continueNode = node as Scene.Content.Continue;
+      Assert.Equal(target, continueNode!.Scene);
+    }
   }
 }
