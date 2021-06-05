@@ -5,16 +5,6 @@ using GoodNight.Service.Storage.Interface;
 namespace GoodNight.Service.Domain.Model.Read
 {
   /// <summary>
-  /// A short summary of a story. This is mostly used for serialisation and
-  /// transfer to the client, as the client never sees the whole story.
-  /// </summary>
-  public record StoryHeader(
-    string Name,
-    string Urlname,
-    string? Icon,
-    string Description);
-
-  /// <summary>
   /// A Story is group of interlinked Scenes that a Player can play as an
   /// Adventure.
   ///
@@ -60,9 +50,9 @@ namespace GoodNight.Service.Domain.Model.Read
       return this with {Qualities = removed.Add(newQuality)};
     }
 
-    public StoryHeader ToHeader()
+    public Transfer.Story ToTransfer()
     {
-      return new StoryHeader(Name, Urlname, Icon, Description);
+      return new Transfer.Story(Name, Urlname, Icon, Description);
     }
   }
 }

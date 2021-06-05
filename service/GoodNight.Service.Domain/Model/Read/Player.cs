@@ -71,7 +71,8 @@ namespace GoodNight.Service.Domain.Model.Read
           throw new InvalidQualityException($"Player State contains invalid "
             + "Quality \"{qualityRef.Key}\".");
 
-        return new Transfer.Property(quality.ToHeader(), quality.Render(value));
+        return new Transfer.Property(quality.ToTransfer(),
+          quality.Render(value));
       });
 
       return new Transfer.Player(Name, ImmutableList.CreateRange(state));

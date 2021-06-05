@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
+using TransferStory = GoodNight.Service.Domain.Model.Read.Transfer.Story;
 using System.Linq;
 
 namespace GoodNight.Service.Api.Controller.Read
@@ -18,19 +19,19 @@ namespace GoodNight.Service.Api.Controller.Read
     }
 
     [HttpGet]
-    public ActionResult<IEnumerable<StoryHeader>> GetAll()
+    public ActionResult<IEnumerable<TransferStory>> GetAll()
     {
-      return Ok(stories.Where(s => s.Public).Select(s => s.ToHeader()));
+      return Ok(stories.Where(s => s.Public).Select(s => s.ToTransfer()));
     }
 
     [HttpGet("{storyUrlname}")]
-    public ActionResult<StoryHeader> Get(string storyUrlname)
+    public ActionResult<TransferStory> Get(string storyUrlname)
     {
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
-      return Ok(story.ToHeader());
+      return Ok(story.ToTransfer());
     }
   }
 }
