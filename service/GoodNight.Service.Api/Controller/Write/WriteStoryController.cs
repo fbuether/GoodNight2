@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
@@ -6,8 +7,6 @@ using GoodNight.Service.Domain;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Write;
 using Model = GoodNight.Service.Domain.Model;
-using System;
-using System.Security.Claims;
 using GoodNight.Service.Api.Controller.Base;
 
 namespace GoodNight.Service.Api.Controller.Write
