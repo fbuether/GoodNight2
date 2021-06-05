@@ -141,6 +141,9 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
         case Expression.BinaryOperator.Mult: return "mult";
         case Expression.BinaryOperator.Div: return "div";
 
+        case Expression.BinaryOperator.And: return "and";
+        case Expression.BinaryOperator.Or: return "or";
+
         case Expression.BinaryOperator.Greater: return ">";
         case Expression.BinaryOperator.GreaterOrEqual: return ">=";
         case Expression.BinaryOperator.Less: return "<";
@@ -148,8 +151,8 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
         case Expression.BinaryOperator.Equal: return "=";
         case Expression.BinaryOperator.NotEqual: return "!=";
         default:
-          throw new JsonException();
+          throw new JsonException($"Invalid binary operator: {op}");
       }
     }
-    }
+  }
 }
