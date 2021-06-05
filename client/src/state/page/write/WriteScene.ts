@@ -24,6 +24,8 @@ export interface WriteScene {
 
 
 async function onLoad(dispatch: Dispatch, state: State) {
+  var sceneName = Lens.WriteScene.scene.value.unloaded.value.get(state.page);
+
   let storyReq = Loadable.forRequestP<string, Story>(state,
     "GET", (story: string) => `api/v1/write/stories/${story}`,
     Lens.WriteScene.story);
@@ -41,8 +43,13 @@ async function onLoad(dispatch: Dispatch, state: State) {
     Dispatch.send(Dispatch.Page(SelectStory.page));
   }
   else if (sceneRes.isError) {
-    Dispatch.send(Dispatch.Page(WriteStory.page(
-      storyRes.message.urlname, storyRes.message)));
+    // if the scene does not exist, create a new one with this name.
+    if (sceneName != null && sceneRes.status == 404) {
+      Dispatch.send(Dispatch.Update(
+        Lens.WriteScene.raw.set("$name: " + sceneName[1] + "\n")));
+      Dispatch.send(Dispatch.Update(
+        Lens.WriteScene.scene.set(null)));
+    }
   }
 
   Dispatch.send(Dispatch.Update(pages => {

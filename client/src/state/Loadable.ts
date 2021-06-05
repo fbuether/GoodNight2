@@ -98,7 +98,9 @@ export const Loadable = {
 
     var loadable = lens.get(state.page);
     if (loadable == null) {
-      return makeError(701, "Invalid state, loadable param not set");
+      return makeError(701, {
+        "message": "Invalid state, loadable param not set"
+      });
     }
 
     switch (loadable.state) {
