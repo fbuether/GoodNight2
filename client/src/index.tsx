@@ -31,7 +31,6 @@ import PageComponent from "./components/Page";
 import {FinishSignIn} from "./state/page/user/FinishSignIn";
 FinishSignIn;
 
-User.setInitialUser();
 
 
 // always render when updates finish.
@@ -54,4 +53,9 @@ let gotoUrl = (url: string) => {
 History.register(gotoUrl);
 
 let initialUrl = new URL(window.location.href).pathname;
-gotoUrl(initialUrl);
+
+// initially load the user prior to going to the first page. This is hopefully
+// quick enough to not cause delays.
+User.setInitialUser().then(user => {
+  gotoUrl(initialUrl);
+});
