@@ -72,19 +72,12 @@ namespace GoodNight.Service.Domain.Model
         return new Result.Failure<(User,Adventure),string>(
           "User has already started an adventure in this story.");
 
-      Scene? firstScene = story.Get()?.Scenes.Select(s => s.Get())
-        .FirstOrDefault(s => s is not null && s.IsStart);
-      if (firstScene is null)
+      var adventure = Adventure.Start(story, this, playerName);
+      if (adventure is null)
         return new Result.Failure<(User,Adventure),string>(
           "The story has no first scene to start at.");
 
-      var player = new Player(playerName,
-        ImmutableList<(IReference<Quality>,Value)>.Empty);
-      var adventure = new Adventure(player, Key, story,
-        ImmutableList<IReference<Log>>.Empty,
-        firstScene.Play(player));
       var user = AddAdventure(adventure);
-
       return new Result.Success<(User,Adventure),string>((user, adventure));
     }
 

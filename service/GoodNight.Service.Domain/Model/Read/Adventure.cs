@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Read.Transfer;
+using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -28,6 +29,23 @@ namespace GoodNight.Service.Domain.Model.Read
     : IStorable<Adventure>
   {
     public string Key => NameConverter.Concat(User, Story.Key);
+
+    public static Adventure? Start(IReference<Story> story,
+      IReference<User> user, string playerName)
+    {
+      Scene? firstScene = story.Get()?.Scenes.Select(s => s.Get())
+        .FirstOrDefault(s => s is not null && s.IsStart);
+      if (firstScene is null)
+        return null;
+
+      var player = new Player(playerName,
+        ImmutableList<(IReference<Quality>,Value)>.Empty);
+      var action = firstScene.Play(player);
+      var affectedPlayer = player.Apply(action.Effects);
+
+      return new Adventure(affectedPlayer, user.Key, story,
+        ImmutableList<IReference<Log>>.Empty, action);
+    }
 
     /// <summary>
     /// Performs the next step in this Adventure given by the passed Option.
