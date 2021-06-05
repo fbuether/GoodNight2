@@ -1,21 +1,27 @@
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using GoodNight.Service.Domain;
 using GoodNight.Service.Storage.Interface;
-using Model = GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Write;
+using Model = GoodNight.Service.Domain.Model;
+using System;
+using System.Security.Claims;
+using GoodNight.Service.Api.Controller.Base;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
+  [Authorize]
   [ApiController]
   [Route("api/v1/write/stories")]
-  public class WriteStoryController : ControllerBase
+  public class WriteStoryController : AuthorisedController
   {
     private IRepository<Story> stories;
     private IRepository<Model.Read.Story> readStories;
 
     public WriteStoryController(IStore store)
+      : base(store)
     {
       stories = store.Create<Story>();
       readStories = store.Create<Model.Read.Story>();
@@ -25,8 +31,9 @@ namespace GoodNight.Service.Api.Controller.Write
     [HttpGet]
     public ActionResult<IEnumerable<StoryHeader>> GetAll()
     {
-      // todo: limit to e.g. 100?
-      return Ok(stories.Select(s => s.ToHeader()));
+      return Ok(stories
+        .Where(s => s.Creator.Key == GetCurrentUser().Key)
+        .Select(s => s.ToHeader()));
     }
 
 
@@ -34,7 +41,7 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<StoryHeader> Get(string urlname)
     {
       var story = stories.Get(urlname);
-      if (story is null)
+      if (story is null || story.Creator.Key != GetCurrentUser().Key)
         return NotFound();
 
       return Ok(story.ToHeader());
@@ -46,7 +53,7 @@ namespace GoodNight.Service.Api.Controller.Write
       string urlname)
     {
       var story = stories.Get(urlname);
-      if (story is null)
+      if (story is null || story.Creator.Key != GetCurrentUser().Key)
         return NotFound();
 
       return Ok(story.GetContentAsCategories());
@@ -64,7 +71,7 @@ namespace GoodNight.Service.Api.Controller.Write
         return Conflict(new ErrorResult(
             "A story of the given name already exists."));
 
-      var story = Story.Create(newStory.name);
+      var story = Story.Create(newStory.name, GetCurrentUser());
       stories.Add(story);
       readStories.Add(Model.Read.Story.Create(newStory.name));
 

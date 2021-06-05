@@ -5,12 +5,13 @@ using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Parse;
+using GoodNight.Service.Api.Controller.Base;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
   [ApiController]
   [Route("api/v1/write/stories/{storyUrlname}/qualities")]
-  public class WriteQualityController : ControllerBase
+  public class WriteQualityController : AuthorisedController
   {
     private IRepository<Story> stories;
     private IRepository<Quality> qualities;
@@ -19,6 +20,7 @@ namespace GoodNight.Service.Api.Controller.Write
     private IRepository<Domain.Model.Read.Story> readStories;
 
     public WriteQualityController(IStore store)
+      : base(store)
     {
       stories = store.Create<Story>();
       qualities = store.Create<Quality>();
@@ -32,7 +34,8 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<IEnumerable<Quality>> Get(string storyUrlname,
       string qualityUrlname)
     {
-      var quality = stories.FirstOrDefault(s => s.Urlname == storyUrlname)
+      var quality = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key)
         ?.GetQuality(qualityUrlname);
       return quality is not null
         ? Ok(quality)
@@ -46,7 +49,8 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<Quality> Create(string storyUrlname,
       [FromBody] RawQuality content)
     {
-      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
       if (story is null)
         return NotFound();
 
@@ -81,7 +85,8 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<Quality> Update(string storyUrlname,
       string qualityUrlname, [FromBody] RawQuality content)
     {
-      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
       if (story is null)
         return NotFound();
 

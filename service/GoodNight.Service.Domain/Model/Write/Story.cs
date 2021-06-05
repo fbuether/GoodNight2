@@ -20,6 +20,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string Name,
     // string? Icon,
     // string Description,
+    IReference<User> Creator,
     IImmutableSet<IReference<Scene>> Scenes,
     IImmutableSet<IReference<Quality>> Qualities)
     : IStorable<Story>
@@ -31,9 +32,9 @@ namespace GoodNight.Service.Domain.Model.Write
     /// <summary>
     /// Create a new story with a given name.
     /// </summary>
-    public static Story Create(string name)
+    public static Story Create(string name, IReference<User> user)
     {
-      return new Story(name,
+      return new Story(name, user,
         ImmutableHashSet<IReference<Scene>>.Empty,
         ImmutableHashSet<IReference<Quality>>.Empty);
     }

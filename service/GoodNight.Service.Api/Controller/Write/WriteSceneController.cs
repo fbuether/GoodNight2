@@ -8,12 +8,13 @@ using GoodNight.Service.Domain.Parse;
 using Model = GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain;
 using System;
+using GoodNight.Service.Api.Controller.Base;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
   [ApiController]
   [Route("api/v1/write/stories/{storyUrlname}/scenes")]
-  public class WriteSceneController : ControllerBase
+  public class WriteSceneController : AuthorisedController
   {
     private IRepository<Scene> scenes;
     private IRepository<Story> stories;
@@ -22,6 +23,7 @@ namespace GoodNight.Service.Api.Controller.Write
     private IRepository<Model.Read.Quality> readQualities;
 
     public WriteSceneController(IStore store)
+      : base(store)
     {
       scenes = store.Create<Scene>();
       stories = store.Create<Story>();
@@ -35,7 +37,9 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<IEnumerable<Scene>> Get(string storyUrlname,
       string sceneUrlname)
     {
-      var scene = stories.FirstOrDefault(s => s.Urlname == storyUrlname)
+      var scene = stories
+        .FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key)
         ?.GetScene(sceneUrlname);
       return scene is not null
         ? Ok(scene)
@@ -49,7 +53,8 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<Scene> Create(string storyUrlname,
       [FromBody] RawScene content)
     {
-      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
       if (story is null)
         return NotFound();
 
@@ -85,7 +90,8 @@ namespace GoodNight.Service.Api.Controller.Write
     public ActionResult<Scene> Update(string storyUrlname, string sceneUrlname,
       [FromBody] RawScene content)
     {
-      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname);
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
       if (story is null)
         return NotFound();
 

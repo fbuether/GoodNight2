@@ -7,46 +7,25 @@ using GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain.Model.Read;
 using GoodNight.Service.Storage.Interface;
 using TransferAdventure = GoodNight.Service.Domain.Model.Read.Transfer.Adventure;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+using GoodNight.Service.Api.Controller.Base;
 
 namespace GoodNight.Service.Api.Controller.Read
 {
-  [Authorize]
   [ApiController]
   [Route("api/v1/read/stories/{storyUrlname}/")]
-  public class ReadStoryController : ControllerBase
+  public class ReadStoryController : AuthorisedController
   {
     private IRepository<Adventure> adventures;
     private IRepository<User> users;
     private IRepository<Story> stories;
 
     public ReadStoryController(IStore store)
+      : base(store)
     {
       adventures = store.Create<Adventure>();
       users = store.Create<User>();
       stories = store.Create<Story>();
     }
-
-
-    private User? GetCurrentUser()
-    {
-      var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
-      if (userIdClaim is null)
-        return null;
-
-      var userId = userIdClaim.Value;
-      var user = users.Get(userId);
-
-      if (user is null)
-      {
-        user = Domain.Model.User.Create(userId);
-        users.Add(user);
-      }
-
-      return user;
-    }
-
 
     public record AdventureStart(string name);
 
@@ -54,10 +33,6 @@ namespace GoodNight.Service.Api.Controller.Read
     public ActionResult<TransferAdventure> StartAdventure(string storyUrlname,
       [FromBody] AdventureStart start)
     {
-      var user = GetCurrentUser();
-      if (user is null)
-        return Unauthorized();
-
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
@@ -66,9 +41,9 @@ namespace GoodNight.Service.Api.Controller.Read
         return BadRequest(new ErrorResult(
             "The player name must not be empty."));
 
-      return user.StartAdventure(story, start.name.Trim())
+      return GetCurrentUser()
+        .StartAdventure(story, start.name.Trim())
         .Do(ua => users.Save(ua.Item1))
-        .Do(ua => adventures.Save(ua.Item2))
         .Map<ActionResult<TransferAdventure>>(
           ua => Ok(ua.Item2.ToTransfer(true)),
           err => BadRequest(new ErrorResult(err)));
@@ -76,20 +51,13 @@ namespace GoodNight.Service.Api.Controller.Read
 
 
     [HttpGet("continue")]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<TransferAdventure> GetAdventure(string storyUrlname)
     {
-      var user = GetCurrentUser();
-      if (user is null)
-        return Unauthorized();
-
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
-      var adventure = user.GetAdventure(storyUrlname);
+      var adventure = GetCurrentUser().GetAdventure(storyUrlname);
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
 
@@ -100,17 +68,9 @@ namespace GoodNight.Service.Api.Controller.Read
     public record Choice(string choice);
 
     [HttpPost("do")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<TransferAdventure> DoOption(string storyUrlname,
       [FromBody] Choice choice)
     {
-      var user = GetCurrentUser();
-      if (user is null)
-        return Unauthorized();
-
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
@@ -119,7 +79,7 @@ namespace GoodNight.Service.Api.Controller.Read
       if (String.IsNullOrEmpty(optionname))
         return BadRequest(new ErrorResult("No Option given."));
 
-      var adventure = users.Update(user.Key, user =>
+      var adventure = users.Update(GetCurrentUser().Key, user =>
         user.ContinueAdventure(story, optionname));
       if (adventure is null)
         return BadRequest("Option not found or not valid now.");
@@ -131,14 +91,11 @@ namespace GoodNight.Service.Api.Controller.Read
     [HttpDelete]
     public ActionResult DeleteAdventure(string storyUrlname)
     {
-      var user = GetCurrentUser();
-      if (user is null)
-        return Unauthorized();
-
       var story = stories.Get(storyUrlname);
       if (story is null)
         return NotFound();
 
+      var user = GetCurrentUser();
       var adventure = user.GetAdventure(storyUrlname);
       if (adventure is null)
         return BadRequest(new ErrorResult("User has not started Adventure."));
