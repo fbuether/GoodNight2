@@ -63,7 +63,7 @@ namespace GoodNight.Service.Domain.Model.Write
             : cat;
         });
 
-      return category;
+      return category.Sorted();
     }
 
 

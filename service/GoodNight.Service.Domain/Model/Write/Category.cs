@@ -66,5 +66,15 @@ namespace GoodNight.Service.Domain.Model.Write
       return this with { Categories = newCategories };
     }
 
+    internal Category Sorted()
+    {
+      return this with
+      {
+        Categories = ImmutableList.CreateRange(Categories
+          .Select(c => c.Sorted()).OrderBy(c => c.Name)),
+        Scenes = ImmutableList.CreateRange(Scenes.OrderBy(s => s.Name)),
+        Qualities = ImmutableList.CreateRange(Qualities.OrderBy(q => q.Name))
+      };
+    }
   }
 }
