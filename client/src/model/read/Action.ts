@@ -2,7 +2,7 @@ import type {Property} from "./Property";
 
 
 export interface Requirement {
-  expression: object;
+  display: string;
   passed: boolean;
 }
 

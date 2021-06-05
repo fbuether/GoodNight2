@@ -8,6 +8,6 @@ export default function Requirement(state: Requirement) {
 
   // todo: fixme: fix requirement display. {state.expression}
   return (
-    <span class="{passedClass}">Requirement</span>
+    <span class={passedClass}>{state.display}</span>
   );
 }

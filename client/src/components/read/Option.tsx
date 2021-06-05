@@ -18,27 +18,27 @@ export default function Option(state: OptionState) {
   if (option.requirements.length > 0) {
     let requirementList = <>{option.requirements.map(Requirement)}</>;
     let available = option.isAvailable ? "" : "nicht verfügbar. ";
-    requirements = <small>({available}benötigt: {requirementList})</small>;
+    requirements = <small class="float-end pt-1">({available}benötigt: {requirementList})</small>;
   }
   else {
     if (!option.isAvailable) {
-      requirements = <small>(nicht verfügbar.)</small>;
+      requirements = <small class="float-end pt-1">(nicht verfügbar.)</small>;
     }
   }
 
   if (option.isAvailable) {
     return (
       <button class="list-group-item list-group-item-action" onClick={doOption}>
-        <Markdown>{option.text}</Markdown>
         {requirements}
+        <Markdown>{option.text}</Markdown>
       </button>
     );
   }
   else {
     return (
       <button class="list-group-item list-group-item-action" disabled>
-        <Markdown>{option.text}</Markdown>
         {requirements}
+        <Markdown>{option.text}</Markdown>
       </button>
     );
   }

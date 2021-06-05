@@ -630,12 +630,9 @@ textarea.larger {
     width: auto;
 
     border-left: 0.4rem solid hsb($base-color, 10%, 90%);
-    padding-left: 0.6rem;
-    margin-left: 1rem;
 
-    padding-top: 0.3rem;
-    padding-bottom: 0.3rem;
-    margin-bottom: 0.6rem;
+    padding: 0.4rem 0.8rem 0.6rem 0.4em;
+    margin: 0.3rem 0.8rem 0.4rem 0.4rem;
 
     &:hover, &:focus {
       background-color: hsb($base-color, 6%, 94%);
