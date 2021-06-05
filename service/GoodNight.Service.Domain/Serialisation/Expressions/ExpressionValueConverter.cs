@@ -24,13 +24,10 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
             throw new JsonException();
           return new Value.Bool(serialised.bValue.Value);
         case "int":
-          if (serialised.iValue is null)
-            throw new JsonException();
-          return new Value.Int(serialised.iValue.Value);
         case "enum":
           if (serialised.iValue is null)
             throw new JsonException();
-          return new Value.Enum(serialised.iValue.Value);
+          return new Value.Int(serialised.iValue.Value);
         default:
           throw new JsonException();
       }
@@ -48,11 +45,6 @@ namespace GoodNight.Service.Domain.Serialisation.Expressions
 
         case Value.Int v:
           JsonSerializer.Serialize(writer, new SerialisedValue("int", null,
-              v.Value), options);
-          break;
-
-        case Value.Enum v:
-          JsonSerializer.Serialize(writer, new SerialisedValue("enum", null,
               v.Value), options);
           break;
       }

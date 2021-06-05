@@ -10,9 +10,5 @@ namespace GoodNight.Service.Domain.Model.Expressions
     public record Int(
       int Value)
       : Value;
-
-    public record Enum(
-      int Value)
-      : Value;
   }
 }

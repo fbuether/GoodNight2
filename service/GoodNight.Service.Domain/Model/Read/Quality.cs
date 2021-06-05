@@ -78,7 +78,7 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       public override Type Type { get; } = Type.Enum;
 
-      public override Value GetDefault() => new Value.Enum(0);
+      public override Value GetDefault() => new Value.Int(0);
     }
 
 
@@ -104,7 +104,7 @@ namespace GoodNight.Service.Domain.Model.Read
         case (Quality.Int q, Value.Int v):
           return v.Value.ToString();
 
-        case (Quality.Enum q, Value.Enum v):
+        case (Quality.Enum q, Value.Int v):
           return q.Values[v.Value];
       }
 

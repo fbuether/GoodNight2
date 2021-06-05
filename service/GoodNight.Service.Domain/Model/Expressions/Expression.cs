@@ -227,13 +227,6 @@ namespace GoodNight.Service.Domain.Model.Expressions
 
           case (Value.Int(var l), Value.Int(var r)):
             return evaluateInts(l, r, i => new Value.Int(i));
-          case (Value.Int(var l), Value.Enum(var r)):
-            return evaluateInts(l, r, i => new Value.Int(i));
-
-          case (Value.Enum(var l), Value.Int(var r)):
-            return evaluateInts(l, r, i => new Value.Enum(i));
-          case (Value.Enum(var l), Value.Enum(var r)):
-            return evaluateInts(l, r, i => new Value.Enum(i));
 
           default:
             throw new TypeError(
