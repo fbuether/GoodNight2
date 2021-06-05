@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,7 +13,7 @@ namespace GoodNight.Service.Domain.Serialisation.Read
     private record SerialisedQuality(string Kind,
       string Name, string Story, string? Icon, string Description, bool Hidden,
       IReference<Scene>? Scene, int? Minimum, int? Maximum,
-      IImmutableDictionary<int, string>? Values);
+      Dictionary<int, string>? Values);
 
     public override Quality? Read(ref Utf8JsonReader reader, Type typeToConvert,
       JsonSerializerOptions options)
@@ -38,7 +39,8 @@ namespace GoodNight.Service.Domain.Serialisation.Read
 
           return new Quality.Enum(serialised.Name, serialised.Story,
             serialised.Icon, serialised.Description, serialised.Hidden,
-            serialised.Scene, serialised.Values);
+            serialised.Scene,
+            ImmutableDictionary.CreateRange(serialised.Values));
         default:
           throw new JsonException();
       }
@@ -66,7 +68,7 @@ namespace GoodNight.Service.Domain.Serialisation.Read
         case Quality.Enum q:
           JsonSerializer.Serialize(writer, new SerialisedQuality("Enum",
               q.Name, q.Story, q.Icon, q.Description, q.Hidden, q.Scene,
-              null, null, q.Values),
+              null, null, new Dictionary<int,string>(q.Values)),
             options);
           break;
       }
