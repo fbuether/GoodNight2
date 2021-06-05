@@ -17,7 +17,7 @@ namespace GoodNight.Service.Domain.Parse
       Parser.Try(Parser.String("name"))
       .Then(NameParser.Colon)
       .Then(NameParser.SceneName)
-      .Map<Scene.Content>(name => new Scene.Content.Name(name.Trim()));
+      .Map<Scene.Content>(name => new Scene.Content.Name(name));
 
     private readonly static ContentParser isStartContent =
       Parser.Try(Parser.String("start"))
@@ -45,7 +45,7 @@ namespace GoodNight.Service.Domain.Parse
       .Then(NameParser.TagName.Separated(Parser.Char(',')))
       .Map<IEnumerable<Scene.Content>>(tags =>
         tags.Select(t =>
-          new Scene.Content.Tag(t.Trim())));
+          new Scene.Content.Tag(t)));
 
     private readonly static ContentParser categoryContent =
       Parser.Try(Parser.String("cat")

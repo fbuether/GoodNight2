@@ -38,7 +38,7 @@ namespace GoodNight.Service.Domain.Parse
                 .Then(QualityLetters.ManyString()),
                 (string f, string r) => f + r)
             ).ManyString(),
-            (string f, string r) => f + r));
+            (string f, string r) => (f + r).Trim()));
 
 
     internal readonly static Parser<char, string> InlineWhitespace =
@@ -60,16 +60,20 @@ namespace GoodNight.Service.Domain.Parse
 
 
     internal readonly static Parser<char, string> IconName =
-      Parser.LetterOrDigit.Or(Parser.OneOf("_- ")).ManyString();
+      Parser.LetterOrDigit.Or(Parser.OneOf("_- ")).ManyString()
+      .Map(name => name.Trim());
 
     internal readonly static Parser<char, string> SceneName =
-      nameCommonLetters.Or(Parser.OneOf(",\\/")).ManyString();
+      nameCommonLetters.Or(Parser.OneOf(",\\/")).ManyString()
+      .Map(name => name.Trim());
 
     internal readonly static Parser<char, string> TagName =
-      nameCommonLetters.Or(Parser.OneOf("\\/")).ManyString();
+      nameCommonLetters.Or(Parser.OneOf("\\/")).ManyString()
+      .Map(name => name.Trim());
 
     internal readonly static Parser<char, string> CategoryName =
-      nameCommonLetters.Or(Parser.OneOf(",")).ManyString();
+      nameCommonLetters.Or(Parser.OneOf(",")).ManyString()
+      .Map(name => name.Trim());
 
   }
 }
