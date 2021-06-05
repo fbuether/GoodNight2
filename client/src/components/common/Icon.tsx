@@ -1,10 +1,15 @@
 
 const icons = {
   "astronaut-helmet": require("../../../assets/icons/astronaut-helmet.svg"),
+  "bone-knife": require("../../../assets/icons/bone-knife.svg"),
   "bookmarklet": require("../../../assets/icons/bookmarklet.svg"),
   "crypt-entrance": require("../../../assets/icons/crypt-entrance.svg"),
   "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
   "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
+  "flute": require("../../../assets/icons/flute.svg"),
+  "forest": require("../../../assets/icons/forest.svg"),
+  "ghost-ally": require("../../../assets/icons/ghost-ally.svg"),
+  "hatchet": require("../../../assets/icons/hatchet.svg"),
   "horizon-road": require("../../../assets/icons/horizon-road.svg"),
   "ninja-head": require("../../../assets/icons/ninja-head.svg"),
   "saloon-doors": require("../../../assets/icons/saloon-doors.svg"),
