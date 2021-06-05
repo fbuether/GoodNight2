@@ -32,6 +32,7 @@ namespace GoodNight.Service.Domain.Model.Write
         : ImmutableList<string>.Empty;
 
       var outLinks = ImmutableList.CreateRange(parsed.GetOutLinks()
+        .Select(NameConverter.OfString)
         .OrderBy(a => a));
       // todo: find possible in-links.
       var inLinks = ImmutableList<string>.Empty;

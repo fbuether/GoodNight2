@@ -34,7 +34,7 @@ namespace GoodNight.Service.Api.Controller.Write
 
 
     [HttpGet("{sceneUrlname}")]
-    public ActionResult<IEnumerable<Scene>> Get(string storyUrlname,
+    public ActionResult<Scene> Get(string storyUrlname,
       string sceneUrlname)
     {
       var scene = stories
