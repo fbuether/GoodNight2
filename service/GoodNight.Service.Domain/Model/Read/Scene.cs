@@ -72,20 +72,19 @@ namespace GoodNight.Service.Domain.Model.Read
       {
         public Action AddTo(Player player, Action action)
         {
-          var isAvailable = true;
-          var requirements = Requirements.Select(expression => {
-            var value = expression.Evaluate(player.GetValueOf);
-            if (value is Value.Bool bValue)
-            {
-              isAvailable = isAvailable && bValue.Value;
-              return new Requirement(expression, bValue.Value);
-            }
-            else
-            {
-              throw new TypeError(
-                "Scene Requirement does not evaluate to bool.");
-            }
-          });
+          var requirements = ImmutableList.CreateRange(
+            Requirements.Select(expression => {
+              var value = expression.Evaluate(player.GetValueOf);
+              if (value is Value.Bool bValue)
+              {
+                return new Requirement(expression, bValue.Value);
+              }
+              else
+              {
+                throw new TypeError(
+                  "Scene Requirement does not evaluate to bool.");
+              }
+            }));
 
           var effects = Effects.Select(qe => {
             var (quality, expression) = qe;
@@ -95,8 +94,8 @@ namespace GoodNight.Service.Domain.Model.Read
 
           return action with {
             Options = action.Options.Add(new Read.Option(Urlname,
-                Description, Icon, isAvailable,
-                ImmutableList.CreateRange(requirements),
+                Description, Icon,
+                requirements.All(r => r.Passed), requirements,
                 ImmutableList.CreateRange(effects), Scene))
               };
         }
@@ -106,7 +105,7 @@ namespace GoodNight.Service.Domain.Model.Read
           string reqs = string.Join(", ", Requirements.Select(r => r.ToString()));
           var effs = string.Join(", ", Effects.Select(r => r.ToString()));
 
-          return $"Option {{Urlname:{Urlname}, Description:{Description},"
+          return $"Option {{Urlname:{Urlname}, Description:{Description}, "
             + $"Icon:{Icon}, "
             + "Requirements:[" + reqs + "], "
             + "Effects:[" + effs + "], "

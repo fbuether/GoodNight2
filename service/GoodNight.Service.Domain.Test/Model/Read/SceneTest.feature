@@ -22,3 +22,14 @@ Feature: Model.Read.Scene
       something
       else
       """
+
+  Scenario: A scene with an option requirement is not playable
+    Given the option "abc" with requirement "aquality"
+    When playing the scene
+    Then the action has an option that is not available
+
+  Scenario: A scene with an option requirement that the player has is playable
+    Given the option "abc" with requirement "aquality"
+    Given a player with "aquality"
+    When playing the scene
+    Then the action has an option that is available
