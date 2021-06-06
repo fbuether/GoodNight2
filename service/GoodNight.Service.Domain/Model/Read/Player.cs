@@ -64,16 +64,11 @@ namespace GoodNight.Service.Domain.Model.Read
 
     internal Transfer.Player ToTransfer()
     {
-      var state = State.Select(qv => {
-        var (qualityRef, value) = qv;
-        var quality = qualityRef.Get();
-        if (quality is null)
-          throw new InvalidQualityException($"Player State contains invalid "
-            + $"Quality \"{qualityRef.Key}\".");
-
-        return new Transfer.Property(quality.ToTransfer(),
-          quality.Render(value));
-      });
+      var state = State.Select(s => (s.Item1.Get(), s.Item2))
+        .OfType<(Quality, Value)>()
+        .Where(s => !s.Item1.Hidden)
+        .Select(s => new Transfer.Property(
+            s.Item1.ToTransfer(), s.Item1.Render(s.Item2)));
 
       return new Transfer.Player(Name, ImmutableList.CreateRange(state));
     }

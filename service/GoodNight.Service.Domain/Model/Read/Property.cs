@@ -25,5 +25,11 @@ namespace GoodNight.Service.Domain.Model.Read
 
       return new Transfer.Property(quality.ToTransfer(), quality.Render(Value));
     }
+
+    internal bool IsHidden()
+    {
+      var quality = Quality.Get();
+      return quality is null ? true : quality.Hidden;
+    }
   }
 }

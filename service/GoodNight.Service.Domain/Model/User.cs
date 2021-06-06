@@ -28,22 +28,6 @@ namespace GoodNight.Service.Domain.Model
     public static User Create(string id) => new User(id, "", "",
       ImmutableHashSet<IReference<Adventure>>.Empty);
 
-    public (User, Adventure)? ContinueAdventure(Story story,
-      string optionname)
-    {
-      var adventure = this.Adventures
-        .First(a => a.Get()?.Story.Key == story.Key)?
-        .Get();
-      if (adventure is null)
-        return null;
-
-      var newAdventure = adventure.ContinueWith(optionname);
-      if (newAdventure is null)
-        return null;
-
-      return (AddAdventure(newAdventure), newAdventure);
-    }
-
     public User RemoveAdventure(IReference<Adventure> adventure)
     {
       return this with {Adventures = Adventures.Remove(adventure)};
@@ -64,6 +48,7 @@ namespace GoodNight.Service.Domain.Model
       return Adventures.FirstOrDefault(adv => adv.Key == advKey)?.Get();
     }
 
+
     public Result<(User,Adventure),string> StartAdventure(
       IReference<Story> story, string playerName)
     {
@@ -80,6 +65,23 @@ namespace GoodNight.Service.Domain.Model
       var user = AddAdventure(adventure);
       return new Result.Success<(User,Adventure),string>((user, adventure));
     }
+
+    public (User, Adventure)? ContinueAdventure(Story story,
+      string optionname)
+    {
+      var adventure = this.Adventures
+        .First(a => a.Get()?.Story.Key == story.Key)?
+        .Get();
+      if (adventure is null)
+        return null;
+
+      var newAdventure = adventure.ContinueWith(optionname);
+      if (newAdventure is null)
+        return null;
+
+      return (AddAdventure(newAdventure), newAdventure);
+    }
+
 
     public override string ToString()
     {

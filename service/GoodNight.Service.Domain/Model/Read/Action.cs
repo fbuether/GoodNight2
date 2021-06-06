@@ -106,7 +106,9 @@ namespace GoodNight.Service.Domain.Model.Read
 
     internal Transfer.Action ToTransfer() =>
       new Transfer.Action(Text,
-        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
+        ImmutableList.CreateRange(Effects
+          .Where(e => !e.IsHidden())
+          .Select(e => e.ToTransfer())),
         ImmutableList.CreateRange(Options.Select(o => o.ToTransfer())),
         Return is not null, Continue is not null);
 

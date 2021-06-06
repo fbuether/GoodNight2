@@ -69,7 +69,9 @@ namespace GoodNight.Service.Domain.Model.Read
 
     internal Transfer.Log ToTransfer() =>
       new Transfer.Log(Number, Text,
-        ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())),
+        ImmutableList.CreateRange(Effects
+          .Where(e => !e.IsHidden())
+          .Select(e => e.ToTransfer())),
         Chosen.ToTransfer());
 
     public override string ToString()
