@@ -16,6 +16,11 @@ import type {Pages} from "../state/Pages";
 import type {Page as State} from "../state/Page";
 
 
+// from webpack.config.js with DefinePlugin.
+declare var _git_revision_version: string;
+declare var _git_revision_commithash: string;
+
+
 const othftwy = require("../../assets/othftwy.gif");
 
 
@@ -50,7 +55,7 @@ export default function Page(state: State) {
       {renderPage(state.page)}
       <footer id="schlussvermerk">
         <hr class="decorated w-75" />
-        GoodNight 2 ~{" "}
+        GoodNight {_git_revision_version}, build {_git_revision_commithash} ~{" "}
         <a href="https://jasminefields.net/" title="jasminefields.net">jasminefields.net</a> ~{" "}
         <a href="https://discord.gg/qwrzStrDwA" target="_blank">discord</a> ~{" "}
         <a href="https://github.com/fbuether/GoodNight2">github</a> ~{" "}

@@ -3,6 +3,11 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CircularDependencyPlugin = require("circular-dependency-plugin");
+const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
+
+const gitRevisionPlugin = new GitRevisionPlugin({
+  versionCommand: 'describe --always --tags --dirty'
+});
 
 
 var statsConfig = {
@@ -54,7 +59,7 @@ module.exports = env => { return {
         : "[name]-[contenthash].js";
     },
 
-    assetModuleFilename: '[name]-[hash][ext][query]'
+    assetModuleFilename: "[name]-[hash][ext][query]"
   },
 
   module: {
@@ -143,11 +148,18 @@ module.exports = env => { return {
       // add errors to webpack instead of warnings
       failOnError: true,
       // allow import cycles that include an asyncronous import,
-      // e.g. via import(/* webpackMode: "weak" */ './file.js')
+      // e.g. via import(/* webpackMode: "weak" */ "./file.js")
       allowAsyncCycles: false
       // set the current working directory for displaying module paths
       // cwd: process.cwd(),
-    })
+    }),
+
+    gitRevisionPlugin,
+
+    new webpack.DefinePlugin({
+      _git_revision_version: JSON.stringify(gitRevisionPlugin.version()),
+      _git_revision_commithash: JSON.stringify(gitRevisionPlugin.commithash().substring(0, 7))
+    }),
   ],
 
 
