@@ -47,7 +47,8 @@ const guardNotNull = <T>(a: T | null): a is T => (a !== null);
 
 export const Lens = P.id<Pages>()
   .prop("page")
-  .union("Home", guardHome, lens => lens)
+  .union("Home", guardHome, lens => lens
+    .path("ownStories", Loadable.lens))
   .union("FinishSignIn", guardFinishSignIn, lens => lens)
   .union("RequireSignIn", guardRequireSignIn, lens => lens)
   .union("StoryOverview", guardStoryOverview, lens => lens

@@ -1,6 +1,6 @@
 import {request} from "../../../service/RequestService";
 import {Dispatch} from "../../../core/Dispatch";
-import {PageDescriptor, PageMapper, registerPageMapper} from "../../../core/PageDescriptor";
+import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import type {State} from "../../State";
 import {Lens} from "../../Pages";
 

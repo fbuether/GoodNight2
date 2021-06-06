@@ -244,6 +244,12 @@ div.d-flex a.boxed {
 }
 
 
+*::selection, *::-moz-selection {
+  background: hsb($secondary-color, 26%, 82%);
+  color: hsb($base-color, 2%, 98%);
+}
+
+
 //--------------------------------------
 // schlussvermerk.
 
@@ -434,6 +440,10 @@ nav.navbar {
 
   &.top {
     vertical-align: top;
+  }
+
+  &.middle {
+    vertical-align: middle;
   }
 
   &.restrained {
