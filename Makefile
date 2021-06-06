@@ -7,7 +7,7 @@ hash=$(shell git rev-list --max-count=1 --no-merges --abbrev-commit HEAD)
 
 docker-tag:
 	git checkout main
-	git pull
+	git pull --prune --tags --all
 	echo checking out version $(version)
 	git checkout $(version)
 	docker build -t goodnight:$(version) -t goodnight:latest --build-arg GIT_TAG=$(version) --build-arg GIT_HASH=$(hash) .
