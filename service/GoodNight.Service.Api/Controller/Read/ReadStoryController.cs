@@ -82,7 +82,7 @@ namespace GoodNight.Service.Api.Controller.Read
       var adventure = users.Update(GetCurrentUser().Key, user =>
         user.ContinueAdventure(story, optionname));
       if (adventure is null)
-        return BadRequest("Option not found or not valid now.");
+        return BadRequest(new ErrorResult("Option not found or not valid now."));
 
       return Ok(adventure.ToTransfer(false));
     }

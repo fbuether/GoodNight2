@@ -65,8 +65,8 @@ namespace GoodNight.Service.Domain.Model.Read
     internal Transfer.Player ToTransfer()
     {
       var state = State.Select(s => (s.Item1.Get(), s.Item2))
+        .Where(s => s.Item1 is not null && !s.Item1.Hidden)
         .OfType<(Quality, Value)>()
-        .Where(s => !s.Item1.Hidden)
         .Select(s => new Transfer.Property(
             s.Item1.ToTransfer(), s.Item1.Render(s.Item2)));
 
