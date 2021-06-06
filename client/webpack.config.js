@@ -3,11 +3,6 @@ const webpack = require("webpack");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CircularDependencyPlugin = require("circular-dependency-plugin");
-const {GitRevisionPlugin} = require("git-revision-webpack-plugin");
-
-const gitRevisionPlugin = new GitRevisionPlugin({
-  versionCommand: 'describe --always --tags --dirty'
-});
 
 
 var statsConfig = {
@@ -154,11 +149,9 @@ module.exports = env => { return {
       // cwd: process.cwd(),
     }),
 
-    gitRevisionPlugin,
-
     new webpack.DefinePlugin({
-      _git_revision_version: JSON.stringify(gitRevisionPlugin.version()),
-      _git_revision_commithash: JSON.stringify(gitRevisionPlugin.commithash().substring(0, 7))
+      _git_revision_version: JSON.stringify(env["git-tag"] ? env["git-tag"] : "dev"),
+      _git_revision_commithash: JSON.stringify(env["git-hash"] ? env["git-hash"] : "dev")
     }),
   ],
 
