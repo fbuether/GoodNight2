@@ -346,10 +346,6 @@ html body {
   line-height: initial;
 
   color: hsb($base-color, 76%, 28%);
-
-  p {
-    margin-bottom: 0.6rem;
-  }
 }
 
 
@@ -663,6 +659,12 @@ textarea.larger {
   h3, h4, h5, h6 {
     margin-top: 0.4rem;
     margin-bottom: 0.28rem;
+  }
+
+  p {
+    margin-bottom: 0.6rem;
+    text-align: justify;
+    hyphens: auto;
   }
 }
 
