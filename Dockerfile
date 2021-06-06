@@ -7,10 +7,10 @@ COPY /client/package*.json /build/
 RUN npm ci
 
 COPY /client/. /build/
-ARG GIT_TAG
-ENV GIT_TAG=${GIT_TAG:2.0}
-ARG GIT_HASH
-ENV GIT_HASH=${GIT_HASH:dev}
+ARG GIT_TAG=2.0
+ENV GIT_TAG=$GIT_TAG
+ARG GIT_HASH=dev
+ENV GIT_HASH=$GIT_HASH
 # no param automatically selects production
 RUN node_modules/.bin/webpack --env git-tag=$GIT_TAG --env git-hash=$GIT_HASH
 RUN gzip -k /build/dist/*
