@@ -24,7 +24,7 @@ function Choice(choice: Choice) {
       }
     case "return":
     case "continue":
-      return <hr class="w-75 mx-auto mt-2 mb-3 decorated" />;
+      return <hr class="w-75 mx-auto spacer decorated" />;
   }
 }
 
