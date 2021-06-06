@@ -1,13 +1,19 @@
+using GoodNight.Service.Api.Controller.Base;
+using GoodNight.Service.Storage.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GoodNight.Service.Api.Controller
 {
-  [Authorize]
   [ApiController]
   [Route("api/v1/user")]
-  public class UserController : ControllerBase
+  public class UserController : AuthorisedController
   {
+    public UserController(IStore store)
+      : base(store)
+    {
+    }
+
     public record MergeableUser(string auth);
 
     [HttpPost("/merge")]
