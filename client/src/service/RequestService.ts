@@ -1,7 +1,7 @@
 import {UserService} from "./UserService";
 
 
-export type Method = "GET" | "POST" | "PUT";
+export type Method = "GET" | "POST" | "PUT" | "DELETE";
 
 interface FetchInit {
   method: string;
@@ -92,14 +92,15 @@ export async function request<T>(method: Method, url: string,
   try {
     let fullUrl = serviceBase + (url.startsWith("/") ? url : "/" + url);
     let response = await fetch(fullUrl, fetchInit);
-    let json = await response.json();
+    let body = method == "DELETE" ? await response.text()
+        : await response.json();
 
     if (response.ok) {
-      return makeResult<T>(json);
+      return makeResult<T>(body);
     }
     else {
-      console.warn("Returned invalid result", response.status, json);
-      return makeError(response.status, json);
+      console.warn("Returned invalid result", response.status, body);
+      return makeError(response.status, body);
     }
   }
   catch (err) {

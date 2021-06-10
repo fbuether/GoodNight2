@@ -53,7 +53,8 @@ export const Lens = P.id<Pages>()
   .union("RequireSignIn", guardRequireSignIn, lens => lens)
   .union("StoryOverview", guardStoryOverview, lens => lens
     .prop("page")
-    .prop("stories"))
+    .prop("stories")
+    .prop("myStories"))
   .union("ReadStory", guardReadStory, lens => lens
     .path("story", Loadable.lensP)
     .path("adventure", Loadable.lens)

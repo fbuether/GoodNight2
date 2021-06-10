@@ -1,5 +1,5 @@
 import * as Preact from "preact";
-
+import {DispatchAction} from "../../core/Dispatch";
 import type {PageDescriptor} from "../../core/PageDescriptor";
 
 import type {Story} from "../../model/read/Story";
@@ -15,6 +15,7 @@ export interface ShowStories {
   page: (urlname: string) => PageDescriptor;
   children?: Preact.ComponentChildren;
   cols?: number;
+  onDelete?: (urlname: string) => DispatchAction;
 }
 
 
@@ -32,7 +33,8 @@ export default function ShowStories(state: ShowStories) {
       <div class={`row cards row-cols-1 ${rows} g-3 mt-0`}>
         {state.children}
         {stories.map(story =>
-          <StoryCard story={story} page={state.page} />)}
+          <StoryCard story={story} page={state.page}
+            onDelete={state.onDelete} />)}
       </div>
     );
   });
