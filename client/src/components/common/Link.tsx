@@ -7,6 +7,7 @@ interface Link {
   class?: string;
   action: DispatchAction | string; // string == regular link
   current?: boolean;
+  title?: string;
 }
 
 export default function Link(state: Preact.RenderableProps<Link>) {
@@ -25,6 +26,7 @@ export default function Link(state: Preact.RenderableProps<Link>) {
 
     return <a class={state.class}
       aria-current={state.current ? "page" : undefined}
+      title={state.title}
       onClick={dispatchLink(state.action)}
       href={href}>{state.children}</a>;
   }
