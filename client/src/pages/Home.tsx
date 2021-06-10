@@ -27,7 +27,7 @@ export function Home(state: State) {
       <div class="col-4">
         <h3>Meine Geschichten</h3>
         <p>Lies hier die Geschichten weiter, die du bereits begonnen hast.</p>
-        <ShowStories stories={state.ownStories} page={page} single={true} />
+        <ShowStories stories={state.ownStories} page={page} />
       </div>
     </div>
   );

@@ -26,7 +26,7 @@ export function SelectStory(state: SelectStory) {
         Wähle eine Geschichte, die du schreiben willst, oder erstelle eine
         neue Geschichte.
       </p>
-      <ShowStories stories={state.stories} page={page}>
+      <ShowStories stories={state.stories} page={page} cols={3}>
         <div class="col">
           <div class="card new">
             <div class="card-body">

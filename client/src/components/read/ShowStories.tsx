@@ -14,12 +14,18 @@ export interface ShowStories {
   stories: Loadable<Array<ShowableStory>>;
   page: (urlname: string) => PageDescriptor;
   children?: Preact.ComponentChildren;
-  single?: true;
+  cols?: number;
 }
 
 
 export default function ShowStories(state: ShowStories) {
-  var rows = state.single ? "" : " row-cols-sm-2 row-cols-md-3";
+  var rows = "";
+  if (state.cols == 2) {
+    rows = "row-cols-md-2";
+  }
+  else if (state.cols && state.cols >=3) {
+    rows = "row-cols-sm-2 row-cols-md-3";
+  }
 
   return LoadableLoader(state.stories, stories => {
     return (
