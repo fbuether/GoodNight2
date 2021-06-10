@@ -62,7 +62,8 @@ function signedInUser(level: "guest" | "bearer", name: string): User {
 
 const defaultUser: User = {
   kind: "SignedOut" as const,
-  signIn: Dispatch.Command(UserService.get().startSignIn)
+  signIn: Dispatch.Command(() => UserService.get().startSignIn(
+    new URL(window.location.href).pathname))
 };
 
 export const User = {
