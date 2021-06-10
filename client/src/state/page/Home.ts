@@ -16,7 +16,7 @@ export interface Home {
 async function onLoad(dispatch: Dispatch, state: State) {
   if (state.user.kind == "SignedIn") {
     await Loadable.forRequest<Array<Story>>(state,
-      "GET", "api/v1/read/user/stories",
+      "GET", "api/v1/read/user/stories/mine",
       Lens.Home.ownStories);
   }
   else {

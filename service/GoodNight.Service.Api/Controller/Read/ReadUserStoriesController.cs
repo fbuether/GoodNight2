@@ -21,7 +21,7 @@ namespace GoodNight.Service.Api.Controller.Read
       stories = store.Create<Story>();
     }
 
-    [HttpGet]
+    [HttpGet("mine")]
     public ActionResult<IEnumerable<TransferStory>> GetAllStarted()
     {
       var stories = GetCurrentUser().Adventures
@@ -31,6 +31,20 @@ namespace GoodNight.Service.Api.Controller.Read
         .Select(s => s.ToTransfer());
 
       return Ok(stories);
+    }
+
+    [HttpGet("unread")]
+    public ActionResult<IEnumerable<TransferStory>> GetAllUnread()
+    {
+      var userStories = GetCurrentUser().Adventures
+        .Select(adv => adv.Get()?.Story.Get())
+        .OfType<Story>();
+
+      var st = stories.Where(s => !userStories.Any(u => u.Name == s.Name))
+        .OrderBy(s => s.Name)
+        .Select(s => s.ToTransfer());
+
+      return Ok(st);
     }
   }
 }
