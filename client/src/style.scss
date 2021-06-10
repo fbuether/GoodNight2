@@ -531,7 +531,25 @@ h4 .icon.higher {
     &:hover {
       box-shadow: 0 0 1rem rgba(0, 0, 0, 0.05);
     }
+
+    .delete-icon {
+      z-index: 2;
+      opacity: 0.35;
+      right: 0.3rem;
+      top: 0.3rem;
+      position: absolute;
+
+      &:hover {
+        opacity: 1;
+      }
+    }
   }
+}
+
+
+.delete-icon {
+  @extend .text-danger;
+
 }
 
 

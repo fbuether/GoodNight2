@@ -7,6 +7,7 @@ const icons = {
   "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
   "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
   "flute": require("../../../assets/icons/flute.svg"),
+  "tombstone": require("../../../assets/icons/tombstone.svg"),
   "forest": require("../../../assets/icons/forest.svg"),
   "ghost-ally": require("../../../assets/icons/ghost-ally.svg"),
   "hatchet": require("../../../assets/icons/hatchet.svg"),
