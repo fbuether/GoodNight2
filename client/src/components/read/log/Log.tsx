@@ -1,6 +1,6 @@
-import {Log, Choice} from "../../model/read/Log";
+import {Log, Choice} from "../../../state/model/read/Log";
 
-import Markdown from "../common/Markdown";
+import Markdown from "../../common/Markdown";
 import Effect from "./Effect";
 
 

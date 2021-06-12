@@ -2,7 +2,7 @@ import {Dispatch} from "../core/Dispatch";
 import {Home as State} from "../state/page/Home";
 import {ReadStory} from "../state/page/read/ReadStory";
 
-import ShowStories from "../components/read/ShowStories";
+import ShowStories from "./stories/ShowStories";
 
 
 export function Home(state: State) {

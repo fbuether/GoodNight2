@@ -1,8 +1,8 @@
-import {Property as State} from "../../model/read/Property";
-import {QualityType} from "../../model/read/Quality";
+import {Property as State} from "../../../state/model/read/Property";
+import {QualityType} from "../../../state/model/read/Quality";
 
-import Icon from "../common/Icon";
-import {isIcon} from "../common/Icon";
+import Icon from "../../common/Icon";
+import {isIcon} from "../../common/Icon";
 
 
 export default function Property(property: State) {

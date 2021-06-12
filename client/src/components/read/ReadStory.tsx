@@ -1,6 +1,6 @@
-import type {Adventure} from "../../model/read/Adventure";
-import type {Story} from "../../model/read/Story";
-import type {Option as OptionState} from "../../model/read/Action";
+import type {Adventure} from "../../state/model/read/Adventure";
+import type {Story} from "../../state/model/read/Story";
+import type {Option as OptionState} from "../../state/model/read/Action";
 import type {ReadStory as State} from "../../state/page/read/ReadStory";
 
 import Error from "../../components/common/Error";
@@ -8,10 +8,10 @@ import Icon from "../../components/common/Icon";
 import LoadableLoader from "../../components/common/LoadableLoader";
 import Markdown from "../../components/common/Markdown";
 
-import Log from "../../components/read/Log";
-import Player from "../../components/read/Player";
-import Effect from "../../components/read/Effect";
-import Option from "../../components/read/Option";
+import Log from "./log/Log";
+import Player from "./log/Player";
+import Effect from "./log/Effect";
+import Option from "./log/Option";
 
 
 

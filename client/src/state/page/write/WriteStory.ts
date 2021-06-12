@@ -3,7 +3,7 @@ import {Lens} from "../../Pages";
 import {Dispatch} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 
-import type {Story, Category} from "../../../model/write/Story";
+import type {Story, Category} from "../../model/write/Story";
 import {Loadable} from "../../Loadable";
 
 

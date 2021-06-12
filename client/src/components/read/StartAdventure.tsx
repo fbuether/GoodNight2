@@ -5,7 +5,7 @@ import {Lens} from "../../state/Pages";
 import type {StartAdventure as State} from "../../state/page/read/StartAdventure";
 import {StoryOverview} from "../../state/page/read/StoryOverview";
 
-import type {Story} from "../../model/read/Story";
+import type {Story} from "../../state/model/read/Story";
 
 import Icon from "../../components/common/Icon";
 import Link from "../../components/common/Link";

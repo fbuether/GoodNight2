@@ -5,8 +5,8 @@ import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request} from "../../../service/RequestService";
 import {Loadable, LoadableP} from "../../Loadable";
 
-import type {Quality} from "../../../model/write/Quality";
-import type {Story} from "../../../model/write/Story";
+import type {Quality} from "../../model/write/Quality";
+import type {Story} from "../../model/write/Story";
 import {WriteStory} from "./WriteStory";
 
 

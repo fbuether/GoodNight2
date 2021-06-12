@@ -3,13 +3,14 @@ import {Lens} from "../../Pages";
 import {Dispatch} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 
-import type {Story} from "../../../model/write/Story";
+import type {Story} from "../../model/write/Story";
 import {Loadable} from "../../Loadable";
 
 
-import {SelectStory as Component} from "../../../pages/write/SelectStory";
-export type SelectStory = Component;
-
+export interface SelectStory {
+  page: "SelectStory";
+  stories: Loadable<Array<Story>>;
+}
 
 
 async function onLoad(dispatch: Dispatch, state: State) {

@@ -3,8 +3,8 @@ import {Lens} from "../../state/Pages";
 import {WriteScene as State} from "../../state/page/write/WriteScene";
 import {WriteStory} from "../../state/page/write/WriteStory";
 
-import type {Scene} from "../../model/write/Scene";
-import type {Story} from "../../model/write/Story";
+import type {Scene} from "../../state/model/write/Scene";
+import type {Story} from "../../state/model/write/Story";
 
 import SceneHelp from "../../components/write/SceneHelp";
 

@@ -5,8 +5,8 @@ import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request, isResult, ResultResponse} from "../../../service/RequestService";
 import {Loadable, LoadableP} from "../../Loadable";
 
-import type {Scene} from "../../../model/write/Scene";
-import type {Story} from "../../../model/write/Story";
+import type {Scene} from "../../model/write/Scene";
+import type {Story} from "../../model/write/Story";
 import {WriteStory} from "./WriteStory";
 import {SelectStory} from "./SelectStory";
 

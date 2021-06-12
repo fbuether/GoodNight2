@@ -1,14 +1,14 @@
-import {Home} from "../pages/Home";
-import {FinishSignIn} from "../pages/user/FinishSignIn";
-import {RequireSignIn} from "../pages/user/RequireSignIn";
-import {StoryOverview} from "../pages/read/StoryOverview";
-import {ReadStory} from "../pages/read/ReadStory";
-import {SelectStory} from "../pages/write/SelectStory";
-import {CreateStory} from "../pages/write/CreateStory";
-import {WriteStory} from "../pages/write/WriteStory";
-import {WriteScene} from "../pages/write/WriteScene";
-import {WriteQuality} from "../pages/write/WriteQuality";
-import {StartAdventure} from "../pages/read/StartAdventure";
+import {Home} from "./Home";
+import {FinishSignIn} from "./user/FinishSignIn";
+import {RequireSignIn} from "./user/RequireSignIn";
+import {StoryOverview} from "./read/StoryOverview";
+import {ReadStory} from "./read/ReadStory";
+import {SelectStory} from "./write/SelectStory";
+import {CreateStory} from "./write/CreateStory";
+import {WriteStory} from "./write/WriteStory";
+import {WriteScene} from "./write/WriteScene";
+import {WriteQuality} from "./write/WriteQuality";
+import {StartAdventure} from "./read/StartAdventure";
 
 import {Navigation} from "./navigation/Navigation";
 

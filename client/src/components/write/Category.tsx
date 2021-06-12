@@ -1,8 +1,8 @@
 import {Dispatch} from "../../core/Dispatch";
 
-import type {Quality} from "../../model/write/Quality";
-import type {Scene as Scene} from "../../model/write/Scene";
-import type {Story, Category as CategoryT} from "../../model/write/Story";
+import type {Quality} from "../../state/model/write/Quality";
+import type {Scene as Scene} from "../../state/model/write/Scene";
+import type {Story, Category as CategoryT} from "../../state/model/write/Story";
 
 import {WriteScene} from "../../state/page/write/WriteScene";
 import {WriteQuality} from "../../state/page/write/WriteQuality";

@@ -6,8 +6,8 @@ import {Lens} from "../../Pages";
 
 import {Loadable, LoadableP} from "../../Loadable";
 
-import type {Story} from "../../../model/read/Story";
-import type {Adventure} from "../../../model/read/Adventure";
+import type {Story} from "../../model/read/Story";
+import type {Adventure} from "../../model/read/Adventure";
 
 import {ReadStory} from "./ReadStory";
 

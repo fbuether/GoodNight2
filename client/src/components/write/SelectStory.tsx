@@ -1,21 +1,18 @@
 import {Dispatch} from "../../core/Dispatch";
-import type {Story} from "../../model/write/Story";
+import type {Story} from "../../state/model/write/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory} from "../../state/page/write/WriteStory";
 import {CreateStory} from "../../state/page/write/CreateStory";
 
-import ShowStories from "../../components/read/ShowStories";
-import Icon from "../../components/common/Icon";
-import Link from "../../components/common/Link";
+import {SelectStory as State} from "../../state/page/write/SelectStory";
+
+import ShowStories from "../stories/ShowStories";
+import Icon from "../common/Icon";
+import Link from "../common/Link";
 
 
-export interface SelectStory {
-  page: "SelectStory";
-  stories: Loadable<Array<Story>>;
-}
-
-export function SelectStory(state: SelectStory) {
+export function SelectStory(state: State) {
   var page = (urlname: string) => WriteStory.page(urlname);
   var newStory = Dispatch.Page(CreateStory.page);
 

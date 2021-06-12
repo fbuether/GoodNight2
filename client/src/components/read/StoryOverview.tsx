@@ -1,11 +1,11 @@
 import {Dispatch} from "../../core/Dispatch";
-import type {Story} from "../../model/read/Story";
+import type {Story} from "../../state/model/read/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import {StoryOverview as State} from "../../state/page/read/StoryOverview";
 import {ReadStory} from "../../state/page/read/ReadStory";
 
-import ShowStories from "../../components/read/ShowStories";
+import ShowStories from "../stories/ShowStories";
 
 
 export function StoryOverview(state: State) {

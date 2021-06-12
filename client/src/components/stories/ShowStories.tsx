@@ -2,7 +2,7 @@ import * as Preact from "preact";
 import {DispatchAction} from "../../core/Dispatch";
 import type {PageDescriptor} from "../../core/PageDescriptor";
 
-import type {Story} from "../../model/read/Story";
+import type {Story} from "../../state/model/read/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import LoadableLoader from "../../components/common/LoadableLoader";

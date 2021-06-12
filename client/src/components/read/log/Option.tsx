@@ -1,7 +1,7 @@
-import type {OptionState} from "../../state/page/read/ReadStory";
+import type {OptionState} from "../../../state/page/read/ReadStory";
 
-import Link from "../common/Link";
-import Markdown from "../common/Markdown";
+import Link from "../../common/Link";
+import Markdown from "../../common/Markdown";
 import Requirement from "./Requirement";
 
 

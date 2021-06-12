@@ -5,9 +5,9 @@ import type {State} from "../../State";
 import {Lens} from "../../Pages";
 import {Loadable, LoadableP} from "../../Loadable";
 
-import type {Adventure} from "../../../model/read/Adventure";
-import type {Story} from "../../../model/read/Story";
-import type {Action, Option} from "../../../model/read/Action";
+import type {Adventure} from "../../model/read/Adventure";
+import type {Story} from "../../model/read/Story";
+import type {Action, Option} from "../../model/read/Action";
 import {StartAdventure} from "./StartAdventure";
 
 

@@ -3,7 +3,7 @@ import {Dispatch} from "../../../core/Dispatch";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request} from "../../../service/RequestService";
 
-import type {Story} from "../../../model/write/Story";
+import type {Story} from "../../model/write/Story";
 import {WriteStory} from "./WriteStory";
 
 

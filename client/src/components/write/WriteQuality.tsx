@@ -3,8 +3,8 @@ import {Lens} from "../../state/Pages";
 import type {WriteQuality as State} from "../../state/page/write/WriteQuality";
 import {WriteStory} from "../../state/page/write/WriteStory";
 
-import type {Quality} from "../../model/write/Quality";
-import type {Story} from "../../model/write/Story";
+import type {Quality} from "../../state/model/write/Quality";
+import type {Story} from "../../state/model/write/Story";
 
 import QualityHelp from "../../components/write/QualityHelp";
 

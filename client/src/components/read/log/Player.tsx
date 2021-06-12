@@ -1,4 +1,4 @@
-import {Player as State} from "../../model/read/Player";
+import {Player as State} from "../../../state/model/read/Player";
 
 import Property from "./Property";
 

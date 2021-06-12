@@ -1,6 +1,6 @@
-import type {Requirement} from "../../model/read/Action";
+import type {Requirement} from "../../../state/model/read/Action";
 
-import Icon from "../common/Icon";
+import Icon from "../../common/Icon";
 
 
 export default function Requirement(state: Requirement) {

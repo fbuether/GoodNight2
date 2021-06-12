@@ -5,7 +5,7 @@ import type {State} from "../../State";
 import {Lens} from "../../Pages";
 
 import {UserService} from "../../../service/UserService";
-import type {Story} from "../../../model/read/Story";
+import type {Story} from "../../model/read/Story";
 import {Loadable} from "../../Loadable";
 
 

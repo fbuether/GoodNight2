@@ -1,5 +1,5 @@
 import {Dispatch} from "../../core/Dispatch";
-import type {Story, Category} from "../../model/write/Story";
+import type {Story, Category} from "../../state/model/write/Story";
 import type {Loadable} from "../../state/Loadable";
 
 import {WriteStory as State} from "../../state/page/write/WriteStory";

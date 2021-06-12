@@ -4,7 +4,7 @@ import type {State} from "../State";
 import {Lens} from "../Pages";
 import {Loadable} from "../Loadable";
 
-import type {Story} from "../../model/read/Story";
+import type {Story} from "../model/read/Story";
 
 
 export interface Home {
