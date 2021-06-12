@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using GoodNight.Service.Storage.Interface;
@@ -30,6 +32,34 @@ namespace GoodNight.Service.Domain.Model.Read
       new Story(name, null, description, true,
         ImmutableHashSet<IReference<Scene>>.Empty,
         ImmutableHashSet<IReference<Quality>>.Empty);
+
+
+    public virtual bool Equals(Story? other)
+    {
+      if (other is null || this.Key != other.Key)
+        return false;
+
+      if (this.Icon != other.Icon ||
+        this.Description != other.Description ||
+        this.Public != other.Public)
+        return false;
+
+      if (Scenes.Count != other.Scenes.Count)
+        return false;
+
+      if (Qualities.Count != other.Qualities.Count)
+        return false;
+
+      if (Scenes.Zip(other.Scenes).Any(ab => ab.Item1 != ab.Item2))
+        return false;
+
+      if (Qualities.Zip(other.Qualities).Any(ab => ab.Item1 != ab.Item2))
+        return false;
+
+      return true;
+    }
+
+    public override int GetHashCode() => this.Key.GetHashCode();
 
 
     public Story AddScene(Scene scene)
