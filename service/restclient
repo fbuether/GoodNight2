@@ -31,6 +31,10 @@ DELETE http://localhost:32016/api/v1/read/stories/hels-schlucht
 Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 
 #
+GET http://localhost:32016/api/v1/write/stories
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
+
+#
 POST http://localhost:32016/api/v1/write/stories
 Content-Type: application/json
 {"name": "Eine neue Geschichte!"}
@@ -43,9 +47,17 @@ Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 GET http://localhost:32016/api/v1/read/user/stories
 Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 
+#
+DELETE http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/an-actual-scene-4
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
+
+#
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes/an-actual-scene-4
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 
 #
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/scenes
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 Content-Type: application/json
 {"text":"$ name: an actual scene 4\nthis is a first scene\nit's just a string."}
 
@@ -58,9 +70,18 @@ Content-Type: application/json
 {"text":"$ name: an actual scene\nthis is a first scene\nit's just a string.\nRight?"}
 
 #
+GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities/toasty
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
+
+#
+DELETE http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities/toasty
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
+
+#
 POST http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/qualities
+Authorization: Guest 05568869-d412-45ad-a100-af60715f44cc
 Content-Type: application/json
-{"text":"$name: toasty\nthis is toasty.\n$type: int\nokay!"}
+{"text":"$name: toasty\nthis is toasty.\n$type: int"}
 
 #
 GET http://localhost:32016/api/v1/write/stories/eine-neue-geschichte-/content-by-category

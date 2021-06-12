@@ -109,9 +109,14 @@ namespace GoodNight.Service.Domain.Model.Write
       return (this with {Scenes = withoutOld.Add(newScene)}, newScene);
     }
 
+    public Story RemoveScene(string sceneKey)
+    {
+      var el = Scenes.FirstOrDefault(s => s.Key == sceneKey);
+      return el is null ? this : (this with {Scenes = Scenes.Remove(el)});
+    }
 
-    public Quality? GetQuality(
-      string qualityUrlname)
+
+    public Quality? GetQuality(string qualityUrlname)
     {
       var name = NameConverter.Concat(Urlname, qualityUrlname);
       return Qualities.FirstOrDefault(q => q.Key == name)?.Get();
@@ -125,6 +130,12 @@ namespace GoodNight.Service.Domain.Model.Write
         ? Qualities
         : Qualities.Remove(oldElement);
       return (this with {Qualities = withoutOld.Add(newQl)}, newQl);
+    }
+
+    public Story RemoveQuality(string qualityKey)
+    {
+      var el = Qualities.FirstOrDefault(q => q.Key == qualityKey);
+      return el is null ? this : this with {Qualities = Qualities.Remove(el)};
     }
   }
 }

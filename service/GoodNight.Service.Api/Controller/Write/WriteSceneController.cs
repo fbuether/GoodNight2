@@ -123,5 +123,28 @@ namespace GoodNight.Service.Api.Controller.Write
             scene))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
+
+    [HttpDelete("{sceneUrlname}")]
+    public ActionResult Delete(string storyUrlname, string sceneUrlname)
+    {
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
+      if (story is null)
+        return NotFound();
+
+      var key = NameConverter.Concat(storyUrlname, sceneUrlname);
+      var scene = scenes.GetReference(key);
+      var readScene = readScenes.GetReference(key);
+
+      stories.Update(storyUrlname, story => story.RemoveScene(scene.Key));
+      readStories.Update(storyUrlname,
+        story => story.RemoveScene(readScene.Key));
+      var existed = scenes.Remove(scene.Key);
+      existed |= readScenes.Remove(readScene.Key);
+
+      return !existed
+        ? NotFound()
+        : NoContent();
+    }
   }
 }

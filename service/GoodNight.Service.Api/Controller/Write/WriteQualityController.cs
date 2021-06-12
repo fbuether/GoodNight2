@@ -6,6 +6,7 @@ using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Parse;
 using GoodNight.Service.Api.Controller.Base;
+using GoodNight.Service.Domain;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
@@ -17,6 +18,7 @@ namespace GoodNight.Service.Api.Controller.Write
     private IRepository<Quality> qualities;
     private IRepository<Scene> scenes;
     private IRepository<Domain.Model.Read.Scene> readScenes;
+    private IRepository<Domain.Model.Read.Quality> readQualities;
     private IRepository<Domain.Model.Read.Story> readStories;
 
     public WriteQualityController(IStore store)
@@ -26,6 +28,7 @@ namespace GoodNight.Service.Api.Controller.Write
       qualities = store.Create<Quality>();
       scenes = store.Create<Scene>();
       readScenes = store.Create<Domain.Model.Read.Scene>();
+      readQualities = store.Create<Domain.Model.Read.Quality>();
       readStories = store.Create<Domain.Model.Read.Story>();
     }
 
@@ -117,6 +120,29 @@ namespace GoodNight.Service.Api.Controller.Write
             $"api/v1/write/stories/{storyUrlname}/qualities/{quality.Key}",
             quality))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
+    }
+
+    [HttpDelete("{qualityUrlname}")]
+    public ActionResult Delete(string storyUrlname, string qualityUrlname)
+    {
+      var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
+          s.Creator.Key == GetCurrentUser().Key);
+      if (story is null)
+        return NotFound();
+
+      var key = NameConverter.Concat(storyUrlname, qualityUrlname);
+      var quality = qualities.GetReference(key);
+      var readQuality = readQualities.GetReference(key);
+
+      stories.Update(storyUrlname, story => story.RemoveQuality(quality.Key));
+      readStories.Update(storyUrlname,
+        story => story.RemoveQuality(readQuality.Key));
+      var existed = qualities.Remove(quality.Key);
+      existed |= readQualities.Remove(readQuality.Key);
+
+      return !existed
+        ? NotFound()
+        : NoContent();
     }
   }
 }

@@ -65,20 +65,29 @@ namespace GoodNight.Service.Domain.Model.Read
     public Story AddScene(Scene scene)
     {
       var newScene = scene with {Story = Urlname};
-      var oldScene = Scenes.FirstOrDefault(s => s.Key == newScene.Key);
-      var removed = oldScene is null ? Scenes : Scenes.Remove(oldScene);
-      return this with {Scenes = removed.Add(newScene)};
+      return RemoveScene(scene.Key) with {Scenes = Scenes.Add(newScene)};
     }
+
+    public Story RemoveScene(string sceneKey)
+    {
+      var el = Scenes.FirstOrDefault(s => s.Key == sceneKey);
+      return el is null ? this : (this with {Scenes = Scenes.Remove(el)});
+    }
+
 
     public Story AddQuality(Quality quality)
     {
       var newQuality = quality with {Story = Urlname};
-      var oldQuality = Qualities.FirstOrDefault(s => s.Key == newQuality.Key);
-      var removed = oldQuality is null
-        ? Qualities
-        : Qualities.Remove(oldQuality);
-      return this with {Qualities = removed.Add(newQuality)};
+      var removed = RemoveQuality(quality.Key);
+      return removed with {Qualities = Qualities.Add(newQuality)};
     }
+
+    public Story RemoveQuality(string qualityKey)
+    {
+      var el = Qualities.FirstOrDefault(q => q.Key == qualityKey);
+      return el is null ? this : this with {Qualities = Qualities.Remove(el)};
+    }
+
 
     public Transfer.Story ToTransfer()
     {
