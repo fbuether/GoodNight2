@@ -82,22 +82,15 @@ namespace GoodNight.Service.Storage
         : reference;
     }
 
-    public IReference<T>? Update(string key, Func<T, T?> update)
+    private IReference<T>? Replace(string key, T? oldElement, T? newElement)
     {
-      var oldElement = dict.GetValueOrDefault(key);
-      if (oldElement is null)
+      if (oldElement is null || newElement is null)
         return null;
-
-      var newElement = update(oldElement);
-      if (newElement is null)
-        return null;
-
-      // if the element does not change, do not write this.
-      if (newElement == oldElement)
-        return new Reference<T>(this, key);
 
       dict[key] = newElement;
-      if (writeUpdates)
+
+      // if the element does not change, do not write this.
+      if (writeUpdates && !newElement.Equals(oldElement))
       {
         writer.Queue(this, new Entry.Update(TypeName, key, newElement));
       }
@@ -105,26 +98,18 @@ namespace GoodNight.Service.Storage
       return new Reference<T>(this, key);
     }
 
+    public IReference<T>? Update(string key, Func<T, T?> update)
+    {
+      var oldElement = dict.GetValueOrDefault(key);
+      var newElement = oldElement is not null ? update(oldElement) : null;
+      return Replace(key, oldElement, newElement);
+    }
+
 
     public IReference<T>? Update(T element)
     {
-      var key = element.Key;
-      var hasElement = dict.ContainsKey(key);
-      if (!hasElement)
-        return null;
-
-      // if the element does not change, do not write it out.
-      if (dict[key] == element)
-        return new Reference<T>(this, key);
-
-      dict[key] = element;
-
-      if (writeUpdates)
-      {
-        writer.Queue(this, new Entry.Update(TypeName, key, element));
-      }
-
-      return new Reference<T>(this, key);
+      var oldElement = dict[element.Key];
+      return Replace(element.Key, oldElement, element);
     }
 
 
@@ -139,19 +124,9 @@ namespace GoodNight.Service.Storage
       if (result is null)
         return null;
 
-      // If the value did not change, return result without re-writing.
-      if (dict[key] == result.Value.Item1)
-        return result.Value.Item2;
-
-      dict[key] = result.Value.Item1;
-      if (writeUpdates)
-      {
-        writer.Queue(this, new Entry.Update(TypeName,
-            key, result.Value.Item1));
-      }
-
-      return result.Value.Item2;
-      }
+      var res = Replace(key, oldElement, result.Value.Item1);
+      return res is not null ? result.Value.Item2 : null;
+    }
 
     public bool Remove(string key)
     {
