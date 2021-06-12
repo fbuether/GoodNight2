@@ -20,6 +20,7 @@ export interface WriteScene {
   isSaving: boolean;
   saveError: string | null;
   save: (state: WriteScene) => Promise<void>;
+  onDelete: (state: WriteScene) => Promise<void>;
 }
 
 
@@ -99,6 +100,25 @@ async function onSave(state: WriteScene) {
   }
 }
 
+async function onDelete(state: WriteScene) {
+  if (state.scene === null) {
+    throw "State.scene is null.";
+  }
+
+  if (state.story.state != "loaded" || state.scene.state != "loaded") {
+    throw `Invalid state in onDelete: ${state.story.state} / ${state.scene.state}`;
+  }
+
+  let story = state.story.result;
+  let response = await request<void>("DELETE",
+    `/api/v1/write/stories/${story.urlname}/scenes/${state.scene.result.urlname}`);
+  if (response.isError) {
+    return;
+  }
+
+  Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
+}
+
 
 function instance(storyUrlname: string, sceneUrlname: string | null)
 : WriteScene {
@@ -111,7 +131,8 @@ function instance(storyUrlname: string, sceneUrlname: string | null)
     raw: "",
     isSaving: false,
     saveError: null,
-    save: onSave
+    save: onSave,
+    onDelete: onDelete
   };
 }
 
@@ -125,7 +146,8 @@ function loadedPage(story: Story, scene: Scene): PageDescriptor {
       raw: scene.raw,
       isSaving: false,
       saveError: null,
-      save: onSave
+      save: onSave,
+      onDelete: onDelete
     },
     url: "/write/stories/" + story.urlname + "/scene/" + scene.urlname,
     title: "GoodNight: Szene bearbeiten",

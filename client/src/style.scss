@@ -1,4 +1,4 @@
-
+@use "sass:color";
 
 //--------------------------------------
 // colour utility.
@@ -414,7 +414,7 @@ nav.navbar {
   display: inline-block;
   vertical-align: bottom;
 
-  color: hsb($base-color, 76%, 28%);
+  color: inherit;
 
   svg {
     width: auto !important;
@@ -507,6 +507,10 @@ h4 .icon.higher {
   }
 }
 
+
+.btn {
+  border-width: 0;
+}
 
 .btn.loading {
   @extend .btn;
@@ -735,4 +739,12 @@ textarea.larger {
     padding: 0.2rem 0rem 0.2rem 0.4rem;
     border: none;
   }
+}
+
+
+//--------------------------------------
+// colours: danger
+
+.btn-danger {
+  background-color: color.adjust($danger, $saturation: -30%, $lightness: 10%);
 }

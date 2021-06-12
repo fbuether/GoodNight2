@@ -48,6 +48,11 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null
     state.save(state);
   };
 
+  let doDelete = (event: Event) => {
+    event.preventDefault();
+    state.onDelete(state);
+  }
+
   let links = <></>;
   if (scene !== null && scene.outLinks !== null && scene.inLinks !== null) {
     links = <>
@@ -69,14 +74,17 @@ export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null
             content={state.raw} />
 
           <Error message={state.saveError} />
-          <div class="d-flex mt-3 align-items-start">
-            <div class="flex-grow-1">
-              {links}
-            </div>
-            <div class="flex-grow-1 d-flex px-4 justify-content-between align-items-center">
-              <Link action={returnLink}>Zurück</Link>
-              <SaveButton isSaving={state.isSaving} />
-            </div>
+          <div class="my-3 mx-4 d-flex justify-content-end g-4">
+            <button class="btn btn-danger mx-3"
+              onClick={doDelete}>
+              <Icon name="tombstone" />
+              Löschen
+            </button>
+            <SaveButton isSaving={state.isSaving} />
+          </div>
+
+          <div class="flex-grow-1">
+            {links}
           </div>
         </form>
         <div class="col-4">

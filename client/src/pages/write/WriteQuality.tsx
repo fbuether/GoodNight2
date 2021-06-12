@@ -28,6 +28,12 @@ export function WriteQualityLoaded(state: State, story: Story, quality: Quality 
     state.save(state);
   };
 
+  let doDelete = (event: Event) => {
+    event.preventDefault();
+    state.onDelete(state);
+  }
+
+
   return (
     <div id="centre" class="px-0">
       <h1><Link action={returnLink}>Schreibe: {story.name}</Link></h1>
@@ -41,8 +47,12 @@ export function WriteQualityLoaded(state: State, story: Story, quality: Quality 
             content={state.raw} />
 
           <Error message={state.saveError} />
-          <div class="d-flex w-75 mx-auto mt-3 justify-content-between align-items-center">
-            <Link action={returnLink}>Zurück</Link>
+          <div class="my-3 mx-4 d-flex justify-content-end g-4">
+            <button class="btn btn-danger mx-3"
+              onClick={doDelete}>
+              <Icon name="tombstone" />
+              Löschen
+            </button>
             <SaveButton isSaving={state.isSaving} />
           </div>
         </form>

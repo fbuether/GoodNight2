@@ -3,11 +3,12 @@ import {Lens} from "../../Pages";
 import type {State} from "../../State";
 import {PageDescriptor, registerPageMapper} from "../../../core/PageDescriptor";
 import {request} from "../../../service/RequestService";
+import {Loadable, LoadableP} from "../../Loadable";
 
 import type {Quality} from "../../../model/write/Quality";
 import type {Story} from "../../../model/write/Story";
+import {WriteStory} from "./WriteStory";
 
-import {Loadable, LoadableP} from "../../Loadable";
 
 
 
@@ -20,6 +21,7 @@ export interface WriteQuality {
   isSaving: boolean;
   saveError: string | null;
   save: (state: WriteQuality) => Promise<void>;
+  onDelete: (state: WriteQuality) => Promise<void>;
 }
 
 
@@ -84,6 +86,27 @@ async function onSave(state: WriteQuality) {
 }
 
 
+async function onDelete(state: WriteQuality) {
+  if (state.quality === null) {
+    throw "State.quality is null.";
+  }
+
+  if (state.story.state != "loaded" || state.quality.state != "loaded") {
+    throw `Invalid state in onDelete: ${state.story.state} / ${state.quality.state}`;
+  }
+
+  let story = state.story.result;
+  let response = await request<void>("DELETE",
+    `/api/v1/write/stories/${story.urlname}/qualities/${state.quality.result.urlname}`);
+  if (response.isError) {
+    return;
+  }
+
+  Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
+}
+
+
+
 function instance(storyUrlname: string, qualityUrlname: string | null)
 : WriteQuality {
   return {
@@ -95,7 +118,8 @@ function instance(storyUrlname: string, qualityUrlname: string | null)
     raw: "",
     isSaving: false,
     saveError: null,
-    save: onSave
+    save: onSave,
+    onDelete: onDelete
   };
 }
 
@@ -108,7 +132,8 @@ function loadedPage(story: Story, quality: Quality): PageDescriptor {
       raw: quality.raw,
       isSaving: false,
       saveError: null,
-      save: onSave
+      save: onSave,
+      onDelete: onDelete
     },
     url: "/write/stories/" + story.urlname + "/quality/" + quality.urlname,
     title: "GoodNight: Szene bearbeiten",
