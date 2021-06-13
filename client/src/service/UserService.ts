@@ -1,10 +1,12 @@
 import Oidc from "oidc-client";
+import {WebStorageStateStore} from "oidc-client";
 
 
 var userManagerConfig = {
   "authority": "https://login.microsoftonline.com/9188040d-6c67-4c5b-b112-36a304b66dad/v2.0",
   "client_id": "d8ee60f3-f059-4169-93b4-8faf1c32a9d8",
-  "redirect_uri": "https://goodnight.jasminefields.net/finish-sign-in"
+  "redirect_uri": "http://localhost:32015/finish-sign-in",
+  userStore: new WebStorageStateStore({ store: window.localStorage })
 };
 
 
@@ -30,6 +32,7 @@ export class UserService {
     }
 
     this.oidc = new Oidc.UserManager(userManagerConfig);
+    this.oidc.startSilentRenew();
 
     this.guest = this.loadGuestName();
     this.getUser();
