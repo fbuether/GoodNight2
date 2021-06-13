@@ -13,6 +13,7 @@ const icons = {
   "hatchet": require("../../../assets/icons/hatchet.svg"),
   "horizon-road": require("../../../assets/icons/horizon-road.svg"),
   "ninja-head": require("../../../assets/icons/ninja-head.svg"),
+  "processor": require("../../../assets/icons/processor.svg"),
   "saloon-doors": require("../../../assets/icons/saloon-doors.svg"),
   "save": require("../../../assets/icons/save.svg"),
   "secret-door": require("../../../assets/icons/secret-door.svg"),
