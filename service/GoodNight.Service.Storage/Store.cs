@@ -90,7 +90,7 @@ namespace GoodNight.Service.Storage
       if (existing is Repository<T> existingRepos)
         return existingRepos;
 
-      var repos = new Repository<T>(writer, typeName);
+      var repos = new Repository<T>(this, writer, typeName);
       repositories.Add(repos);
       return repos;
     }

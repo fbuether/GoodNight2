@@ -1,6 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Storage.Journal;
 
@@ -9,15 +13,18 @@ namespace GoodNight.Service.Storage
   internal class Repository<T> : BaseRepository, IRepository<T>
     where T : class, IStorable<T>
   {
+    private Store store;
+
     private Dictionary<string,T> dict = new Dictionary<string,T>();
 
     private JournalWriter writer;
 
     private bool writeUpdates = true;
 
-    internal Repository(JournalWriter writer, string typeName)
+    internal Repository(Store store, JournalWriter writer, string typeName)
       : base(typeName)
     {
+      this.store = store;
       this.writer = writer;
     }
 
@@ -46,15 +53,17 @@ namespace GoodNight.Service.Storage
 
     public IReference<T>? Add(T element)
     {
-      var key = element.Key;
+      var refedElement = UnlinkProperties(element);
+
+      var key = refedElement.Key;
       if (dict.ContainsKey(key))
         return null;
 
-      dict[key] = element;
+      dict[key] = refedElement;
 
       if (writeUpdates)
       {
-        writer.Queue(this, new Entry.Add(TypeName, element));
+        writer.Queue(this, new Entry.Add(TypeName, refedElement));
       }
 
       return new Reference<T>(this, key);
@@ -76,9 +85,10 @@ namespace GoodNight.Service.Storage
 
     public IReference<T> Save(T element)
     {
-      var reference = this.Update(element.Key, _ => element);
+      var refedElement = UnlinkProperties(element);
+      var reference = this.Update(element.Key, _ => refedElement);
       return reference is null
-        ? this.Add(element)! // if reference is null, adding will succeed.
+        ? this.Add(refedElement)! // if reference is null, adding will succeed.
         : reference;
     }
 
@@ -87,12 +97,13 @@ namespace GoodNight.Service.Storage
       if (oldElement is null || newElement is null)
         return null;
 
-      dict[key] = newElement;
+      var refedElement = UnlinkProperties(newElement);
+      dict[key] = refedElement;
 
       // if the element does not change, do not write this.
       if (writeUpdates && !newElement.Equals(oldElement))
       {
-        writer.Queue(this, new Entry.Update(TypeName, key, newElement));
+        writer.Queue(this, new Entry.Update(TypeName, key, refedElement));
       }
 
       return new Reference<T>(this, key);
@@ -183,6 +194,48 @@ namespace GoodNight.Service.Storage
       {
         writeUpdates = true;
       }
+    }
+
+
+    /// <summary>
+    /// Replaces all IReferences in this object with fresh, indirect references.
+    /// This removes the risk of having stale references to old versions.
+    /// </summary>
+    /// <remarks>
+    /// Sadly, this is not so elegant. But it does the job.
+    /// </remarks>
+    private T UnlinkProperties(T element)
+    {
+      // do not unlink during replay; read entries are always fully unlinked.
+      if (!writeUpdates)
+        return element;
+
+      var streamStore = new MemoryStream();
+      var writer = new Utf8JsonWriter(streamStore);
+
+      // serialise
+      JsonSerializer.Serialize(writer, element, ValueType,
+        store.JsonSerializerOptions);
+      writer.Flush();
+      streamStore.Flush();
+
+      streamStore.Seek(0, SeekOrigin.Begin);
+
+      // deserialise
+      var streamReader = new StreamReader(streamStore, Encoding.UTF8);
+      var line = streamReader.ReadLine();
+      if (line is null)
+        throw new Exception($"Could not read serialised object \"{element}\".");
+
+      var bytes = Encoding.UTF8.GetBytes(line);
+      var reader = new Utf8JsonReader(bytes);
+      var obj = JsonSerializer.Deserialize(ref reader, ValueType,
+        store.JsonSerializerOptions) as T;
+
+      if (obj is null)
+        throw new Exception($"Could not read object from \"{line}\".");
+
+      return obj;
     }
   }
 }
