@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
@@ -16,5 +17,13 @@ namespace GoodNight.Service.Domain.Model.Write
     public string Urlname => NameConverter.OfString(Name);
 
     public string Key => NameConverter.Concat(Story, Urlname);
+
+    public override string ToString()
+    {
+      return $"Quality {{Name:{Name}, Story:{Story}, Icon:{Icon}, "
+        + $"Raw:\"{Raw}\", Tags: [" + string.Join(", ", Tags)
+        + "], Category: " + string.Join("/", Category) + "}";
+    }
   }
 }
+

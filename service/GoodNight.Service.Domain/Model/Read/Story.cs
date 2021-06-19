@@ -93,5 +93,15 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       return new Transfer.Story(Name, Urlname, Icon, Description);
     }
+
+    public override string ToString()
+    {
+      return $"Story {{Name:{Name}, Icon:{Icon}, Description:{Description}, "
+        + $"Public:{Public}, Scenes: ["
+        + string.Join(", ", Scenes.Select(s => s.ToString()))
+        + "], Qualities: ["
+        +  string.Join(", ", Qualities.Select(q => q.ToString()))
+        + "]}";
+    }
   }
 }

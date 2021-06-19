@@ -137,5 +137,15 @@ namespace GoodNight.Service.Domain.Model.Write
       var el = Qualities.FirstOrDefault(q => q.Key == qualityKey);
       return el is null ? this : this with {Qualities = Qualities.Remove(el)};
     }
+
+
+    public override string ToString()
+    {
+      return $"Story {{Name:{Name}, Creator:{Creator}, Scenes: ["
+        + string.Join(", ", Scenes.Select(s => s.ToString()))
+        + "], Qualities: ["
+        +  string.Join(", ", Qualities.Select(q => q.ToString()))
+        + "]}";
+    }
   }
 }
