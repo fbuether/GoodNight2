@@ -27,7 +27,7 @@ export default function Effect(effect: State) {
       </p>);
     case QualityType.Enum:
       return (<p class="fst-italic">
-        {icon} {quality.name} ist jetzt: {value}.
+        {icon} {quality.name} ist jetzt: {value}
       </p>);
   }
 }
