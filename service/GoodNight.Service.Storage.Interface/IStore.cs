@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Immutable;
 
 namespace GoodNight.Service.Storage.Interface
 {
@@ -36,5 +37,10 @@ namespace GoodNight.Service.Storage.Interface
     /// </returns>
     IRepository<T> Create<T>()
       where T : class, IStorable<T>;
+
+    /// <summary>
+    /// Returns information about the current status of the store.
+    /// </summary>
+    IImmutableDictionary<string,string> GetStatus();
   }
 }

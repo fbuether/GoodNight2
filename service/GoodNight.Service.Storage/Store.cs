@@ -1,6 +1,9 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -12,6 +15,8 @@ namespace GoodNight.Service.Storage
 {
   public class Store : IStore, IDisposable
   {
+    private static readonly string storeFile = "storage/store.json";
+
     private Stream backingStore;
 
     private bool ownsBackingStore = false;
@@ -37,9 +42,8 @@ namespace GoodNight.Service.Storage
       if (backingStore is null)
       {
         var cwd = Directory.GetCurrentDirectory();
-        Console.WriteLine($"Store: Using {cwd}/storage/store.json");
-        this.backingStore = File.Open("storage/store.json",
-          FileMode.OpenOrCreate);
+        Console.WriteLine($"Store: Using {cwd}/{storeFile}");
+        this.backingStore = File.Open(storeFile, FileMode.OpenOrCreate);
       }
       else {
         this.backingStore = backingStore;
@@ -70,6 +74,49 @@ namespace GoodNight.Service.Storage
       {
         ((IDisposable)backingStore).Dispose();
       }
+    }
+
+
+    IImmutableDictionary<string, string> IStore.GetStatus()
+    {
+      var map = ImmutableDictionary.Create<string,string>();
+      map = map.Add("Number of Repositories", repositories.Count.ToString());
+      foreach (var repos in repositories)
+      {
+        map = map.Add($"Repository \"{repos.ValueType.Name}\" count",
+          (repos as IEnumerable)?.Cast<object>().Count().ToString() ?? "-");
+      }
+
+      var storeSize = new System.IO.FileInfo(storeFile).Length;
+      var sizeUnit = "B";
+      if (storeSize > 10240)
+      {
+        storeSize = storeSize / 1024;
+        sizeUnit = "KiB";
+      }
+      if (storeSize > 10240)
+      {
+        storeSize = storeSize / 1024;
+        sizeUnit = "MiB";
+      }
+      if (storeSize > 10240)
+      {
+        storeSize = storeSize / 1024;
+        sizeUnit = "GiB";
+      }
+
+      map = map.Add("Store file size", storeSize.ToString() + sizeUnit);
+
+      map = map.Add("Last write time",
+        writer.GetLastWrite().ToString("u"));
+      map = map.Add("Writer exceptions",
+        writer.GetExceptions().Count().ToString());
+      foreach (var msg in writer.GetExceptions())
+      {
+        map = map.Add($"Exception", msg);
+      }
+
+      return map;
     }
 
 

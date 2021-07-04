@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.IO;
 using System.Text.Json;
 using System.Threading;
@@ -19,6 +20,9 @@ namespace GoodNight.Service.Storage.Journal
 
     private Stream backingStore;
 
+    private List<string> Exceptions = new List<string>();
+
+    private DateTime lastWrite = DateTime.UnixEpoch;
 
     private readonly JsonSerializerOptions options;
 
@@ -85,6 +89,7 @@ namespace GoodNight.Service.Storage.Journal
           }
           catch (Exception e)
           {
+            Exceptions.Add(e.Message);
             Console.WriteLine(
               $"Exception occurred on JournalWriter write thread: {e}");
           }
@@ -92,6 +97,19 @@ namespace GoodNight.Service.Storage.Journal
       }
     }
 
+
+    internal IEnumerable<string> GetExceptions()
+    {
+      foreach (var desc in Exceptions)
+      {
+        yield return desc;
+      }
+    }
+
+    internal DateTime GetLastWrite()
+    {
+      return lastWrite;
+    }
 
     internal void Queue(BaseRepository repos, Entry entry)
     {
@@ -135,6 +153,7 @@ namespace GoodNight.Service.Storage.Journal
 
       writer.WriteEndObject();
       writer.Flush();
+      lastWrite = DateTime.UtcNow;
 
       // write a newline.
       var breakWriter = new StreamWriter(backingStore);
