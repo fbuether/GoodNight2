@@ -83,7 +83,7 @@ namespace GoodNight.Service.Storage
       map = map.Add("Number of Repositories", repositories.Count.ToString());
       foreach (var repos in repositories)
       {
-        map = map.Add($"Repository \"{repos.ValueType.Name}\" count",
+        map = map.Add($"Repository {repos.ValueType.FullName} count",
           (repos as IEnumerable)?.Cast<object>().Count().ToString() ?? "-");
       }
 
