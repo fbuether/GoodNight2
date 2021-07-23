@@ -125,7 +125,8 @@ namespace GoodNight.Service.Domain.Model.Read
         public Action AddTo(Player player, Action action)
         {
           if (action.Return is not null)
-            throw new InvalidSceneException("Scene contains multiple returns.");
+            throw new InvalidSceneException(
+              $"Scene \"{Scene.Key}\" contains multiple returns.");
 
           return action with { Return = Scene };
         }
@@ -144,7 +145,7 @@ namespace GoodNight.Service.Domain.Model.Read
         {
           if (action.Continue is not null)
             throw new InvalidSceneException(
-              "Scene contains multiple continues.");
+              $"Scene \"{Scene.Key}\" contains multiple continues.");
 
           return action with { Continue = Scene };
         }

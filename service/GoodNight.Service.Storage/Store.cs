@@ -159,7 +159,8 @@ namespace GoodNight.Service.Storage
       var callable = method.MakeGenericMethod(elementType);
       var repos = callable.Invoke(this, new[] { typeName }) as BaseRepository;
       if (repos is null)
-        throw new Exception("CreateRepository did not return a repository.");
+        throw new Exception(
+          $"CreateRepository({typeName}) did not return a repository.");
 
       return repos;
     }
