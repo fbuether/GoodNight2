@@ -2,7 +2,10 @@ using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Model.Read.Transfer
 {
-  public record Choice(string Kind, string? Text, string? Icon,
+  public record Choice(
+    string Kind,
+    string? Text,
+    string? Icon,
     IImmutableList<Property>? Effects);
 
   public record Log(
