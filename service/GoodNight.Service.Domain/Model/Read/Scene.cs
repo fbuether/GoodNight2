@@ -234,9 +234,12 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public override string ToString()
     {
+      var contents = Contents != null
+        ? "[" + string.Join(", ", Contents.Select(c => c.ToString())) + "]"
+        : "<null>";
+
       return $"Scene {{ Name:{Name}, Story:{Story}, IS:{IsStart}, "
-        + $"SA:{ShowAlways}, FS:{ForceShow}, Contents: ["
-        + string.Join(", ", Contents.Select(c => c.ToString())) + "]}";
+        + $"SA:{ShowAlways}, FS:{ForceShow}, Contents: {contents}}}";
     }
   }
 }
