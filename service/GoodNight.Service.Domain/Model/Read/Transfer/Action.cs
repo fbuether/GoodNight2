@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using GoodNight.Service.Domain.Model.Expressions;
 
 namespace GoodNight.Service.Domain.Model.Read.Transfer
 {
