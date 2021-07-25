@@ -25,7 +25,22 @@ namespace GoodNight.Service.Domain.Model.Read
     /// taken. Newest steps are at the end of the list.
     /// </summary>
     IImmutableList<IReference<Log>> History,
-    Action Current)
+
+    /// <summary>
+    /// The seed used for any randomness in the current scene. Storing this
+    /// here ensures that the player will get the same Action on reloading their
+    /// story.
+    /// </summary>
+    // int Seed
+
+    /// <summary>
+    /// The Scene that this player last entered.
+    /// It is stored un-realised here, in order to accomodate future changes
+    /// to the scene. When playing the story, the Scene is realised into an
+    /// action.
+    /// </summary>
+    Scene Current)
+
     : IStorable<Adventure>
   {
     public string Key => NameConverter.Concat(User, Story.Key);
@@ -38,13 +53,8 @@ namespace GoodNight.Service.Domain.Model.Read
       if (firstScene is null)
         return null;
 
-      var player = new Player(playerName,
-        ImmutableList<(IReference<Quality>,Value)>.Empty);
-      var action = firstScene.Play(player);
-      var affectedPlayer = player.Apply(action.Effects);
-
-      return new Adventure(affectedPlayer, user.Key, story,
-        ImmutableList<IReference<Log>>.Empty, action);
+      return new Adventure(Player.Create(playerName), user.Key, story,
+        ImmutableList<IReference<Log>>.Empty, firstScene);
     }
 
     /// <summary>
@@ -60,23 +70,23 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var (log, nextScene) = Current.ContinueWith(User, lastNumber,
+      var asAction = Current.Play(Player);
+      var playerAfterAction = Player.Apply(asAction.Effects);
+      var (log, nextScene) = asAction.ContinueWith(User, lastNumber,
         optionname);
       if (log is null || nextScene is null)
         return null;
 
-      var playerAfterChoice = log.Chosen is Choice.Action ca
-        ? Player.Apply(ca.Effects)
-        : Player;
-      var action = nextScene.Play(playerAfterChoice);
-      var playerAfterScene = playerAfterChoice.Apply(action.Effects);
+      var playerAfterScene = log.Chosen is Choice.Action ca
+        ? playerAfterAction.Apply(ca.Effects)
+        : playerAfterAction;
 
       return this with
-        {
-          Player = playerAfterScene,
-          History = History.Add(log),
-          Current = action
-        };
+      {
+        Player = playerAfterScene,
+        History = History.Add(log),
+        Current = nextScene
+      };
     }
 
     public Transfer.Adventure ToTransfer(bool fullHistory)
@@ -90,9 +100,12 @@ namespace GoodNight.Service.Domain.Model.Read
         .OfType<Log>()
         .Select(h => h.ToTransfer());
 
-      return new Transfer.Adventure(Player.ToTransfer(),
+      var action = Current.Play(Player);
+
+      return new Transfer.Adventure(
+        Player.Apply(action.Effects).ToTransfer(),
         ImmutableList.CreateRange(history),
-        Current.ToTransfer());
+        action.ToTransfer());
     }
 
     public override string ToString()

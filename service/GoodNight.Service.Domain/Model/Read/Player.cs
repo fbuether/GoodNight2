@@ -26,6 +26,9 @@ namespace GoodNight.Service.Domain.Model.Read
     /// </summary>
     IImmutableList<(IReference<Quality>, Value)> State)
   {
+    public static Player Create(string name) =>
+      new Player(name, ImmutableList<(IReference<Quality>,Value)>.Empty);
+
     public Player Apply(IImmutableList<Property> effects)
     {
       if (effects.Count == 0)
