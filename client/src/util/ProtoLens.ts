@@ -1,4 +1,6 @@
 
+import {clone} from "./Clone";
+
 export interface PrismAccess<TObject, TValue> {
   get: (obj: TObject) => TValue | null;
   set: (value: TValue) => (obj: TObject) => TObject;
@@ -99,9 +101,7 @@ function copyWith<TObj,
     throw "ProtoLens copied value of non-object type: " + obj;
   }
 
-  var sameClassObject = Object.create(Object.getPrototypeOf(obj));
-  let updated = Object.assign(sameClassObject, obj, {[prop]: value});
-  return updated;
+  return clone(obj, {[prop]: value});
 }
 
 
