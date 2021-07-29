@@ -15,7 +15,7 @@ import LoadableLoader from "../../components/common/LoadableLoader";
 
 
 function StartAdventureInner(state: State, story: Story) {
-  let returnLink = Dispatch.Page(StoryOverview.page);
+  let returnLink = Dispatch.Page(new StoryOverview());
   let submit = (event: Event) => {
     event.preventDefault();
     state.onStart(state);

@@ -17,7 +17,7 @@ type MenuItem = [string, PageDescriptor];
 
 let menuItems: Array<MenuItem> = [
   ["Willkommen", Home.page],
-  ["Geschichten lesen", StoryOverview.page]
+  ["Geschichten lesen", new StoryOverview()]
 ];
 
 let signedInItems: Array<MenuItem> = [
