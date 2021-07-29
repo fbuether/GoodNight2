@@ -99,8 +99,8 @@ function copyWith<TObj,
     throw "ProtoLens copied value of non-object type: " + obj;
   }
 
-  var copy = Object.create(obj);
-  let updated: TObj = Object.assign(copy, {[prop]: value});
+  var sameClassObject = Object.create(Object.getPrototypeOf(obj));
+  let updated = Object.assign(sameClassObject, obj, {[prop]: value});
   return updated;
 }
 
