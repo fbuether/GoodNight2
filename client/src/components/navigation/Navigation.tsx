@@ -31,7 +31,7 @@ export function Navigation(state: State) {
             {buttons}
           </ul>
           <ul class="navbar-nav">
-            <User {...state.user} />
+            {User(state.user)}
           </ul>
         </div>
       </div>

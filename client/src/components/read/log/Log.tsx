@@ -11,7 +11,7 @@ function Choice(choice: Choice) {
         return (
           <div class="action-log">
             <Markdown>{choice.text}</Markdown>
-            {choice.effects.map(effect => <Effect {...effect} />)}
+            {choice.effects.map(effect => Effect(effect))}
           </div>
         );
       }
@@ -34,7 +34,7 @@ function Entry(entry: Log) {
     <>
       <Markdown>{entry.text}</Markdown>
       {entry.effects.map(Effect)}
-      <Choice {...entry.chosen} />
+      {Choice(entry.chosen)}
     </>
   );
 }

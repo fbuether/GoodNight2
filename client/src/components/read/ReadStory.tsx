@@ -79,7 +79,7 @@ function ReadStoryLoaded(state: State, story: Story, adventure: Adventure) {
       </div>
       <div id="side" class="col-sm-4">
         <hr class="w-75 mx-auto mt-4 mb-5" />
-        <Player {...adventure.player} />
+        {Player(adventure.player)}
       </div>
     </div>
   );
