@@ -85,6 +85,26 @@ export type Prism<O,V> = PrismAccess<O,V> & AddPrismProp<O,V> & AddUnion<O,V> & 
 //------------------------------------------------------------------------------
 
 
+function isObject(a: any): a is object {
+  return typeof a == "object";
+}
+
+function copyWith<TObj,
+    TKey extends string & keyof TObj,
+    TProp extends TObj[TKey]>(
+  obj: TObj, prop: TKey, value: TProp)
+: TObj
+{
+  if (!isObject(obj)) {
+    throw "ProtoLens copied value of non-object type: " + obj;
+  }
+
+  var copy = Object.create(obj);
+  let updated: TObj = Object.assign(copy, {[prop]: value});
+  return updated;
+}
+
+
 function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
   baseLens: LensAccess<TOrigin, TObject>,
   key: TKey)
@@ -92,7 +112,7 @@ function makeLens<TOrigin, TObject, TKey extends string & keyof TObject>(
   return {
     get: (origin: TOrigin) => (baseLens.get(origin))[key],
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
-      return baseLens.set({ ...baseLens.get(origin), [key]: value })(origin);
+      return baseLens.set(copyWith(baseLens.get(origin), key, value))(origin);
     },
 
     prop: function<TSubKey extends string & keyof TObject[TKey], TThis>(
@@ -228,7 +248,7 @@ function makePrismFromProp<TOrigin, TObject,
     },
     set: (value: TObject[TKey]) => (origin: TOrigin): TOrigin => {
       let obj = baseLens.get(origin);
-      return obj != null ? baseLens.set({ ...obj, [key]: value })(origin) : origin;
+      return obj != null ? baseLens.set(copyWith(obj, key, value))(origin) : origin;
     },
 
     prop: function<TSubKey extends string & keyof TObject[TKey], TThis>(
@@ -296,7 +316,7 @@ function addProp<TKey extends string,
   let propLens: LensAccess<TOrigin, TObject[TKey]> = {
     get: (origin: TOrigin) => (baseLens.get(origin))[key],
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
-      return baseLens.set({ ...baseLens.get(origin), [key]: value })(origin);
+      return baseLens.set(copyWith(baseLens.get(origin), key, value))(origin);
     }
   };
 
@@ -324,7 +344,7 @@ function addPrismProp<TKey extends string,
     set: (value: TObject[TKey]) => (origin: TOrigin) => {
       let base = basePrism.get(origin);
       return base != null
-          ? basePrism.set({ ...base, [key]: value })(origin)
+          ? basePrism.set(copyWith(base, key, value))(origin)
           : origin;
     }
   };
