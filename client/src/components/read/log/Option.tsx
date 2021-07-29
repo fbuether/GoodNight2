@@ -1,9 +1,32 @@
 import type {OptionState} from "../../../state/page/read/ReadStory";
+import type {Option} from "../../../state/model/read/Action";
 
 import Link from "../../common/Link";
 import Markdown from "../../common/Markdown";
 import Requirement from "./Requirement";
 
+
+function Requirements(option: Option) {
+  if (option.requirements.length <= 0 && option.isAvailable) {
+    return <></>;
+  }
+
+  var avail = option.isAvailable ? "" : "nicht verfügbar.";
+  var requires = option.requirements.length > 0
+      ? (!option.isAvailable ? " " : "") + "benötigt: "
+      : "";
+
+  var requirements = option.requirements.map(Requirement);
+  for (let i = requirements.length; i = i - 1; i > 0) {
+    requirements.splice(i, 0, <>; </>);
+  }
+
+  return (
+    <small class="float-end mw-50 px-2 pt-1">
+      (<em>{avail}{requires}</em>{requirements})
+    </small>
+  );
+}
 
 
 export default function Option(state: OptionState) {
@@ -14,32 +37,10 @@ export default function Option(state: OptionState) {
 
   let option = state.option;
 
-  let requirements;
-  if (option.requirements.length > 0) {
-    let requirementList = <>{option.requirements.map(Requirement)}</>;
-    let available = option.isAvailable ? "" : "nicht verfügbar. ";
-    requirements = <small class="float-end pt-1">({available}benötigt: {requirementList})</small>;
-  }
-  else {
-    if (!option.isAvailable) {
-      requirements = <small class="float-end pt-1">(nicht verfügbar.)</small>;
-    }
-  }
+  let classes = "list-group-item list-group-item-action";
+  let content = <>{Requirements(option)}<Markdown>{option.text}</Markdown></>;
 
-  if (option.isAvailable) {
-    return (
-      <button class="list-group-item list-group-item-action" onClick={doOption}>
-        {requirements}
-        <Markdown>{option.text}</Markdown>
-      </button>
-    );
-  }
-  else {
-    return (
-      <button class="list-group-item list-group-item-action" disabled>
-        {requirements}
-        <Markdown>{option.text}</Markdown>
-      </button>
-    );
-  }
+  return option.isAvailable
+      ? <button class={classes} onClick={doOption}>{content}</button>
+      : <button class={classes} disabled>{content}</button>;
 }
