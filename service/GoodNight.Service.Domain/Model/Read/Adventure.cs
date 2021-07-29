@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Read.Transfer;
 using GoodNight.Service.Domain.Model.Expressions;
+using GoodNight.Service.Domain.Model.Read.Error;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -39,7 +40,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// to the scene. When playing the story, the Scene is realised into an
     /// action.
     /// </summary>
-    Scene Current)
+    IReference<Scene> Current)
 
     : IStorable<Adventure>
   {
@@ -70,7 +71,12 @@ namespace GoodNight.Service.Domain.Model.Read
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var asAction = Current.Play(Player);
+      var asAction = Current.Get()?.Play(Player);
+      if (asAction is null) {
+        throw new InvalidSceneException(
+          $"Player \"{Player.Name}\" is at invalid Scene \"{Current.Key}\"");
+      }
+
       var playerAfterAction = Player.Apply(asAction.Effects);
       var (log, nextScene) = asAction.ContinueWith(User, lastNumber,
         optionname);
@@ -100,8 +106,13 @@ namespace GoodNight.Service.Domain.Model.Read
         .OfType<Log>()
         .Select(h => h.ToTransfer());
 
-      var action = Current.Play(Player);
+      var scene = Current.Get();
+      if (scene is null) {
+        throw new InvalidSceneException(
+          $"Player \"{Player.Name}\" plays invalid Scene \"{Current.Key}\".");
+      }
 
+      var action = scene.Play(Player);
       return new Transfer.Adventure(
         Player.Apply(action.Effects).ToTransfer(),
         ImmutableList.CreateRange(history),
