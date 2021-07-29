@@ -66,11 +66,8 @@ async function onOption(state: ReadStory, urlname: string, choice: string) {
     Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(null)));
   }
   else {
-    Dispatch.send(Dispatch.Update(Lens.set({
-      ...state,
-      error: response.message,
-      choice: null
-    })));
+    Dispatch.send(Dispatch.Update(Lens.ReadStory.error.set(response.message)));
+    Dispatch.send(Dispatch.Update(Lens.ReadStory.choice.set(null)));
   }
 }
 

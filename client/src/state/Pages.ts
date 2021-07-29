@@ -64,6 +64,7 @@ export const Lens = P.id<Pages>()
     .prop("stories"))
   .union("CreateStory", guardCreateStory, lens => lens
     .prop("name")
+    .prop("saveError")
     .prop("isSaving"))
   .union("WriteStory", guardWriteStory, lens => lens
     .prop("urlname")
@@ -74,12 +75,14 @@ export const Lens = P.id<Pages>()
     .path("scene", lens => lens
       .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
+    .prop("saveError")
     .prop("isSaving"))
   .union("WriteQuality", guardWriteQuality, lens => lens
     .path("story", Loadable.lensP)
     .path("quality", lens => lens
       .union("value", guardNotNull, Loadable.lensP))
     .prop("raw")
+    .prop("saveError")
     .prop("isSaving"))
   .union("StartAdventure", guardStartAdventure, lens => lens
     .path("story", Loadable.lensP)

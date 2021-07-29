@@ -40,7 +40,7 @@ Dispatch.onFinishUpdate(() => {
     throw "HTML does not contain the root element \"goodnight-client\".";
   }
 
-  Preact.render(<PageComponent {...StateStore.get()} />, rootElement);
+  Preact.render(PageComponent(StateStore.get()), rootElement);
 });
 
 Dispatch.addPageValidator(Page.authCheck);

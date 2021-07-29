@@ -3,6 +3,7 @@ import type {Pages} from "../state/Pages";
 import type {PageDescriptor} from "./PageDescriptor";
 import {StateStore} from "./StateStore";
 import {History} from "./History";
+import {clone} from "../util/Clone";
 
 
 type CommandAction = {
@@ -78,7 +79,7 @@ export function update() {
       StateStore.update(state => {
         var updated = upd(state.page);
         return updated != null
-            ? { ...state, page: updated }
+            ? clone(state, { page: updated })
             : null;
       });
 
@@ -90,7 +91,7 @@ export function update() {
         (desc, val) => val(desc),
         msg.descriptor);
 
-      let newState = StateStore.update(state => ({ ...state, page: desc.state }));
+      let newState = StateStore.update(state => clone(state, { page: desc.state }));
       document.title = desc.title;
 
       // must be prior to history push, as UserService must read a first url

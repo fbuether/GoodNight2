@@ -77,11 +77,8 @@ async function onSave(state: WriteQuality) {
     Dispatch.send(Dispatch.Page(loadedPage(story, response.message)));
   }
   else {
-    Dispatch.send(Dispatch.Update(Lens.set({
-      ...state,
-      saveError: response.message,
-      isSaving: false
-    })));
+    Dispatch.send(Dispatch.Update(Lens.WriteQuality.saveError.set(response.message)));
+    Dispatch.send(Dispatch.Update(Lens.WriteQuality.isSaving.set(false)));
   }
 }
 

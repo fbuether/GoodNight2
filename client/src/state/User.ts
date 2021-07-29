@@ -1,3 +1,4 @@
+import {clone} from "../util/Clone";
 import {Dispatch, DispatchAction} from "../core/Dispatch";
 
 import {UserService} from "../service/UserService";
@@ -20,10 +21,7 @@ export type User = SignedIn | SignedOut;
 
 
 function setUser(user: User) {
-  Dispatch.send(Dispatch.State(state => ({
-    ...state,
-    user: user
-  })));
+  Dispatch.send(Dispatch.State(state => clone(state, {user: user})));
 }
 
 async function loadUser() {

@@ -27,11 +27,8 @@ async function submit(state: CreateStory) {
     Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
   }
   else {
-    Dispatch.send(Dispatch.Update(Lens.set({
-      ...state,
-      saveError: response.message,
-      isSaving: false
-    })));
+    Dispatch.send(Dispatch.Update(Lens.CreateStory.saveError.set(response.message)));
+    Dispatch.send(Dispatch.Update(Lens.CreateStory.isSaving.set(false)));
   }
 }
 
