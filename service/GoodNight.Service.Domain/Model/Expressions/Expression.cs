@@ -176,6 +176,28 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public record LessOrEqual : BinaryOperator {}
       public record Equal : BinaryOperator {}
       public record NotEqual : BinaryOperator {}
+
+      internal static string Format(BinaryOperator op)
+      {
+        switch (op)
+        {
+          case Add: return "+";
+          case Sub: return "-";
+          case Mult: return "*";
+          case Div: return "/";
+
+          case And: return "und";
+          case Or: return "oder";
+
+          case Greater: return ">";
+          case GreaterOrEqual: return "≥";
+          case Less: return "<";
+          case LessOrEqual: return "≤";
+          case Equal: return "=";
+          case NotEqual: return "≠";
+          default: return "<?>";
+        }
+      }
     }
 
     public record BinaryApplication<Q>(
@@ -243,7 +265,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public string Format(Func<Q, string> qualityToString)
       {
         return Left.Format(qualityToString) + " " +
-          Operator.ToString() + " " +
+          BinaryOperator.Format(Operator) + " " +
           Right.Format(qualityToString);
       }
     }
