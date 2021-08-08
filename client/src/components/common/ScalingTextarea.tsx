@@ -34,7 +34,10 @@ function updateDataWithCallback(callback: (content: string) => DispatchAction) {
 export default function ScalingTextarea(state: TextareaState) {
   let textarea = PreactHooks.useRef<HTMLTextAreaElement>(null);
   PreactHooks.useEffect(() => {
-    refitTextarea(textarea.current);
+    let curr = textarea.current;
+    if (curr != null) {
+      refitTextarea(curr);
+    }
   });
 
   return (
