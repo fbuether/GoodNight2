@@ -71,7 +71,8 @@ namespace GoodNight.Service.Domain.Model.Read
         .Where(s => s.Item1 is not null && !s.Item1.Hidden)
         .OfType<(Quality, Value)>()
         .Select(s => new Transfer.Property(
-            s.Item1.ToTransfer(), s.Item1.Render(s.Item2)));
+            s.Item1.ToTransfer(), s.Item1.Render(s.Item2)))
+        .OrderBy(p => p.Quality.Name);
 
       return new Transfer.Player(Name, ImmutableList.CreateRange(state));
     }
