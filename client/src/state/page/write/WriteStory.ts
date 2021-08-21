@@ -12,6 +12,7 @@ export interface WriteStory {
   urlname: string;
   story: Loadable<Story>;
   category: Loadable<Category>;
+  tag?: string;
 }
 
 
@@ -26,8 +27,12 @@ async function onLoad(dispatch: Dispatch, state: State) {
     "GET", `api/v1/write/stories/${storyUrlname}`,
     Lens.WriteStory.story);
 
+  let tag = Lens.WriteStory.tag.get(state.page);
+  let categoryUrl = `api/v1/write/stories/${storyUrlname}/content-by-category`
+      + (tag ? `/tag/${tag}` : "");
+
   let category = Loadable.forRequest<Category>(state,
-    "GET", `api/v1/write/stories/${storyUrlname}/content-by-category`,
+    "GET", categoryUrl,
     Lens.WriteStory.category);
 
   await Promise.all([story, category]);
@@ -45,6 +50,7 @@ function instance(story: string | Story, tag?: string): WriteStory {
     urlname: urlname,
     story: storyLoadable,
     category: Loadable.Unloaded,
+    tag: tag
   };
 }
 

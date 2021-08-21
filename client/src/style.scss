@@ -98,7 +98,7 @@ $container-max-widths: map-remove(
 // @import "~bootstrap/scss/accordion";
 // @import "~bootstrap/scss/breadcrumb";
 // @import "~bootstrap/scss/pagination";
-// @import "~bootstrap/scss/badge";
+@import "~bootstrap/scss/badge";
 @import "~bootstrap/scss/alert";
 // @import "~bootstrap/scss/progress";
 @import "~bootstrap/scss/list-group";
@@ -567,12 +567,12 @@ h4 .icon.higher {
 // editing: category tree and tags
 
 ul.category {
-  &, ul {
+  &, & > ul {
     list-style: none;
     padding-left: 0;
   }
 
-  li {
+  & > li {
     padding-left: 1rem;
     border-left: 0.5rem solid hsb(0, 0, 0, 0.04);
 
@@ -595,7 +595,7 @@ ul.category {
     // margin-left: -0.4rem;
   }
 
-  div, a {
+  div, & > .link > a {
     display: inline-block;
     padding: 0.2rem 0.4rem;
     margin-left: -0.4rem;
@@ -604,9 +604,11 @@ ul.category {
 
 
 .tags {
+  display: inline;
+
   a {
     display: inline-block;
-    padding: 0.15rem 0.3rem;
+    padding: 0.1rem 0.2rem;
     background: hsb($secondary-color, 24%, 86%, 0.3);
     border: 0.05rem solid hsb($secondary-color, 24%, 86%, 0);
 
@@ -617,6 +619,22 @@ ul.category {
       box-shadow: 0 0 1rem rgba(0, 0, 0, 0.08);
     }
   }
+}
+
+a + .tags.list-inline {
+  margin-left: 0.6em;
+}
+
+//--------------------------------------
+// editing: tags
+
+.tag {
+  display: inline-block;
+  padding: 0.35em 0.65em;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
 }
 
 

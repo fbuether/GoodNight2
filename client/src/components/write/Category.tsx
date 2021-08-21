@@ -9,6 +9,7 @@ import {WriteQuality} from "../../state/page/write/WriteQuality";
 
 import Icon from "../common/Icon";
 import Link from "../common/Link";
+import Tags from "./Tags";
 
 
 export interface Category {
@@ -28,6 +29,7 @@ function SceneLink(story: Story, scene: Scene) {
         <Icon class="restrained color-primary mr-1" name="horizon-road" />
         {scene.name}
       </Link>
+      {Tags(story, scene.tags)}
     </li>
   );
 }
@@ -41,6 +43,7 @@ function QualityLink(story: Story, quality: Quality) {
         <Icon class="restrained color-secondary mr-1" name="swap-bag" />
         {quality.name}
       </Link>
+      {Tags(story, quality.tags)}
     </li>
   );
 }

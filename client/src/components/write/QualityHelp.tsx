@@ -43,7 +43,7 @@ export default function QualityHelp() {
         heraus starten kann.
       </dd>
 
-        <dt>$tag: <em>tag1</em> <em>tag2</em>…</dt>
+        <dt>$tag: <em>tag1</em>, <em>tag2</em>…</dt>
         <dd>
           Füge dieser Qualität Tags hinzu, um sie in der Bearbeitungsansicht zu
           einem Tag mit aufzuführen.<br />

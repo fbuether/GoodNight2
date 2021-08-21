@@ -69,7 +69,8 @@ export const Lens = P.id<Pages>()
   .union("WriteStory", guardWriteStory, lens => lens
     .prop("urlname")
     .prop("story")
-    .prop("category"))
+    .prop("category")
+    .prop("tag"))
   .union("WriteScene", guardWriteScene, lens => lens
     .path("story", Loadable.lensP)
     .path("scene", lens => lens

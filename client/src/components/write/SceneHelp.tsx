@@ -31,7 +31,7 @@ export default function SceneHelp() {
           Spieler eine Wahl zu lassen.
         </dd>
   
-        <dt>$tag: <em>tag1</em> <em>tag2</em>…</dt>
+        <dt>$tag: <em>tag1</em>, <em>tag2</em>…</dt>
         <dd>
           Füge dieser Szene Tags hinzu, um sie in der Bearbeitungsansicht zu
           einem Tag mit aufzuführen.<br />
