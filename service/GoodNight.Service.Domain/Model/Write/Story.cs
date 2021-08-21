@@ -75,7 +75,20 @@ namespace GoodNight.Service.Domain.Model.Write
 
     public Category GetContentAsCategories()
     {
-      var category = this.Scenes.Aggregate(Category.Empty,
+      return CategoriseScenesAndQualities(this.Scenes, this.Qualities);
+    }
+
+    public Category GetContentAsCategories(string tag)
+    {
+      return CategoriseScenesAndQualities(
+        this.Scenes.Where(s => s.Get()?.Tags.Contains(tag) == true),
+        this.Qualities.Where(s => s.Get()?.Tags.Contains(tag) == true));
+    }
+
+    private Category CategoriseScenesAndQualities(IEnumerable<IReference<Scene>> scenes,
+      IEnumerable<IReference<Quality>> qualities)
+    {
+      var category = scenes.Aggregate(Category.Empty,
         (cat, sceneRef) => {
           var scene = sceneRef.Get();
           return scene is not null
@@ -83,7 +96,7 @@ namespace GoodNight.Service.Domain.Model.Write
             : cat;
         });
 
-      category = this.Qualities.Aggregate(category,
+      category = qualities.Aggregate(category,
         (cat, qualityRef) => {
           var quality = qualityRef.Get();
           return quality is not null

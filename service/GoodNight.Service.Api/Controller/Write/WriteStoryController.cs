@@ -59,6 +59,18 @@ namespace GoodNight.Service.Api.Controller.Write
     }
 
 
+    [HttpGet("{urlname}/content-by-category/tag/{tag}")]
+    public ActionResult<Category> GetContentByCategory(
+      string urlname, string tag)
+    {
+      var story = stories.Get(urlname);
+      if (story is null || story.Creator.Key != GetCurrentUser().Key)
+        return NotFound();
+
+      return Ok(story.GetContentAsCategories(tag));
+    }
+
+
     public record CreateStoryBody(string name);
 
     [HttpPost]
