@@ -22,7 +22,8 @@ namespace GoodNight.Service.Domain.Model.Write
       // tags
       var tags = ImmutableArray.CreateRange(
         contents.OfType<Parse.Scene.Content.Tag>()
-        .Select(t => t.TagName));
+        .Select(t => t.TagName))
+        .Sort();
 
       // category
       var categoryElement = contents.OfType<Parse.Scene.Content.Category>()
