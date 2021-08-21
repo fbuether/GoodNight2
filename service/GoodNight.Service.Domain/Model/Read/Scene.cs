@@ -82,7 +82,8 @@ namespace GoodNight.Service.Domain.Model.Read
               else
               {
                 throw new TypeError(
-                  "Scene Requirement does not evaluate to bool.");
+                  $"Scene Requirement \"{expression}\" does not evaluate to "
+                  + $"bool. Result: \"{value}\", Option: {this}");
               }
             }));
 
