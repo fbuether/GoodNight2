@@ -42,7 +42,7 @@ function mkLinkGroup(story: string, title: string, links: Array<string>) {
 
 
 export function WriteSceneLoaded(state: State, story: Story, scene: Scene | null) {
-  let returnLink = Dispatch.Page(WriteStory.page(story.urlname, story));
+  let returnLink = Dispatch.Page(WriteStory.page(story));
   let submit = (event: Event) => {
     event.preventDefault();
     state.save(state);

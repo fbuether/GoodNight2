@@ -24,7 +24,7 @@ async function submit(state: CreateStory) {
 
   if (response.isResult) {
     let story = response.message;
-    Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
+    Dispatch.send(Dispatch.Page(WriteStory.page(story)));
   }
   else {
     Dispatch.send(Dispatch.Update(Lens.CreateStory.saveError.set(response.message)));

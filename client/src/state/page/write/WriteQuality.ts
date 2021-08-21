@@ -99,16 +99,21 @@ async function onDelete(state: WriteQuality) {
     return;
   }
 
-  Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
+  Dispatch.send(Dispatch.Page(WriteStory.page(story)));
 }
 
 
 
-function instance(storyUrlname: string, qualityUrlname: string | null)
+function instance(story: string | Story, qualityUrlname: string | null)
 : WriteQuality {
+  let storyLoadable = typeof story == "string"
+      ? Loadable.UnloadedP(story)
+      : Loadable.Loaded(story);
+  let storyUrlname = typeof story == "string" ? story : story.urlname;
+
   return {
     page: "WriteQuality" as const,
-    story: Loadable.UnloadedP(storyUrlname),
+    story: storyLoadable,
     quality: qualityUrlname === null
         ? null
         : Loadable.UnloadedP([storyUrlname, qualityUrlname]),
@@ -138,10 +143,12 @@ function loadedPage(story: Story, quality: Quality): PageDescriptor {
   };
 }
 
-function page(storyUrlname: string, qualityUrlname: string | null)
+function page(story: string | Story, qualityUrlname: string | null)
 : PageDescriptor {
+  let storyUrlname = typeof story == "string" ? story : story.urlname;
+
   return {
-    state: instance(storyUrlname, qualityUrlname),
+    state: instance(story, qualityUrlname),
     url: "/write/stories/" + storyUrlname
         + (qualityUrlname !== null
             ? "/quality/" + qualityUrlname

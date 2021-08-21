@@ -34,20 +34,28 @@ async function onLoad(dispatch: Dispatch, state: State) {
 }
 
 
-function instance(urlname: string, story?: Story): WriteStory {
+function instance(story: string | Story, tag?: string): WriteStory {
+  let urlname = typeof story == "string" ? story : story.urlname;
+  let storyLoadable = typeof story == "string"
+      ? Loadable.Unloaded
+      : Loadable.Loaded(story);
+
   return {
     page: "WriteStory" as const,
     urlname: urlname,
-    story: story ? Loadable.Loaded(story) : Loadable.Unloaded,
-    category: Loadable.Unloaded
+    story: storyLoadable,
+    category: Loadable.Unloaded,
   };
 }
 
-function page(urlname: string, story?: Story): PageDescriptor {
+function page(story: string | Story, tag?: string): PageDescriptor {
+  let urlname = typeof story == "string" ? story : story.urlname;
+  let name = typeof story == "string" ? "" : story.name;
+
   return {
-    state: instance(urlname, story),
+    state: instance(story, tag),
     url: "/write/stories/" + urlname,
-    title: "GoodNight: Schreibe" + (story ? " "+ story.name : ""),
+    title: "GoodNight: Schreibe" + name,
     onLoad: onLoad,
     requiresAuth: true
   };

@@ -113,15 +113,20 @@ async function onDelete(state: WriteScene) {
     return;
   }
 
-  Dispatch.send(Dispatch.Page(WriteStory.page(story.urlname, story)));
+  Dispatch.send(Dispatch.Page(WriteStory.page(story)));
 }
 
 
-function instance(storyUrlname: string, sceneUrlname: string | null)
+function instance(story: string | Story, sceneUrlname: string | null)
 : WriteScene {
+  let storyLoadable = typeof story == "string"
+      ? Loadable.UnloadedP(story)
+      : Loadable.Loaded(story);
+  let storyUrlname = typeof story == "string" ? story : story.urlname;
+
   return {
     page: "WriteScene" as const,
-    story: Loadable.UnloadedP(storyUrlname),
+    story: storyLoadable,
     scene: sceneUrlname === null
         ? null
         : Loadable.UnloadedP([storyUrlname, sceneUrlname]),
@@ -152,10 +157,12 @@ function loadedPage(story: Story, scene: Scene): PageDescriptor {
   };
 }
 
-function page(storyUrlname: string, sceneUrlname: string | null)
+function page(story: string | Story, sceneUrlname: string | null)
 : PageDescriptor {
+  let storyUrlname = typeof story == "string" ? story : story.urlname;
+
   return {
-    state: instance(storyUrlname, sceneUrlname),
+    state: instance(story, sceneUrlname),
     url: "/write/stories/" + storyUrlname
         + (sceneUrlname !== null ? "/scene/" + sceneUrlname : "/new-scene"),
     title: "GoodNight: "

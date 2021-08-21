@@ -12,15 +12,15 @@ import Link from "../common/Link";
 
 
 export interface Category {
-  story: string;
+  story: Story;
   category: CategoryT;
   withHeader: boolean;
 }
 
 
 
-function SceneLink(story: string, scene: Scene) {
-  let editScene = Dispatch.Page(WriteScene.page(story, scene.urlname));
+function SceneLink(story: Story, scene: Scene) {
+  let editScene = Dispatch.Page(WriteScene.page(story.urlname, scene.urlname));
 
   return (
     <li class="link s">
@@ -32,8 +32,8 @@ function SceneLink(story: string, scene: Scene) {
   );
 }
 
-function QualityLink(story: string, quality: Quality) {
-  let editQuality = Dispatch.Page(WriteQuality.page(story, quality.urlname));
+function QualityLink(story: Story, quality: Quality) {
+  let editQuality = Dispatch.Page(WriteQuality.page(story.urlname, quality.urlname));
 
   return (
     <li class="link q">

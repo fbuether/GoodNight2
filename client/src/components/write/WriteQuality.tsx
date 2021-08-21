@@ -22,7 +22,7 @@ function setText(newText: string) {
 
 
 export function WriteQualityLoaded(state: State, story: Story, quality: Quality | null) {
-  let returnLink = Dispatch.Page(WriteStory.page(story.urlname, story));
+  let returnLink = Dispatch.Page(WriteStory.page(story));
   let submit = (event: Event) => {
     event.preventDefault();
     state.save(state);

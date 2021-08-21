@@ -17,7 +17,7 @@ import LoadableLoader from "../../components/common/LoadableLoader";
 function WriteStoryInner(state: State, story: Story, category: Category) {
   let toNewScene = Dispatch.Page(WriteScene.pageNew(story.urlname));
   let toNewQuality = Dispatch.Page(WriteQuality.pageNew(story.urlname));
-  let toBase = Dispatch.Page(State.page(state.urlname, story));
+  let toBase = Dispatch.Page(State.page(story));
 
   return (
     <div id="centre" class="px-0">
@@ -35,8 +35,8 @@ function WriteStoryInner(state: State, story: Story, category: Category) {
 
       <div class="row">
         <div class="col-8">
-          <h2>Inhalt</h2>
-          <CategoryC story={story.urlname} category={category}
+          <h2>Inhalt {state.tag ? " für " + state.tag : ""}</h2>
+          <CategoryC story={story} category={category}
             withHeader={false} />
         </div>
         <div class="col-4">
