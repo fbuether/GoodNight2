@@ -109,7 +109,7 @@ namespace GoodNight.Service.Domain.Model.Read
       }
 
       throw new InvalidQualityException(
-        $"Quality of type {Type} rendered with value {value}.");
+        $"Quality of type {Type} rendered with value {value}. Quality: {this}");
     }
   }
 }
