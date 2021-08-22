@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Immutable;
 using System.Linq;
+using System.Text.RegularExpressions;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Model.Read.Error;
 using GoodNight.Service.Storage.Interface;
@@ -25,15 +26,36 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public interface Content
     {
+      private static string ReplacePlaceholders(Player player, string text)
+      {
+        var placeholder = @"\${(\w+)(,(\w+))?}";
+        return Regex.Replace(text, placeholder, (Match match) => {
+          string expr = match.Groups[1].Value;
+          string op = match.Groups[3].Value;
+
+          string replaced = expr switch {
+            "name" => player.Name,
+            _ => expr
+          };
+
+          return op switch {
+            "upper" or "uppercase" => replaced.ToUpper(),
+            "lower" or "lowercase" => replaced.ToLower(),
+            _ => replaced
+          };
+        });
+      }
+
       public record Text(
         string Value)
         : Content
       {
-        public Action AddTo(Player player, Action action) =>
-          action with { Text =
-          action.Text == ""
-          ? Value
-          : action.Text + "\n" + Value };
+        public Action AddTo(Player player, Action action) {
+          var replaced = Content.ReplacePlaceholders(player, Value);
+          return action with { Text = action.Text == ""
+              ? replaced
+              : action.Text + "\n" + replaced };
+        }
       }
 
       public record Effect(
@@ -95,7 +117,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
           return action with {
             Options = action.Options.Add(new Read.Option(Urlname,
-                Description, Icon,
+                ReplacePlaceholders(player, Description), Icon,
                 requirements.All(r => r.Passed), requirements,
                 ImmutableList.CreateRange(effects), Scene))
               };
