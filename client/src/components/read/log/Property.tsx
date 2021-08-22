@@ -32,7 +32,7 @@ export default function Property(property: State) {
 
   return (
     <li class="list-group-item text-truncate">
-      <Icon name={iconName} />
+      <Icon name={iconName} class="mr-1" />
       {display}
     </li>
   );
