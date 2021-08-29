@@ -86,23 +86,35 @@ namespace GoodNight.Service.Domain.Model.Expressions
     /// A range of integer values, to be randomly determined at evaluation time.
     /// </summary>
     public record Range<Q>(
-      int Lower,
-      int Upper)
+      Expression<Q> Lower,
+      Expression<Q> Upper)
       : Expression<Q>
     {
       public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
-        return new Value.Int(rnd.Next(Lower, Upper + 1));
+        var lower = Lower.Evaluate(context, rnd);
+        var upper = Upper.Evaluate(context, rnd);
+
+        if (lower is Value.Int l && upper is Value.Int u)
+        {
+          return new Value.Int(rnd.Next(l.Value, u.Value+1));
+        }
+        else
+        {
+          throw new TypeError("Range subexpressions do not contain numbers.");
+        }
       }
 
       public Expression<R> Map<R>(Func<Q, R> fun)
       {
-        return new Range<R>(Lower, Upper);
+        return new Range<R>(Lower.Map(fun), Upper.Map(fun));
       }
 
       public string Format(Func<Q, string> qualityToString)
       {
-        return $"[{Lower},{Upper}]";
+        var low = Lower.Format(qualityToString);
+        var up = Lower.Format(qualityToString);
+        return $"[{low},{up}]";
       }
     }
 

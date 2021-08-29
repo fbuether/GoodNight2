@@ -12,6 +12,7 @@ namespace GoodNight.Service.Domain.Test.Parse
   using BinaryApplication = Expression.BinaryApplication<string>;
   using Bool = Expression.Bool<string>;
   using Number = Expression.Number<string>;
+  using Range = Expression.Range<string>;
   using Quality = Expression.Quality<string>;
 
   [FeatureFile("Parse/ExpressionParserTest.feature")]
@@ -148,6 +149,10 @@ namespace GoodNight.Service.Domain.Test.Parse
       { "-14", new Number(-14) },
       { "7", exp7 },
       { "77516", new Number(77516) },
+      { "[4,13]", new Range(new Number(4), new Number(13)) },
+      { "[-4,-13]", new Range(new Number(-4), new Number(-13)) },
+      { "[0,9+7]", new Range(new Number(0), mkBin(new Expression.BinaryOperator.Add(), exp9, exp7)) },
+
       { "Quality \"qualityname\"", new Quality("qualityname") },
       { "Quality \"quality name\"", new Quality("quality name") },
       { "Quality \"quality name with several parts\"",

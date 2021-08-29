@@ -594,5 +594,7 @@ Feature: SceneParser
       """
     When the parser parses the input
     Then parsing succeeds
-    Then the result has 1 node
-    Then the result has only "Option" nodes
+    Then the result has 2 nodes
+    Then the node 1 is a "Name"
+    Then the node 2 is a "Option"
+

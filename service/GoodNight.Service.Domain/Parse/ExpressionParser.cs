@@ -24,6 +24,14 @@ namespace GoodNight.Service.Domain.Parse
       NameParser.QualityName
       .Select<Expression<string>>(name => new Expression.Quality<string>(name));
 
+    private static Parser<char, Expression<string>> rangeExpr(
+      Parser<char, Expression<string>> exprParser) =>
+      exprParser.Between(NameParser.InlineWhitespace)
+      .Before(Parser.Char(','))
+      .Then<Expression<string>, Expression<string>>(
+        exprParser.Between(NameParser.InlineWhitespace),
+        (a,b) => new Expression.Range<string>(a, b))
+      .Between(Parser.Char('['), Parser.Char(']'));
 
     private static Parser<char, UnaryExprFun> unaryOp(
       Parser<char, Expression.UnaryOperator> op) =>
@@ -83,10 +91,11 @@ namespace GoodNight.Service.Domain.Parse
     internal readonly static Parser<char, Expression<string>> Expression =
       Pidgin.Expression.ExpressionParser.Build<char, Expression<string>>(expr =>
         Parser.OneOf(
-          numberExpr,
+          numberExpr.Labelled("Number"),
           qualityExpr.Labelled("Quality"),
-          boolExpr,
-          bracedExpr(expr).Labelled("Expr in braces")
+          rangeExpr(expr).Labelled("Range"),
+          boolExpr.Labelled("Boolean"),
+          bracedExpr(expr).Labelled("Braced Expr")
         )
         .Before(NameParser.InlineWhitespace),
         new[] {
@@ -126,9 +135,8 @@ namespace GoodNight.Service.Domain.Parse
 
     public static ParseResult<Expression<string>> Parse(string input)
     {
-      var res =
-        NameParser.InlineWhitespace // leading whitespace
-        .Then(Expression)
+      var res = Expression
+        .Between(NameParser.InlineWhitespace) // allow surrounding whitespace.
         .Before(Parser<char>.End)
         .Parse(input);
 
