@@ -23,7 +23,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
     /// This may throw TypeError exceptions if the expression is not properly
     /// typed in the given context.
     /// </remarks>
-    public Value Evaluate(Func<TQuality, Value> context);
+    public Value Evaluate(Func<TQuality, Value> context, Random rnd);
 
     public Expression<R> Map<R>(Func<TQuality, R> fun);
 
@@ -43,7 +43,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
       Q Value)
       : Expression<Q>
     {
-      public Value Evaluate(Func<Q, Value> context)
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
         return context(Value);
       }
@@ -66,7 +66,7 @@ namespace GoodNight.Service.Domain.Model.Expressions
       bool Value)
       : Expression<Q>
     {
-      public Value Evaluate(Func<Q, Value> context)
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
         return new Value.Bool(Value);
       }
@@ -83,13 +83,37 @@ namespace GoodNight.Service.Domain.Model.Expressions
     }
 
     /// <summary>
+    /// A range of integer values, to be randomly determined at evaluation time.
+    /// </summary>
+    public record Range<Q>(
+      int Lower,
+      int Upper)
+      : Expression<Q>
+    {
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
+      {
+        return new Value.Int(rnd.Next(Lower, Upper + 1));
+      }
+
+      public Expression<R> Map<R>(Func<Q, R> fun)
+      {
+        return new Range<R>(Lower, Upper);
+      }
+
+      public string Format(Func<Q, string> qualityToString)
+      {
+        return $"[{Lower},{Upper}]";
+      }
+    }
+
+    /// <summary>
     /// A literal numerical value.
     /// </summary>
     public record Number<Q>(
       int Value)
       : Expression<Q>
     {
-      public Value Evaluate(Func<Q, Value> context)
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
         return new Value.Int(Value);
       }
@@ -128,9 +152,9 @@ namespace GoodNight.Service.Domain.Model.Expressions
       Expression<Q> Argument)
       : Expression<Q>
     {
-      public Value Evaluate(Func<Q, Value> context)
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
-        var argVal = Argument.Evaluate(context);
+        var argVal = Argument.Evaluate(context, rnd);
         switch (Operator)
         {
           case UnaryOperator.Not:
@@ -228,10 +252,10 @@ namespace GoodNight.Service.Domain.Model.Expressions
       }
 
 
-      public Value Evaluate(Func<Q, Value> context)
+      public Value Evaluate(Func<Q, Value> context, Random rnd)
       {
-        var leftVal = Left.Evaluate(context);
-        var rightVal = Right.Evaluate(context);
+        var leftVal = Left.Evaluate(context, rnd);
+        var rightVal = Right.Evaluate(context, rnd);
 
         switch (leftVal, rightVal)
         {
