@@ -71,7 +71,7 @@ namespace GoodNight.Service.Domain.Test.Model.Read
     {
       output.WriteLine($"scene: {scene}");
       output.WriteLine($"player: {player}");
-      action = scene.Play(player);
+      action = scene.Play(player, 14);
       Assert.NotNull(action);
       output.WriteLine($"action: {action}");
     }
