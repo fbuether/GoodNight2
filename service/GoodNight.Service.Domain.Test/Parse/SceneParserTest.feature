@@ -572,3 +572,27 @@ Feature: SceneParser
     Then the result has 1 node
     Then the node 1 is a "Condition"
     Then the result has 1 "Option" nodes in branches
+
+  Scenario: Parse a random requirement
+    Given the scene input
+      """
+      $require: 5 > [1,10]
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Require" nodes
+
+  Scenario: Parse a random generator
+    Given the scene input
+      """
+      $name: test
+      $option: somewhere else
+      $require: 5 > [1,10]
+      maybe here?
+      $end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 node
+    Then the result has only "Option" nodes
