@@ -50,7 +50,7 @@ namespace GoodNight.Service.Domain.Model.Read
         string Value)
         : Content
       {
-        public Action AddTo(Player player, Action action) {
+        public Action AddTo(Player player, Random rnd, Action action) {
           var replaced = Content.ReplacePlaceholders(player, Value);
           return action with { Text = action.Text == ""
               ? replaced
@@ -63,10 +63,10 @@ namespace GoodNight.Service.Domain.Model.Read
         Expression Expression)
         : Content
       {
-        public Action AddTo(Player player, Action action) =>
+        public Action AddTo(Player player, Random rnd, Action action) =>
           action with {
           Effects = action.Effects.Add(new Property(Quality,
-              Expression.Evaluate(player.GetValueOf)))
+              Expression.Evaluate(player.GetValueOf, rnd)))
         };
 
         public override string ToString()
@@ -92,11 +92,11 @@ namespace GoodNight.Service.Domain.Model.Read
         IReference<Scene> Scene)
         : Content
       {
-        public Action AddTo(Player player, Action action)
+        public Action AddTo(Player player, Random rnd, Action action)
         {
           var requirements = ImmutableList.CreateRange(
             Requirements.Select(expression => {
-              var value = expression.Evaluate(player.GetValueOf);
+              var value = expression.Evaluate(player.GetValueOf, rnd);
               if (value is Value.Bool bValue)
               {
                 return new Requirement(expression, bValue.Value);
@@ -112,7 +112,7 @@ namespace GoodNight.Service.Domain.Model.Read
           var effects = Effects.Select(qe => {
             var (quality, expression) = qe;
             return new Property(quality,
-              expression.Evaluate(player.GetValueOf));
+              expression.Evaluate(player.GetValueOf, rnd));
           });
 
           return action with {
@@ -145,7 +145,7 @@ namespace GoodNight.Service.Domain.Model.Read
         IReference<Scene> Scene)
         : Content
       {
-        public Action AddTo(Player player, Action action)
+        public Action AddTo(Player player, Random rnd, Action action)
         {
           if (action.Return is not null)
             throw new InvalidSceneException(
@@ -164,7 +164,7 @@ namespace GoodNight.Service.Domain.Model.Read
         IReference<Scene> Scene)
         : Content
       {
-        public Action AddTo(Player player, Action action)
+        public Action AddTo(Player player, Random rnd, Action action)
         {
           if (action.Continue is not null)
             throw new InvalidSceneException(
@@ -185,13 +185,14 @@ namespace GoodNight.Service.Domain.Model.Read
         IImmutableList<Content> Else)
         : Content
       {
-        public Action AddTo(Player player, Action action)
+        public Action AddTo(Player player, Random rnd, Action action)
         {
-          var cond = If.Evaluate(player.GetValueOf);
+          var cond = If.Evaluate(player.GetValueOf, rnd);
           if (cond is Value.Bool(var b))
           {
             var additonalContent = b ? Then : Else;
-            return ((Content)this).OnAction(player, action, additonalContent);
+            return ((Content)this).OnAction(player, rnd, action,
+              additonalContent);
           }
           else
           {
@@ -212,28 +213,28 @@ namespace GoodNight.Service.Domain.Model.Read
         IReference<Scene> Scene)
         : Content
       {
-        public Action AddTo(Player player, Action action)
+        public Action AddTo(Player player, Random rnd, Action action)
         {
           var scene = Scene.Get();
           if (scene is null)
             throw new InvalidSceneException(
               $"Scene {Scene.Key} does not exist.");
 
-          return ((Content)this).OnAction(player, action, scene.Contents);
+          return ((Content)this).OnAction(player, rnd, action, scene.Contents);
         }
       }
 
 
-      protected Action OnAction(Player player, Action action,
+      protected Action OnAction(Player player, Random rnd, Action action,
         IImmutableList<Content> content) =>
         content.Aggregate(action,
-          (action, content) => content.AddTo(player, action));
+          (action, content) => content.AddTo(player, rnd, action));
 
       /// <summary>
       /// Apply this Content to a Player and a partial Action, yielding a
       /// more complete Action representing the current Scene.
       /// </summary>
-      public abstract Action AddTo(Player player, Action action);
+      public abstract Action AddTo(Player player, Random rnd, Action action);
     }
 
 
@@ -246,13 +247,15 @@ namespace GoodNight.Service.Domain.Model.Read
     /// This computes the effects that this Scene has onto a specific player,
     /// resulting in the Action that the Player has taken.
     /// </summary>
-    public Action Play(Player player)
+    public Action Play(Player player, int rndSeed)
     {
+      var rnd = new Random(rndSeed);
+
       var action = new Action(this, "",
         ImmutableList<Property>.Empty,
         ImmutableList<Option>.Empty, null, null);
       return Contents.Aggregate(action,
-        (action, content) => content.AddTo(player, action));
+        (action, content) => content.AddTo(player, rnd, action));
     }
 
     public override string ToString()

@@ -2,9 +2,8 @@ using System;
 using System.Linq;
 using System.Collections.Immutable;
 using GoodNight.Service.Storage.Interface;
-using GoodNight.Service.Domain.Model.Read.Transfer;
-using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Model.Read.Error;
+using System.Threading;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -32,7 +31,7 @@ namespace GoodNight.Service.Domain.Model.Read
     /// here ensures that the player will get the same Action on reloading their
     /// story.
     /// </summary>
-    // int Seed
+    int RndSeed,
 
     /// <summary>
     /// The Scene that this player last entered.
@@ -44,6 +43,11 @@ namespace GoodNight.Service.Domain.Model.Read
 
     : IStorable<Adventure>
   {
+    static private ThreadLocal<Random> rndGen = new ThreadLocal<Random>(() =>
+      new Random());
+
+    private static int GetNextRandom() => (rndGen.Value ?? new Random()).Next();
+
     public string Key => NameConverter.Concat(User, Story.Key);
 
     public static Adventure? Start(IReference<Story> story,
@@ -55,23 +59,24 @@ namespace GoodNight.Service.Domain.Model.Read
         return null;
 
       return new Adventure(Player.Create(playerName), user.Key, story,
-        ImmutableList<IReference<Log>>.Empty, firstScene);
+        ImmutableList<IReference<Log>>.Empty, GetNextRandom(), firstScene);
     }
 
     /// <summary>
     /// Performs the next step in this Adventure given by the passed Option.
-    /// This returns the new Adventure as well as a Consequence, which just
-    /// encapsulates the newest history Log as well as the new Action.
+    /// This returns the new Adventure with the played out scene as the newest
+    /// log entry and the player updated, as well as a new seed and current
+    /// scene.
     /// </summary>
     /// <param name="option">
-    /// One of the options in Current.Options, or Current.Return or
-    /// Current.Continue.
+    /// One of the options in Current.Options, or "return" or
+    /// "continue".
     /// <param>
     public Adventure? ContinueWith(string optionname)
     {
       var lastNumber = History.LastOrDefault()?.Get()?.Number ?? 0;
 
-      var asAction = Current.Get()?.Play(Player);
+      var asAction = Current.Get()?.Play(Player, RndSeed);
       if (asAction is null) {
         throw new InvalidSceneException(
           $"Player \"{Player.Name}\" is at invalid Scene \"{Current.Key}\"");
@@ -91,6 +96,7 @@ namespace GoodNight.Service.Domain.Model.Read
       {
         Player = playerAfterScene,
         History = History.Add(log),
+        RndSeed = GetNextRandom(),
         Current = nextScene
       };
     }
@@ -112,7 +118,7 @@ namespace GoodNight.Service.Domain.Model.Read
           $"Player \"{Player.Name}\" plays invalid Scene \"{Current.Key}\".");
       }
 
-      var action = scene.Play(Player);
+      var action = scene.Play(Player, RndSeed);
       return new Transfer.Adventure(
         Player.Apply(action.Effects).ToTransfer(),
         ImmutableList.CreateRange(history),
