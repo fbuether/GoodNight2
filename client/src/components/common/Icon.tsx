@@ -26,7 +26,7 @@ const icons = {
   "mining": require("../../../assets/icons/mining.svg"),
   "nested-hexagons": require("../../../assets/icons/nested-hexagons.svg"),
   "ninja-head": require("../../../assets/icons/ninja-head.svg"),
-  "octagonal-eye": require("../../../assets/icons/octagonal-eye.svg"),
+  "octogonal-eye": require("../../../assets/icons/octogonal-eye.svg"),
   "pianist": require("../../../assets/icons/pianist.svg"),
   "police-officer-head": require("../../../assets/icons/police-officer-head.svg"),
   "prisoner": require("../../../assets/icons/prisoner.svg"),
@@ -78,4 +78,11 @@ export default function Icon(icon: Icon) {
     <span class={"icon " + (icon.class ?? "")}
       dangerouslySetInnerHTML={ { __html: iconValue } }></span>
   );
+}
+
+
+export function makeIcon(icon?: string, classes?: string) {
+  return icon && isIcon(icon)
+      ? <Icon name={icon} class={classes} />
+      : <></>;
 }
