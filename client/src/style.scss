@@ -118,6 +118,11 @@ $container-max-widths: map-remove(
 // bootstrap overrides.
 
 
+.text-default {
+  color: hsb($base-color, 4%, 22%);
+}
+
+
 .border-lg {
   border-left-width: 0.4rem !important;
 }
@@ -153,7 +158,7 @@ hr {
 
 .card:hover {
   background-color: hsla(0, 0%, 100%, 0.85);
-  border: 0.05px solid hsla(0, 0%, 0%, 0.25);
+  border: 0.05rem solid hsla(0, 0%, 0%, 0.25);
 }
 
 
@@ -206,7 +211,7 @@ a {
   }
 
   p {
-    color: hsb($base-color, 4%, 22%);
+    @extend .text-default;
   }
 }
 
@@ -330,8 +335,9 @@ hr.spacer {
 
 
 html body {
+  @extend .text-default;
+
   background: hsb($base-color, 4%, 94%);
-  color: hsb($base-color, 4%, 22%);
   overflow-y: scroll;
   line-height: initial;
 }
@@ -457,19 +463,6 @@ nav.navbar {
     margin: 0 0.5rem;
   }
 
-  &.small {
-    width: 1.2rem;
-    height: 1.2rem;
-
-    &.lower {
-      padding-top: 0.07rem;
-    }
-
-    &.higher {
-      padding-bottom: 1.3rem;
-    }
-  }
-
   &.mr-2 {
     margin-right: 0.4rem;
   }
@@ -477,6 +470,20 @@ nav.navbar {
     margin-right: 0.2rem;
   }
 }
+
+.icon.small, small .icon {
+  width: 1.12rem;
+  height: 1.12rem;
+
+  &.lower {
+    padding-top: 0.07rem;
+  }
+
+  &.higher {
+    padding-bottom: 1.3rem;
+  }
+}
+
 
 a .icon {
   color: inherit;
@@ -723,7 +730,7 @@ textarea.larger {
     background-color: inherit;
     border: none;
     width: auto;
-
+    
     border-left: 0.4rem solid hsb($base-color, 10%, 90%);
 
     padding: 0.4rem 0.8rem 0.6rem 0.4em;
@@ -745,12 +752,48 @@ textarea.larger {
         margin-bottom: 0;
       }
     }
+
+    .requirements {
+      background: hsb($base-color, 100%, 100%, 2%);
+      border: 0.05rem solid hsb($base-color, 7%, 88%);
+
+      margin: 0.2rem -0.2rem 0.2rem 0.6rem;
+
+      small {
+        display: block;
+        margin-bottom: 0.4rem;
+
+        span {
+          display: inline-block;
+        }
+
+        span::after {
+          content: "; ";
+          @extend .text-default;
+        }
+
+        span:last-child::after {
+          content: "";
+        }
+
+        &:last-child {
+          margin-bottom: 0;
+        }
+      }
+    }
   }
 
   .choice {
     background-color: hsb($base-color, 5%, 96%);
   }
 }
+
+
+.ampel-15 { color: hsb(130, 71%, 62%); }
+.ampel-25 { color: hsb( 76, 78%, 64%); }
+.ampel-35 { color: hsb( 48, 73%, 69%); }
+.ampel-45 { color: hsb( 30, 78%, 76%); }
+.ampel-55 { color: hsb(  6, 77%, 74%); }
 
 
 //--------------------------------------
