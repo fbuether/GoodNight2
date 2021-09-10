@@ -3,7 +3,14 @@ import type {Property} from "./Property";
 
 export interface Requirement {
   display: string;
+  icon?: string;
   passed: boolean;
+}
+
+export interface Test {
+  display: string;
+  icon?: string;
+  chance: number;
 }
 
 
@@ -13,6 +20,7 @@ export interface Option {
   icon: string | null;
   isAvailable: boolean;
   requirements: Array<Requirement>;
+  tests: Array<Test>;
 }
 
 
