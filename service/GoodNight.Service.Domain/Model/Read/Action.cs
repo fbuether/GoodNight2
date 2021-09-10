@@ -27,7 +27,8 @@ namespace GoodNight.Service.Domain.Model.Read
         return quality.Name;
       });
 
-      return new Transfer.Requirement(transferExpr.Format(q => q),
+      // todo: Grab actual icon of quality.
+      return new Transfer.Requirement(transferExpr.Format(q => q), null,
         Passed);
     }
   }
@@ -50,6 +51,15 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     internal Transfer.Option ToTransfer() =>
       new Transfer.Option(Urlname, Text, Icon, IsAvailable,
+        // ImmutableList.CreateRange<Transfer.Test>(new[] {
+        //     new Transfer.Test("foobar1", "pianist", 7),
+        //     new Transfer.Test("foobar2", "sundial", 27),
+        //     new Transfer.Test("foobar3", "swipe-card", 47),
+        //     new Transfer.Test("foobar4", "mining", 67),
+        //     new Transfer.Test("toast5", "magic-gate", 83)
+        //   }),
+        // todo: grab actual list of tests here.
+        ImmutableList<Transfer.Test>.Empty,
         ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())));
 
     public override string ToString()
