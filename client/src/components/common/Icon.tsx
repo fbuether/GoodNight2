@@ -1,5 +1,6 @@
 
 const icons = {
+  "annexation": require("../../../assets/icons/annexation.svg"),
   "astronaut-helmet": require("../../../assets/icons/astronaut-helmet.svg"),
   "bone-knife": require("../../../assets/icons/bone-knife.svg"),
   "bookmarklet": require("../../../assets/icons/bookmarklet.svg"),
@@ -9,6 +10,7 @@ const icons = {
   "cook": require("../../../assets/icons/cook.svg"),
   "cpu": require("../../../assets/icons/cpu.svg"),
   "crypt-entrance": require("../../../assets/icons/crypt-entrance.svg"),
+  "digital-trace": require("../../../assets/icons/digital-trace.svg"),
   "echo-ripples": require("../../../assets/icons/echo-ripples.svg"),
   "embrassed-energy": require("../../../assets/icons/embrassed-energy.svg"),
   "empty-hourglass": require("../../../assets/icons/empty-hourglass.svg"),
@@ -20,6 +22,7 @@ const icons = {
   "hatchet": require("../../../assets/icons/hatchet.svg"),
   "health-capsule": require("../../../assets/icons/health-capsule.svg"),
   "horizon-road": require("../../../assets/icons/horizon-road.svg"),
+  "kaleidoscope-pearls": require("../../../assets/icons/kaleidoscope-pearls.svg"),
   "magic-gate": require("../../../assets/icons/magic-gate.svg"),
   "mesh-network": require("../../../assets/icons/mesh-network.svg"),
   "mine-explosion": require("../../../assets/icons/mine-explosion.svg"),
@@ -27,10 +30,13 @@ const icons = {
   "nested-hexagons": require("../../../assets/icons/nested-hexagons.svg"),
   "ninja-head": require("../../../assets/icons/ninja-head.svg"),
   "octogonal-eye": require("../../../assets/icons/octogonal-eye.svg"),
+  "padlock": require("../../../assets/icons/padlock.svg"),
   "pianist": require("../../../assets/icons/pianist.svg"),
   "police-officer-head": require("../../../assets/icons/police-officer-head.svg"),
   "prisoner": require("../../../assets/icons/prisoner.svg"),
   "processor": require("../../../assets/icons/processor.svg"),
+  "ram": require("../../../assets/icons/ram.svg"),
+  "recycle": require("../../../assets/icons/recycle.svg"),
   "road": require("../../../assets/icons/road.svg"),
   "saloon-doors": require("../../../assets/icons/saloon-doors.svg"),
   "save": require("../../../assets/icons/save.svg"),
@@ -49,6 +55,7 @@ const icons = {
   "tombstone": require("../../../assets/icons/tombstone.svg"),
   "two-coins": require("../../../assets/icons/two-coins.svg"),
   "unplugged": require("../../../assets/icons/unplugged.svg"),
+  "vibrating-shield": require("../../../assets/icons/vibrating-shield.svg"),
 } as const;
 
 
