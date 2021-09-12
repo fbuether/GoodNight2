@@ -26,26 +26,6 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public interface Content
     {
-      private static string ReplacePlaceholders(Player player, string text)
-      {
-        var placeholder = @"\${(\w+)(,(\w+))?}";
-        return Regex.Replace(text, placeholder, (Match match) => {
-          string expr = match.Groups[1].Value;
-          string op = match.Groups[3].Value;
-
-          string replaced = expr switch {
-            "name" => player.Name,
-            _ => expr
-          };
-
-          return op switch {
-            "upper" or "uppercase" => replaced.ToUpper(),
-            "lower" or "lowercase" => replaced.ToLower(),
-            _ => replaced
-          };
-        });
-      }
-
       public record Text(
         string Value)
         : Content
@@ -218,6 +198,27 @@ namespace GoodNight.Service.Domain.Model.Read
 
           return ((Content)this).OnAction(player, rnd, action, scene.Contents);
         }
+      }
+
+
+      private static string ReplacePlaceholders(Player player, string text)
+      {
+        var placeholder = @"\${(\w+)(,(\w+))?}";
+        return Regex.Replace(text, placeholder, (Match match) => {
+          string expr = match.Groups[1].Value;
+          string op = match.Groups[3].Value;
+
+          string replaced = expr switch {
+            "name" => player.Name,
+            _ => expr
+          };
+
+          return op switch {
+            "upper" or "uppercase" => replaced.ToUpper(),
+            "lower" or "lowercase" => replaced.ToLower(),
+            _ => replaced
+          };
+        });
       }
 
 
