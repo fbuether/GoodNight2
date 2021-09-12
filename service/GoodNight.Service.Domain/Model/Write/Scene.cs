@@ -7,10 +7,15 @@ namespace GoodNight.Service.Domain.Model.Write
     string Name,
     string Story, // urlname of story, for the key
     string Raw,
+
+    // link to the read scene, for easier udpate
+    IReference<Model.Read.Scene> ReadScene,
+
     IImmutableList<string> Tags,
     IImmutableList<string> Category,
-    IImmutableList<string> OutLinks,
-    IImmutableList<string> InLinks)
+
+    IImmutableList<IReference<Scene>> OutLinks,
+    IImmutableList<IReference<Scene>> InLinks)
     : IStorable<Scene>
   {
     public string Urlname => NameConverter.OfString(Name);

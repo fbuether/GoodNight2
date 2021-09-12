@@ -75,21 +75,17 @@ namespace GoodNight.Service.Domain.Model.Read
         }
       }
 
-
       /// <summary>
-      /// Adds an Option the Player may take here. It has a specific Urlname to
-      /// make this Option uniquely chooseable, a descriptive text and
-      /// optionally an icon. A set of requirement Expressions may guard this
-      /// Option. If chosen, it may have a set of Effects and a Scene to
-      /// continue to.
+      /// An Option the Player may take here. May only occur in regular Scenes.
+      ///
+      /// The Urlname may be either the regular Scene name pointed towards.
+      /// For inline-options, this will create a virtual Scene that is named
+      /// here.
+      /// The linked Scene will be used to fill this Option.
       /// </summary>
       public record Option(
         string Urlname,
-        string Description,
-        string? Icon,
-        IImmutableList<Expression> Requirements,
-        IImmutableList<(IReference<Quality>, Expression)> Effects,
-        IReference<Scene> Scene)
+        IImmutableList<Content> Scene)
         : Content
       {
         public Action AddTo(Player player, Random rnd, Action action)
