@@ -324,6 +324,7 @@ Feature: SceneParser
     Then parsing succeeds
     Then the result has only "Set" nodes
     Then "Set" node 1 sets quality "Hildas Hammer"
+    Then "Set" node 1 has operator Set
 
   Scenario: Several set settings
     Given the scene input
@@ -335,6 +336,62 @@ Feature: SceneParser
     When the parser parses the input
     Then parsing succeeds
     Then the result has only "Set" nodes
+
+  Scenario: Sets with += operator
+    Given the scene input
+      """
+      $name: test
+      $set: quality to += 2
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the node 1 is a "Name"
+    Then the node 2 is a "Set"
+    Then "Set" node 2 sets quality "quality to"
+    Then "Set" node 2 has operator Add
+
+  Scenario: Sets with -= operator
+    Given the scene input
+      """
+      $name: test
+      $set: quality for -= 2
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the node 1 is a "Name"
+    Then the node 2 is a "Set"
+    Then "Set" node 2 sets quality "quality for"
+    Then "Set" node 2 has operator Sub
+
+  Scenario: Sets with *= operator
+    Given the scene input
+      """
+      $name: test
+      $set: quality by *= 2
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the node 1 is a "Name"
+    Then the node 2 is a "Set"
+    Then "Set" node 2 sets quality "quality by"
+    Then "Set" node 2 has operator Mult
+
+  Scenario: Sets with /= operator
+    Given the scene input
+      """
+      $name: test
+      $set: quality of /= 2
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 2 nodes
+    Then the node 1 is a "Name"
+    Then the node 2 is a "Set"
+    Then "Set" node 2 sets quality "quality of"
+    Then "Set" node 2 has operator Div
 
   Scenario: A requirement
     Given the scene input
@@ -597,4 +654,3 @@ Feature: SceneParser
     Then the result has 2 nodes
     Then the node 1 is a "Name"
     Then the node 2 is a "Option"
-

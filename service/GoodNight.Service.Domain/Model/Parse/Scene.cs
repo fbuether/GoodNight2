@@ -55,11 +55,16 @@ namespace GoodNight.Service.Domain.Model.Parse
         IImmutableList<string> Path)
         : Content;
 
+      public enum SetOperator
+      {
+        Set, Add, Sub, Mult, Div
+      }
 
       // set a quality of the player to a new value
       // only used on the top level of an action/option
       public record Set(
         string Quality,
+        SetOperator Operator,
         Expression<string> Expression)
         : Content;
 

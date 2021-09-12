@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
+using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
+using static GoodNight.Service.Domain.Model.Parse.Scene.Content;
 
 namespace GoodNight.Service.Domain.Model.Read
 {
@@ -36,8 +38,28 @@ namespace GoodNight.Service.Domain.Model.Read
           break;
 
         case Parse.Scene.Content.Set c:
-          yield return new Scene.Content.Effect(makeQuality(c.Quality),
-            c.Expression.Map(makeQuality));
+          if (c.Operator == Parse.Scene.Content.SetOperator.Set)
+          {
+            yield return new Scene.Content.Effect(makeQuality(c.Quality),
+                c.Expression.Map(makeQuality));
+          }
+          else
+          {
+            Expression.BinaryOperator newOp = c.Operator switch
+            {
+              SetOperator.Add => new Expression.BinaryOperator.Add(),
+              SetOperator.Sub => new Expression.BinaryOperator.Sub(),
+              SetOperator.Mult => new Expression.BinaryOperator.Mult(),
+              SetOperator.Div => new Expression.BinaryOperator.Div(),
+              _ => throw new Exception("Invalid control flow.")
+            };
+
+            var quality = makeQuality(c.Quality);
+            yield return new Scene.Content.Effect(quality,
+              new Expression.BinaryApplication<IReference<Quality>>(
+                newOp, new Expression.Quality<IReference<Quality>>(quality),
+                c.Expression.Map(makeQuality)));
+          }
           break;
 
         case Parse.Scene.Content.Option c:

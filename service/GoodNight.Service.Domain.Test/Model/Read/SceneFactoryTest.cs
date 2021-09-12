@@ -74,7 +74,9 @@ namespace GoodNight.Service.Domain.Test.Model.Read
 
       output.WriteLine($"setup {qualityRef} to return {qualityRef.Key}");
 
-      AddPContent(new PScene.Content.Set(quality, StringToExpression(expr)));
+      AddPContent(new PScene.Content.Set(quality,
+          PScene.Content.SetOperator.Set,
+          StringToExpression(expr)));
     }
 
 

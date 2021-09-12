@@ -60,11 +60,18 @@ namespace GoodNight.Service.Domain.Parse
       Parser.String("set")
       .Then(NameParser.Colon)
       .Then(NameParser.QualityName)
-      .Before(NameParser.InlineWhitespace
-        .Then(Parser.Char('='))
-        .Then(NameParser.InlineWhitespace)).
-      Then<Expression<string>, Scene.Content>(ExpressionParser.Expression,
-        (quality,expr) => new Scene.Content.Set(quality, expr));
+      .Before(NameParser.InlineWhitespace)
+      .Then<(Scene.Content.SetOperator, Expression<string>), Scene.Content>(
+        Parser.OneOf(new[] {
+            Parser.String("=").WithResult(Scene.Content.SetOperator.Set),
+            Parser.String("+=").WithResult(Scene.Content.SetOperator.Add),
+            Parser.String("-=").WithResult(Scene.Content.SetOperator.Sub),
+            Parser.String("*=").WithResult(Scene.Content.SetOperator.Mult),
+            Parser.String("/=").WithResult(Scene.Content.SetOperator.Div) })
+        .Before(NameParser.InlineWhitespace)
+        .Then(ExpressionParser.Expression,
+          (symbol, expr) => (symbol, expr)),
+        (name, se) => new Scene.Content.Set(name, se.Item1, se.Item2));
 
     private readonly static ContentParser requireContent =
       Parser.Try(Parser.String("require"))

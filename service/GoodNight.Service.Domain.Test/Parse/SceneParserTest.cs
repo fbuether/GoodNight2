@@ -191,6 +191,34 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.Equal(quality, setNode!.Quality);
     }
 
+    [Then(@"""Set"" node (\d) has operator (.*)")]
+    public void ThenSetNodeIntHasOperatorString(int position, string op)
+    {
+      Assert.True(position <= Get(result).Contents.Count());
+      var node = Get(result).Contents[position-1];
+      Assert.IsType<Scene.Content.Set>(node);
+      var setNode = node as Scene.Content.Set;
+
+      switch (op)
+      {
+        case "Set":
+          Assert.Equal(Scene.Content.SetOperator.Set, setNode!.Operator);
+          break;
+        case "Add":
+          Assert.Equal(Scene.Content.SetOperator.Add, setNode!.Operator);
+          break;
+        case "Sub":
+          Assert.Equal(Scene.Content.SetOperator.Sub, setNode!.Operator);
+          break;
+        case "Mult":
+          Assert.Equal(Scene.Content.SetOperator.Mult, setNode!.Operator);
+          break;
+        case "Div":
+          Assert.Equal(Scene.Content.SetOperator.Div, setNode!.Operator);
+          break;
+      }
+    }
+
 
     [Then(@"the node (\d+) has text ""(.*)""")]
     public void TheNodeNHasTextContent(int position, string content)
