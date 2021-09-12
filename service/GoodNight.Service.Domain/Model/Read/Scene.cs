@@ -26,6 +26,11 @@ namespace GoodNight.Service.Domain.Model.Read
   {
     public interface Content
     {
+      /// <summary>
+      /// A simple plain bit of text, that is shown if this Scene is played.
+      /// If it is contained within other constructs (e.g. conditionals), it
+      /// is only shown if these evaluate it.
+      /// </summary>
       public record Text(
         string Value)
         : Content
@@ -38,6 +43,10 @@ namespace GoodNight.Service.Domain.Model.Read
         }
       }
 
+      /// <summary>
+      /// An effect that this Scene causes. If evaluated, it sets the Player's
+      /// Quality to the result of evaulating the expression.
+      /// </summary>
       public record Effect(
         IReference<Quality> Quality,
         Expression Expression)
@@ -70,52 +79,47 @@ namespace GoodNight.Service.Domain.Model.Read
       {
         public Action AddTo(Player player, Random rnd, Action action)
         {
-          var requirements = ImmutableList.CreateRange(
-            Requirements.Select(expression => {
-              var value = expression.Evaluate(player.GetValueOf, rnd);
-              if (value is Value.Bool bValue)
-              {
-                return new Requirement(expression, bValue.Value);
-              }
-              else
-              {
-                throw new TypeError(
-                  $"Scene Requirement \"{expression}\" does not evaluate to "
-                  + $"bool. Result: \"{value}\", Option: {this}");
-              }
-            }));
-
-          var effects = Effects.Select(qe => {
-            var (quality, expression) = qe;
-            return new Property(quality,
-              expression.Evaluate(player.GetValueOf, rnd));
-          });
-
-          return action with {
-            Options = action.Options.Add(new Read.Option(Urlname,
-                ReplacePlaceholders(player, Description), Icon,
-                requirements.All(r => r.Passed), requirements,
-                ImmutableList.CreateRange(effects), Scene))
-              };
         }
 
-        public override string ToString()
-        {
-          string reqs = string.Join(", ", Requirements.Select(r => r.ToString()));
-          var effs = string.Join(", ", Effects.Select(r => r.ToString()));
+      }
 
-          return $"Option {{Urlname:{Urlname}, Description:{Description}, "
-            + $"Icon:{Icon}, "
-            + "Requirements:[" + reqs + "], "
-            + "Effects:[" + effs + "], "
-            + $"Scene:{Scene}}}";
+      /// <summary>
+      /// A requirement to execute this Scene. May only occur on options.
+      /// If an Option refers to a Scene with a Requirement, the Option can be
+      /// disabled if the Player's State does not fulfil this Requirement.
+      /// The Requirement may be hidden if it contains a hidden Quality.
+      /// </summary>
+      public record Requirement(
+        Expression Expression)
+        : Content
+      {
+        public Action AddTo(Player player, Random rnd, Action action)
+        {
+          throw new NotImplementedException();
         }
       }
 
+      /// <summary>
+      /// A test to execute in this scene.
+      /// Will roll a random value in [0,1) and compare it with Expression and
+      /// store that in Result. If Display is set, the test can be used in
+      /// Options, which will show Display as the test Quality.
+      /// </summary>
+      public record Test(
+        IReference<Quality> Result,
+        IReference<Quality>? Display,
+        Expression Expression)
+        : Content
+      {
+        public Action AddTo(Player player, Random rnd, Action action)
+        {
+          throw new NotImplementedException();
+        }
+      }
 
       /// <summary>
       /// Returns to a previous Scene. This may only occur once on each
-      /// manifestation of a Scene.
+      /// manifestation of a Scene. May not occur on Options.
       /// </summary>
       public record Return(
         IReference<Scene> Scene)
@@ -134,7 +138,8 @@ namespace GoodNight.Service.Domain.Model.Read
 
       /// <summary>
       /// Continues to a next Scene. This may only occur once on each
-      /// manifestation of a Scene.
+      /// manifestation of a Scene. Must occur exactly once on an evaluated
+      /// Option.
       /// </summary>
       public record Continue(
         IReference<Scene> Scene)
