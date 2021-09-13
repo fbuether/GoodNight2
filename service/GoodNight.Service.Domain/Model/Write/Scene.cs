@@ -8,7 +8,7 @@ namespace GoodNight.Service.Domain.Model.Write
     string Story, // urlname of story, for the key
     string Raw,
 
-    // link to the read scene, for easier udpate
+    // link to the read scene, for easier update
     IReference<Model.Read.Scene> ReadScene,
 
     IImmutableList<string> Tags,

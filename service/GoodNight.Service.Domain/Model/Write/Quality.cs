@@ -11,7 +11,10 @@ namespace GoodNight.Service.Domain.Model.Write
     string? Icon,
     string Raw,
     IImmutableList<string> Tags,
-    IImmutableList<string> Category)
+    IImmutableList<string> Category,
+
+    // the scenes this quality is used in
+    IImmutableList<IReference<Scene>> InLinks)
     : IStorable<Quality>
   {
     public string Urlname => NameConverter.OfString(Name);
