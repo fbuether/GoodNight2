@@ -74,7 +74,7 @@ namespace GoodNight.Service.Domain.Model.Read
       /// </summary>
       public record Option(
         string Urlname,
-        IImmutableList<Content> Scene)
+        IReference<Scene> Scene)
         : Content
       {
         public Action AddTo(Player player, Random rnd, Action action)
