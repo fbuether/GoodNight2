@@ -17,13 +17,15 @@ Feature: SceneParser
       $return: Im Keller
       $category: quest/Salars Keller
 
-      $option: Gehe die Treppe hoch
+      $option
       Klettere vorsichtig die steile Treppe hinauf.
+      $continue: Gehe die Treppe hoch
       $end
 
-      $option: Spüre oben nach Leben
+      $option
       $require: "Gespür für Leben" > 5 and Atem > 4
       Fokussiere dich auf deinen Atem und spüre nach Leben über dir.
+      $continue: Spüre oben nach Leben
       $end
       """
     When the parser parses the input
@@ -443,6 +445,70 @@ Feature: SceneParser
     Then the result has 1 node
     Then the node 1 is a "Condition"
 
+
+  Scenario: If without end does not parse
+    Given the scene input
+      """
+      $if: true
+      some expression text.
+      """
+    When the parser parses the input
+    Then parsing fails
+    Then an error occurs on line 2 and position 22
+    Then expected token End-Statement
+
+
+  Scenario: If / Else without end does not parse
+    Given the scene input
+      """
+      $if: true
+      some expression text.
+      $else
+      something else?
+      """
+    When the parser parses the input
+    Then parsing fails
+    Then an error occurs on line 4 and position 16
+    Then expected token End-Statement
+
+  Scenario: end without if or option does not parse.
+    Given the scene input
+      """
+      some expression text.
+      $end
+      something else?
+      """
+    When the parser parses the input
+    Then parsing fails
+    Then an error occurs on line 2 and position 1
+    Then expected token EOF
+
+  Scenario: else without if or option does not parse.
+    Given the scene input
+      """
+      some expression text.
+      $else
+      something else?
+      """
+    When the parser parses the input
+    Then parsing fails
+    Then an error occurs on line 2 and position 1
+    Then expected token EOF
+
+
+  Scenario: A simple conditional with two lines of content and an inner command
+    Given the scene input
+      """
+      $if: true
+      some expression text.
+      woash.
+      $set: a = 1
+      okay.
+      $end
+      """
+    When the parser parses the input
+    Then parsing succeeds
+
   Scenario: Consecutive conditions
     Given the scene input
       """
@@ -560,12 +626,12 @@ Feature: SceneParser
     Then parsing succeeds
 
 
-  Scenario: A Simple option with text
+  Scenario: A Simple option with just some text
     Given the scene input
       """
-      $ option: scenename
-      text content
-      $ end
+      $option
+      This is just some text.
+      $end
       """
     When the parser parses the input
     Then parsing succeeds
@@ -576,7 +642,7 @@ Feature: SceneParser
     Given the scene input
       """
       Hello, here!
-      $ option: scenename
+      $ option
       text content
       $ end
       this, as well.
@@ -589,11 +655,13 @@ Feature: SceneParser
   Scenario: Several options consecutively
     Given the scene input
       """
-      $ option: scenename
+      $ option
       text content
+      $continue: here
       $ end
-      $ option: something else
+      $ option
       other content
+      $continue: something else
       $ end
       """
     When the parser parses the input
@@ -604,9 +672,10 @@ Feature: SceneParser
   Scenario: An option with nested settings
     Given the scene input
       """
-      $ option: scenename
+      $ option
       $ require: cookies
       $ always show
+      $continue: scenename
       $ end
       """
     When the parser parses the input
@@ -614,11 +683,11 @@ Feature: SceneParser
     Then the result has 1 node
     Then the result has only "Option" nodes
 
-  Scenario: A conditional with a nested option
+  Scenario: A conditional with a nested inline option
     Given the scene input
       """
       $ if: not cookies
-      $ option: scenename
+      $ option
       $ require: cookies
       it's optional.
       $ end
@@ -630,27 +699,51 @@ Feature: SceneParser
     Then the node 1 is a "Condition"
     Then the result has 1 "Option" nodes in branches
 
-  Scenario: Parse a random requirement
+  Scenario: An option with scene name contained
     Given the scene input
       """
-      $require: 5 > [1,10]
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the result has 1 node
-    Then the result has only "Require" nodes
-
-  Scenario: Parse a random generator
-    Given the scene input
-      """
-      $name: test
-      $option: somewhere else
-      $require: 5 > [1,10]
-      maybe here?
+      $option
+      $continue: new places
       $end
       """
     When the parser parses the input
     Then parsing succeeds
-    Then the result has 2 nodes
-    Then the node 1 is a "Name"
-    Then the node 2 is a "Option"
+    Then the result has 1 node
+    Then the node 1 is a "Option"
+    Then the result has 1 "Continue" nodes in branches
+
+  Scenario: A basic test
+    Given the scene input
+      """
+      $test: Karpal as >= 0.4
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 nodes
+    Then the node 1 is a "Test"
+
+  Scenario: A test with a result quality
+    Given the scene input
+      """
+      $test: storage = Karpal as >= 0.4
+      """
+    When the parser parses the input
+    Then parsing succeeds
+    Then the result has 1 nodes
+    Then the node 1 is a "Test"
+    Then "Test" node 1 has Result quality "storage"
+    Then "Test" node 1 has Display quality "Karpal"
+
+
+
+  Scenario: A failing test provides a proper error message
+    Given the scene input
+      """
+      abc
+      $set: name of test quality
+      def
+      """
+    When the parser parses the input
+    Then parsing fails
+    Then an error occurs on line 2 and position 27
+    Then expected token Set-Operator

@@ -88,10 +88,10 @@ namespace GoodNight.Service.Domain.Test.Parse
           break;
         case ParseResult.Failure<Scene> r:
           output.WriteLine($"Result is failure.");
-          output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
-          output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
-          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}.");
-          output.WriteLine($"ExpectedToken: {r.ExpectedToken}.");
+          output.WriteLine($"ErrorMessage: {r.ErrorMessage}");
+          output.WriteLine($"ErrorPosition: {r.ErrorPosition}");
+          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}");
+          output.WriteLine($"ExpectedToken: {r.ExpectedToken}");
           break;
       }
     }
@@ -111,6 +111,30 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.IsType<ParseResult.Success<Scene>>(result);
       Assert.NotNull((result as ParseResult.Success<Scene>)!.Result);
     }
+
+    [Then(@"an error occurs on line (\d+) and position (\d+)")]
+    public void ThenAndErrorOccursOnLineNumberAndPositionNumber(
+      int line, int pos)
+    {
+      Assert.NotNull(result);
+      Assert.IsType<ParseResult.Failure<Scene>>(result);
+      var fail = result as ParseResult.Failure<Scene>;
+
+      Assert.Equal(line, fail!.ErrorPosition.Item1);
+      Assert.Equal(pos, fail!.ErrorPosition.Item2);
+    }
+
+    [Then(@"expected token (.+)")]
+    public void ThenExpectedTokenString(string token)
+    {
+      Assert.NotNull(result);
+      Assert.IsType<ParseResult.Failure<Scene>>(result);
+      var fail = result as ParseResult.Failure<Scene>;
+
+      var required = token == "EOF" ? token : "Label: " + token;
+      Assert.StartsWith(required, fail!.ExpectedToken);
+    }
+
 
     private Scene Get(ParseResult<Scene>? result)
     {
@@ -163,6 +187,11 @@ namespace GoodNight.Service.Domain.Test.Parse
         if (content.GetType().Name == type)
         {
           count += 1;
+        }
+
+        if (content is Scene.Content.Option option)
+        {
+          count += CountNodesOfType(option.Content, type);
         }
 
         if (content is Scene.Content.Condition condition)
@@ -234,7 +263,7 @@ namespace GoodNight.Service.Domain.Test.Parse
     public void TheResultHasTagName(string tag)
     {
       Assert.Contains(Get(result).Contents, node =>
-        (node as Scene.Content.Tag)!.TagName == tag);
+        (node as Scene.Content.Tag)!.Tags.Any(t => t == tag));
     }
 
     [Then(@"the result has the category ""(.*)""")]
@@ -263,6 +292,29 @@ namespace GoodNight.Service.Domain.Test.Parse
       Assert.IsType<Scene.Content.Continue>(node);
       var continueNode = node as Scene.Content.Continue;
       Assert.Equal(target, continueNode!.Scene);
+    }
+
+    [Then(@"""Test"" node (\d) has (.+) quality ""(.*)""")]
+    public void ThenTestNodeIntHasStringQualityString(int position,
+      string which, string quality)
+    {
+      Assert.True(position <= Get(result).Contents.Count());
+      var node = Get(result).Contents[position-1];
+      Assert.IsType<Scene.Content.Test>(node);
+
+      var testNode = node as Scene.Content.Test;
+      if (which == "Result")
+      {
+        Assert.Equal(quality, testNode!.Result);
+      }
+      else if (which == "Display")
+      {
+        Assert.Equal(quality, testNode!.Display);
+      }
+      else
+      {
+        throw new Exception("wrong kind of quality position for test node.");
+      }
     }
   }
 }
