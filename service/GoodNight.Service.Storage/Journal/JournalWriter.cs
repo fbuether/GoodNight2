@@ -48,9 +48,22 @@ namespace GoodNight.Service.Storage.Journal
 
       if (writeCacheTask is not null && !writeCacheTask.IsCompleted)
       {
-        writeCacheCanceler.Cancel();
-        writeCache.CompleteAdding();
-        writeCacheTask.Wait();
+        try
+        {
+          writeCacheCanceler.Cancel();
+          writeCache.CompleteAdding();
+          writeCacheTask.Wait();
+        }
+        catch (AggregateException ex)
+        {
+          Exceptions.Add(ex.Message);
+          if (ex.InnerException is not null)
+          {
+            Exceptions.Add("Inner Exception: " + ex.InnerException.Message);
+          }
+
+          throw;
+        }
       }
 
       ((IDisposable)writeCache).Dispose();
@@ -73,7 +86,15 @@ namespace GoodNight.Service.Storage.Journal
       {
         if (writeCache.Count > 0)
         {
-          Write(writeCache.Take());
+          try
+          {
+            Write(writeCache.Take());
+          }
+          catch (Exception e)
+          {
+            Exceptions.Add(e.Message);
+            throw;
+          }
         }
         else
         {
@@ -90,8 +111,7 @@ namespace GoodNight.Service.Storage.Journal
           catch (Exception e)
           {
             Exceptions.Add(e.Message);
-            Console.WriteLine(
-              $"Exception occurred on JournalWriter write thread: {e}");
+            throw;
           }
         }
       }
