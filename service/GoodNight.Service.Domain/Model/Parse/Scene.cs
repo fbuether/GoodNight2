@@ -131,6 +131,20 @@ namespace GoodNight.Service.Domain.Model.Parse
         }
       }
 
+      // a test that is taken when an option is chosen or a scene first is
+      // entered.
+      public record Test(
+        string Result,
+        string? Display,
+        Expression<string> Expression)
+        : Content
+      {
+        public override string ToString()
+        {
+          return $"{{Parse.Content.Test Result: {Result}, " +
+            $"Display: {Display}, Expression: {Expression}}}";
+        }
+      }
 
       // something the player can do here, contains a body of description
       public record Option(
