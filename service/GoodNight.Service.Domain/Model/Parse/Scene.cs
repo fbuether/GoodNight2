@@ -134,7 +134,6 @@ namespace GoodNight.Service.Domain.Model.Parse
 
       // something the player can do here, contains a body of description
       public record Option(
-        string Scene,
         IImmutableList<Content> Content)
         : Content
       {
