@@ -63,8 +63,25 @@ namespace GoodNight.Service.Domain.Parse
             Tuple.Create(0, 0), null, null);
         }
 
+        string expr = error.Expected.Count() == 1
+          && error.Expected.First().Label is not null
+          ? error.Expected.First().Label!
+          : "\"" + string.Join("\", \"", error.Expected) + "\"";
+
+        var expectMessage =
+          "At line " + error.ErrorPos.Line + ", pos " + error.ErrorPos.Col +
+          ", expected " +
+          (!error.Expected.Any()
+            ? "nothing"
+            : expr) +
+          (error.Unexpected.HasValue
+            ? ", but found \"" + (error.Unexpected.Value == '\n'
+              ? "\\n"
+              : error.Unexpected.Value) + "\"."
+            : ".");
+
         return new ParseResult.Failure<T>(
-          error.Message ?? "An Error occurred, but produced no message.",
+          error.Message ?? expectMessage,
           Tuple.Create(error.ErrorPos.Line, error.ErrorPos.Col),
           error.Unexpected.HasValue
             ? error.Unexpected.Value.ToString()
