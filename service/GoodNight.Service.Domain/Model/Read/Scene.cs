@@ -81,6 +81,7 @@ namespace GoodNight.Service.Domain.Model.Read
           string Text,
           Player Player,
           IImmutableList<Read.Requirement> Requirements,
+          IImmutableList<Property> Effects,
           IReference<Scene>? Target
         );
 
@@ -98,8 +99,10 @@ namespace GoodNight.Service.Domain.Model.Read
             case Effect e:
               var value = e.Expression.Evaluate(collector.Player.GetValueOf,
                 rnd);
+              var effect = new Property(e.Quality, value);
               return collector with { Player = collector.Player
-                  .Apply(e.Quality, value) };
+                  .Apply(e.Quality, value),
+                  Effects = collector.Effects.Add(effect) };
 
             case Requirement r:
               var result = r.Expression.Evaluate(collector.Player.GetValueOf,
