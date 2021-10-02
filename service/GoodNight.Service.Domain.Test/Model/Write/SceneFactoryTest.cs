@@ -7,6 +7,10 @@ using Gherkin.Ast;
 using GoodNight.Service.Domain.Util;
 using P = GoodNight.Service.Domain.Model.Parse;
 using W = GoodNight.Service.Domain.Model.Write;
+using System.IO;
+using GoodNight.Service.Storage;
+using System.Text.Json.Serialization;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Test.Model.Write
 {
@@ -49,15 +53,15 @@ namespace GoodNight.Service.Domain.Test.Model.Write
     [When("converting to a Write.Scene")]
     public void ConvertingToAWriteScene()
     {
+      var journal = new MemoryStream();
+      var store = new Store(new JsonConverter[] {}, journal) as IStore;
+
       Assert.NotNull(pscene);
-      var parseResult = W.SceneFactory.Build(pscene!, "story");
-
-//       switch (parseResult)
-//       {
-//         case ParseResult.Success<W.Scene> r:
-//           break;
-// }
-
+      var parseResult = W.SceneFactory.Build(
+        store.Create<Domain.Model.Write.Scene>(),
+        store.Create<Domain.Model.Write.Quality>(),
+        store.Create<Domain.Model.Read.Scene>(),
+        pscene!, "story");
 
       Assert.IsType<Result.Success<W.Scene, string>>(parseResult);
 
