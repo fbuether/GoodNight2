@@ -15,7 +15,8 @@ namespace GoodNight.Service.Domain.Model.Write
     IImmutableList<string> Category,
 
     IImmutableList<IReference<Scene>> OutLinks,
-    IImmutableList<IReference<Scene>> InLinks)
+    IImmutableList<IReference<Scene>> InLinks,
+    IImmutableList<IReference<Quality>> Qualities)
     : IStorable<Scene>
   {
     public string Urlname => NameConverter.OfString(Name);
