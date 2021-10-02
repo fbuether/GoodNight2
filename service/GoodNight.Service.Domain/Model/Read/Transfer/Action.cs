@@ -2,11 +2,13 @@ using System.Collections.Immutable;
 
 namespace GoodNight.Service.Domain.Model.Read.Transfer
 {
+  // Requirements stem from an expression of type bool
   public record Requirement(
     string Display,
     string? Icon,
-    bool Passed);
+    bool? Passed);
 
+  // Tests stem from requirements with expressions of type chance
   public record Test(
     string Display,
     string? Icon,
@@ -16,8 +18,8 @@ namespace GoodNight.Service.Domain.Model.Read.Transfer
     string Urlname,
     string Text,
     bool IsAvailable,
-    IImmutableList<Test> Tests,
-    IImmutableList<Requirement> Requirements);
+    IImmutableList<Requirement> Requirements,
+    IImmutableList<Test> Tests);
 
   public record Action(
     string Text,
