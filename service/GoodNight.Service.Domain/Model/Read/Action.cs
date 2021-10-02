@@ -84,6 +84,20 @@ namespace GoodNight.Service.Domain.Model.Read
     IReference<Scene>? Return,
     IReference<Scene>? Continue)
   {
+    /// <summary>
+    /// Play an option of this action, which the player currently is at.
+    /// </summary>
+    /// <param name="optionname">
+    /// optionname is the name of the option that the player takes, usually
+    /// the name of the next Scene. It may also be the special names
+    /// "return" or "continue", when a player choses the respective action of
+    /// the Scene.
+    /// </param>
+    /// <returns>
+    /// If a valid option was given, a new log entry as well as the next
+    /// Scene the Player is at. Both are null if the option name was invalid,
+    /// which should not happen in regular operation.
+    /// </returns>
     public (Log?, Scene?) ContinueWith(string user, uint lastLogNumber,
       string optionname)
     {
