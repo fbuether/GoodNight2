@@ -14,7 +14,6 @@ namespace GoodNight.Service.Domain.Model.Read
     public record Action(
       string Urlname,
       string Text,
-      string? Icon,
       IImmutableList<Property> Effects)
       : Choice
     {
@@ -24,7 +23,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
       public override string ToString()
       {
-        return $"Action {{Urlname:{Urlname}, Text:{Text}, Icon:{Icon}, "
+        return $"Action {{Urlname:{Urlname}, Text:{Text}, "
           + "Effects: [" + string.Join(", ", Effects.Select(e => e.ToString()))
           + "]}}";
       }

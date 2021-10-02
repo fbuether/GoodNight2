@@ -8,8 +8,12 @@ namespace GoodNight.Service.Domain.Serialisation.Read
 {
   public class LogChoiceConverter : JsonConverter<Choice>
   {
-    public record SerialisedChoice(string Kind, string? Urlname, string? Text,
-      string? Icon, IImmutableList<Property>? Effects);
+    public record SerialisedChoice(
+      string Kind,
+
+      string? Urlname,
+      string? Text,
+      IImmutableList<Property>? Effects);
 
     public override Choice? Read(ref Utf8JsonReader reader, Type typeToConvert,
       JsonSerializerOptions options)
@@ -24,12 +28,11 @@ namespace GoodNight.Service.Domain.Serialisation.Read
         case "Action":
           if (serialised.Urlname is null
             || serialised.Text is null
-            || serialised.Icon is null
             || serialised.Effects is null)
             throw new JsonException();
 
           return new Choice.Action(serialised.Urlname, serialised.Text,
-            serialised.Icon, serialised.Effects);
+            serialised.Effects);
         case "Return":
           return new Choice.Return();
         case "Continue":
@@ -46,15 +49,15 @@ namespace GoodNight.Service.Domain.Serialisation.Read
       {
         case Choice.Action c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Action",
-              c.Urlname, c.Text, c.Icon, c.Effects), options);
+              c.Urlname, c.Text, c.Effects), options);
           break;
         case Choice.Return c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Return",
-              null, null, null, null), options);
+              null, null, null), options);
           break;
         case Choice.Continue c:
           JsonSerializer.Serialize(writer, new SerialisedChoice("Continue",
-              null, null, null, null), options);
+              null, null, null), options);
           break;
       }
     }
