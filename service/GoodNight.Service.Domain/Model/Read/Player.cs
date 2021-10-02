@@ -44,6 +44,15 @@ namespace GoodNight.Service.Domain.Model.Read
       return this with { State = ImmutableList.CreateRange(state) };
     }
 
+    public Player Apply(IReference<Quality> quality, Value value)
+    {
+      var state = (State as IEnumerable<(IReference<Quality>,Value)>)
+        .Where(s => s.Item1.Key != quality.Key)
+        .Append((quality, value));
+
+      return this with { State = ImmutableList.CreateRange(state) };
+    }
+
     public Value GetValueOf(IReference<Quality> qualityRef)
     {
       var quality = qualityRef.Get();
