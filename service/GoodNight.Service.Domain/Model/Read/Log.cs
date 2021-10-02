@@ -33,14 +33,14 @@ namespace GoodNight.Service.Domain.Model.Read
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice("return", null, null, null);
+        new Transfer.Choice("return", null, null);
     }
 
     public record Continue
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice("continue", null, null, null);
+        new Transfer.Choice("continue", null, null);
     }
 
     internal abstract Transfer.Choice ToTransfer();
