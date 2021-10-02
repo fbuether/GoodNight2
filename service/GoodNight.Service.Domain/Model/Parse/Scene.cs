@@ -255,10 +255,6 @@ namespace GoodNight.Service.Domain.Model.Parse
       {
         switch (content)
         {
-          case Content.Option c:
-            yield return c.Scene;
-            break;
-
           case Content.Return c:
             yield return c.Scene;
             break;
