@@ -176,24 +176,6 @@ namespace GoodNight.Service.Domain.Model.Read
       }
 
       /// <summary>
-      /// A test to execute in this scene.
-      /// Will roll a random value in [0,1) and compare it with Expression and
-      /// store that in Result. If Display is set, the test can be used in
-      /// Options, which will show Display as the test Quality.
-      /// </summary>
-      public record Test(
-        IReference<Quality> Result,
-        IReference<Quality>? Display,
-        Expression Expression)
-        : Content
-      {
-        public Action AddTo(Player player, Random rnd, Action action)
-        {
-          throw new NotImplementedException();
-        }
-      }
-
-      /// <summary>
       /// Returns to a previous Scene. This may only occur once on each
       /// manifestation of a Scene. May not occur on Options.
       /// </summary>

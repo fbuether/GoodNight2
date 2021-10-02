@@ -58,11 +58,6 @@ namespace GoodNight.Service.Domain.Serialisation.Read
             throw new JsonException();
           return new Scene.Content.Requirement(c.expression);
 
-        case "test":
-          if (c.quality is null || c.expression is null)
-            throw new JsonException();
-          return new Scene.Content.Test(c.quality, c.quality2, c.expression);
-
         case "return":
           if (c.scene is null)
             throw new JsonException();
@@ -119,12 +114,6 @@ namespace GoodNight.Service.Domain.Serialisation.Read
         case Scene.Content.Requirement c:
           JsonSerializer.Serialize(writer, new SerialisedContent("effect",
               null, null, null, c.Expression, null, null, null, null),
-            options);
-          break;
-
-        case Scene.Content.Test c:
-          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
-              null, c.Result, c.Display, c.Expression, null, null, null, null),
             options);
           break;
 
