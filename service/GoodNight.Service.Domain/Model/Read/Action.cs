@@ -14,7 +14,7 @@ namespace GoodNight.Service.Domain.Model.Read
   /// </summary>
   public record Requirement(
     Expression<IReference<Quality>> Expression,
-    bool Passed)
+    Value Value)
   {
     internal Transfer.Requirement ToTransfer()
     {
@@ -29,7 +29,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
       // todo: Grab actual icon of quality.
       return new Transfer.Requirement(transferExpr.Format(q => q), null,
-        Passed);
+        Value is Value.Bool && ((Value.Bool)Value).Value);
     }
   }
 
@@ -43,14 +43,13 @@ namespace GoodNight.Service.Domain.Model.Read
   public record Option(
     string Urlname,
     string Text,
-    string? Icon,
     bool IsAvailable,
     IImmutableList<Requirement> Requirements,
     IImmutableList<Property> Effects,
     IReference<Scene> Scene)
   {
     internal Transfer.Option ToTransfer() =>
-      new Transfer.Option(Urlname, Text, Icon, IsAvailable,
+      new Transfer.Option(Urlname, Text, IsAvailable,
         // ImmutableList.CreateRange<Transfer.Test>(new[] {
         //     new Transfer.Test("foobar1", "pianist", 7),
         //     new Transfer.Test("foobar2", "sundial", 27),
@@ -64,7 +63,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
     public override string ToString()
     {
-      return $"Option {{Urlname:{Urlname}, Text:{Text}, Icon:{Icon}, "
+      return $"Option {{Urlname:{Urlname}, Text:{Text}, "
         + $"IsAvailable:{IsAvailable}, Requirements: ["
         + string.Join(", ", Requirements.Select(r => r.ToString()))
         + "], Effects: [" + string.Join(", ", Effects.Select(e => e.ToString()))
@@ -106,7 +105,6 @@ namespace GoodNight.Service.Domain.Model.Read
         return (buildLog(new Choice.Action(
               option.Urlname,
               option.Text,
-              option.Icon,
               option.Effects)),
           option.Scene.Get());
       }
