@@ -43,9 +43,25 @@ namespace GoodNight.Service.Storage
       {
         var cwd = Directory.GetCurrentDirectory();
         Console.WriteLine($"Store: Using {cwd}/{storeFile}");
-        this.backingStore = File.Open(storeFile, FileMode.OpenOrCreate);
+
+        if (!File.Exists(storeFile))
+        {
+          var directory = Path.GetDirectoryName(storeFile);
+          if (directory is not null)
+          {
+            Console.WriteLine($"Store: File does not exist, creating...");
+            Directory.CreateDirectory(directory);
+            this.backingStore = File.Create(storeFile);
+          }
+        }
+
+        if (this.backingStore is null)
+        {
+          this.backingStore = File.Open(storeFile, FileMode.OpenOrCreate);
+        }
       }
-      else {
+      else
+      {
         this.backingStore = backingStore;
       }
 
