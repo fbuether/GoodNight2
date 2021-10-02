@@ -41,8 +41,8 @@ namespace GoodNight.Service.Domain.Parse
             (string f, string r) => (f + r).Trim()));
 
 
-    internal readonly static Parser<char, string> InlineWhitespace =
-      Parser.OneOf(" \t").ManyString();
+    internal readonly static Parser<char, Unit> InlineWhitespace =
+      Parser.OneOf(" \t").SkipMany();
 
     internal readonly static Parser<char, Unit> Colon =
       InlineWhitespace
