@@ -42,14 +42,10 @@ namespace GoodNight.Service.Domain.Parse
    * - $set: <quality> = <expr>
    *   Sets quality <quality> of the player to the value of computing <expr>
    *   with the player's state as context.
-   * - $require: <expr>
+   * - $require: [(<label>)] <expr>
    *   When used inside an option, requires <expr> to evaluate to true to make
-   *   the option available. If used outside an option, does nothing.
-   * - $test: [<quality1> =] [<quality2> when] <= <expr>
-   *   Rolls a random value and compares it to <= <expr>. If <quality1> is
-   *   given, the result is stored in the player's state at <quality1>. If
-   *   used in an option and <quality2> is given, shows the success likeliness
-   *   as for <quality2>.
+   *   the option available. If used outside an option, does nothing. Optionally
+   *   may have a label text in braces.
    * - $continue: <scene>
    *   If used directly in a scene, allows the player to continue to this scene.
    *   If used inside an option, denotes the scene that the option continues to.
@@ -246,7 +242,6 @@ namespace GoodNight.Service.Domain.Parse
       Parser.AnyCharExcept("$\r\n") // not EOL or setting starting with $
       .Then(
         NameParser.RemainingLine, (lead, tail) => lead + tail)
-      // .Trace(g => $"----------- p82 parsed: " + g)
       .Map(text => new Scene.Content.Text(text) as Scene.Content);
 
     private readonly static ContentParser emptyLine =
