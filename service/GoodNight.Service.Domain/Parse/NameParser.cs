@@ -38,7 +38,8 @@ namespace GoodNight.Service.Domain.Parse
                 .Then(QualityLetters.ManyString()),
                 (string f, string r) => f + r)
             ).ManyString(),
-            (string f, string r) => (f + r).Trim()));
+            (string f, string r) => (f + r).Trim()))
+      .Labelled(@"name of a Quality (possibly in quotes)");
 
 
     internal readonly static Parser<char, Unit> InlineWhitespace =
@@ -48,7 +49,8 @@ namespace GoodNight.Service.Domain.Parse
       InlineWhitespace
       .Then(Parser.Char(':'))
       .Then(NameParser.InlineWhitespace)
-      .WithResult(Unit.Value);
+      .WithResult(Unit.Value)
+      .Labelled(@"Colon "":""");
 
     internal readonly static Parser<char, string> RemainingLine =
       Parser.AnyCharExcept("\r\n").ManyString();
@@ -61,19 +63,23 @@ namespace GoodNight.Service.Domain.Parse
 
     internal readonly static Parser<char, string> IconName =
       Parser.LetterOrDigit.Or(Parser.OneOf("_- ")).ManyString()
-      .Map(name => name.Trim());
+      .Map(name => name.Trim())
+      .Labelled(@"name of an Icon (letters, digits, _, -, space)");
 
     internal readonly static Parser<char, string> SceneName =
       nameCommonLetters.Or(Parser.OneOf(",\\/")).ManyString()
-      .Map(name => name.Trim());
+      .Map(name => name.Trim())
+      .Labelled(@"name of a Scene");
 
     internal readonly static Parser<char, string> TagName =
       nameCommonLetters.Or(Parser.OneOf("\\/")).ManyString()
-      .Map(name => name.Trim());
+      .Map(name => name.Trim())
+      .Labelled(@"name of a Tag");
 
     internal readonly static Parser<char, string> CategoryName =
       nameCommonLetters.Or(Parser.OneOf(",")).ManyString()
-      .Map(name => name.Trim());
+      .Map(name => name.Trim())
+      .Labelled(@"name of a Category");
 
   }
 }
