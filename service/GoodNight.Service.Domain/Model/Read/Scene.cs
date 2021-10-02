@@ -132,7 +132,8 @@ namespace GoodNight.Service.Domain.Model.Read
         public Action AddTo(Player player, Random rnd, Action action)
         {
           var collector = new Collector("", player,
-            ImmutableList<Read.Requirement>.Empty, null);
+            ImmutableList<Read.Requirement>.Empty,
+            ImmutableList<Property>.Empty, null);
 
           collector = Contents.Aggregate(collector,
             (c, content) => AddContent(rnd, c, content));
@@ -143,10 +144,8 @@ namespace GoodNight.Service.Domain.Model.Read
           var isAvailable = collector.Requirements.All(r =>
             (r.Value is Value.Bool && ((Value.Bool)r.Value).Value));
 
-          var option = new Read.Option(target.Key,
-            collector.Text, isAvailable,
-            collector.Requirements, target);
-
+          var option = new Read.Option(target.Key, collector.Text, isAvailable,
+            collector.Requirements, collector.Effects, target);
           return action with {
             Options = action.Options.Add(option)
           };
