@@ -11,6 +11,7 @@ using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Model.Expressions;
 using GoodNight.Service.Domain.Parse;
 using System.Linq;
+using System;
 
 namespace GoodNight.Service.Domain.Test.Model.Read
 {
@@ -31,7 +32,7 @@ namespace GoodNight.Service.Domain.Test.Model.Read
     private Player player = new Player("", 
       ImmutableList<(IReference<Quality>, Value)>.Empty);
 
-    private Action? action = null;
+    private Domain.Model.Read.Action? action = null;
 
     [Given(@"the scene content text ""(.*)""")]
     public void GivenTheSceneContentTextString(string text)
@@ -50,12 +51,9 @@ namespace GoodNight.Service.Domain.Test.Model.Read
       var reqq = req!.Result.Map(qn =>
         new Quality.Bool(qn, "story", null, "description", false, null) as IReference<Quality>);
 
-      scene = scene with { Contents = scene.Contents.Add(
-          new Scene.Content.Option(option, option, null,
-            ImmutableList.Create(reqq),
-            ImmutableList<(IReference<Quality>, Expression<IReference<Quality>>)>.Empty,
-            new Scene("target", "", false, false, false,
-              ImmutableList<Scene.Content>.Empty))) };
+      var content = new Scene.Content.Option(ImmutableList.Create(
+          new Scene.Content.Requirement(reqq) as Scene.Content));
+      scene = scene with { Contents = scene.Contents.Add(content) };
     }
 
     [Given(@"a player with ""(.*)""")]

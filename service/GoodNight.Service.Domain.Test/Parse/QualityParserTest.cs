@@ -57,10 +57,10 @@ namespace GoodNight.Service.Domain.Test.Parse
           break;
         case ParseResult.Failure<Quality> r:
           output.WriteLine($"Result is failure.");
-          output.WriteLine($"ErrorMessage: {r.ErrorMessage}.");
-          output.WriteLine($"ErrorPosition: {r.ErrorPosition}.");
-          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}.");
-          output.WriteLine($"ExpectedToken: {r.ExpectedToken}.");
+          output.WriteLine($"ErrorMessage: {r.ErrorMessage}");
+          output.WriteLine($"ErrorPosition: {r.ErrorPosition}");
+          output.WriteLine($"UnexpectedToken: {r.UnexpectedToken}");
+          output.WriteLine($"ExpectedToken: {r.ExpectedToken}");
           break;
       }
     }
