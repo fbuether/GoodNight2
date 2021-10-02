@@ -151,6 +151,12 @@ namespace GoodNight.Service.Domain.Model.Read
           };
         }
 
+        public override string ToString()
+        {
+          string content = string.Join(", ",
+            Contents.Select(c => c.ToString()));
+          return "Option {Contents: [" + content + "]}";
+        }
       }
 
       /// <summary>
