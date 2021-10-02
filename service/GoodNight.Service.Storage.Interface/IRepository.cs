@@ -54,15 +54,14 @@ namespace GoodNight.Service.Storage.Interface
     T? Get(string key);
 
     /// <summary>
-    /// Creates a reference to a specified key, if an element with that key
-    /// exists in this repository.
+    /// Creates a reference to a specified key, even if the element does not
+    /// exist in the repository.
     /// </summary>
     /// <param name="key">
     /// The unique key of the element to create the reference for.
     /// </param>
     /// <returns>
-    /// A reference to the element with the given key, or `null` if the element
-    /// does not exist.
+    /// A reference to the element with the given key.
     /// </returns>
     IReference<T> GetReference(string key);
 
