@@ -18,7 +18,7 @@ namespace GoodNight.Service.Domain.Model.Read
       : Choice
     {
       internal override Transfer.Choice ToTransfer() =>
-        new Transfer.Choice("action", Text, Icon,
+        new Transfer.Choice("action", Text,
           ImmutableList.CreateRange(Effects.Select(e => e.ToTransfer())));
 
       public override string ToString()
