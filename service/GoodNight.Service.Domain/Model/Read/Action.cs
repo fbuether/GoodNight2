@@ -35,7 +35,7 @@ namespace GoodNight.Service.Domain.Model.Read
 
   /// <summary>
   /// An Option the player can take as they are at this Action.
-  /// It shows a text and optionally an Icon. It may pose a set of Requirements
+  /// It shows a markdown text. It may pose a set of Requirements and Tests
   /// that a Player state must fulfil in order to be taken, and consequently is
   /// available or not. When taken, it applies a set of effects and will
   /// continue on to a new scene.
@@ -58,8 +58,8 @@ namespace GoodNight.Service.Domain.Model.Read
         //     new Transfer.Test("toast5", "magic-gate", 83)
         //   }),
         // todo: grab actual list of tests here.
-        ImmutableList<Transfer.Test>.Empty,
-        ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())));
+        ImmutableList.CreateRange(Requirements.Select(r => r.ToTransfer())),
+        ImmutableList<Transfer.Test>.Empty);
 
     public override string ToString()
     {
