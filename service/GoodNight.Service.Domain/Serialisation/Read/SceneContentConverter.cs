@@ -17,18 +17,15 @@ namespace GoodNight.Service.Domain.Serialisation.Read
   {
     private record SerialisedContent(
       string type,
+
       string? value,
       IReference<Quality>? quality,
+      IReference<Quality>? quality2,
       QExpr? expression,
-      string? urlname,
-      string? description,
-      string? icon,
-      List<QExpr>? requirements,
-      List<Tuple<IReference<Quality>,QExpr>>? effects,
+      List<Scene.Content>? content,
+      List<Scene.Content>? content2,
       IReference<Scene>? scene,
-      QExpr? ifExpression,
-      List<Scene.Content>? thenExpression,
-      List<Scene.Content>? elseExpression);
+      QExpr? ifExpression);
 
     public override Scene.Content? Read(ref Utf8JsonReader reader,
       SysType typeToConvert, JsonSerializerOptions options)
@@ -52,19 +49,19 @@ namespace GoodNight.Service.Domain.Serialisation.Read
           return new Scene.Content.Effect(c.quality, c.expression);
 
         case "option":
-          if (c.urlname is null || c.scene is null)
+          if (c.content is null)
             throw new JsonException();
-          return new Scene.Content.Option(c.urlname,
-            c.description ?? "",
-            c.icon,
-            c.requirements is not null
-            ? ImmutableList.CreateRange(c.requirements)
-            : ImmutableList<QExpr>.Empty,
-            c.effects is not null
-            ? ImmutableList.CreateRange(c.effects
-              .Select(e => (e.Item1,e.Item2)))
-            : ImmutableList<(IReference<Quality>,QExpr)>.Empty,
-            c.scene);
+          return new Scene.Content.Option(ImmutableList.CreateRange(c.content));
+
+        case "requirement":
+          if (c.expression is null)
+            throw new JsonException();
+          return new Scene.Content.Requirement(c.expression);
+
+        case "test":
+          if (c.quality is null || c.expression is null)
+            throw new JsonException();
+          return new Scene.Content.Test(c.quality, c.quality2, c.expression);
 
         case "return":
           if (c.scene is null)
@@ -80,11 +77,11 @@ namespace GoodNight.Service.Domain.Serialisation.Read
           if (c.ifExpression is null)
             throw new JsonException();
           return new Scene.Content.Condition(c.ifExpression,
-            c.thenExpression is not null
-            ? ImmutableList.CreateRange(c.thenExpression)
+            c.content is not null
+            ? ImmutableList.CreateRange(c.content)
             : ImmutableList<Scene.Content>.Empty,
-            c.elseExpression is not null
-            ? ImmutableList.CreateRange(c.elseExpression)
+            c.content2 is not null
+            ? ImmutableList.CreateRange(c.content2)
             : ImmutableList<Scene.Content>.Empty);
 
         case "include":
@@ -103,47 +100,57 @@ namespace GoodNight.Service.Domain.Serialisation.Read
       switch (value) {
         case Scene.Content.Text c:
           JsonSerializer.Serialize(writer, new SerialisedContent("text",
-              c.Value, null, null, null, null, null, null, null, null, null,
-              null, null), options);
+              c.Value, null, null, null, null, null, null, null),
+            options);
           break;
 
         case Scene.Content.Effect c:
           JsonSerializer.Serialize(writer, new SerialisedContent("effect",
-              null, c.Quality, c.Expression, null, null, null, null, null, null,
-              null, null, null), options);
+              null, c.Quality, null, c.Expression, null, null, null, null),
+            options);
           break;
 
         case Scene.Content.Option c:
-          var effects = c.Effects.Select(e => Tuple.Create(e.Item1,e.Item2))
-            .ToList();
-          var option = new SerialisedContent("option",
-              null, null, null, c.Urlname, c.Description, c.Icon,
-              c.Requirements.ToList(), effects, c.Scene, null, null, null);
-          JsonSerializer.Serialize<SerialisedContent>(writer, option, options);
+          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+              null, null, null, null, c.Contents.ToList(), null, null, null),
+            options);
+          break;
+
+        case Scene.Content.Requirement c:
+          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+              null, null, null, c.Expression, null, null, null, null),
+            options);
+          break;
+
+        case Scene.Content.Test c:
+          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+              null, c.Result, c.Display, c.Expression, null, null, null, null),
+            options);
           break;
 
         case Scene.Content.Return c:
           JsonSerializer.Serialize(writer, new SerialisedContent("return",
-              null, null, null, null, null, null, null, null, c.Scene, null,
-              null, null), options);
+              null, null, null, null, null, null, c.Scene, null),
+            options);
           break;
 
         case Scene.Content.Continue c:
           JsonSerializer.Serialize(writer, new SerialisedContent("continue",
-              null, null, null, null, null, null, null, null, c.Scene, null,
-              null, null), options);
+              null, null, null, null, null, null, c.Scene, null),
+            options);
           break;
 
         case Scene.Content.Condition c:
           JsonSerializer.Serialize(writer, new SerialisedContent("condition",
-              null, null, null, null, null, null, null, null, null,
-              c.If, c.Then.ToList(), c.Else.ToList()), options);
+              null, null, null, null, c.Then.ToList(), c.Else.ToList(), null,
+              c.If),
+            options);
           break;
 
         case Scene.Content.Include c:
           JsonSerializer.Serialize(writer, new SerialisedContent("include",
-              null, null, null, null, null, null, null, null, c.Scene, null,
-              null, null), options);
+              null, null, null, null, null, null, c.Scene, null),
+            options);
           break;
       }
     }

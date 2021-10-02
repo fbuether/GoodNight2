@@ -35,7 +35,8 @@ namespace GoodNight.Service.Domain.Model.Read
         string Value)
         : Content
       {
-        public Action AddTo(Player player, Random rnd, Action action) {
+        public Action AddTo(Player player, Random rnd, Action action)
+        {
           var replaced = Content.ReplacePlaceholders(player, Value);
           return action with { Text = action.Text == ""
               ? replaced
@@ -73,12 +74,79 @@ namespace GoodNight.Service.Domain.Model.Read
       /// The linked Scene will be used to fill this Option.
       /// </summary>
       public record Option(
-        string Urlname,
-        IReference<Scene> Scene)
+        IImmutableList<Content> Contents)
         : Content
       {
+        private record Collector(
+          string Text,
+          Player Player,
+          IImmutableList<Read.Requirement> Requirements,
+          IReference<Scene>? Target
+        );
+
+        private Collector AddContent(Random rnd,
+          Collector collector, Content content)
+        {
+          switch (content) {
+            case Text t:
+              var replaced = Content.ReplacePlaceholders(collector.Player,
+                t.Value);
+              return collector with { Text = collector.Text == ""
+                  ? replaced
+                  : collector.Text + "\n" + replaced };
+
+            case Effect e:
+              var value = e.Expression.Evaluate(collector.Player.GetValueOf,
+                rnd);
+              return collector with { Player = collector.Player
+                  .Apply(e.Quality, value) };
+
+            case Requirement r:
+              var result = r.Expression.Evaluate(collector.Player.GetValueOf,
+                rnd);
+              var requirement = new Read.Requirement(r.Expression, result);
+              return collector with { Requirements = collector.Requirements
+                  .Add(requirement) };
+
+            case Continue c:
+              return collector with { Target = c.Scene };
+
+            case Condition c:
+              var cond = c.If.Evaluate(collector.Player.GetValueOf, rnd)
+                as Value.Bool;
+              var branch = cond is not null && cond.Value
+                ? c.Then
+                : c.Else;
+              return branch.Aggregate(collector, (c, content) =>
+                AddContent(rnd, c, content));
+
+            default:
+              throw new InvalidSceneException(
+                $"Invalid Content in Option: {content}");
+          }
+        }
+
         public Action AddTo(Player player, Random rnd, Action action)
         {
+          var collector = new Collector("", player,
+            ImmutableList<Read.Requirement>.Empty, null);
+
+          collector = Contents.Aggregate(collector,
+            (c, content) => AddContent(rnd, c, content));
+          var target = collector.Target;
+          if (target is null)
+            throw new InvalidSceneException("Option has no target for player!");
+
+          var isAvailable = collector.Requirements.All(r =>
+            (r.Value is Value.Bool && ((Value.Bool)r.Value).Value));
+
+          var option = new Read.Option(target.Key,
+            collector.Text, isAvailable,
+            collector.Requirements, target);
+
+          return action with {
+            Options = action.Options.Add(option)
+          };
         }
 
       }
