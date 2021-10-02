@@ -82,22 +82,22 @@ Feature: ExpressionParser
 
 
   Scenario: Parse ranges
-    Given the input [4,13]
+    Given the input [4..13]
     When the parser parses the input
     Then parsing succeeds
-    Then the result is [4,13]
+    Then the result is [4..13]
 
   Scenario: Parse ranges with negative numbers
-    Given the input [-4,-13]
+    Given the input [-4..-13]
     When the parser parses the input
     Then parsing succeeds
-    Then the result is [-4,-13]
+    Then the result is [-4..-13]
 
   Scenario: Parse ranges with sub expressions
-    Given the input [(0),9+7]
+    Given the input [(0)..9+7]
     When the parser parses the input
     Then parsing succeeds
-    Then the result is [0,9+7]
+    Then the result is [0..9+7]
 
 
   Scenario: Parse application of unary not operator

@@ -19,6 +19,7 @@ Feature: SceneParser
 
       $option
       Klettere vorsichtig die steile Treppe hinauf.
+      $require: [0..100] >= 70
       $continue: Gehe die Treppe hoch
       $end
 
@@ -711,30 +712,6 @@ Feature: SceneParser
     Then the result has 1 node
     Then the node 1 is a "Option"
     Then the result has 1 "Continue" nodes in branches
-
-  Scenario: A basic test
-    Given the scene input
-      """
-      $test: Karpal as >= 0.4
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the result has 1 nodes
-    Then the node 1 is a "Test"
-
-  Scenario: A test with a result quality
-    Given the scene input
-      """
-      $test: storage = Karpal as >= 0.4
-      """
-    When the parser parses the input
-    Then parsing succeeds
-    Then the result has 1 nodes
-    Then the node 1 is a "Test"
-    Then "Test" node 1 has Result quality "storage"
-    Then "Test" node 1 has Display quality "Karpal"
-
-
 
   Scenario: A failing test provides a proper error message
     Given the scene input
