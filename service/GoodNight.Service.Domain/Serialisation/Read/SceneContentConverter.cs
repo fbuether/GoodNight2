@@ -106,13 +106,13 @@ namespace GoodNight.Service.Domain.Serialisation.Read
           break;
 
         case Scene.Content.Option c:
-          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+          JsonSerializer.Serialize(writer, new SerialisedContent("option",
               null, null, null, null, c.Contents.ToList(), null, null, null),
             options);
           break;
 
         case Scene.Content.Requirement c:
-          JsonSerializer.Serialize(writer, new SerialisedContent("effect",
+          JsonSerializer.Serialize(writer, new SerialisedContent("requirement",
               null, null, null, c.Expression, null, null, null, null),
             options);
           break;
