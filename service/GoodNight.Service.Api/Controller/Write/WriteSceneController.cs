@@ -18,6 +18,7 @@ namespace GoodNight.Service.Api.Controller.Write
   {
     private IRepository<Scene> scenes;
     private IRepository<Story> stories;
+    private IRepository<Quality> qualities;
     private IRepository<Model.Read.Story> readStories;
     private IRepository<Model.Read.Scene> readScenes;
     private IRepository<Model.Read.Quality> readQualities;
@@ -27,6 +28,7 @@ namespace GoodNight.Service.Api.Controller.Write
     {
       scenes = store.Create<Scene>();
       stories = store.Create<Story>();
+      qualities = store.Create<Quality>();
       readStories = store.Create<Model.Read.Story>();
       readScenes = store.Create<Model.Read.Scene>();
       readQualities = store.Create<Model.Read.Quality>();
@@ -65,7 +67,7 @@ namespace GoodNight.Service.Api.Controller.Write
         return NotFound();
 
       var writeScene = parsed
-        .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
+        .Bind(parsed => SceneFactory.Build(scenes, qualities, readScenes, parsed, story.Urlname))
         .Map(story.AddScene)
         .Assure(sq => scenes.Get(sq.Item2.Key) is null,
           "A scene with that name already exists.");
@@ -102,7 +104,8 @@ namespace GoodNight.Service.Api.Controller.Write
         return NotFound();
 
       var writeScene = parsed
-        .Bind(parsed => SceneFactory.Build(parsed, story.Urlname))
+        .Bind(parsed => SceneFactory.Build(scenes, qualities, readScenes,
+            parsed, story.Urlname))
         .Map(story.AddScene)
         .Assure(sq => scenes.Get(sq.Item2.Key) is not null,
           "The scene does not exist.")
