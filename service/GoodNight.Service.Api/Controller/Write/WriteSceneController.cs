@@ -9,6 +9,7 @@ using Model = GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain;
 using System;
 using GoodNight.Service.Api.Controller.Base;
+using System.Collections.Immutable;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
@@ -78,8 +79,22 @@ namespace GoodNight.Service.Api.Controller.Write
         .Map(readStory.AddScene);
 
       return writeScene.And(readScene)
-        .Do(wsrs => stories.Save(wsrs.Item1.Item1))
-        .Do(wsrs => readStories.Save(wsrs.Item2))
+        .Do(wsrs => {
+          stories.Save(wsrs.Item1.Item1);
+          readStories.Save(wsrs.Item2);
+
+          foreach (var link in LinkHandler.UpdateLinkedScenes(scenes,
+              wsrs.Item1.Item2))
+          {
+            scenes.Save(link);
+          }
+
+          foreach (var link in LinkHandler.UpdateLinkedQualities(qualities,
+              wsrs.Item1.Item2))
+          {
+            qualities.Save(link);
+          }
+        })
         .Map(wr => wr.Item1.Item2)
         .Map<ActionResult<Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
@@ -87,13 +102,12 @@ namespace GoodNight.Service.Api.Controller.Write
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
-
     [HttpPut("{sceneUrlname}")]
     public ActionResult<Scene> Update(string storyUrlname, string sceneUrlname,
       [FromBody] RawScene content)
     {
       var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
-          s.Creator.Key == GetCurrentUser().Key);
+        s.Creator.Key == GetCurrentUser().Key);
       if (story is null)
         return NotFound();
 
