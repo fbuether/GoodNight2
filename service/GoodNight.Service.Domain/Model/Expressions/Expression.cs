@@ -1,5 +1,7 @@
 using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Domain.Model.Read.Transfer;
 
 namespace GoodNight.Service.Domain.Model.Expressions
@@ -25,9 +27,22 @@ namespace GoodNight.Service.Domain.Model.Expressions
     /// </remarks>
     public Value Evaluate(Func<TQuality, Value> context, Random rnd);
 
+    /// <summary>
+    /// Transform the quality references of this expression to something
+    /// different, using a mapper function.
+    /// </summary>
     public Expression<R> Map<R>(Func<TQuality, R> fun);
 
+    /// <summary>
+    /// Format this expression to a string, given a way to format the
+    /// qualities in the expression.
+    /// </summary>
     public string Format(Func<TQuality, string> qualityToString);
+
+    /// <summary>
+    /// Collect all qualities in this expressions.
+    /// </summary>
+    public IEnumerable<TQuality> GetQualities();
   }
 
   public static class Expression
@@ -57,6 +72,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       {
         return qualityToString(Value);
       }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        yield return Value;
+      }
     }
 
     /// <summary>
@@ -79,6 +99,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public string Format(Func<Q, string> qualityToString)
       {
         return Value ? "wahr" : "falsch";
+      }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        yield break;
       }
     }
 
@@ -116,6 +141,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
         var up = Lower.Format(qualityToString);
         return $"[{low},{up}]";
       }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        return Lower.GetQualities().Concat(Upper.GetQualities());
+      }
     }
 
     /// <summary>
@@ -138,6 +168,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public string Format(Func<Q, string> qualityToString)
       {
         return Value.ToString();
+      }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        yield break;
       }
     }
 
@@ -190,6 +225,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
       public string Format(Func<Q, string> qualityToString)
       {
         return Operator.ToString() + " " + Argument.Format(qualityToString);
+      }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        return Argument.GetQualities();
       }
     }
 
@@ -303,6 +343,11 @@ namespace GoodNight.Service.Domain.Model.Expressions
         return Left.Format(qualityToString) + " " +
           BinaryOperator.Format(Operator) + " " +
           Right.Format(qualityToString);
+      }
+
+      public IEnumerable<Q> GetQualities()
+      {
+        return Left.GetQualities().Concat(Right.GetQualities());
       }
     }
   }
