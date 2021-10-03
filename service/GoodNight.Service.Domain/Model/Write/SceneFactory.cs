@@ -38,7 +38,7 @@ namespace GoodNight.Service.Domain.Model.Write
         : ImmutableList<string>.Empty;
 
       var outLinks = ImmutableList.CreateRange(parsed.GetOutLinks()
-        .Select(NameConverter.OfString)
+        .Select(scene => NameConverter.Concat(story, scene))
         .OrderBy(a => a)
         .Select(scenes.GetReference));
 
