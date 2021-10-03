@@ -1,3 +1,4 @@
+import type {Key} from "../Key";
 
 export interface Scene {
   name: string;
@@ -8,6 +9,7 @@ export interface Scene {
   tags: Array<string>;
   category: Array<string>;
 
-  outLinks: Array<string>;
-  inLinks: Array<string>;
+  outLinks: Array<Key>;
+  inLinks: Array<Key>;
+  qualities: Array<Key>;
 }

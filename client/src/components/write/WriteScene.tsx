@@ -5,6 +5,7 @@ import {WriteStory} from "../../state/page/write/WriteStory";
 
 import type {Scene} from "../../state/model/write/Scene";
 import type {Story} from "../../state/model/write/Story";
+import type {Key} from "../../state/model/Key";
 
 import SceneHelp from "../../components/write/SceneHelp";
 
@@ -21,17 +22,18 @@ function setText(newText: string) {
 }
 
 
-function mkLinkGroup(story: string, title: string, links: Array<string>) {
+function mkLinkGroup(story: string, title: string, links: Array<Key>) {
   if (links.length == 0) {
     return <></>;
   }
 
-  let sceneLink = (link: string) => Dispatch.Page(State.page(story, link));
+  let sceneLink = (link: string) => Dispatch.Page(State.page(
+    story, link.substr(link.indexOf("/")+1)));
 
   let linkItems = links.map(link => (<li>
-      <Link action={sceneLink(link)}>
+      <Link action={sceneLink(link.key)}>
         <Icon class="restrained color-primary mr-1" name="horizon-road" />
-        {link}
+        {link.key}
       </Link>
     </li>));
   return <>
