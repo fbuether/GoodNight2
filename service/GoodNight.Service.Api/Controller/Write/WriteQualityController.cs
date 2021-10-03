@@ -68,7 +68,7 @@ namespace GoodNight.Service.Api.Controller.Write
         .Map(readStory.AddQuality);
 
       var writeQuality = parsed
-        .Bind(parsed => QualityFactory.Build(
+        .Bind(parsed => QualityFactory.Build(scenes,
             parsed, content.text, story.Urlname))
         .Map(story.AddQuality)
         .Assure(sq => qualities.Get(sq.Item2.Key) is null,
@@ -104,7 +104,7 @@ namespace GoodNight.Service.Api.Controller.Write
         .Map(readStory.AddQuality);
 
       var writeQuality = parsed
-        .Bind(parsed => QualityFactory.Build(
+        .Bind(parsed => QualityFactory.Build(scenes,
             parsed, content.text, story.Urlname))
         .Map(story.AddQuality)
         .Assure(sq => qualities.Get(sq.Item2.Key) is not null,

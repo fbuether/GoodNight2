@@ -1,6 +1,7 @@
 using System.Collections.Immutable;
 using System.Linq;
 using GoodNight.Service.Domain.Util;
+using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
 {
@@ -11,7 +12,9 @@ namespace GoodNight.Service.Domain.Model.Write
       return new Result.Failure<Quality, string>(error);
     }
 
-    public static Result<Quality,string> Build(Parse.Quality parsed, string raw,
+    public static Result<Quality,string> Build(
+      IRepository<Scene> scenes,
+      Parse.Quality parsed, string raw,
       string story)
     {
       var contents = parsed.Contents;
@@ -40,8 +43,15 @@ namespace GoodNight.Service.Domain.Model.Write
         ? categoryElement.First()
         : ImmutableList<string>.Empty;
 
+      // find in-links from stories.
+      var inLinks = ImmutableList.CreateRange<IReference<Scene>>(
+        scenes.Where(scene => scene.Qualities.Any(q =>
+            q.Key == NameConverter.Concat(story, name))));
+
       return new Result.Success<Quality, string>(new Quality(
-          name, story, icon, raw, tags, category));
+          name, story, icon, raw,
+          tags, category,
+          inLinks));
     }
   }
 }
