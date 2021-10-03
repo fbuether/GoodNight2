@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Linq;
 using GoodNight.Service.Storage.Interface;
 
 namespace GoodNight.Service.Domain.Model.Write
@@ -22,5 +23,13 @@ namespace GoodNight.Service.Domain.Model.Write
     public string Urlname => NameConverter.OfString(Name);
 
     public string Key => NameConverter.Concat(Story, Urlname);
+
+    public Transfer.Scene ToTransfer()
+    {
+      return new Transfer.Scene(Name, Story, Raw,
+        OutLinks.Select(l => new Transfer.Reference(l)),
+        InLinks.Select(l => new Transfer.Reference(l)),
+        Qualities.Select(l => new Transfer.Reference(l)));
+    }
   }
 }

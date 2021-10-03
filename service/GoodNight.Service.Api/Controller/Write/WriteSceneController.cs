@@ -5,11 +5,12 @@ using GoodNight.Service.Domain.Model.Write;
 using GoodNight.Service.Domain.Util;
 using GoodNight.Service.Storage.Interface;
 using GoodNight.Service.Domain.Parse;
-using Model = GoodNight.Service.Domain.Model;
 using GoodNight.Service.Domain;
 using System;
 using GoodNight.Service.Api.Controller.Base;
 using System.Collections.Immutable;
+using Model = GoodNight.Service.Domain.Model;
+using Transfer = GoodNight.Service.Domain.Model.Write.Transfer;
 
 namespace GoodNight.Service.Api.Controller.Write
 {
@@ -53,7 +54,7 @@ namespace GoodNight.Service.Api.Controller.Write
     public record RawScene(string text);
 
     [HttpPost]
-    public ActionResult<Scene> Create(string storyUrlname,
+    public ActionResult<Transfer.Scene> Create(string storyUrlname,
       [FromBody] RawScene content)
     {
       var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
@@ -68,7 +69,8 @@ namespace GoodNight.Service.Api.Controller.Write
         return NotFound();
 
       var writeScene = parsed
-        .Bind(parsed => SceneFactory.Build(scenes, qualities, readScenes, parsed, story.Urlname))
+        .Bind(parsed => SceneFactory.Build(scenes, qualities, readScenes,
+            parsed, story.Urlname))
         .Map(story.AddScene)
         .Assure(sq => scenes.Get(sq.Item2.Key) is null,
           "A scene with that name already exists.");
@@ -96,15 +98,15 @@ namespace GoodNight.Service.Api.Controller.Write
           }
         })
         .Map(wr => wr.Item1.Item2)
-        .Map<ActionResult<Scene>>(scene => Accepted(
+        .Map<ActionResult<Transfer.Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
-            scene))
+            scene.ToTransfer()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
     [HttpPut("{sceneUrlname}")]
-    public ActionResult<Scene> Update(string storyUrlname, string sceneUrlname,
-      [FromBody] RawScene content)
+    public ActionResult<Transfer.Scene> Update(string storyUrlname,
+      string sceneUrlname, [FromBody] RawScene content)
     {
       var story = stories.FirstOrDefault(s => s.Urlname == storyUrlname &&
         s.Creator.Key == GetCurrentUser().Key);
@@ -135,9 +137,9 @@ namespace GoodNight.Service.Api.Controller.Write
         .Do(wsrs => stories.Save(wsrs.Item1.Item1))
         .Do(wsrs => readStories.Save(wsrs.Item2))
         .Map(wr => wr.Item1.Item2)
-        .Map<ActionResult<Scene>>(scene => Accepted(
+        .Map<ActionResult<Transfer.Scene>>(scene => Accepted(
             $"api/v1/write/stories/{storyUrlname}/scenes/{scene.Key}",
-            scene))
+            scene.ToTransfer()))
         .GetOrError(err => BadRequest(new ErrorResult(err)));
     }
 
