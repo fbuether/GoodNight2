@@ -40,7 +40,8 @@ namespace GoodNight.Service.Domain.Model.Write
       var outLinks = ImmutableList.CreateRange(parsed.GetOutLinks()
         .Select(scene => NameConverter.Concat(story, scene))
         .OrderBy(a => a)
-        .Select(scenes.GetReference));
+        .Select(scenes.GetReference)
+        .Distinct());
 
       // links from other scenes to this one
       var inLinks = ImmutableList.CreateRange<IReference<Scene>>(
@@ -50,7 +51,8 @@ namespace GoodNight.Service.Domain.Model.Write
       // links to qualities used in this scene.
       var qualityRefs = ImmutableList.CreateRange(
         contents.SelectMany(content => CollectQualities(
-            (name) => MakeQualityKey(qualities, story, name), content)));
+            (name) => MakeQualityKey(qualities, story, name), content))
+        .Distinct());
 
       // name of the Model.Read.Story.
       var readKey = NameConverter.Concat(story, name);
