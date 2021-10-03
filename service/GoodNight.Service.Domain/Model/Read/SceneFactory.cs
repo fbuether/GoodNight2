@@ -21,7 +21,7 @@ namespace GoodNight.Service.Domain.Model.Read
       (string sceneUrlname) => scenes.GetReference(
         NameConverter.Concat(story, sceneUrlname));
 
-    private static Scene.Content ToReadContent(
+    private static Scene.Content? ToReadContent(
       IRepository<Scene> scenes,
       IRepository<Quality> qualities,
       string story,
@@ -61,7 +61,8 @@ namespace GoodNight.Service.Domain.Model.Read
 
         case Parse.Scene.Content.Option c:
           var contents = c.Content.Select(c =>
-            ToReadContent(scenes, qualities, story, c));
+            ToReadContent(scenes, qualities, story, c))
+            .OfType<Scene.Content>();
           return new Scene.Content.Option(
             ImmutableList.CreateRange(contents));
 
@@ -82,8 +83,8 @@ namespace GoodNight.Service.Domain.Model.Read
           return new Scene.Content.Include(makeScene(c.Scene));
 
         default:
-          throw new Exception(
-            $"Cannot make Read.Content from Parse.Content: {parsed}");
+          // not everthing must be converted.
+          return null;
       }
     }
 
@@ -94,7 +95,8 @@ namespace GoodNight.Service.Domain.Model.Read
       IEnumerable<Parse.Scene.Content> parsedContent) =>
       ImmutableList.CreateRange(
         parsedContent.Select(c =>
-          ToReadContent(scenes, qualities, story, c)));
+          ToReadContent(scenes, qualities, story, c))
+      .OfType<Scene.Content>());
 
     public static Result<Scene,string> Build(
       IRepository<Scene> scenes,
